@@ -28,7 +28,7 @@ interface Props {
 }
 
 const DEFAULT_THEME = "theme-default";
-const STORAGE_KEY = "devie-qt-theme:v1";
+const STORAGE_KEY = "devie-quota-theme:v1";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
 
 function getStoredTheme(): string | null {

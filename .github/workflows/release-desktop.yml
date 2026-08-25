@@ -1,4 +1,4 @@
-# Desktop release pipeline: builds, signs, and publishes Devie QT to
+# Desktop release pipeline: builds, signs, and publishes Devie Quota to
 # CrabNebula Cloud. Same shape as the Mana desktop pipeline.
 #
 # Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  CN_APPLICATION: "mathdev/devie-qt"
+  CN_APPLICATION: "mathdev/devie-quota"
 
 jobs:
   draft:

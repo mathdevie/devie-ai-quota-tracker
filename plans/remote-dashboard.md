@@ -1,7 +1,7 @@
 # Remote dashboard
 
 Goal: read the quota dashboard from another device. The user puts the app
-behind a Cloudflare Tunnel or a Tailscale network. Devie QT only needs to
+behind a Cloudflare Tunnel or a Tailscale network. Devie Quota only needs to
 serve the dashboard on a local URL.
 
 ## Shape

@@ -5,13 +5,13 @@ import "@/ui/_themes.scss";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "Devie QT",
+  title: "Devie Quota",
   description: "A local AI subscription quota tracker",
 };
 
 const themeBootScript = `(() => {
   try {
-    const key = "devie-qt-theme:v1";
+    const key = "devie-quota-theme:v1";
     const allowed = new Set([
       "theme-default", "theme-dark", "theme-midnight-ink",
       "theme-copper-sunset", "theme-aurora-green", "theme-sharingan",

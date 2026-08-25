@@ -33,7 +33,7 @@ use crate::{
 };
 
 pub const LOGIN_TIMEOUT: Duration = Duration::from_secs(300);
-pub const USER_AGENT: &str = "devie-qt/0.1";
+pub const USER_AGENT: &str = "devie-quota/0.2";
 
 /// Data the interface needs to guide the user through a sign-in.
 #[derive(Clone, Debug, Serialize)]

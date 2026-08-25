@@ -1,5 +1,5 @@
 [package]
-name = "devie-qt"
+name = "devie-quota"
 version = "0.1.0"
 description = "A local AI subscription quota tracker"
 authors = ["Devie"]
@@ -7,7 +7,7 @@ edition = "2021"
 rust-version = "1.77.2"
 
 [lib]
-name = "devie_qt_lib"
+name = "devie_quota_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

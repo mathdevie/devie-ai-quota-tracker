@@ -69,7 +69,7 @@ export default function PopoverSurface({
       <footer className={styles.footer}>
         <span>Updated {latestUpdate(state)}</span>
         <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
-          Open Devie QT
+          Open Devie Quota
         </Button>
       </footer>
     </main>

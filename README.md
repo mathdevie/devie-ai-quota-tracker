@@ -1,6 +1,6 @@
-# Devie QT
+# Devie Quota
 
-Devie QT is a local macOS menu bar app for AI subscription quotas.
+Devie Quota is a local macOS menu bar app for AI subscription quotas.
 
 It keeps separate Claude, Codex, and GitHub Copilot accounts in one place.
 The product has no Devie account, cloud database, proxy, or hosted backend.
@@ -51,7 +51,7 @@ fresh for five minutes on the timer (a refresh button always fetches), one
 request per token runs at a time, a `429` pauses the endpoint for three
 minutes, and a failed read shows the last good data as "Stale".
 
-Devie QT finds CLI commands in the normal shell path and common macOS install
+Devie Quota finds CLI commands in the normal shell path and common macOS install
 folders. These folders include Homebrew, `~/.local/bin`, Bun, Cargo, Volta,
 asdf, npm, pnpm, NVM, and FNM locations.
 
@@ -61,7 +61,7 @@ Each OAuth account is a separate connection. Tokens live in one private file
 per connection with `0600` permissions:
 
 ```text
-~/Library/Application Support/com.devie.qt/credentials/<connection-id>.json
+~/Library/Application Support/com.devie.quota/credentials/<connection-id>.json
 ```
 
 The app renews Claude and Codex tokens before they expire. Removing an account
@@ -100,23 +100,23 @@ plans/                  Product research and feasibility analysis
 
 `src/ui` mirrors the `src/ui` folder from the
 [Devie UI repository](https://github.com/mathdevie/devie-ui.com). The local
-theme context uses the versioned `devie-qt-theme:v1` storage key.
+theme context uses the versioned `devie-quota-theme:v1` storage key.
 
 ## Privacy and security
 
-- Devie QT has no product login or remote application database.
+- Devie Quota has no product login or remote application database.
 - Provider quota checks can contact Anthropic, OpenAI, or GitHub.
 - Provider tokens never enter the React webview.
 - SQLite does not store provider tokens or complete provider responses.
 - Claude and Codex own their login credentials and refresh behavior.
 - The Copilot adapter reads one GitHub CLI token into memory for one request.
 - The Copilot adapter clears its token buffer after the request starts.
-- Devie QT never changes the active GitHub CLI account.
+- Devie Quota never changes the active GitHub CLI account.
 
 The local database is stored at:
 
 ```text
-~/Library/Application Support/com.devie.qt/devie-qt.sqlite3
+~/Library/Application Support/com.devie.quota/devie-quota.sqlite3
 ```
 
 ## Requirements
@@ -182,7 +182,7 @@ To download a build:
 1. Open the repository **Actions** page.
 2. Open a successful **Build signed macOS app** run.
 3. Find the **Artifacts** section on the run summary.
-4. Download `Devie-QT-arm64`.
+4. Download `Devie-Quota-arm64`.
 5. Extract the ZIP and open the DMG or app bundle.
 
 GitHub keeps the current build artifacts for 14 days. The workflow does not yet

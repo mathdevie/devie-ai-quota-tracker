@@ -30,7 +30,7 @@ export default function UsageView({ state }: { state: DashboardState }) {
           <Info size={16} />
         </Callout.Icon>
         <Callout.Content title="Usage history">
-          Devie QT stores one snapshot per refresh. Charts over time will use
+          Devie Quota stores one snapshot per refresh. Charts over time will use
           this history in a later version.
         </Callout.Content>
       </Callout.Root>

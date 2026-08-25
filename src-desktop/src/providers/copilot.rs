@@ -26,7 +26,7 @@ pub async fn refresh(
         .get("https://api.github.com/copilot_internal/user")
         .header(ACCEPT, "application/json")
         .header(AUTHORIZATION, format!("token {token}"))
-        .header(USER_AGENT, "devie-qt/0.1")
+        .header(USER_AGENT, "devie-quota/0.2")
         .header("Editor-Version", "vscode/1.95.0")
         .header("Editor-Plugin-Version", "copilot-chat/0.26.7")
         .header("X-GitHub-Api-Version", "2022-11-28")
