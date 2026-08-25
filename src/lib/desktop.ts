@@ -1,4 +1,9 @@
-import type { DashboardState, Provider } from "./contracts";
+import type {
+  AppSettings,
+  DashboardState,
+  LoginStart,
+  Provider,
+} from "./contracts";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -11,72 +16,88 @@ export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
 }
 
+async function call<T>(command: string, args?: Record<string, unknown>) {
+  const { invoke } = await import("@tauri-apps/api/core");
+  return invoke<T>(command, args);
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
 export async function getDashboardState(): Promise<DashboardState> {
   if (!isDesktop()) return previewState;
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("get_dashboard_state");
+  return call("get_dashboard_state");
 }
 
 export async function refreshAll(): Promise<DashboardState> {
   if (!isDesktop()) {
-    await new Promise((resolve) => window.setTimeout(resolve, 450));
+    await delay(450);
     return previewState;
   }
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("refresh_all");
+  return call("refresh_all");
+}
+
+export async function refreshConnection(
+  connectionId: string,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    await delay(300);
+    return previewState;
+  }
+  return call("refresh_connection", { connectionId });
 }
 
 export async function discoverConnections(): Promise<DashboardState> {
   if (!isDesktop()) {
-    await new Promise((resolve) => window.setTimeout(resolve, 350));
+    await delay(350);
     return previewState;
   }
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("discover_connections");
+  return call("discover_connections");
 }
 
-export async function addProviderAccount(
-  provider: Extract<Provider, "claude" | "codex">,
-  profileName: string,
-): Promise<DashboardState> {
+export async function startLogin(provider: Provider): Promise<LoginStart> {
   if (!isDesktop()) {
-    await new Promise((resolve) => window.setTimeout(resolve, 600));
-    const label = provider === "claude" ? "Claude" : "Codex";
+    await delay(300);
     return {
-      ...previewState,
-      connections: [
-        ...previewState.connections,
-        {
-          id: `preview-${provider}-${profileName.toLowerCase().replaceAll(" ", "-")}`,
-          provider,
-          label: `${label} · ${profileName.trim()}`,
-          sourceLocator: `local/${provider}/${profileName.trim()}`,
-          enabled: true,
-          status: "needs_login",
-          source: "",
-          lastError: "The browser preview cannot complete provider login.",
-          captureState: provider === "claude" ? "available" : undefined,
-          windows: [],
-        },
-      ],
+      sessionId: "preview",
+      provider,
+      url: "https://example.com/oauth",
+      userCode: provider === "copilot" ? "ABCD-1234" : undefined,
+      acceptsManualCode: provider === "claude",
     };
   }
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("add_provider_account", {
-    provider,
-    profileName,
-  });
+  return call("start_login", { provider });
 }
 
-export async function loginProviderAccount(
+export async function finishLogin(
+  sessionId: string,
+  code?: string,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    await delay(1200);
+    throw new Error("The browser preview cannot complete a provider sign-in.");
+  }
+  return call("finish_login", { sessionId, code: code || null });
+}
+
+export async function cancelLogin(sessionId: string): Promise<void> {
+  if (!isDesktop()) return;
+  await call("cancel_login", { sessionId });
+}
+
+export async function removeConnection(
   connectionId: string,
 ): Promise<DashboardState> {
   if (!isDesktop()) {
-    await new Promise((resolve) => window.setTimeout(resolve, 450));
-    return previewState;
+    return {
+      ...previewState,
+      connections: previewState.connections.filter(
+        (connection) => connection.id !== connectionId,
+      ),
+    };
   }
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("login_provider_account", { connectionId });
+  return call("remove_connection", { connectionId });
 }
 
 export async function setConnectionEnabled(
@@ -93,11 +114,7 @@ export async function setConnectionEnabled(
       ),
     };
   }
-  const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<DashboardState>("set_connection_enabled", {
-    connectionId,
-    enabled,
-  });
+  return call("set_connection_enabled", { connectionId, enabled });
 }
 
 export async function setClaudeCapture(
@@ -105,13 +122,21 @@ export async function setClaudeCapture(
   install: boolean,
 ): Promise<DashboardState> {
   if (!isDesktop()) return previewState;
-  const { invoke } = await import("@tauri-apps/api/core");
   const command = install ? "install_claude_capture" : "remove_claude_capture";
-  return invoke<DashboardState>(command, { connectionId });
+  return call(command, { connectionId });
+}
+
+export async function getAppSettings(): Promise<AppSettings | undefined> {
+  if (!isDesktop()) return undefined;
+  return call("get_app_settings");
+}
+
+export async function setTranslucency(enabled: boolean): Promise<void> {
+  if (!isDesktop()) return;
+  await call("set_translucency", { enabled });
 }
 
 export async function openMainWindow(): Promise<void> {
   if (!isDesktop()) return;
-  const { invoke } = await import("@tauri-apps/api/core");
-  await invoke("open_main_window");
+  await call("open_main_window");
 }

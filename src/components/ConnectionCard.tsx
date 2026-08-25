@@ -1,22 +1,9 @@
-import { Bot, Braces, Clock3, GitPullRequest } from "lucide-react";
+import { Clock3 } from "lucide-react";
 import type { ProviderConnection, QuotaWindow } from "@/lib/contracts";
 import Badge from "@/ui/Badge";
 import Progress from "@/ui/Progress";
 import styles from "./ConnectionCard.module.scss";
-
-function ProviderIcon({ provider }: Pick<ProviderConnection, "provider">) {
-  const Icon =
-    provider === "claude"
-      ? Bot
-      : provider === "codex"
-        ? Braces
-        : GitPullRequest;
-  return (
-    <span className={styles.providerIcon}>
-      <Icon aria-hidden size={17} />
-    </span>
-  );
-}
+import ProviderIcon from "./ProviderIcon";
 
 function resetText(window: QuotaWindow): string | undefined {
   if (!window.resetsAt) return undefined;

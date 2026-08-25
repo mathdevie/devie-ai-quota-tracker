@@ -1,16 +1,18 @@
-mod accounts;
 mod capture;
+mod credentials;
 mod db;
 mod discovery;
 mod executable;
 mod model;
+mod oauth;
 mod providers;
 mod pty;
 
 use std::{path::PathBuf, time::Duration};
 
 use db::Database;
-use model::{ConnectionStatus, DashboardState};
+use model::{AppSettings, ConnectionStatus, DashboardState};
+use oauth::{LoginSessions, LoginStart};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -23,6 +25,7 @@ struct Core {
     database: Database,
     app_data_dir: PathBuf,
     client: reqwest::Client,
+    logins: LoginSessions,
 }
 
 #[tauri::command]
@@ -31,72 +34,67 @@ fn get_dashboard_state(core: State<'_, Core>) -> Result<DashboardState, String> 
 }
 
 #[tauri::command]
-fn discover_connections(app: AppHandle, core: State<'_, Core>) -> Result<DashboardState, String> {
-    core.database
-        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
+async fn discover_connections(app: AppHandle) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    sync_discovery(&core).await?;
     publish_state(&app, &core)
 }
 
 #[tauri::command]
-async fn add_provider_account(
-    app: AppHandle,
-    provider: String,
-    profile_name: String,
-) -> Result<DashboardState, String> {
+async fn start_login(app: AppHandle, provider: String) -> Result<LoginStart, String> {
     let core = app.state::<Core>().inner().clone();
     let provider = model::Provider::from_db(&provider)
-        .filter(|provider| *provider != model::Provider::Copilot)
-        .ok_or_else(|| "This provider cannot use subscription login yet.".to_string())?;
-    let connection = accounts::create_profile(&core.app_data_dir, provider, &profile_name)?;
-    let connection_id = connection.id.clone();
-    let login_provider = connection.provider.clone();
-    let login_source = connection.source_locator.clone();
-    core.database.upsert_discovered(&[connection.clone()])?;
+        .ok_or_else(|| "This provider is not supported.".to_string())?;
+    let (start, pending) = oauth::start(&core.client, provider).await?;
+    core.logins.insert(start.session_id.clone(), pending);
+    Ok(start)
+}
 
-    let login_result = tauri::async_runtime::spawn_blocking(move || {
-        accounts::login(&login_provider, &login_source)
-    })
-    .await
-    .map_err(|_| "The provider login stopped early.".to_string())?;
-    if let Err(message) = login_result {
-        core.database
-            .save_failure(&connection_id, ConnectionStatus::NeedsLogin, &message)?;
-    } else if let Some(connection) = core.database.connection_by_id(&connection_id)? {
+#[tauri::command]
+async fn finish_login(
+    app: AppHandle,
+    session_id: String,
+    code: Option<String>,
+) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    let pending = core
+        .logins
+        .take(&session_id)
+        .ok_or_else(|| "The sign-in session ended. Start again.".to_string())?;
+    let provider = pending.provider.clone();
+    let outcome = oauth::finish(&core.client, pending, code).await?;
+    let connection = oauth::connection_for(&provider, &outcome);
+    core.database.upsert_discovered(&[connection.clone()])?;
+    core.database.set_enabled(&connection.id, true)?;
+    credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
+    if let Some(connection) = core.database.connection_by_id(&connection.id)? {
         refresh_one(&core, &connection).await;
     }
-
-    core.database
-        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
     publish_state(&app, &core)
 }
 
 #[tauri::command]
-async fn login_provider_account(
+fn cancel_login(core: State<'_, Core>, session_id: String) {
+    drop(core.logins.take(&session_id));
+}
+
+#[tauri::command]
+fn remove_connection(
     app: AppHandle,
+    core: State<'_, Core>,
     connection_id: String,
 ) -> Result<DashboardState, String> {
-    let core = app.state::<Core>().inner().clone();
     let connection = core
         .database
         .connection_by_id(&connection_id)?
-        .ok_or_else(|| "The provider profile does not exist.".to_string())?;
-    if connection.provider == model::Provider::Copilot {
-        return Err("Copilot login is not available yet.".to_string());
+        .ok_or_else(|| "The connection does not exist.".to_string())?;
+    if connection.kind != model::ConnectionKind::Oauth {
+        return Err(
+            "This connection comes from a CLI on this Mac. Disable it instead.".to_string(),
+        );
     }
-    let login_provider = connection.provider.clone();
-    let login_source = connection.source_locator.clone();
-    let login_result = tauri::async_runtime::spawn_blocking(move || {
-        accounts::login(&login_provider, &login_source)
-    })
-    .await
-    .map_err(|_| "The provider login stopped early.".to_string())?;
-
-    if let Err(message) = login_result {
-        core.database
-            .save_failure(&connection_id, ConnectionStatus::NeedsLogin, &message)?;
-    } else {
-        refresh_one(&core, &connection).await;
-    }
+    core.database.delete_connection(&connection_id)?;
+    credentials::remove(&core.app_data_dir, &connection_id);
     publish_state(&app, &core)
 }
 
@@ -159,6 +157,24 @@ fn remove_claude_capture(
 }
 
 #[tauri::command]
+fn get_app_settings(core: State<'_, Core>) -> Result<AppSettings, String> {
+    core.database.settings()
+}
+
+#[tauri::command]
+fn set_translucency(
+    app: AppHandle,
+    core: State<'_, Core>,
+    enabled: bool,
+) -> Result<AppSettings, String> {
+    let mut settings = core.database.settings()?;
+    settings.translucent = enabled;
+    core.database.save_settings(&settings)?;
+    apply_translucency(&app, enabled);
+    Ok(settings)
+}
+
+#[tauri::command]
 fn open_main_window(app: AppHandle) -> Result<(), String> {
     show_main_window(&app)
 }
@@ -171,10 +187,19 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
+/// Runs CLI discovery off the main thread and syncs the database with it.
+async fn sync_discovery(core: &Core) -> Result<(), String> {
+    let discovered = tauri::async_runtime::spawn_blocking(discovery::discover)
+        .await
+        .map_err(|_| "Discovery stopped early.".to_string())?;
+    core.database.upsert_discovered(&discovered)?;
+    core.database.prune_missing_local(&discovered)?;
+    Ok(())
+}
+
 async fn refresh_all_internal(app: &AppHandle) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
-    core.database
-        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
+    sync_discovery(&core).await?;
     let connections = core.database.dashboard_state()?.connections;
     for connection in connections.into_iter().filter(|item| item.enabled) {
         refresh_one(&core, &connection).await;
@@ -189,14 +214,16 @@ async fn refresh_one(core: &Core, connection: &model::ProviderConnection) {
         }
         Err(message) => {
             let lower = message.to_lowercase();
-            let status =
-                if lower.contains("login") || lower.contains("token") || lower.contains("access") {
-                    ConnectionStatus::NeedsLogin
-                } else if !connection.windows.is_empty() {
-                    ConnectionStatus::Stale
-                } else {
-                    ConnectionStatus::Error
-                };
+            let status = if lower.contains("sign in")
+                || lower.contains("login")
+                || lower.contains("expired")
+            {
+                ConnectionStatus::NeedsLogin
+            } else if !connection.windows.is_empty() {
+                ConnectionStatus::Stale
+            } else {
+                ConnectionStatus::Error
+            };
             let _ = core.database.save_failure(&connection.id, status, &message);
         }
     }
@@ -245,13 +272,52 @@ fn toggle_popover(app: &AppHandle) {
     let _ = window.set_focus();
 }
 
-fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+/// Turns the macOS sidebar vibrancy on or off for the main window.
+fn apply_translucency(app: &AppHandle, enabled: bool) {
+    #[cfg(target_os = "macos")]
+    {
+        use window_vibrancy::{
+            apply_vibrancy, clear_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,
+        };
+        let Some(window) = app.get_webview_window("main") else {
+            return;
+        };
+        if enabled {
+            let _ = apply_vibrancy(
+                &window,
+                NSVisualEffectMaterial::Sidebar,
+                Some(NSVisualEffectState::Active),
+                None,
+            );
+        } else {
+            let _ = clear_vibrancy(&window);
+        }
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = (app, enabled);
+}
+
+fn build_windows(
+    app: &tauri::App,
+    settings: &AppSettings,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
         .title("Devie QT")
         .inner_size(1120.0, 760.0)
         .min_inner_size(780.0, 560.0)
-        .center()
-        .build()?;
+        .center();
+    // The interface draws its own title bar. macOS keeps the native traffic
+    // lights, placed inside the sidebar header, and the window stays
+    // transparent so the sidebar can show the desktop vibrancy behind it.
+    #[cfg(target_os = "macos")]
+    let main = main
+        .title_bar_style(tauri::TitleBarStyle::Overlay)
+        .hidden_title(true)
+        .traffic_light_position(tauri::LogicalPosition::new(18.0, 20.0))
+        .transparent(true);
+    let _main = main.build()?;
+    apply_translucency(app.handle(), settings.translucent);
+
     WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
         .title("Devie QT Quotas")
         .inner_size(420.0, 650.0)
@@ -322,9 +388,7 @@ pub fn run() {
             let app_data_dir = app.path().app_data_dir()?;
             let database = Database::open(app_data_dir.join("devie-qt.sqlite3"))
                 .map_err(std::io::Error::other)?;
-            database
-                .upsert_discovered(&discovery::discover(&app_data_dir))
-                .map_err(std::io::Error::other)?;
+            let settings = database.settings().map_err(std::io::Error::other)?;
             let client = reqwest::Client::builder()
                 .timeout(Duration::from_secs(20))
                 .build()?;
@@ -332,8 +396,9 @@ pub fn run() {
                 database,
                 app_data_dir,
                 client,
+                logins: LoginSessions::default(),
             });
-            build_windows(app)?;
+            build_windows(app, &settings)?;
             build_tray(app)?;
 
             let handle = app.handle().clone();
@@ -358,13 +423,17 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_dashboard_state,
             discover_connections,
-            add_provider_account,
-            login_provider_account,
+            start_login,
+            finish_login,
+            cancel_login,
+            remove_connection,
             refresh_all,
             refresh_connection,
             set_connection_enabled,
             install_claude_capture,
             remove_claude_capture,
+            get_app_settings,
+            set_translucency,
             open_main_window,
             hide_popover,
         ])

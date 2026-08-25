@@ -1,18 +1,21 @@
 mod claude;
 mod codex;
-mod copilot;
+pub mod copilot;
 
 use std::path::Path;
 
 use serde_json::{Map, Value};
 
-use crate::model::{Provider, ProviderConnection, QuotaReading};
+use crate::model::{ConnectionKind, Provider, ProviderConnection, QuotaReading};
 
 pub async fn refresh(
     connection: &ProviderConnection,
     app_data_dir: &Path,
     client: &reqwest::Client,
 ) -> Result<QuotaReading, String> {
+    if connection.kind == ConnectionKind::Oauth {
+        return crate::oauth::refresh_quota(connection, app_data_dir, client).await;
+    }
     match connection.provider {
         Provider::Claude => claude::refresh(connection, app_data_dir).await,
         Provider::Codex => codex::refresh(connection).await,
@@ -20,7 +23,7 @@ pub async fn refresh(
     }
 }
 
-fn number(value: Option<&Value>) -> Option<f64> {
+pub fn number(value: Option<&Value>) -> Option<f64> {
     match value {
         Some(Value::Number(value)) => value.as_f64(),
         Some(Value::String(value)) => value.parse().ok(),
@@ -28,7 +31,7 @@ fn number(value: Option<&Value>) -> Option<f64> {
     }
 }
 
-fn reset_time(value: Option<&Value>) -> Option<String> {
+pub fn reset_time(value: Option<&Value>) -> Option<String> {
     let value = value?;
     if let Some(text) = value.as_str() {
         if chrono::DateTime::parse_from_rfc3339(text).is_ok() {

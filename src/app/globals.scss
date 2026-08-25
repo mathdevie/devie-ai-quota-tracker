@@ -11,11 +11,22 @@
     margin: 0;
   }
 
+  // The Tauri window is transparent. The sidebar decides how much of the
+  // macOS vibrancy shows through; the content column stays opaque.
+  html {
+    background: transparent;
+  }
+
   body {
+    overflow: hidden;
     background: $devie__color__background;
     color: $devie__color__text;
     font-family: $devie__font-family;
     -webkit-font-smoothing: antialiased;
+
+    html[data-translucent="true"] & {
+      background: transparent;
+    }
   }
 
   button,

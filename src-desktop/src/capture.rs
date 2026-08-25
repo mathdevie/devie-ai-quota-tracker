@@ -169,6 +169,7 @@ mod tests {
         ProviderConnection {
             id: "claude-test".into(),
             provider: Provider::Claude,
+            kind: crate::model::ConnectionKind::Local,
             label: "Claude · Test".into(),
             source_locator: path.display().to_string(),
             enabled: true,
@@ -188,6 +189,7 @@ mod tests {
             .upsert_discovered(&[crate::model::DiscoveredConnection {
                 id: connection.id.clone(),
                 provider: connection.provider.clone(),
+                kind: connection.kind.clone(),
                 label: connection.label.clone(),
                 source_locator: connection.source_locator.clone(),
                 capture_state: connection.capture_state.clone(),

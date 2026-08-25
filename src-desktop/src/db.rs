@@ -4,8 +4,8 @@ use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
-    CaptureState, ConnectionStatus, DashboardState, DiscoveredConnection, Provider,
-    ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
+    AppSettings, CaptureState, ConnectionKind, ConnectionStatus, DashboardState,
+    DiscoveredConnection, Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
 };
 
 #[derive(Clone, Debug)]
@@ -78,9 +78,110 @@ impl Database {
                    previous_status_line TEXT,
                    installed_status_line TEXT NOT NULL,
                    created_at TEXT NOT NULL
+                 );
+                 CREATE TABLE IF NOT EXISTS app_settings (
+                   key TEXT PRIMARY KEY,
+                   value TEXT NOT NULL
                  );",
             )
             .map_err(|error| error.to_string())?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "kind",
+            "TEXT NOT NULL DEFAULT 'local'",
+        )?;
+        Ok(())
+    }
+
+    fn add_column_if_missing(
+        connection: &Connection,
+        table: &str,
+        column: &str,
+        definition: &str,
+    ) -> Result<(), String> {
+        let mut statement = connection
+            .prepare(&format!("PRAGMA table_info({table})"))
+            .map_err(|error| error.to_string())?;
+        let exists = statement
+            .query_map([], |row| row.get::<_, String>(1))
+            .map_err(|error| error.to_string())?
+            .flatten()
+            .any(|name| name == column);
+        if !exists {
+            connection
+                .execute(
+                    &format!("ALTER TABLE {table} ADD COLUMN {column} {definition}"),
+                    [],
+                )
+                .map_err(|error| error.to_string())?;
+        }
+        Ok(())
+    }
+
+    pub fn settings(&self) -> Result<AppSettings, String> {
+        let connection = self.connection()?;
+        let value = connection
+            .query_row(
+                "SELECT value FROM app_settings WHERE key = 'app'",
+                [],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()
+            .map_err(|error| error.to_string())?;
+        Ok(value
+            .and_then(|text| serde_json::from_str(&text).ok())
+            .unwrap_or_else(AppSettings::defaults))
+    }
+
+    pub fn save_settings(&self, settings: &AppSettings) -> Result<(), String> {
+        let text = serde_json::to_string(settings).map_err(|error| error.to_string())?;
+        self.connection()?
+            .execute(
+                "INSERT INTO app_settings(key, value) VALUES ('app', ?1)
+                 ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                [text],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
+    /// Removes local connections that discovery no longer reports, such as a
+    /// deleted CLI folder or a GitHub account that signed out.
+    pub fn prune_missing_local(
+        &self,
+        discovered: &[DiscoveredConnection],
+    ) -> Result<Vec<String>, String> {
+        let connection = self.connection()?;
+        let mut statement = connection
+            .prepare("SELECT id FROM provider_connections WHERE kind = 'local'")
+            .map_err(|error| error.to_string())?;
+        let existing = statement
+            .query_map([], |row| row.get::<_, String>(0))
+            .map_err(|error| error.to_string())?
+            .flatten()
+            .collect::<Vec<_>>();
+        let mut removed = Vec::new();
+        for id in existing {
+            if discovered.iter().any(|item| item.id == id) {
+                continue;
+            }
+            connection
+                .execute("DELETE FROM provider_connections WHERE id = ?1", [&id])
+                .map_err(|error| error.to_string())?;
+            removed.push(id);
+        }
+        Ok(removed)
+    }
+
+    pub fn delete_connection(&self, id: &str) -> Result<(), String> {
+        let changed = self
+            .connection()?
+            .execute("DELETE FROM provider_connections WHERE id = ?1", [id])
+            .map_err(|error| error.to_string())?;
+        if changed == 0 {
+            return Err("The connection does not exist.".to_string());
+        }
         Ok(())
     }
 
@@ -96,10 +197,12 @@ impl Database {
                 .execute(
                     "INSERT INTO provider_connections (
                        id, provider, label, source_locator, capture_state,
-                       identity_user_id, identity_display_name, identity_plan, updated_at
-                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+                       identity_user_id, identity_display_name, identity_plan, updated_at, kind
+                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
                      ON CONFLICT(id) DO UPDATE SET
                        source_locator = excluded.source_locator,
+                       label = excluded.label,
+                       kind = excluded.kind,
                        capture_state = COALESCE(provider_connections.capture_state, excluded.capture_state),
                        identity_user_id = COALESCE(excluded.identity_user_id, provider_connections.identity_user_id),
                        identity_display_name = COALESCE(excluded.identity_display_name, provider_connections.identity_display_name),
@@ -115,6 +218,7 @@ impl Database {
                         item.identity.as_ref().and_then(|value| value.display_name.as_deref()),
                         item.identity.as_ref().and_then(|value| value.plan.as_deref()),
                         now,
+                        item.kind.as_str(),
                     ],
                 )
                 .map_err(|error| error.to_string())?;
@@ -129,7 +233,7 @@ impl Database {
             .prepare(
                 "SELECT id, provider, label, source_locator, enabled, status, source,
                         last_updated_at, last_error, capture_state,
-                        identity_user_id, identity_display_name, identity_plan
+                        identity_user_id, identity_display_name, identity_plan, kind
                  FROM provider_connections
                  ORDER BY CASE provider WHEN 'claude' THEN 0 WHEN 'codex' THEN 1 ELSE 2 END,
                           label",
@@ -156,6 +260,7 @@ impl Database {
                 Ok(ProviderConnection {
                     id: row.get(0)?,
                     provider,
+                    kind: ConnectionKind::from_db(&row.get::<_, String>(13)?),
                     label: row.get(2)?,
                     source_locator: row.get(3)?,
                     enabled: row.get::<_, i64>(4)? != 0,
@@ -389,6 +494,7 @@ mod tests {
             DiscoveredConnection {
                 id: "claude-one".into(),
                 provider: Provider::Claude,
+                kind: ConnectionKind::Local,
                 label: "Claude · One".into(),
                 source_locator: "/tmp/.claude-one".into(),
                 capture_state: Some(CaptureState::Available),
@@ -397,6 +503,7 @@ mod tests {
             DiscoveredConnection {
                 id: "claude-two".into(),
                 provider: Provider::Claude,
+                kind: ConnectionKind::Oauth,
                 label: "Claude · Two".into(),
                 source_locator: "/tmp/.claude-two".into(),
                 capture_state: Some(CaptureState::Available),
@@ -432,5 +539,24 @@ mod tests {
             .query_row("SELECT COUNT(*) FROM quota_snapshots", [], |row| row.get(0))
             .expect("history count");
         assert_eq!(count, 2);
+
+        // Pruning removes local connections that discovery no longer reports
+        // and keeps OAuth connections.
+        let removed = database.prune_missing_local(&[]).expect("prune");
+        assert_eq!(removed, vec!["claude-one".to_string()]);
+        let state = database.dashboard_state().expect("state");
+        assert_eq!(state.connections.len(), 1);
+        assert_eq!(state.connections[0].kind, ConnectionKind::Oauth);
+    }
+
+    #[test]
+    fn stores_settings() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
+        assert!(database.settings().expect("defaults").translucent);
+        database
+            .save_settings(&AppSettings { translucent: false })
+            .expect("save");
+        assert!(!database.settings().expect("saved").translucent);
     }
 }

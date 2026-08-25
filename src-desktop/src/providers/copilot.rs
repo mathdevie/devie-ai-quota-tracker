@@ -72,7 +72,7 @@ fn github_token(host: &str, login: &str) -> Result<String, String> {
     Ok(token)
 }
 
-fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, String> {
+pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, String> {
     let object = payload
         .as_object()
         .ok_or_else(|| "GitHub Copilot returned an invalid quota object.".to_string())?;

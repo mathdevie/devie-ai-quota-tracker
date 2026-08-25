@@ -1,55 +1,59 @@
 "use client";
 
 import {
-  Bot,
-  Braces,
-  GitPullRequest,
+  ChartColumn,
+  ChevronLeft,
+  Gauge,
   LoaderCircle,
+  Plug,
   Plus,
   RefreshCw,
   ScanSearch,
-  TerminalSquare,
+  Settings,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import type {
-  DashboardState,
-  Provider,
-  ProviderConnection,
-} from "@/lib/contracts";
+import type { DashboardState, Provider } from "@/lib/contracts";
 import {
-  addProviderAccount,
   discoverConnections,
   getDashboardState,
   isDesktop,
-  loginProviderAccount,
-  openMainWindow,
   refreshAll,
+  refreshConnection,
+  removeConnection,
   setClaudeCapture,
   setConnectionEnabled,
 } from "@/lib/desktop";
-import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
-import Switch from "@/ui/Switch";
-import Tabs from "@/ui/Tabs";
-import AddProviderDialog from "./AddProviderDialog";
 import styles from "./AppShell.module.scss";
-import BrandMark from "./BrandMark";
-import ConnectionCard from "./ConnectionCard";
-import ThemeSwitcher from "./ThemeSwitcher";
+import LoginDialog from "./LoginDialog";
+import PopoverSurface from "./PopoverSurface";
+import { PROVIDER_NAMES } from "./ProviderIcon";
+import Sidebar, { type SidebarItem } from "./Sidebar";
+import TitleBar from "./TitleBar";
+import ProviderDetailView from "./views/ProviderDetailView";
+import ProvidersView from "./views/ProvidersView";
+import QuotaView from "./views/QuotaView";
+import SettingsView from "./views/SettingsView";
+import UsageView from "./views/UsageView";
 
-type View = "usage" | "providers";
-type LoginProvider = Extract<Provider, "claude" | "codex">;
+type View = "quota" | "usage" | "providers" | "settings";
+
+const NAV: SidebarItem<View>[] = [
+  { value: "quota", label: "Quota", icon: Gauge },
+  { value: "usage", label: "Usage", icon: ChartColumn },
+  { value: "providers", label: "Providers", icon: Plug },
+  { value: "settings", label: "Settings", icon: Settings },
+];
+
+const TITLES: Record<View, string> = {
+  quota: "Quota",
+  usage: "Usage",
+  providers: "Providers",
+  settings: "Settings",
+};
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
-}
-
-function remainingPercent(connection: ProviderConnection): number | undefined {
-  if (connection.windows.length === 0) return undefined;
-  return Math.max(
-    0,
-    100 - Math.max(...connection.windows.map((window) => window.usedPercent)),
-  );
 }
 
 function latestUpdate(state: DashboardState): string {
@@ -60,227 +64,15 @@ function latestUpdate(state: DashboardState): string {
   }).format(new Date(state.refreshedAt));
 }
 
-function ProviderIcon({ provider }: { provider: Provider }) {
-  const Icon =
-    provider === "claude"
-      ? Bot
-      : provider === "codex"
-        ? Braces
-        : GitPullRequest;
-  return (
-    <span className={styles.providerIcon}>
-      <Icon aria-hidden size={17} />
-    </span>
-  );
-}
-
-function ProviderStatus({ connection }: { connection: ProviderConnection }) {
-  if (connection.status === "ready") {
-    return <Badge variant="success">Ready</Badge>;
-  }
-  if (connection.status === "stale") {
-    return <Badge variant="warning">Stale</Badge>;
-  }
-  if (connection.status === "needs_login") {
-    return <Badge variant="warning">Login required</Badge>;
-  }
-  return <Badge variant="danger">Error</Badge>;
-}
-
-function PopoverSurface({
-  state,
-  refreshing,
-  onRefresh,
-}: {
-  state: DashboardState;
-  refreshing: boolean;
-  onRefresh: () => void;
-}) {
-  const enabled = state.connections.filter((connection) => connection.enabled);
-  const remaining = enabled
-    .map(remainingPercent)
-    .filter((value): value is number => value !== undefined);
-  const lowest = remaining.length > 0 ? Math.min(...remaining) : undefined;
-
-  return (
-    <main className={styles.popover}>
-      <header className={styles.popoverHeader} data-tauri-drag-region>
-        <div className={styles.brand}>
-          <BrandMark size={28} />
-          <strong>Devie QT</strong>
-        </div>
-        <div className={styles.popoverActions}>
-          <span className={styles.minimum}>
-            {lowest === undefined ? "—" : `${Math.round(lowest)}%`}
-          </span>
-          <Button
-            aria-label="Refresh quotas"
-            disabled={refreshing}
-            onClick={onRefresh}
-            size="sm"
-            variant="icon-naked"
-          >
-            <RefreshCw
-              className={refreshing ? styles.spinning : undefined}
-              size={16}
-            />
-          </Button>
-        </div>
-      </header>
-
-      <section className={styles.popoverList}>
-        {enabled.map((connection) => (
-          <ConnectionCard compact connection={connection} key={connection.id} />
-        ))}
-        {enabled.length === 0 && <p className={styles.empty}>No providers</p>}
-      </section>
-
-      <footer className={styles.popoverFooter}>
-        <span>{latestUpdate(state)}</span>
-        <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
-          Open
-        </Button>
-      </footer>
-    </main>
-  );
-}
-
-function UsageView({ state }: { state: DashboardState }) {
-  const enabled = state.connections.filter((connection) => connection.enabled);
-  return (
-    <section className={styles.page}>
-      <h1>Usage</h1>
-      <div className={styles.list}>
-        {enabled.map((connection) => (
-          <ConnectionCard connection={connection} key={connection.id} />
-        ))}
-        {enabled.length === 0 && <p className={styles.empty}>No providers</p>}
-      </div>
-    </section>
-  );
-}
-
-function ProvidersView({
-  state,
-  busyId,
-  discovering,
-  onAdd,
-  onDiscover,
-  onEnabledChange,
-  onCaptureChange,
-  onLogin,
-}: {
-  state: DashboardState;
-  busyId?: string;
-  discovering: boolean;
-  onAdd: () => void;
-  onDiscover: () => void;
-  onEnabledChange: (id: string, enabled: boolean) => void;
-  onCaptureChange: (id: string, install: boolean) => void;
-  onLogin: (id: string) => void;
-}) {
-  return (
-    <section className={styles.page}>
-      <div className={styles.pageHeader}>
-        <h1>Providers</h1>
-        <div className={styles.pageActions}>
-          <Button
-            aria-label="Find local profiles"
-            disabled={discovering}
-            onClick={onDiscover}
-            size="sm"
-            variant="icon-secondary"
-          >
-            <ScanSearch
-              className={discovering ? styles.spinning : undefined}
-              size={15}
-            />
-          </Button>
-          <Button onClick={onAdd} size="sm">
-            <Plus size={15} />
-            Add subscription
-          </Button>
-        </div>
-      </div>
-
-      <div className={styles.list}>
-        {state.connections.map((connection) => {
-          const detail =
-            connection.identity?.displayName ?? connection.identity?.plan;
-          return (
-            <article className={styles.providerRow} key={connection.id}>
-              <div className={styles.providerMain}>
-                <ProviderIcon provider={connection.provider} />
-                <div>
-                  <h2>{connection.label}</h2>
-                  {detail && <p>{detail}</p>}
-                  {connection.lastError && connection.status !== "ready" && (
-                    <p className={styles.rowError}>{connection.lastError}</p>
-                  )}
-                </div>
-              </div>
-              <div className={styles.providerActions}>
-                <ProviderStatus connection={connection} />
-                {connection.status === "needs_login" &&
-                  connection.provider !== "copilot" && (
-                    <Button
-                      disabled={busyId === connection.id}
-                      onClick={() => onLogin(connection.id)}
-                      size="sm"
-                      variant="secondary"
-                    >
-                      Login
-                    </Button>
-                  )}
-                {connection.provider === "claude" &&
-                  connection.captureState !== "unsupported" && (
-                    <Button
-                      disabled={busyId === connection.id}
-                      onClick={() =>
-                        onCaptureChange(
-                          connection.id,
-                          connection.captureState !== "installed",
-                        )
-                      }
-                      size="sm"
-                      variant="secondary"
-                    >
-                      <TerminalSquare size={14} />
-                      {connection.captureState === "installed"
-                        ? "Remove capture"
-                        : "Enable capture"}
-                    </Button>
-                  )}
-                <Switch.Root
-                  aria-label={`${connection.enabled ? "Disable" : "Enable"} ${connection.label}`}
-                  checked={connection.enabled}
-                  disabled={busyId === connection.id}
-                  onCheckedChange={(checked) =>
-                    onEnabledChange(connection.id, checked)
-                  }
-                >
-                  <Switch.Thumb />
-                </Switch.Root>
-              </div>
-            </article>
-          );
-        })}
-        {state.connections.length === 0 && (
-          <p className={styles.empty}>No providers</p>
-        )}
-      </div>
-    </section>
-  );
-}
-
 export default function AppShell() {
   const [state, setState] = useState<DashboardState | null>(null);
-  const [view, setView] = useState<View>("usage");
+  const [view, setView] = useState<View>("quota");
+  const [providerPage, setProviderPage] = useState<Provider>();
   const [refreshing, setRefreshing] = useState(false);
   const [discovering, setDiscovering] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [error, setError] = useState<string>();
-  const [addOpen, setAddOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [surface, setSurface] = useState<"main" | "popover">("main");
 
   const load = useCallback(async () => {
@@ -309,74 +101,38 @@ export default function AppShell() {
     return () => unlisten?.();
   }, [load]);
 
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    try {
-      setState(await refreshAll());
-      setError(undefined);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setRefreshing(false);
-    }
-  }, []);
+  /** Runs a state-changing command and stores its result or error. */
+  const run = useCallback(
+    async (
+      action: () => Promise<DashboardState>,
+      setBusy?: (busy: boolean) => void,
+    ) => {
+      setBusy?.(true);
+      try {
+        setState(await action());
+        setError(undefined);
+      } catch (reason) {
+        setError(errorMessage(reason));
+      } finally {
+        setBusy?.(false);
+      }
+    },
+    [],
+  );
 
-  const handleDiscover = useCallback(async () => {
-    setDiscovering(true);
-    try {
-      setState(await discoverConnections());
-      setError(undefined);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setDiscovering(false);
-    }
-  }, []);
+  const handleRefresh = () => run(refreshAll, setRefreshing);
+  const handleDiscover = () => run(discoverConnections, setDiscovering);
+  const withBusyId = (id: string) => (busy: boolean) =>
+    setBusyId(busy ? id : undefined);
 
-  async function handleEnabledChange(id: string, enabled: boolean) {
-    setBusyId(id);
-    try {
-      setState(await setConnectionEnabled(id, enabled));
-      setError(undefined);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setBusyId(undefined);
-    }
-  }
-
-  async function handleCaptureChange(id: string, install: boolean) {
-    setBusyId(id);
-    try {
-      setState(await setClaudeCapture(id, install));
-      setError(undefined);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setBusyId(undefined);
-    }
-  }
-
-  async function handleLogin(id: string) {
-    setBusyId(id);
-    try {
-      setState(await loginProviderAccount(id));
-      setError(undefined);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setBusyId(undefined);
-    }
-  }
-
-  async function handleAddProvider(
-    provider: LoginProvider,
-    profileName: string,
-  ) {
-    const nextState = await addProviderAccount(provider, profileName);
+  const handleConnected = useCallback((nextState: DashboardState) => {
     setState(nextState);
-    setView("providers");
     setError(undefined);
+  }, []);
+
+  function changeView(next: View) {
+    setView(next);
+    setProviderPage(undefined);
   }
 
   if (!state) {
@@ -397,74 +153,124 @@ export default function AppShell() {
     );
   }
 
+  const onProviderPage = view === "providers" && providerPage !== undefined;
+  const title = onProviderPage ? PROVIDER_NAMES[providerPage] : TITLES[view];
+
   return (
-    <Tabs.Root
-      className={styles.shell}
-      onValueChange={(value) => value && setView(value as View)}
-      value={view}
-    >
-      <header className={styles.header} data-tauri-drag-region>
-        <div className={styles.brand}>
-          <BrandMark size={28} />
-          <strong>Devie QT</strong>
-        </div>
-        <div className={styles.headerActions}>
-          <ThemeSwitcher />
-          <Button
-            aria-label="Refresh quotas"
-            disabled={refreshing}
-            onClick={() => void handleRefresh()}
-            size="sm"
-            variant="icon-primary"
-          >
-            <RefreshCw
-              className={refreshing ? styles.spinning : undefined}
-              size={15}
-            />
-          </Button>
-        </div>
-      </header>
-
-      <Tabs.List className={styles.tabs}>
-        <Tabs.Tab value="usage">Usage</Tabs.Tab>
-        <Tabs.Tab value="providers">Providers</Tabs.Tab>
-        <Tabs.Indicator />
-      </Tabs.List>
-
-      {error && (
-        <div className={styles.errorBanner}>
-          <span>{error}</span>
-          <Button onClick={() => setError(undefined)} size="sm" variant="naked">
-            Dismiss
-          </Button>
-        </div>
-      )}
-
-      <Tabs.Panel className={styles.panel} value="usage">
-        <UsageView state={state} />
-      </Tabs.Panel>
-      <Tabs.Panel className={styles.panel} value="providers">
-        <ProvidersView
-          busyId={busyId}
-          discovering={discovering}
-          onAdd={() => setAddOpen(true)}
-          onCaptureChange={(id, install) =>
-            void handleCaptureChange(id, install)
-          }
-          onDiscover={() => void handleDiscover()}
-          onEnabledChange={(id, enabled) =>
-            void handleEnabledChange(id, enabled)
-          }
-          onLogin={(id) => void handleLogin(id)}
-          state={state}
-        />
-      </Tabs.Panel>
-
-      <AddProviderDialog
-        onConnect={handleAddProvider}
-        onOpenChange={setAddOpen}
-        open={addOpen}
+    <div className={styles.shell}>
+      <Sidebar
+        footer={<span>Updated {latestUpdate(state)}</span>}
+        items={NAV}
+        onChange={changeView}
+        value={view}
       />
-    </Tabs.Root>
+
+      <div className={styles.content}>
+        <TitleBar
+          leading={
+            onProviderPage && (
+              <Button
+                aria-label="Back to providers"
+                onClick={() => setProviderPage(undefined)}
+                size="sm"
+                variant="icon-naked"
+              >
+                <ChevronLeft size={16} />
+              </Button>
+            )
+          }
+          title={title}
+        >
+          {view === "providers" && !onProviderPage && (
+            <Button
+              aria-label="Find CLI profiles on this Mac"
+              disabled={discovering}
+              onClick={() => void handleDiscover()}
+              size="sm"
+              variant="icon-naked"
+            >
+              <ScanSearch
+                className={discovering ? styles.spinning : undefined}
+                size={16}
+              />
+            </Button>
+          )}
+          {onProviderPage && (
+            <Button onClick={() => setLoginOpen(true)} size="sm">
+              <Plus size={15} />
+              Add account
+            </Button>
+          )}
+          {(view === "quota" || view === "usage") && (
+            <Button
+              aria-label="Refresh quotas"
+              disabled={refreshing}
+              onClick={() => void handleRefresh()}
+              size="sm"
+              variant="icon-naked"
+            >
+              <RefreshCw
+                className={refreshing ? styles.spinning : undefined}
+                size={16}
+              />
+            </Button>
+          )}
+        </TitleBar>
+
+        {error && (
+          <div className={styles.errorBanner}>
+            <span>{error}</span>
+            <Button
+              onClick={() => setError(undefined)}
+              size="sm"
+              variant="naked"
+            >
+              Dismiss
+            </Button>
+          </div>
+        )}
+
+        <main className={styles.main}>
+          {view === "quota" && <QuotaView state={state} />}
+          {view === "usage" && <UsageView state={state} />}
+          {view === "providers" && !onProviderPage && (
+            <ProvidersView onOpen={setProviderPage} state={state} />
+          )}
+          {onProviderPage && (
+            <ProviderDetailView
+              busyId={busyId}
+              onAdd={() => setLoginOpen(true)}
+              onCaptureChange={(id, install) =>
+                void run(() => setClaudeCapture(id, install), withBusyId(id))
+              }
+              onEnabledChange={(id, enabled) =>
+                void run(
+                  () => setConnectionEnabled(id, enabled),
+                  withBusyId(id),
+                )
+              }
+              onRefresh={(id) =>
+                void run(() => refreshConnection(id), withBusyId(id))
+              }
+              onRemove={(id) =>
+                void run(() => removeConnection(id), withBusyId(id))
+              }
+              provider={providerPage}
+              state={state}
+            />
+          )}
+          {view === "settings" && <SettingsView state={state} />}
+        </main>
+      </div>
+
+      {providerPage && (
+        <LoginDialog
+          onConnected={handleConnected}
+          onOpenChange={setLoginOpen}
+          open={loginOpen}
+          provider={providerPage}
+        />
+      )}
+    </div>
   );
 }

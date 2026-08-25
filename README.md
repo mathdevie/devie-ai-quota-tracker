@@ -2,7 +2,7 @@
 
 Devie QT is a local macOS menu bar app for AI subscription quotas.
 
-It keeps separate Claude, Codex, and GitHub Copilot connections in one place.
+It keeps separate Claude, Codex, and GitHub Copilot accounts in one place.
 The product has no Devie account, cloud database, proxy, or hosted backend.
 
 > [!NOTE]
@@ -13,7 +13,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 
 - Keep the interface minimal, useful, and close to the Mana configuration pages.
 - Keep product data on the Mac.
-- Let each provider CLI own its credentials and token refresh.
+- Sign in with the same public OAuth clients the provider CLIs use.
 - Treat every account or configuration directory as a separate connection.
 - Keep provider-specific quota logic behind a common Rust model.
 - Preserve the last good quota snapshot when a refresh fails.
@@ -22,46 +22,43 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 
 - A Tauri 2 app with a Next.js static frontend.
 - A macOS menu bar item with a quota summary and popover.
-- A normal window for usage and provider management.
-- Separate connections for multiple Claude or Codex subscriptions.
+- A native-style window with a sidebar: Quota, Usage, Providers, Settings.
+- In-app OAuth sign-in for Claude, Codex, and GitHub Copilot accounts.
+- Any number of accounts per provider.
 - Local discovery of existing Claude, Codex, and GitHub CLI profiles.
-- Provider-owned sign-in for new Claude and Codex profiles.
 - An optional passive Claude status-line capture.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
-- Ten bundled Devie UI themes with a persistent theme selector.
+- Ten bundled Devie UI themes and an optional translucent sidebar.
 - Signed and notarized Apple silicon builds through GitHub Actions.
 
 ## Provider support
 
-| Provider | Account source | Quota source | Current account flow |
-| --- | --- | --- | --- |
-| Claude | `CLAUDE_CONFIG_DIR`, `~/.claude*`, or a managed profile | An optional status-line capture, then Claude Code `/usage` | Runs `claude auth login --claudeai` inside an isolated configuration directory |
-| Codex | `CODEX_HOME`, `~/.codex*`, or a managed profile | Recent local session records, then Codex `/status` | Runs `codex login` inside an isolated `CODEX_HOME` |
-| GitHub Copilot | Accounts already stored by GitHub CLI | The Copilot quota response for the selected GitHub CLI account | Discovery only; use `gh auth login` outside the app |
+| Provider | Sign-in | Quota source |
+| --- | --- | --- |
+| Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
+| Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
+| GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
+
+Existing CLI profiles are also listed as read-only "CLI" connections. Claude
+CLI folders use the status-line capture or `/usage`; Codex folders use local
+session records or `/status`; GitHub CLI accounts use `gh auth token`.
 
 Devie QT finds CLI commands in the normal shell path and common macOS install
 folders. These folders include Homebrew, `~/.local/bin`, Bun, Cargo, Volta,
 asdf, npm, pnpm, NVM, and FNM locations.
 
-## Multiple subscriptions
+## Accounts and tokens
 
-Devie QT does not switch one global CLI account between refreshes. It gives each
-managed Claude or Codex subscription its own configuration directory.
-
-Managed profiles live under the application data folder:
+Each OAuth account is a separate connection. Tokens live in one private file
+per connection with `0600` permissions:
 
 ```text
-~/Library/Application Support/com.devie.qt/profiles/
-  claude/<profile>/
-  codex/<profile>/
+~/Library/Application Support/com.devie.qt/credentials/<connection-id>.json
 ```
 
-The provider CLI writes its own credentials into that directory or the macOS
-Keychain. Devie QT stores the profile label and path, but not the provider token.
-
-Existing directories also remain separate. Examples include `~/.claude-work`,
-`~/.claude-personal`, `~/.codex-work`, and `~/.codex-personal`.
+The app renews Claude and Codex tokens before they expire. Removing an account
+deletes its token file.
 
 ## Claude capture
 

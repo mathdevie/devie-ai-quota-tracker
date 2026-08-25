@@ -1,0 +1,32 @@
+@use "../ui/_devie.scss" as *;
+
+.titleBar {
+  display: flex;
+  height: 52px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: $devie__spacing__x2;
+  padding: 0 $devie__spacing__x3;
+  user-select: none;
+}
+
+.leading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.title {
+  margin: 0;
+  font-size: $devie__font-size__normal;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}

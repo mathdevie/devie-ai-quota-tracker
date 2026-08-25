@@ -2,149 +2,21 @@
 
 .shell {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  min-width: 0;
+  flex: 1;
   flex-direction: column;
   background: $devie__color__background;
 }
 
-.header {
-  display: flex;
-  min-height: 56px;
-  align-items: center;
-  justify-content: space-between;
-  gap: $devie__spacing__x2;
-  padding: 0 $devie__spacing__x3;
-}
-
-.brand,
-.headerActions,
-.pageHeader,
-.pageActions,
-.providerMain,
-.providerActions,
-.popoverHeader,
-.popoverActions,
-.popoverFooter {
-  display: flex;
-  align-items: center;
-}
-
-.brand {
-  gap: $devie__spacing__x1;
-
-  strong {
-    font-size: $devie__font-size__normal;
-    font-weight: 500;
-  }
-}
-
-.headerActions,
-.pageActions,
-.providerActions,
-.popoverActions {
-  gap: $devie__spacing__x1;
-}
-
-.tabs {
-  flex-shrink: 0;
-  width: 100%;
-  padding: 0 $devie__spacing__x2;
-}
-
-.panel {
+.main {
   flex: 1;
-
-  &[inert],
-  &[data-hidden],
-  &[hidden] {
-    display: none !important;
-  }
-}
-
-.page {
-  width: min(880px, calc(100% - #{$devie__spacing__x6}));
-  margin: 0 auto;
-  padding: $devie__spacing__x4 0 $devie__spacing__x6;
-
-  > h1,
-  .pageHeader h1 {
-    margin: 0;
-    font-size: $devie__font-size__title2;
-    font-weight: 500;
-  }
-}
-
-.pageHeader {
-  justify-content: space-between;
-  gap: $devie__spacing__x2;
-}
-
-.list {
-  margin-top: $devie__spacing__x3;
-  overflow: hidden;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
-  background: $devie__color__background;
-}
-
-.providerRow {
-  display: flex;
-  min-height: 72px;
-  align-items: center;
-  justify-content: space-between;
-  gap: $devie__spacing__x2;
-  padding: $devie__spacing__x2;
-
-  & + & {
-    border-top: 1px solid $devie__color__line;
-  }
-}
-
-.providerMain {
-  min-width: 0;
-  gap: $devie__spacing__x1;
-
-  h2,
-  p {
-    overflow: hidden;
-    margin: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  h2 {
-    font-size: $devie__font-size__normal;
-    font-weight: 500;
-  }
-
-  p {
-    color: $devie__color__text-sub;
-    font-size: $devie__font-size__small;
-  }
-
-  .rowError {
-    max-width: 440px;
-    color: $devie__color__danger;
-  }
-}
-
-.providerIcon {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  place-items: center;
-  border-radius: $devie__radius;
-  background: $devie__color__background-sub;
-  color: $devie__color__text-sub;
-}
-
-.empty {
-  margin: 0;
-  padding: $devie__spacing__x3;
-  color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
-  text-align: center;
+  overflow-y: auto;
 }
 
 .errorBanner {
@@ -155,39 +27,6 @@
   padding: $devie__spacing__x1 $devie__spacing__x3;
   border-bottom: 1px solid $devie__color__danger;
   color: $devie__color__danger;
-  font-size: $devie__font-size__small;
-}
-
-.popover {
-  min-height: 100vh;
-  padding: $devie__spacing__x2;
-  background: $devie__color__background-sub;
-}
-
-.popoverHeader,
-.popoverFooter {
-  justify-content: space-between;
-  gap: $devie__spacing__x2;
-}
-
-.popoverHeader {
-  padding-bottom: $devie__spacing__x2;
-}
-
-.minimum {
-  color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
-  font-variant-numeric: tabular-nums;
-}
-
-.popoverList {
-  display: grid;
-  gap: $devie__spacing__x1;
-}
-
-.popoverFooter {
-  padding-top: $devie__spacing__x1;
-  color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
 }
 
@@ -205,26 +44,5 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 720px) {
-  .header {
-    padding: 0 $devie__spacing__x2;
-  }
-
-  .page {
-    width: calc(100% - #{$devie__spacing__x4});
-    padding-top: $devie__spacing__x3;
-  }
-
-  .providerRow {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .providerActions {
-    width: 100%;
-    justify-content: flex-end;
   }
 }

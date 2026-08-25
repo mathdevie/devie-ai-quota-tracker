@@ -1,0 +1,93 @@
+@use "../ui/_devie.scss" as *;
+
+.sidebar {
+  display: flex;
+  width: 220px;
+  flex: 0 0 220px;
+  flex-direction: column;
+  padding: 0 $devie__spacing__x2 $devie__spacing__x2;
+  border-right: 1px solid $devie__color__line;
+  background: $devie__color__background-sub;
+  user-select: none;
+
+  :global(html[data-translucent="true"]) & {
+    background: color-mix(in srgb, $devie__color__background-sub 55%, transparent);
+  }
+}
+
+// Space for the native macOS traffic lights.
+.handle {
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x1;
+  padding: 0 $devie__spacing__x1 $devie__spacing__x2;
+
+  strong {
+    font-size: $devie__font-size__normal;
+    font-weight: 500;
+    pointer-events: none;
+  }
+}
+
+.nav {
+  display: grid;
+  gap: 2px;
+}
+
+.item {
+  display: flex;
+  width: 100%;
+  min-height: 32px;
+  align-items: center;
+  gap: $devie__spacing__x1;
+  padding: 0 $devie__spacing__x1;
+  border: 0;
+  border-radius: $devie__radius;
+  background: transparent;
+  color: $devie__color__text;
+  font-size: $devie__font-size__normal;
+  text-align: left;
+  cursor: default;
+
+  svg {
+    flex-shrink: 0;
+    color: $devie__color__text-sub;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, $devie__color__text 7%, transparent);
+  }
+
+  &[aria-current="page"] {
+    background: $devie__color__primary;
+    color: $devie__color__primary-label;
+
+    svg {
+      color: inherit;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
+  }
+}
+
+.grow {
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $devie__spacing__x1;
+  padding: 0 $devie__spacing__x1;
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+}
