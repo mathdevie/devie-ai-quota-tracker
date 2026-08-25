@@ -27,6 +27,32 @@ impl Provider {
     }
 }
 
+/// How the app reaches a connection's credentials.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ConnectionKind {
+    /// The app holds OAuth tokens it obtained itself.
+    Oauth,
+    /// A provider CLI on this Mac owns the credentials.
+    Local,
+}
+
+impl ConnectionKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Oauth => "oauth",
+            Self::Local => "local",
+        }
+    }
+
+    pub fn from_db(value: &str) -> Self {
+        match value {
+            "oauth" => Self::Oauth,
+            _ => Self::Local,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum ConnectionStatus {
@@ -109,6 +135,7 @@ pub struct RemoteIdentity {
 pub struct ProviderConnection {
     pub id: String,
     pub provider: Provider,
+    pub kind: ConnectionKind,
     pub label: String,
     pub source_locator: String,
     pub enabled: bool,
@@ -139,10 +166,23 @@ pub struct DashboardState {
 pub struct DiscoveredConnection {
     pub id: String,
     pub provider: Provider,
+    pub kind: ConnectionKind,
     pub label: String,
     pub source_locator: String,
     pub capture_state: Option<CaptureState>,
     pub identity: Option<RemoteIdentity>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct AppSettings {
+    pub translucent: bool,
+}
+
+impl AppSettings {
+    pub fn defaults() -> Self {
+        Self { translucent: true }
+    }
 }
 
 #[derive(Clone, Debug)]

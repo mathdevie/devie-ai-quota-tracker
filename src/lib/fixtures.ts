@@ -8,7 +8,8 @@ export const previewState: DashboardState = {
     {
       id: "claude-work",
       provider: "claude",
-      label: "Claude · Work",
+      kind: "oauth",
+      label: "Claude · work@example.com",
       sourceLocator: "~/.claude-work",
       enabled: true,
       status: "ready",
@@ -34,7 +35,8 @@ export const previewState: DashboardState = {
     {
       id: "claude-personal",
       provider: "claude",
-      label: "Claude · Personal",
+      kind: "local",
+      label: "Claude CLI · Default",
       sourceLocator: "~/.claude",
       enabled: true,
       status: "stale",
@@ -60,7 +62,8 @@ export const previewState: DashboardState = {
     {
       id: "codex-default",
       provider: "codex",
-      label: "Codex · Default",
+      kind: "local",
+      label: "Codex CLI · Default",
       sourceLocator: "~/.codex",
       enabled: true,
       status: "ready",
@@ -85,7 +88,8 @@ export const previewState: DashboardState = {
     {
       id: "copilot-mathdevie",
       provider: "copilot",
-      label: "Copilot · mathdevie",
+      kind: "local",
+      label: "GitHub CLI · mathdevie",
       sourceLocator: "github.com/octocat",
       enabled: true,
       status: "ready",

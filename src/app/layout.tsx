@@ -25,6 +25,13 @@ const themeBootScript = `(() => {
   } catch {
     document.documentElement.dataset.devieTheme = "theme-default";
   }
+  try {
+    const translucent = localStorage.getItem("devie-qt-translucent:v1");
+    document.documentElement.dataset.translucent =
+      translucent === "0" ? "false" : "true";
+  } catch {
+    document.documentElement.dataset.translucent = "true";
+  }
 })();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {

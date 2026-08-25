@@ -1,6 +1,8 @@
 export type Provider = "claude" | "codex" | "copilot";
 export type ConnectionStatus = "ready" | "stale" | "needs_login" | "error";
 export type CaptureState = "available" | "installed" | "unsupported";
+/** `oauth`: the app holds tokens it obtained. `local`: a CLI on this Mac owns them. */
+export type ConnectionKind = "oauth" | "local";
 
 export interface QuotaWindow {
   key: string;
@@ -18,6 +20,7 @@ export interface RemoteIdentity {
 export interface ProviderConnection {
   id: string;
   provider: Provider;
+  kind: ConnectionKind;
   label: string;
   sourceLocator: string;
   enabled: boolean;
@@ -35,4 +38,19 @@ export interface DashboardState {
   connections: ProviderConnection[];
   databasePath?: string;
   refreshedAt?: string;
+}
+
+export interface AppSettings {
+  translucent: boolean;
+}
+
+export interface LoginStart {
+  sessionId: string;
+  provider: Provider;
+  /** The page the browser opened. */
+  url: string;
+  /** Device flow only: the code to type on the provider page. */
+  userCode?: string;
+  /** True when the user can paste an authorization code by hand. */
+  acceptsManualCode: boolean;
 }

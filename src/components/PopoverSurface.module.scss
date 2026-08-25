@@ -1,0 +1,70 @@
+@use "../ui/_devie.scss" as *;
+
+.popover {
+  min-height: 100vh;
+  padding: $devie__spacing__x2;
+  background: $devie__color__background-sub;
+}
+
+.header,
+.footer,
+.brand,
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.header,
+.footer {
+  justify-content: space-between;
+  gap: $devie__spacing__x2;
+}
+
+.header {
+  padding-bottom: $devie__spacing__x2;
+}
+
+.brand,
+.actions {
+  gap: $devie__spacing__x1;
+}
+
+.brand strong {
+  font-size: $devie__font-size__normal;
+  font-weight: 500;
+}
+
+.minimum {
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+  font-variant-numeric: tabular-nums;
+}
+
+.list {
+  display: grid;
+  gap: $devie__spacing__x1;
+}
+
+.footer {
+  padding-top: $devie__spacing__x1;
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+}
+
+.empty {
+  margin: 0;
+  padding: $devie__spacing__x3;
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+  text-align: center;
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

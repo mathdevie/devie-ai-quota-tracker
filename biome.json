@@ -8,6 +8,7 @@
       "!out",
       "!.worktrees",
       "!src/ui/themes/**/*.svg",
+      "!src/components/provider-icons/*.svg",
       "!src-desktop/gen",
       "!src-desktop/target"
     ]

@@ -1,0 +1,20 @@
+@use "../ui/_devie.scss" as *;
+
+.frame {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: $devie__radius;
+  background: $devie__color__background-sub;
+}
+
+.mark {
+  display: block;
+  color: $devie__color__text;
+
+  &[data-provider="claude"] {
+    color: #d97757;
+  }
+}

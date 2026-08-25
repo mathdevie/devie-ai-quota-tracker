@@ -1,0 +1,97 @@
+@use "../ui/_devie.scss" as *;
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.body {
+  display: grid;
+  gap: $devie__spacing__x2;
+}
+
+.hint,
+.status,
+.error,
+.success {
+  margin: 0;
+  font-size: $devie__font-size__small;
+}
+
+.hint {
+  color: $devie__color__text-sub;
+}
+
+.status,
+.success,
+.link {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.status {
+  color: $devie__color__text-sub;
+}
+
+.success {
+  color: $devie__color__success;
+}
+
+.error {
+  color: $devie__color__danger;
+}
+
+.link {
+  width: fit-content;
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+  text-decoration: none;
+
+  &:hover {
+    color: $devie__color__text;
+    text-decoration: underline;
+  }
+}
+
+.userCode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $devie__spacing__x2;
+  padding: $devie__spacing__x2;
+  border: 1px dashed $devie__color__line;
+  border-radius: $devie__radius;
+  background: $devie__color__background-sub;
+  color: $devie__color__text;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: $devie__font-size__title2;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+
+  svg {
+    color: $devie__color__text-sub;
+  }
+}
+
+.manual {
+  display: grid;
+  gap: $devie__spacing__x1;
+  padding-top: $devie__spacing__x1;
+  border-top: 1px solid $devie__color__line;
+
+  button {
+    justify-self: end;
+  }
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -57,17 +57,6 @@
   }
 }
 
-.providerIcon {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  place-items: center;
-  border-radius: $devie__radius;
-  background: $devie__color__background-sub;
-  color: $devie__color__text-sub;
-}
-
 .windows {
   display: grid;
   gap: $devie__spacing__x2;
