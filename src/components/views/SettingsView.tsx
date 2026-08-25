@@ -29,7 +29,7 @@ function UpdateRow() {
     if (status === "ready") return `Version ${info?.version} is ready.`;
     if (status === "installing") return "Installing…";
     if (status === "error") return error ?? "The update failed.";
-    return `Devie QT ${APP_VERSION} is up to date.`;
+    return `Devie Quota ${APP_VERSION} is up to date.`;
   })();
 
   return (

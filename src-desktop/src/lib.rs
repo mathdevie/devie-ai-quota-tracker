@@ -229,8 +229,35 @@ fn update_tray_title(app: &AppHandle, state: &DashboardState) {
         .map(|window| (100.0 - window.used_percent).clamp(0.0, 100.0))
         .reduce(f64::min);
     if let Some(tray) = app.tray_by_id("main-tray") {
-        let title = minimum.map_or_else(|| "QT —".to_string(), |value| format!("QT {:.0}%", value));
+        let title = minimum.map_or_else(|| "—".to_string(), |value| format!("{:.0}%", value));
         let _ = tray.set_title(Some(title));
+    }
+}
+
+/// Moves the data written by the app while it was named "Devie QT"
+/// (`com.devie.qt`) into the current data folder. Runs once.
+fn migrate_legacy_data(app_data_dir: &std::path::Path) {
+    let Some(parent) = app_data_dir.parent() else {
+        return;
+    };
+    let legacy = parent.join("com.devie.qt");
+    let new_database = app_data_dir.join("devie-quota.sqlite3");
+    if !legacy.is_dir() || new_database.exists() {
+        return;
+    }
+    if std::fs::create_dir_all(app_data_dir).is_err() {
+        return;
+    }
+    for (from, to) in [
+        ("devie-qt.sqlite3", "devie-quota.sqlite3"),
+        ("devie-qt.sqlite3-wal", "devie-quota.sqlite3-wal"),
+        ("devie-qt.sqlite3-shm", "devie-quota.sqlite3-shm"),
+        ("credentials", "credentials"),
+    ] {
+        let source = legacy.join(from);
+        if source.exists() {
+            let _ = std::fs::rename(&source, app_data_dir.join(to));
+        }
     }
 }
 
@@ -258,7 +285,7 @@ fn toggle_popover(app: &AppHandle) {
 
 fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-        .title("Devie QT")
+        .title("Devie Quota")
         .inner_size(1120.0, 760.0)
         .min_inner_size(780.0, 560.0)
         .center();
@@ -272,7 +299,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     main.build()?;
 
     WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
-        .title("Devie QT Quotas")
+        .title("Devie Quota Quotas")
         .inner_size(380.0, 480.0)
         .min_inner_size(320.0, 320.0)
         .max_inner_size(480.0, 760.0)
@@ -287,15 +314,15 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    let open = MenuItem::with_id(app, "open", "Open Devie QT", true, None::<&str>)?;
+    let open = MenuItem::with_id(app, "open", "Open Devie Quota", true, None::<&str>)?;
     let refresh = MenuItem::with_id(app, "refresh", "Refresh All", true, None::<&str>)?;
-    let quit = MenuItem::with_id(app, "quit", "Quit Devie QT", true, None::<&str>)?;
+    let quit = MenuItem::with_id(app, "quit", "Quit Devie Quota", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&open, &refresh, &quit])?;
     let mut builder = TrayIconBuilder::with_id("main-tray")
         .menu(&menu)
         .show_menu_on_left_click(false)
-        .tooltip("Devie QT subscription quotas")
-        .title("QT —")
+        .tooltip("Devie Quota subscription quotas")
+        .title("—")
         .icon_as_template(true)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open" => {
@@ -341,7 +368,8 @@ pub fn run() {
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
             let app_data_dir = app.path().app_data_dir()?;
-            let database = Database::open(app_data_dir.join("devie-qt.sqlite3"))
+            migrate_legacy_data(&app_data_dir);
+            let database = Database::open(app_data_dir.join("devie-quota.sqlite3"))
                 .map_err(std::io::Error::other)?;
             let client = reqwest::Client::builder()
                 .timeout(Duration::from_secs(20))
@@ -392,5 +420,5 @@ pub fn run() {
             hide_popover,
         ])
         .run(tauri::generate_context!())
-        .expect("Devie QT failed to start");
+        .expect("Devie Quota failed to start");
 }

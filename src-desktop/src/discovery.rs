@@ -207,6 +207,8 @@ pub(crate) fn run_with_timeout(command: &mut Command, timeout: Duration) -> Opti
 pub fn connection_id(provider: &str, locator: &str) -> String {
     Uuid::new_v5(
         &Uuid::NAMESPACE_URL,
+        // The old bundle id stays here on purpose: it seeds the stable ids that
+        // name the credential files.
         format!("com.devie.qt/{provider}/{locator}").as_bytes(),
     )
     .to_string()

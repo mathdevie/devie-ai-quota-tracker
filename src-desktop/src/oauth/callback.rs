@@ -89,7 +89,7 @@ fn serve(
                 &mut stream,
                 404,
                 "Not found",
-                "This address is not used by Devie QT.",
+                "This address is not used by Devie Quota.",
             );
             continue;
         }
@@ -106,7 +106,7 @@ fn serve(
                 &mut stream,
                 200,
                 "Signed in",
-                "You can close this tab and return to Devie QT.",
+                "You can close this tab and return to Devie Quota.",
             );
         }
         let _ = sender.send(params);

@@ -109,10 +109,10 @@ mod tests {
         let root = tempfile::tempdir().expect("temp dir");
         let bin = root.path().join("bin");
         fs::create_dir_all(&bin).expect("bin dir");
-        fs::write(bin.join("devie-qt-fake"), "not executable").expect("command");
+        fs::write(bin.join("devie-quota-fake"), "not executable").expect("command");
 
         assert_eq!(
-            resolve_from("devie-qt-fake", Some(bin.as_os_str()), None),
+            resolve_from("devie-quota-fake", Some(bin.as_os_str()), None),
             None
         );
     }

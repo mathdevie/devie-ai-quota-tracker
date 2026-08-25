@@ -12,9 +12,9 @@ import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
 const CLI_HINTS: Record<Provider, string> = {
-  claude: "Devie QT also lists Claude Code folders it finds on this Mac.",
-  codex: "Devie QT also lists Codex folders it finds on this Mac.",
-  copilot: "Devie QT also lists accounts signed in with the GitHub CLI.",
+  claude: "Devie Quota also lists Claude Code folders it finds on this Mac.",
+  codex: "Devie Quota also lists Codex folders it finds on this Mac.",
+  copilot: "Devie Quota also lists accounts signed in with the GitHub CLI.",
 };
 
 function ProviderStatus({ connection }: { connection: ProviderConnection }) {

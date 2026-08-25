@@ -1,6 +1,6 @@
 # Auto-updates
 
-Devie QT updates itself through CrabNebula Cloud, the same way the Mana
+Devie Quota updates itself through CrabNebula Cloud, the same way the Mana
 desktop app does. The app checks at start and installs a found update right
 away. Later checks run every 15 minutes; a downloaded update shows an
 **Update available** button in the sidebar.
@@ -10,13 +10,13 @@ Updates run only in packaged builds. `tauri dev` never reads the update feed
 
 ## One-time setup
 
-1. Create the `mathdev/devie-qt` application on https://web.crabnebula.cloud
+1. Create the `mathdev/devie-quota` application on https://web.crabnebula.cloud
    and create an API key. Store it as the `CN_API_KEY` secret in the
    `Release` GitHub environment.
 2. Generate the updater signing key:
 
    ```sh
-   bunx tauri signer generate -w ~/.tauri/devie-qt.key
+   bunx tauri signer generate -w ~/.tauri/devie-quota.key
    ```
 
    - Put the public key in `src-desktop/tauri.conf.json` under

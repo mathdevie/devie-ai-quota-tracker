@@ -130,7 +130,7 @@ jobs:
           xcrun stapler staple "$dmg_path"
           xcrun stapler validate "$dmg_path"
 
-          zip_path="${RUNNER_TEMP}/Devie-QT-${ARTIFACT_SUFFIX}.app.zip"
+          zip_path="${RUNNER_TEMP}/Devie-Quota-${ARTIFACT_SUFFIX}.app.zip"
           ditto -c -k --sequesterRsrc --keepParent "$app_path" "$zip_path"
 
           echo "app_zip=${zip_path}" >> "$GITHUB_OUTPUT"
@@ -139,7 +139,7 @@ jobs:
       - name: Upload the signed app
         uses: actions/upload-artifact@v6
         with:
-          name: Devie-QT-${{ matrix.artifact_suffix }}
+          name: Devie-Quota-${{ matrix.artifact_suffix }}
           path: |
             ${{ steps.package.outputs.app_zip }}
             ${{ steps.package.outputs.dmg }}

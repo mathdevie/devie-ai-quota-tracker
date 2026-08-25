@@ -19,7 +19,7 @@ interface Filters {
   sort: Sort;
 }
 
-const STORAGE_KEY = "devie-qt-quota-filters:v2";
+const STORAGE_KEY = "devie-quota-filters:v1";
 const DEFAULT_FILTERS: Filters = { provider: "all", sort: "expiring" };
 
 const PROVIDER_OPTIONS: { value: ProviderFilter; label: string }[] = [

@@ -1,3 +1,3 @@
 fn main() {
-    devie_qt_lib::run();
+    devie_quota_lib::run();
 }

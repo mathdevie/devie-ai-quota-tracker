@@ -3,7 +3,8 @@ import type { DashboardState } from "./contracts";
 export const previewState: DashboardState = {
   mode: "preview",
   refreshedAt: "2026-08-25T13:42:00Z",
-  databasePath: "~/Library/Application Support/com.devie.qt/devie-qt.sqlite3",
+  databasePath:
+    "~/Library/Application Support/com.devie.quota/devie-quota.sqlite3",
   settings: { showMenuBarItem: true },
   connections: [
     {

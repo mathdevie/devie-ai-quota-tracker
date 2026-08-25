@@ -5,7 +5,7 @@ import Badge from "@/ui/Badge";
 import ProviderIcon, { LetterIcon } from "../ProviderIcon";
 import styles from "./views.module.scss";
 
-/** Subscription tools other quota trackers cover. Not read by Devie QT yet. */
+/** Subscription tools other quota trackers cover. Not read by Devie Quota yet. */
 const UNSUPPORTED = [
   "Antigravity",
   "Cursor",

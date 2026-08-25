@@ -1,7 +1,7 @@
 export default function BrandMark({ size = 34 }: { size?: number }) {
   return (
     <svg
-      aria-label="Devie QT"
+      aria-label="Devie Quota"
       height={size}
       role="img"
       viewBox="0 0 40 40"

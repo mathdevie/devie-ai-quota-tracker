@@ -624,7 +624,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "devie-qt"
+name = "devie-quota"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",

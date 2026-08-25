@@ -47,7 +47,7 @@ export default function Sidebar<T extends string>({
       {footer && <div className={styles.footer}>{footer}</div>}
       <div className={styles.brand} data-tauri-drag-region>
         <BrandMark size={20} />
-        <strong>Devie QT</strong>
+        <strong>Devie Quota</strong>
       </div>
     </aside>
   );
