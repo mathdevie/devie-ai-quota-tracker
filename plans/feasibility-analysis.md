@@ -189,7 +189,7 @@ Recommended reuse by concept:
 ## 5. Proposed architecture
 
 ```text
-devie-qt.com/
+devie-quota/
   src/                         Next.js static frontend and Devie UI
   src-desktop/                 Tauri 2 Rust application
     src/providers/             Provider adapters and source plans
@@ -435,7 +435,7 @@ Recommended defaults appear in the second column.
 | Popover technology | Standard Tauri window | Native macOS `NSPanel` bridge |
 | History | SQLite from the first POC | Settings store only |
 | Token and cost statistics | Phase 2 | Include local JSONL analysis in the POC |
-| Product identity | Working name `Devie QT`, bundle `com.devie.qt` | A different name and bundle identifier |
+| Product identity | Name `Devie Quota`, bundle `com.devie.quota` | A different name and bundle identifier |
 
 The POC should not start until the Claude source policy, scope, platform, and
 connection behavior are approved.
