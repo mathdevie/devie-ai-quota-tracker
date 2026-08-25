@@ -178,8 +178,8 @@ The bundle is written under `src-desktop/target/debug/bundle/macos/`.
 
 ## CI and signed builds
 
-The CI workflow runs for each pull request and each push to `main`. It checks the
-frontend, builds the static export, and runs the Rust tests.
+The `CI` workflow runs manually. It checks the frontend, builds the static
+export, and runs the Rust tests.
 
 The `Build signed macOS app` workflow runs manually or for a `v*` tag. It builds,
 signs, notarizes, and checks an Apple silicon app and DMG.
