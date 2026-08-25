@@ -1,13 +1,13 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Devie QT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.devie.qt",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3002",
     "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build"
+    "beforeBuildCommand": "bun run build:desktop-frontend"
   },
   "app": {
     "macOSPrivateApi": true,
@@ -16,7 +16,12 @@
       "csp": {
         "default-src": ["'self'", "tauri:", "asset:"],
         "base-uri": ["'self'"],
-        "connect-src": ["'self'", "ipc:", "http://ipc.localhost"],
+        "connect-src": [
+          "'self'",
+          "ipc:",
+          "http://ipc.localhost",
+          "https://cdn.crabnebula.app"
+        ],
         "font-src": ["'self'", "data:"],
         "form-action": ["'self'"],
         "frame-ancestors": ["'none'"],
@@ -31,6 +36,7 @@
   "bundle": {
     "active": true,
     "targets": ["app", "dmg"],
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -39,6 +45,14 @@
     ],
     "macOS": {
       "minimumSystemVersion": "12.0"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4Njc1MkVGMkUxNEY0RjYKUldUMjlCUXU3MUpuV0ZFaWJITFhEWHVWbWdZOWlwV2xmQmZEaEU0Y0hGeGI2ZGZNNm82RlYvSksK",
+      "endpoints": [
+        "https://cdn.crabnebula.app/update/mathdevie/devie-qt/{{target}}-{{arch}}/{{current_version}}"
+      ]
     }
   }
 }

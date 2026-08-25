@@ -10,11 +10,7 @@ const MARKS = {
   copilot: CopilotMark,
 } as const;
 
-export const PROVIDER_NAMES: Record<Provider, string> = {
-  claude: "Claude",
-  codex: "Codex",
-  copilot: "GitHub Copilot",
-};
+export { PROVIDER_NAMES } from "@/lib/labels";
 
 export default function ProviderIcon({
   provider,
@@ -39,6 +35,15 @@ export default function ProviderIcon({
   return (
     <span className={styles.frame} data-provider={provider}>
       {mark}
+    </span>
+  );
+}
+
+/** A framed initial for providers without a mark. */
+export function LetterIcon({ name }: { name: string }) {
+  return (
+    <span aria-hidden className={styles.frame} data-muted>
+      <span className={styles.letter}>{name.slice(0, 1).toUpperCase()}</span>
     </span>
   );
 }

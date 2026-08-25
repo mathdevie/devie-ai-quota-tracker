@@ -2,7 +2,6 @@ import { RefreshCw } from "lucide-react";
 import type { DashboardState, ProviderConnection } from "@/lib/contracts";
 import { openMainWindow } from "@/lib/desktop";
 import Button from "@/ui/Button";
-import BrandMark from "./BrandMark";
 import ConnectionCard from "./ConnectionCard";
 import styles from "./PopoverSurface.module.scss";
 
@@ -40,13 +39,10 @@ export default function PopoverSurface({
   return (
     <main className={styles.popover}>
       <header className={styles.header} data-tauri-drag-region>
-        <div className={styles.brand}>
-          <BrandMark size={22} />
-          <strong>Devie QT</strong>
-        </div>
+        <strong>Quotas</strong>
         <div className={styles.actions}>
           <span className={styles.minimum}>
-            {lowest === undefined ? "—" : `${Math.round(lowest)}%`}
+            {lowest === undefined ? "—" : `${Math.round(lowest)}% left`}
           </span>
           <Button
             aria-label="Refresh quotas"
@@ -57,7 +53,7 @@ export default function PopoverSurface({
           >
             <RefreshCw
               className={refreshing ? styles.spinning : undefined}
-              size={16}
+              size={14}
             />
           </Button>
         </div>
@@ -71,9 +67,9 @@ export default function PopoverSurface({
       </section>
 
       <footer className={styles.footer}>
-        <span>{latestUpdate(state)}</span>
+        <span>Updated {latestUpdate(state)}</span>
         <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
-          Open
+          Open Devie QT
         </Button>
       </footer>
     </main>

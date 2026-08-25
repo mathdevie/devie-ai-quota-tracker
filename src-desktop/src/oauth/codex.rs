@@ -215,14 +215,14 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         limits,
         &["primary_window", "primary"],
         "primary",
-        "5-hour limit",
+        "Session (5h)",
         &mut windows,
     );
     add_window(
         limits,
         &["secondary_window", "secondary"],
         "secondary",
-        "Weekly limit",
+        "Weekly",
         &mut windows,
     );
     if windows.is_empty() {
@@ -268,9 +268,9 @@ fn add_window(
         .or_else(|| number(window.get("window_minutes")))
         .map(|minutes| {
             if minutes >= 10_000.0 {
-                "Weekly limit".to_string()
+                "Weekly".to_string()
             } else if minutes >= 60.0 {
-                format!("{}-hour limit", (minutes / 60.0).round())
+                format!("Session ({}h)", (minutes / 60.0).round())
             } else {
                 fallback_label.to_string()
             }
@@ -344,7 +344,7 @@ mod tests {
         )
         .expect("json");
         let reading = parse_usage(&json).expect("reading");
-        assert_eq!(reading.windows[0].label, "5-hour limit");
+        assert_eq!(reading.windows[0].label, "Session (5h)");
         assert_eq!(reading.windows[1].used_percent, 71.0);
         assert_eq!(
             reading.identity.and_then(|value| value.plan).as_deref(),

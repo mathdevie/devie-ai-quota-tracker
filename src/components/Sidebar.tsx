@@ -19,15 +19,12 @@ export default function Sidebar<T extends string>({
   items: SidebarItem<T>[];
   value: T;
   onChange: (value: T) => void;
+  /** Sits above the brand, for example an update button. */
   footer?: React.ReactNode;
 }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.handle} data-tauri-drag-region />
-      <div className={styles.brand} data-tauri-drag-region>
-        <BrandMark size={22} />
-        <strong>Devie QT</strong>
-      </div>
       <nav aria-label="Sections" className={styles.nav}>
         {items.map((item) => {
           const Icon = item.icon;
@@ -48,6 +45,10 @@ export default function Sidebar<T extends string>({
       </nav>
       <div className={styles.grow} data-tauri-drag-region />
       {footer && <div className={styles.footer}>{footer}</div>}
+      <div className={styles.brand} data-tauri-drag-region>
+        <BrandMark size={20} />
+        <strong>Devie QT</strong>
+      </div>
     </aside>
   );
 }

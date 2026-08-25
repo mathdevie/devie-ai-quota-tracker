@@ -1,0 +1,56 @@
+@use "../ui/_devie.scss" as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $devie__spacing__x1;
+
+  & + & {
+    margin-top: $devie__spacing__x3;
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 $devie__spacing__x1;
+  font-size: $devie__font-size__title3;
+  font-weight: 500;
+}
+
+.row {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: $devie__spacing__x2;
+  padding: $devie__spacing__x1 0;
+}
+
+.text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+
+  p {
+    overflow: hidden;
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  p:not(.subText) {
+    font-weight: 500;
+  }
+}
+
+.subText {
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
