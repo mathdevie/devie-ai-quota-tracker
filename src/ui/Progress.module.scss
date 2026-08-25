@@ -1,0 +1,53 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: $devie__spacing__x05;
+    width: 100%;
+    font-family: $devie__font-family;
+  }
+
+  .track {
+    position: relative;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: $devie__radius;
+    background-color: $devie__color__background-sub;
+  }
+
+  .indicator {
+    height: 100%;
+    background-color: $devie__color__primary;
+    border-radius: $devie__radius;
+    transition: width 0.3s ease-out;
+
+    &[data-indeterminate] {
+      width: 30% !important;
+      animation: indeterminate 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
+  .label {
+    font-size: $devie__font-size__small;
+    color: $devie__color__text;
+  }
+
+  .value {
+    font-size: $devie__font-size__small;
+    color: $devie__color__text-sub;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,94 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .panel {
+        &[data-hidden] {
+            display: none;
+            padding: 0;
+        }
+    }
+
+    .list {
+        display: flex;
+        position: relative;
+        z-index: 0;
+        padding-inline: $devie__spacing__x1;
+        gap: $devie__spacing__x1;
+        border-bottom: 1px solid $devie__color__line;
+
+        &[data-orientation="vertical"] {
+            flex-direction: column;
+            padding-block: $devie__spacing__x1;
+            border-bottom: none;
+            border-right: 1px solid $devie__color__line;
+        }
+    }
+
+    .tab {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: $devie__spacing__x1;
+        border: 0;
+        margin: 0;
+        outline: 0;
+        background: none;
+        appearance: none;
+        user-select: none;
+        padding: $devie__spacing__x2;
+        font-family: inherit;
+        font-size: $devie__font-size__normal;
+        color: $devie__color__text;
+        border-radius: $devie__radius;
+
+        &[data-active] {
+            color: $devie__color__primary;
+            font-weight: 600;
+        }
+
+        @media (hover: hover) {
+            &:hover:not([data-selected]) {
+                color: $devie__color__primary;
+                cursor: pointer;
+            }
+        }
+
+        &:focus-visible {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: $devie__spacing__x1 0;
+                border-radius: $devie__radius;
+                outline: 2px solid $devie__color__primary;
+                outline-offset: -1px;
+            }
+        }
+    }
+
+    .indicator {
+        position: absolute;
+        z-index: -1;
+
+        &[data-orientation="horizontal"] {
+            left: 0;
+            translate: var(--active-tab-left) var(--active-tab-top);
+            width: var(--active-tab-width);
+            height: var(--active-tab-height);
+            box-sizing: border-box;
+            border-bottom: 2px solid $devie__color__primary;
+            transition: translate 200ms ease-in-out, width 200ms ease-in-out;
+        }
+
+        &[data-orientation="vertical"] {
+            top: 0;
+            right: 0;
+            translate: 0 var(--active-tab-top);
+            height: var(--active-tab-height);
+            width: auto;
+            border-right: 2px solid $devie__color__primary;
+            transition: translate 200ms ease-in-out, height 200ms ease-in-out;
+        }
+    }
+}

@@ -1,0 +1,105 @@
+import type { DashboardState } from "./contracts";
+
+export const previewState: DashboardState = {
+  mode: "preview",
+  refreshedAt: "2026-08-25T13:42:00Z",
+  databasePath: "~/Library/Application Support/com.devie.qt/devie-qt.sqlite3",
+  connections: [
+    {
+      id: "claude-work",
+      provider: "claude",
+      label: "Claude · Work",
+      sourceLocator: "~/.claude-work",
+      enabled: true,
+      status: "ready",
+      source: "Claude Code status line",
+      lastUpdatedAt: "2026-08-25T13:42:00Z",
+      captureState: "installed",
+      identity: { displayName: "Work team", plan: "Max" },
+      windows: [
+        {
+          key: "five_hour",
+          label: "Current session",
+          usedPercent: 63,
+          resetsAt: "2026-08-25T15:00:00Z",
+        },
+        {
+          key: "seven_day",
+          label: "Weekly limit",
+          usedPercent: 28,
+          resetsAt: "2026-08-29T07:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "claude-personal",
+      provider: "claude",
+      label: "Claude · Personal",
+      sourceLocator: "~/.claude",
+      enabled: true,
+      status: "stale",
+      source: "Claude Code /usage",
+      lastUpdatedAt: "2026-08-25T13:28:00Z",
+      captureState: "available",
+      identity: { displayName: "Personal", plan: "Pro" },
+      windows: [
+        {
+          key: "five_hour",
+          label: "Current session",
+          usedPercent: 18,
+          resetsAt: "2026-08-25T16:00:00Z",
+        },
+        {
+          key: "seven_day",
+          label: "Weekly limit",
+          usedPercent: 46,
+          resetsAt: "2026-08-30T07:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "codex-default",
+      provider: "codex",
+      label: "Codex · Default",
+      sourceLocator: "~/.codex",
+      enabled: true,
+      status: "ready",
+      source: "Codex local records",
+      lastUpdatedAt: "2026-08-25T13:41:00Z",
+      identity: { plan: "Plus" },
+      windows: [
+        {
+          key: "primary",
+          label: "5-hour limit",
+          usedPercent: 41,
+          resetsAt: "2026-08-25T15:34:00Z",
+        },
+        {
+          key: "secondary",
+          label: "Weekly limit",
+          usedPercent: 71,
+          resetsAt: "2026-08-28T09:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "copilot-mathdevie",
+      provider: "copilot",
+      label: "Copilot · mathdevie",
+      sourceLocator: "github.com/octocat",
+      enabled: true,
+      status: "ready",
+      source: "GitHub CLI",
+      lastUpdatedAt: "2026-08-25T13:40:00Z",
+      identity: { displayName: "mathdevie", plan: "Copilot Pro" },
+      windows: [
+        {
+          key: "premium_interactions",
+          label: "Premium requests",
+          usedPercent: 22,
+          resetsAt: "2026-09-01T00:00:00Z",
+        },
+      ],
+    },
+  ],
+};

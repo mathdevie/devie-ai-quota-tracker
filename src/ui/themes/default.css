@@ -1,0 +1,65 @@
+@layer devie {
+  :root {
+    /* Color Tokens */
+    --devie__color__text: #111111;
+    --devie__color__text-sub: #848385;
+    --devie__color__line: #d7d7d7;
+    --devie__color__background: #ffffff;
+    --devie__color__background-sub: #f5f5f5;
+    --devie__color__primary: #5739da;
+    --devie__color__primary-label: #ffffff;
+    --devie__color__danger: #df5449;
+    --devie__color__danger-label: #ffffff;
+    --devie__color__success: #0da841;
+    --devie__color__success-label: #ffffff;
+    --devie__color__warning: #ff7e28;
+    --devie__color__warning-label: #ffffff;
+
+    /* Font Tokens */
+    --devie__font-family:
+      -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --devie__font-size__title1: 32px;
+    --devie__font-size__title2: 24px;
+    --devie__font-size__title3: 20.5px;
+    --devie__font-size__normal: 16px;
+    --devie__font-size__small: 14px;
+
+    /* Radius Tokens */
+    --devie__radius: 8px;
+    --devie__radius-strong: 16px;
+
+    /* Shadow Tokens */
+    --devie__shadow__menu:
+      0px 10px 30px -16px rgba(0, 0, 0, 0.1),
+      0px 4px 10px -6px rgba(0, 0, 0, 0.25);
+
+    /* Litteral Colors Tokens */
+    --devie__color__literal-gray: #6b7280;
+    --devie__color__literal-brown: #a16207;
+    --devie__color__literal-orange: #ea580c;
+    --devie__color__literal-yellow: #d97706;
+    --devie__color__literal-green: #16a34a;
+    --devie__color__literal-blue: #2563eb;
+    --devie__color__literal-purple: #9333ea;
+    --devie__color__literal-pink: #ec4899;
+    --devie__color__literal-red: #dc2626;
+
+    /* Effect Tokens */
+    --devie__effect__hover-intensity: 0.06;
+    --devie__effect__disabled-intensity: 0.8;
+    --devie__effect__disabled-desaturate: 0.5;
+    --devie__effect__disabled-target-l: 0.9;
+
+    /* Spacing Tokens */
+    --devie__spacing__x05: 4px;
+    --devie__spacing__x1: 8px;
+    --devie__spacing__x2: 16px;
+    --devie__spacing__x3: 24px;
+    --devie__spacing__x4: 32px;
+    --devie__spacing__x5: 40px;
+    --devie__spacing__x6: 48px;
+    --devie__spacing__x7: 56px;
+    --devie__spacing__x8: 64px;
+  }
+}

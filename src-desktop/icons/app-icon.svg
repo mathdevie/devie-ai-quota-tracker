@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Devie QT</title>
+  <rect width="512" height="512" rx="150" fill="#5739da"/>
+  <path fill="#fff" d="M137 133h105c80 0 133 45 133 123s-53 123-133 123H137V133Zm100 180c40 0 65-20 65-57s-25-57-65-57h-29v114h29Z"/>
+</svg>

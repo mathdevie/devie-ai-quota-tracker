@@ -1,0 +1,57 @@
+@use 'sass:string';
+
+$devie__color__text: var(--devie__color__text);
+$devie__color__text-sub: var(--devie__color__text-sub);
+$devie__color__line: var(--devie__color__line);
+$devie__color__background: var(--devie__color__background);
+$devie__color__background-sub: var(--devie__color__background-sub);
+$devie__color__primary: var(--devie__color__primary);
+$devie__color__primary-label: var(--devie__color__primary-label);
+$devie__color__danger: var(--devie__color__danger);
+$devie__color__danger-label: var(--devie__color__danger-label);
+$devie__color__success: var(--devie__color__success);
+$devie__color__success-label: var(--devie__color__success-label);
+$devie__color__warning: var(--devie__color__warning);
+$devie__color__warning-label: var(--devie__color__warning-label);
+
+$devie__font-family: var(--devie__font-family);
+$devie__font-size__title1: var(--devie__font-size__title1);
+$devie__font-size__title2: var(--devie__font-size__title2);
+$devie__font-size__title3: var(--devie__font-size__title3);
+$devie__font-size__normal: var(--devie__font-size__normal);
+$devie__font-size__small: var(--devie__font-size__small);
+
+$devie__radius: var(--devie__radius);
+$devie__radius-strong: var(--devie__radius-strong);
+
+$devie__shadow__menu: var(--devie__shadow__menu);
+
+$devie__color__literal-gray: var(--devie__color__literal-gray);
+$devie__color__literal-brown: var(--devie__color__literal-brown);
+$devie__color__literal-orange: var(--devie__color__literal-orange);
+$devie__color__literal-yellow: var(--devie__color__literal-yellow);
+$devie__color__literal-green: var(--devie__color__literal-green);
+$devie__color__literal-blue: var(--devie__color__literal-blue);
+$devie__color__literal-purple: var(--devie__color__literal-purple);
+$devie__color__literal-pink: var(--devie__color__literal-pink);
+$devie__color__literal-red: var(--devie__color__literal-red);
+
+$devie__spacing__x05: var(--devie__spacing__x05);
+$devie__spacing__x1: var(--devie__spacing__x1);
+$devie__spacing__x2: var(--devie__spacing__x2);
+$devie__spacing__x3: var(--devie__spacing__x3);
+$devie__spacing__x4: var(--devie__spacing__x4);
+$devie__spacing__x5: var(--devie__spacing__x5);
+$devie__spacing__x6: var(--devie__spacing__x6);
+$devie__spacing__x7: var(--devie__spacing__x7);
+$devie__spacing__x8: var(--devie__spacing__x8);
+
+@function devie-hover-color($color) {
+    @return string.unquote("oklch(from #{$color} calc(l * (1 - var(--devie__effect__hover-intensity))) c h)"
+    );
+}
+
+@function devie-disabled-color($color) {
+    @return string.unquote("oklch(from #{$color} calc(l + (var(--devie__effect__disabled-target-l) - l) * var(--devie__effect__disabled-intensity)) calc(c * var(--devie__effect__disabled-desaturate)) h)"
+    );
+}

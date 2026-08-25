@@ -4,4 +4,7 @@ node_modules/
 .next/
 out/
 target/
-
+src-desktop/target/
+src-desktop/gen/
+*.log
+*.tsbuildinfo
