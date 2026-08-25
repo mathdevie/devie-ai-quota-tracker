@@ -85,11 +85,11 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
     add_snapshot(
         snapshots,
         "premium_interactions",
-        "Premium requests",
+        "Premium",
         reset.clone(),
         &mut windows,
     );
-    add_snapshot(snapshots, "chat", "Chat requests", reset, &mut windows);
+    add_snapshot(snapshots, "chat", "Chat", reset, &mut windows);
     if windows.is_empty() {
         return Err("GitHub Copilot returned no usable subscription quota.".to_string());
     }

@@ -9,29 +9,12 @@
   border-right: 1px solid $devie__color__line;
   background: $devie__color__background-sub;
   user-select: none;
-
-  :global(html[data-translucent="true"]) & {
-    background: color-mix(in srgb, $devie__color__background-sub 55%, transparent);
-  }
 }
 
-// Space for the native macOS traffic lights.
+// Space for the native macOS traffic lights, plus some air above the menu.
 .handle {
-  height: 52px;
+  height: 64px;
   flex-shrink: 0;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: $devie__spacing__x1;
-  padding: 0 $devie__spacing__x1 $devie__spacing__x2;
-
-  strong {
-    font-size: $devie__font-size__normal;
-    font-weight: 500;
-    pointer-events: none;
-  }
 }
 
 .nav {
@@ -83,11 +66,20 @@
 }
 
 .footer {
+  display: grid;
+  padding-bottom: $devie__spacing__x2;
+}
+
+.brand {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: $devie__spacing__x1;
   padding: 0 $devie__spacing__x1;
   color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
+
+  strong {
+    font-size: $devie__font-size__small;
+    font-weight: 500;
+    pointer-events: none;
+  }
 }

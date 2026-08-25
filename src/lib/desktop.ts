@@ -1,9 +1,4 @@
-import type {
-  AppSettings,
-  DashboardState,
-  LoginStart,
-  Provider,
-} from "./contracts";
+import type { DashboardState, LoginStart, Provider } from "./contracts";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -15,6 +10,13 @@ declare global {
 export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
 }
+
+/**
+ * True only for packaged builds (`tauri build`). `tauri dev` must not read
+ * the production update feed or install over the development binary.
+ */
+export const IS_DESKTOP_BUILD =
+  process.env.NEXT_PUBLIC_IS_DESKTOP_BUILD === "true";
 
 async function call<T>(command: string, args?: Record<string, unknown>) {
   const { invoke } = await import("@tauri-apps/api/core");
@@ -117,23 +119,34 @@ export async function setConnectionEnabled(
   return call("set_connection_enabled", { connectionId, enabled });
 }
 
-export async function setClaudeCapture(
+export async function renameConnection(
   connectionId: string,
-  install: boolean,
+  label: string,
 ): Promise<DashboardState> {
-  if (!isDesktop()) return previewState;
-  const command = install ? "install_claude_capture" : "remove_claude_capture";
-  return call(command, { connectionId });
+  const trimmed = label.trim();
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      connections: previewState.connections.map((connection) =>
+        connection.id === connectionId
+          ? { ...connection, customLabel: trimmed || undefined }
+          : connection,
+      ),
+    };
+  }
+  return call("rename_connection", { connectionId, label: trimmed || null });
 }
 
-export async function getAppSettings(): Promise<AppSettings | undefined> {
-  if (!isDesktop()) return undefined;
-  return call("get_app_settings");
-}
-
-export async function setTranslucency(enabled: boolean): Promise<void> {
-  if (!isDesktop()) return;
-  await call("set_translucency", { enabled });
+export async function setMenuBarItemVisible(
+  visible: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      settings: { ...previewState.settings, showMenuBarItem: visible },
+    };
+  }
+  return call("set_menu_bar_item_visible", { visible });
 }
 
 export async function openMainWindow(): Promise<void> {

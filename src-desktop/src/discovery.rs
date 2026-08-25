@@ -19,7 +19,7 @@ use uuid::Uuid;
 
 use crate::{
     executable,
-    model::{CaptureState, ConnectionKind, DiscoveredConnection, Provider, RemoteIdentity},
+    model::{ConnectionKind, DiscoveredConnection, Provider, RemoteIdentity},
 };
 
 const GH_TIMEOUT: Duration = Duration::from_secs(8);
@@ -113,38 +113,14 @@ pub fn profile_connection(
         Provider::Copilot => "Copilot",
     };
     let source_locator = path.to_string_lossy().into_owned();
-    let capture_state = if provider == Provider::Claude {
-        Some(if has_managed_status_line(path) {
-            CaptureState::Installed
-        } else {
-            CaptureState::Available
-        })
-    } else {
-        None
-    };
-
     DiscoveredConnection {
         id: connection_id(provider.as_str(), &source_locator),
         provider,
         kind: ConnectionKind::Local,
         label: format!("{provider_name} CLI · {profile_name}"),
         source_locator,
-        capture_state,
         identity: None,
     }
-}
-
-fn has_managed_status_line(config_dir: &Path) -> bool {
-    let Ok(data) = fs::read(config_dir.join("settings.json")) else {
-        return false;
-    };
-    let Ok(json) = serde_json::from_slice::<Value>(&data) else {
-        return false;
-    };
-    json.get("statusLine")
-        .and_then(|value| value.get("command"))
-        .and_then(Value::as_str)
-        .is_some_and(|command| command.contains("devie-qt-statusline"))
 }
 
 fn discover_github_accounts() -> Vec<DiscoveredConnection> {
@@ -189,7 +165,6 @@ pub fn parse_gh_hosts(json: &Value) -> Vec<DiscoveredConnection> {
                 kind: ConnectionKind::Local,
                 label: format!("GitHub CLI · {login}"),
                 source_locator: locator,
-                capture_state: None,
                 identity: Some(RemoteIdentity {
                     provider_user_id: Some(login.to_string()),
                     display_name: Some(login.to_string()),
@@ -202,7 +177,7 @@ pub fn parse_gh_hosts(json: &Value) -> Vec<DiscoveredConnection> {
 }
 
 /// Runs a command and returns its stdout, or `None` on failure or timeout.
-fn run_with_timeout(command: &mut Command, timeout: Duration) -> Option<Vec<u8>> {
+pub(crate) fn run_with_timeout(command: &mut Command, timeout: Duration) -> Option<Vec<u8>> {
     let mut child = command
         .stdout(Stdio::piped())
         .stderr(Stdio::null())

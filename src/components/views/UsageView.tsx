@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import type { DashboardState, ProviderConnection } from "@/lib/contracts";
+import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Callout from "@/ui/Callout";
 import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
@@ -38,7 +39,7 @@ export default function UsageView({ state }: { state: DashboardState }) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Connection</th>
+              <th>Account</th>
               <th>Source</th>
               <th>Peak window</th>
               <th>Updated</th>
@@ -51,10 +52,8 @@ export default function UsageView({ state }: { state: DashboardState }) {
                   <span className={styles.cellIdentity}>
                     <ProviderIcon provider={connection.provider} size={16} />
                     <span>
-                      <strong>{connection.label}</strong>
-                      {connection.identity?.plan && (
-                        <small>{connection.identity.plan}</small>
-                      )}
+                      <strong>{PROVIDER_NAMES[connection.provider]}</strong>
+                      <small>{accountLabel(connection)}</small>
                     </span>
                   </span>
                 </td>
@@ -66,7 +65,7 @@ export default function UsageView({ state }: { state: DashboardState }) {
             {enabled.length === 0 && (
               <tr>
                 <td className={styles.empty} colSpan={4}>
-                  No enabled providers
+                  No enabled accounts
                 </td>
               </tr>
             )}

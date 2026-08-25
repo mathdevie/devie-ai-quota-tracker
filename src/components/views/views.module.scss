@@ -4,8 +4,32 @@
   display: grid;
   width: min(880px, 100%);
   margin: 0 auto;
-  padding: $devie__spacing__x1 $devie__spacing__x3 $devie__spacing__x6;
-  gap: $devie__spacing__x3;
+  padding: $devie__spacing__x4 $devie__spacing__x4 $devie__spacing__x8;
+  gap: $devie__spacing__x4;
+
+  &[data-wide] {
+    width: 100%;
+    gap: $devie__spacing__x3;
+  }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.filterTrigger {
+  min-height: 28px;
+  font-size: $devie__font-size__small;
+}
+
+.cardGrid {
+  display: grid;
+  align-items: start;
+  gap: $devie__spacing__x2;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
 }
 
 .list {
@@ -77,16 +101,12 @@
 
 .groupTitle {
   margin: 0;
-  padding: 0 $devie__spacing__x1;
+  padding: 0 $devie__spacing__x05;
   color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-.groupBody {
-  padding: $devie__spacing__x1 0;
 }
 
 .table {
@@ -150,72 +170,48 @@
   }
 }
 
-.grid {
-  display: grid;
-  gap: $devie__spacing__x2;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-}
-
-.providerCard {
+.providerRow {
   display: flex;
+  width: 100%;
+  min-height: 56px;
   align-items: center;
   gap: $devie__spacing__x2;
-  padding: $devie__spacing__x2;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
+  padding: $devie__spacing__x1 $devie__spacing__x2;
+  border: 0;
   background: $devie__color__background;
   color: $devie__color__text;
   font: inherit;
   text-align: left;
   cursor: default;
 
-  &:hover {
-    background: color-mix(in srgb, $devie__color__text 4%, $devie__color__background);
+  & + & {
+    border-top: 1px solid $devie__color__line;
   }
-
-  &:focus-visible {
-    outline: 2px solid $devie__color__primary;
-    outline-offset: 2px;
-  }
-}
-
-.providerCardText {
-  display: grid;
-  min-width: 0;
-  flex: 1;
-  gap: 2px;
 
   strong {
     font-weight: 500;
   }
 
-  small {
-    overflow: hidden;
+  &:is(button):hover {
+    background: color-mix(in srgb, $devie__color__text 4%, $devie__color__background);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
+  }
+
+  &[data-muted] strong {
     color: $devie__color__text-sub;
-    font-size: $devie__font-size__small;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 
-.providerCount {
+.providerBadges {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: $devie__spacing__x1;
-  margin-top: $devie__spacing__x05;
-  font-size: $devie__font-size__small;
-
-  [data-tone="ok"] {
-    color: $devie__color__success;
-  }
-
-  [data-tone="warn"] {
-    color: $devie__color__warning;
-  }
-
-  [data-tone="muted"] {
-    color: $devie__color__text-sub;
-  }
 }
 
 .chevron {
@@ -258,14 +254,4 @@
   padding: 0 $devie__spacing__x1;
   color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
-}
-
-.spinning {
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
