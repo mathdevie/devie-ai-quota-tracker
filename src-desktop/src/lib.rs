@@ -128,6 +128,35 @@ fn set_connection_enabled(
 }
 
 #[tauri::command]
+fn rename_connection(
+    app: AppHandle,
+    core: State<'_, Core>,
+    connection_id: String,
+    label: Option<String>,
+) -> Result<DashboardState, String> {
+    core.database
+        .set_custom_label(&connection_id, label.as_deref())?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+fn set_menu_bar_item_visible(
+    app: AppHandle,
+    core: State<'_, Core>,
+    visible: bool,
+) -> Result<DashboardState, String> {
+    core.database.set_show_menu_bar_item(visible)?;
+    apply_tray_visibility(&app, visible);
+    publish_state(&app, &core)
+}
+
+fn apply_tray_visibility(app: &AppHandle, visible: bool) {
+    if let Some(tray) = app.tray_by_id("main-tray") {
+        let _ = tray.set_visible(visible);
+    }
+}
+
+#[tauri::command]
 fn open_main_window(app: AppHandle) -> Result<(), String> {
     show_main_window(&app)
 }
@@ -305,6 +334,8 @@ fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_positioner::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .setup(|app| {
             #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
@@ -323,6 +354,8 @@ pub fn run() {
             });
             build_windows(app)?;
             build_tray(app)?;
+            let settings = app.state::<Core>().database.settings().unwrap_or_default();
+            apply_tray_visibility(app.handle(), settings.show_menu_bar_item);
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -353,6 +386,8 @@ pub fn run() {
             refresh_all,
             refresh_connection,
             set_connection_enabled,
+            rename_connection,
+            set_menu_bar_item_visible,
             open_main_window,
             hide_popover,
         ])

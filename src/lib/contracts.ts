@@ -27,8 +27,14 @@ export interface ProviderConnection {
   source: string;
   lastUpdatedAt?: string;
   lastError?: string;
+  /** A name the user typed for this account. */
+  customLabel?: string;
   identity?: RemoteIdentity;
   windows: QuotaWindow[];
+}
+
+export interface AppSettings {
+  showMenuBarItem: boolean;
 }
 
 export interface DashboardState {
@@ -36,6 +42,7 @@ export interface DashboardState {
   connections: ProviderConnection[];
   databasePath?: string;
   refreshedAt?: string;
+  settings: AppSettings;
 }
 
 export interface LoginStart {

@@ -1,13 +1,14 @@
-import { RefreshCw, Trash2 } from "lucide-react";
 import type {
   DashboardState,
   Provider,
   ProviderConnection,
 } from "@/lib/contracts";
+import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
-import ProviderIcon, { PROVIDER_NAMES } from "../ProviderIcon";
+import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";
+import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
 const CLI_HINTS: Record<Provider, string> = {
@@ -31,7 +32,7 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
 
 function detailText(connection: ProviderConnection): string | undefined {
   const parts = [
-    connection.kind === "local" && connection.identity?.displayName,
+    connection.customLabel ? connection.identity?.displayName : undefined,
     connection.identity?.plan,
     connection.kind === "local" ? connection.sourceLocator : undefined,
   ].filter((part): part is string => Boolean(part));
@@ -42,19 +43,14 @@ export default function ProviderDetailView({
   provider,
   state,
   busyId,
-  onEnabledChange,
-  onRefresh,
-  onRemove,
   onAdd,
+  ...actions
 }: {
   provider: Provider;
   state: DashboardState;
   busyId?: string;
-  onEnabledChange: (id: string, enabled: boolean) => void;
-  onRefresh: (id: string) => void;
-  onRemove: (id: string) => void;
   onAdd: () => void;
-}) {
+} & ConnectionActions) {
   const connections = state.connections.filter(
     (connection) => connection.provider === provider,
   );
@@ -69,7 +65,7 @@ export default function ProviderDetailView({
               <ProviderIcon provider={connection.provider} />
               <div>
                 <h2>
-                  {connection.label}
+                  {accountLabel(connection)}
                   {connection.kind === "local" && (
                     <span className={styles.kindTag}>CLI</span>
                   )}
@@ -88,41 +84,23 @@ export default function ProviderDetailView({
                     Sign in with the CLI in a terminal.
                   </span>
                 )}
-              <Button
-                aria-label={`Refresh ${connection.label}`}
-                disabled={busyId === connection.id}
-                onClick={() => onRefresh(connection.id)}
-                size="sm"
-                variant="icon-naked"
-              >
-                <RefreshCw
-                  className={
-                    busyId === connection.id ? styles.spinning : undefined
-                  }
-                  size={14}
-                />
-              </Button>
-              {connection.kind === "oauth" && (
-                <Button
-                  aria-label={`Remove ${connection.label}`}
-                  disabled={busyId === connection.id}
-                  onClick={() => onRemove(connection.id)}
-                  size="sm"
-                  variant="icon-naked"
-                >
-                  <Trash2 size={14} />
-                </Button>
-              )}
               <Switch.Root
-                aria-label={`${connection.enabled ? "Disable" : "Enable"} ${connection.label}`}
+                aria-label={`${connection.enabled ? "Disable" : "Enable"} ${accountLabel(connection)}`}
                 checked={connection.enabled}
                 disabled={busyId === connection.id}
                 onCheckedChange={(checked) =>
-                  onEnabledChange(connection.id, checked)
+                  actions.onEnabledChange?.(connection.id, checked)
                 }
               >
                 <Switch.Thumb />
               </Switch.Root>
+              <ConnectionMenu
+                busy={busyId === connection.id}
+                connection={connection}
+                onRefresh={actions.onRefresh}
+                onRemove={actions.onRemove}
+                onRename={actions.onRename}
+              />
             </div>
           </article>
         ))}

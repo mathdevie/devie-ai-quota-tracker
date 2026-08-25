@@ -1,20 +1,33 @@
 @use "../ui/_devie.scss" as *;
 
+// The frame keeps one fixed look in every theme so the marks stay legible.
 .frame {
   display: grid;
   width: 32px;
   height: 32px;
   flex: 0 0 32px;
   place-items: center;
+  border: 1px solid rgb(0 0 0 / 8%);
   border-radius: $devie__radius;
-  background: $devie__color__background-sub;
+  background: #ffffff;
+  color: #18181b;
+
+  &[data-muted] {
+    background: #f4f4f5;
+    color: #71717a;
+  }
 }
 
 .mark {
   display: block;
-  color: $devie__color__text;
+  color: inherit;
 
   &[data-provider="claude"] {
     color: #d97757;
   }
+}
+
+.letter {
+  font-size: 13px;
+  font-weight: 600;
 }

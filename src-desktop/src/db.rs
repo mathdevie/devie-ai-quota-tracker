@@ -4,9 +4,11 @@ use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
-    ConnectionKind, ConnectionStatus, DashboardState, DiscoveredConnection, Provider,
-    ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
+    AppSettings, ConnectionKind, ConnectionStatus, DashboardState, DiscoveredConnection,
+    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
 };
+
+const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
 
 #[derive(Clone, Debug)]
 pub struct Database {
@@ -67,6 +69,10 @@ impl Database {
                    resets_at TEXT,
                    PRIMARY KEY(snapshot_id, window_key)
                  );
+                 CREATE TABLE IF NOT EXISTS settings (
+                   key TEXT PRIMARY KEY,
+                   value TEXT NOT NULL
+                 );
                  ",
             )
             .map_err(|error| error.to_string())?;
@@ -76,6 +82,49 @@ impl Database {
             "kind",
             "TEXT NOT NULL DEFAULT 'local'",
         )?;
+        Self::add_column_if_missing(&connection, "provider_connections", "custom_label", "TEXT")?;
+        Ok(())
+    }
+
+    pub fn settings(&self) -> Result<AppSettings, String> {
+        let connection = self.connection()?;
+        let defaults = AppSettings::default();
+        let show_menu_bar_item = connection
+            .query_row(
+                "SELECT value FROM settings WHERE key = ?1",
+                [SHOW_MENU_BAR_ITEM],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()
+            .map_err(|error| error.to_string())?
+            .map_or(defaults.show_menu_bar_item, |value| value == "1");
+        Ok(AppSettings { show_menu_bar_item })
+    }
+
+    pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
+        self.connection()?
+            .execute(
+                "INSERT INTO settings(key, value) VALUES (?1, ?2)
+                 ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                params![SHOW_MENU_BAR_ITEM, if visible { "1" } else { "0" }],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
+    /// Stores the user's name for a connection. An empty name clears it.
+    pub fn set_custom_label(&self, id: &str, label: Option<&str>) -> Result<(), String> {
+        let label = label.map(str::trim).filter(|value| !value.is_empty());
+        let changed = self
+            .connection()?
+            .execute(
+                "UPDATE provider_connections SET custom_label = ?2, updated_at = ?3 WHERE id = ?1",
+                params![id, label, Utc::now().to_rfc3339()],
+            )
+            .map_err(|error| error.to_string())?;
+        if changed == 0 {
+            return Err("The connection does not exist.".to_string());
+        }
         Ok(())
     }
 
@@ -189,7 +238,8 @@ impl Database {
             .prepare(
                 "SELECT id, provider, label, source_locator, enabled, status, source,
                         last_updated_at, last_error,
-                        identity_user_id, identity_display_name, identity_plan, kind
+                        identity_user_id, identity_display_name, identity_plan, kind,
+                        custom_label
                  FROM provider_connections
                  ORDER BY CASE provider WHEN 'claude' THEN 0 WHEN 'codex' THEN 1 ELSE 2 END,
                           label",
@@ -224,6 +274,7 @@ impl Database {
                     source: row.get(6)?,
                     last_updated_at: row.get(7)?,
                     last_error: row.get(8)?,
+                    custom_label: row.get(13)?,
                     identity,
                     windows: Vec::new(),
                 })
@@ -250,6 +301,7 @@ impl Database {
             connections,
             database_path: self.path.display().to_string(),
             refreshed_at,
+            settings: self.settings()?,
         })
     }
 
@@ -435,5 +487,34 @@ mod tests {
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections.len(), 1);
         assert_eq!(state.connections[0].kind, ConnectionKind::Oauth);
+    }
+
+    #[test]
+    fn stores_custom_labels_and_settings() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
+        database
+            .upsert_discovered(&[DiscoveredConnection {
+                id: "claude-one".into(),
+                provider: Provider::Claude,
+                kind: ConnectionKind::Local,
+                label: "Claude · One".into(),
+                source_locator: "/tmp/.claude-one".into(),
+                identity: None,
+            }])
+            .expect("discover");
+
+        database
+            .set_custom_label("claude-one", Some("  Work  "))
+            .expect("label");
+        let state = database.dashboard_state().expect("state");
+        assert_eq!(state.connections[0].custom_label.as_deref(), Some("Work"));
+        database.set_custom_label("claude-one", Some("")).expect("clear");
+        let state = database.dashboard_state().expect("state");
+        assert_eq!(state.connections[0].custom_label, None);
+
+        assert!(state.settings.show_menu_bar_item);
+        database.set_show_menu_bar_item(false).expect("setting");
+        assert!(!database.settings().expect("settings").show_menu_bar_item);
     }
 }

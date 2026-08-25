@@ -118,9 +118,28 @@ pub struct ProviderConnection {
     pub last_updated_at: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error: Option<String>,
+    /// A name the user typed for this account. Shown instead of the identity.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_label: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub identity: Option<RemoteIdentity>,
     pub windows: Vec<QuotaWindow>,
+}
+
+/// User preferences stored in the database.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct AppSettings {
+    /// Whether the macOS menu bar item is visible.
+    pub show_menu_bar_item: bool,
+}
+
+impl Default for AppSettings {
+    fn default() -> Self {
+        Self {
+            show_menu_bar_item: true,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
@@ -131,6 +150,7 @@ pub struct DashboardState {
     pub database_path: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub refreshed_at: Option<String>,
+    pub settings: AppSettings,
 }
 
 #[derive(Clone, Debug)]
