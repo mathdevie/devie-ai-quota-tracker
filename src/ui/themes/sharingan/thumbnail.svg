@@ -1,0 +1,39 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="blur-sharingan" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="grain-sharingan" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" seed="42" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+      <feBlend in="SourceGraphic" in2="mono" mode="overlay"/>
+    </filter>
+    <clipPath id="clip-sharingan">
+      <rect width="120" height="120" rx="16" ry="16"/>
+    </clipPath>
+  </defs>
+  
+  <g clip-path="url(#clip-sharingan)">
+    <!-- Solid background base -->
+    <rect width="120" height="120" fill="#09090b"/>
+    
+    <!-- Fixed position blobs - diagonal gradient from top-left to bottom-right -->
+    <!-- Main primary blob - bottom right -->
+    <ellipse cx="100" cy="100" rx="70" ry="65" fill="#dc2626" filter="url(#blur-sharingan)"/>
+    
+    <!-- Secondary blob - middle area -->
+    <ellipse cx="65" cy="75" rx="45" ry="40" fill="#dc2626" filter="url(#blur-sharingan)"/>
+    
+    <!-- Light accent - transition zone -->
+    <ellipse cx="45" cy="55" rx="35" ry="30" fill="#e87272" filter="url(#blur-sharingan)"/>
+    
+    <!-- Dark accent - corner depth -->
+    <ellipse cx="115" cy="115" rx="40" ry="35" fill="#a51d1d" filter="url(#blur-sharingan)"/>
+    
+    <!-- Subtle grain overlay -->
+    <rect width="120" height="120" fill="#09090b" filter="url(#grain-sharingan)" opacity="0.1"/>
+  </g>
+  
+  <!-- Rounded border -->
+  <rect width="120" height="120" rx="16" ry="16" fill="none" stroke="#dc2626" stroke-width="0.5" stroke-opacity="0.15"/>
+</svg>

@@ -1,4 +1,4 @@
-import type { DashboardState } from "./contracts";
+import type { DashboardState, Provider } from "./contracts";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -33,6 +33,50 @@ export async function discoverConnections(): Promise<DashboardState> {
   }
   const { invoke } = await import("@tauri-apps/api/core");
   return invoke<DashboardState>("discover_connections");
+}
+
+export async function addProviderAccount(
+  provider: Extract<Provider, "claude" | "codex">,
+  profileName: string,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    await new Promise((resolve) => window.setTimeout(resolve, 600));
+    const label = provider === "claude" ? "Claude" : "Codex";
+    return {
+      ...previewState,
+      connections: [
+        ...previewState.connections,
+        {
+          id: `preview-${provider}-${profileName.toLowerCase().replaceAll(" ", "-")}`,
+          provider,
+          label: `${label} · ${profileName.trim()}`,
+          sourceLocator: `local/${provider}/${profileName.trim()}`,
+          enabled: true,
+          status: "needs_login",
+          source: "",
+          lastError: "The browser preview cannot complete provider login.",
+          captureState: provider === "claude" ? "available" : undefined,
+          windows: [],
+        },
+      ],
+    };
+  }
+  const { invoke } = await import("@tauri-apps/api/core");
+  return invoke<DashboardState>("add_provider_account", {
+    provider,
+    profileName,
+  });
+}
+
+export async function loginProviderAccount(
+  connectionId: string,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    await new Promise((resolve) => window.setTimeout(resolve, 450));
+    return previewState;
+  }
+  const { invoke } = await import("@tauri-apps/api/core");
+  return invoke<DashboardState>("login_provider_account", { connectionId });
 }
 
 export async function setConnectionEnabled(

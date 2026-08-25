@@ -1,0 +1,237 @@
+import type { FC, SVGProps } from "react";
+
+type ExtendedSVGProps = SVGProps<SVGSVGElement> & { title?: string };
+
+import AlpineSnowThumbnail from "@/ui/themes/alpine-snow/thumbnail.svg";
+import AuroraGreenThumbnail from "@/ui/themes/aurora-green/thumbnail.svg";
+import CatpuccinLatteThumbnail from "@/ui/themes/catpuccin-latte/thumbnail.svg";
+import CommandPromptThumbnail from "@/ui/themes/command-prompt/thumbnail.svg";
+import CopperSunsetThumbnail from "@/ui/themes/copper-sunset/thumbnail.svg";
+import DarkThumbnail from "@/ui/themes/dark/thumbnail.svg";
+import DefaultThumbnail from "@/ui/themes/default/thumbnail.svg";
+import MidnightInkThumbnail from "@/ui/themes/midnight-ink/thumbnail.svg";
+import SharinganThumbnail from "@/ui/themes/sharingan/thumbnail.svg";
+import TotoroThumbnail from "@/ui/themes/totoro/thumbnail.svg";
+
+export interface ThemeOption {
+  className: string;
+  nameKey: string;
+  thumbnailSrc: FC<ExtendedSVGProps>;
+  displayName: Record<string, string>;
+  categories?: string[];
+}
+
+export const THEMES: ThemeOption[] = [
+  {
+    nameKey: "default",
+    className: "theme-default",
+    thumbnailSrc: DefaultThumbnail,
+    categories: ["All", "Light"],
+    displayName: {
+      "en-US": "Light",
+      "en-GB": "Light",
+      "fr-FR": "Clair",
+      "de-DE": "Hell",
+      "it-IT": "Chiaro",
+      "es-ES": "Claro",
+      "es-419": "Claro",
+      "pt-BR": "Claro",
+      "fi-FI": "Vaalea",
+      "da-DK": "Lys",
+      "nl-NL": "Licht",
+      "nb-NO": "Lys",
+      "sv-SE": "Ljus",
+    },
+  },
+  {
+    nameKey: "dark",
+    className: "theme-dark",
+    thumbnailSrc: DarkThumbnail,
+    categories: ["All", "Dark"],
+    displayName: {
+      "en-US": "Dark",
+      "en-GB": "Dark",
+      "fr-FR": "Sombre",
+      "de-DE": "Dunkel",
+      "it-IT": "Scuro",
+      "es-ES": "Oscuro",
+      "es-419": "Oscuro",
+      "pt-BR": "Escuro",
+      "fi-FI": "Tumma",
+      "da-DK": "Mørk",
+      "nl-NL": "Donker",
+      "nb-NO": "Mørk",
+      "sv-SE": "Mörk",
+    },
+  },
+  {
+    nameKey: "midnight-ink",
+    className: "theme-midnight-ink",
+    thumbnailSrc: MidnightInkThumbnail,
+    categories: ["All", "Dark"],
+    displayName: {
+      "en-US": "Midnight Ink",
+      "en-GB": "Midnight Ink",
+      "fr-FR": "Encre de Minuit",
+      "de-DE": "Mitternacht Tinte",
+      "it-IT": "Inchiostro di Mezzanotte",
+      "es-ES": "Tinta de Medianoche",
+      "es-419": "Tinta de Medianoche",
+      "pt-BR": "Tinta da Meia-Noite",
+      "fi-FI": "Keskiyön Muste",
+      "da-DK": "Midnat Blæk",
+      "nl-NL": "Middernacht Inkt",
+      "nb-NO": "Midnattsblekk",
+      "sv-SE": "Midnattsbläck",
+    },
+  },
+  {
+    nameKey: "copper-sunset",
+    className: "theme-copper-sunset",
+    thumbnailSrc: CopperSunsetThumbnail,
+    categories: ["All", "Light"],
+    displayName: {
+      "en-US": "Copper Sunset",
+      "en-GB": "Copper Sunset",
+      "fr-FR": "Coucher de Soleil Cuivré",
+      "de-DE": "Kupfer Sonnenuntergang",
+      "it-IT": "Tramonto di Rame",
+      "es-ES": "Atardecer de Cobre",
+      "es-419": "Atardecer de Cobre",
+      "pt-BR": "Pôr do Sol de Cobre",
+      "fi-FI": "Kupari Auringonlasku",
+      "da-DK": "Kobber Solnedgang",
+      "nl-NL": "Koperen Zonsondergang",
+      "nb-NO": "Kobber Solnedgang",
+      "sv-SE": "Koppar Solnedgång",
+    },
+  },
+  {
+    nameKey: "aurora-green",
+    className: "theme-aurora-green",
+    thumbnailSrc: AuroraGreenThumbnail,
+    categories: ["All", "Dark"],
+    displayName: {
+      "en-US": "Aurora Green",
+      "en-GB": "Aurora Green",
+      "fr-FR": "Aurora Vert",
+      "de-DE": "Aurora Grün",
+      "it-IT": "Aurora Verde",
+      "es-ES": "Aurora Verde",
+      "es-419": "Aurora Verde",
+      "pt-BR": "Aurora Verde",
+      "fi-FI": "Aurora Vihreä",
+      "da-DK": "Aurora Grøn",
+      "nl-NL": "Aurora Groen",
+      "nb-NO": "Aurora Grønn",
+      "sv-SE": "Aurora Grön",
+    },
+  },
+  {
+    nameKey: "sharingan",
+    className: "theme-sharingan",
+    thumbnailSrc: SharinganThumbnail,
+    categories: ["All", "Dark"],
+    displayName: {
+      "en-US": "Sharingan",
+      "en-GB": "Sharingan",
+      "fr-FR": "Sharingan",
+      "de-DE": "Sharingan",
+      "it-IT": "Sharingan",
+      "es-ES": "Sharingan",
+      "es-419": "Sharingan",
+      "pt-BR": "Sharingan",
+      "fi-FI": "Sharingan",
+      "da-DK": "Sharingan",
+      "nl-NL": "Sharingan",
+      "nb-NO": "Sharingan",
+      "sv-SE": "Sharingan",
+    },
+  },
+  {
+    nameKey: "alpine-snow",
+    className: "theme-alpine-snow",
+    thumbnailSrc: AlpineSnowThumbnail,
+    categories: ["All", "Light"],
+    displayName: {
+      "en-US": "Alpine Snow",
+      "en-GB": "Alpine Snow",
+      "fr-FR": "Neige Alpine",
+      "de-DE": "Alpiner Schnee",
+      "it-IT": "Neve Alpina",
+      "es-ES": "Nieve Alpina",
+      "es-419": "Nieve Alpina",
+      "pt-BR": "Neve Alpina",
+      "fi-FI": "Alppilumi",
+      "da-DK": "Alpin Sne",
+      "nl-NL": "Alpijnse Sneeuw",
+      "nb-NO": "Alpin Snø",
+      "sv-SE": "Alpin Snö",
+    },
+  },
+  {
+    nameKey: "command-prompt",
+    className: "theme-command-prompt",
+    thumbnailSrc: CommandPromptThumbnail,
+    categories: ["All", "Dark"],
+    displayName: {
+      "en-US": "Command Prompt",
+      "en-GB": "Command Prompt",
+      "fr-FR": "Command Prompt",
+      "de-DE": "Command Prompt",
+      "it-IT": "Command Prompt",
+      "es-ES": "Command Prompt",
+      "es-419": "Command Prompt",
+      "pt-BR": "Command Prompt",
+      "fi-FI": "Command Prompt",
+      "da-DK": "Command Prompt",
+      "nl-NL": "Command Prompt",
+      "nb-NO": "Command Prompt",
+      "sv-SE": "Command Prompt",
+    },
+  },
+  {
+    nameKey: "totoro",
+    className: "theme-totoro",
+    thumbnailSrc: TotoroThumbnail,
+    categories: ["All", "Light"],
+    displayName: {
+      "en-US": "Totoro",
+      "en-GB": "Totoro",
+      "fr-FR": "Totoro",
+      "de-DE": "Totoro",
+      "it-IT": "Totoro",
+      "es-ES": "Totoro",
+      "es-419": "Totoro",
+      "pt-BR": "Totoro",
+      "fi-FI": "Totoro",
+      "da-DK": "Totoro",
+      "nl-NL": "Totoro",
+      "nb-NO": "Totoro",
+      "sv-SE": "Totoro",
+    },
+  },
+  {
+    nameKey: "catpuccin-latte",
+    className: "theme-catpuccin-latte",
+    thumbnailSrc: CatpuccinLatteThumbnail,
+    categories: ["All", "Light"],
+    displayName: {
+      "en-US": "Catpuccin Latte",
+      "en-GB": "Catpuccin Latte",
+      "fr-FR": "Catpuccin Latte",
+      "de-DE": "Catpuccin Latte",
+      "it-IT": "Catpuccin Latte",
+      "es-ES": "Catpuccin Latte",
+      "es-419": "Catpuccin Latte",
+      "pt-BR": "Catpuccin Latte",
+      "fi-FI": "Catpuccin Latte",
+      "da-DK": "Catpuccin Latte",
+      "nl-NL": "Catpuccin Latte",
+      "nb-NO": "Catpuccin Latte",
+      "sv-SE": "Catpuccin Latte",
+    },
+  },
+];
+
+export type ThemeClassName = (typeof THEMES)[number]["className"];

@@ -1,0 +1,40 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+  .list {
+    display: flex;
+    align-items: center;
+    gap: $devie__spacing__x1;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: $devie__spacing__x1;
+    color: $devie__color__text;
+    font-size: $devie__font-size__normal;
+    font-family: $devie__font-family;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    [aria-current="page"] {
+      font-weight: 500;
+    }
+  }
+
+  .span {
+    display: inline-flex;
+    align-items: flex-end;
+  }
+}

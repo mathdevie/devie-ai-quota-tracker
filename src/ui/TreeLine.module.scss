@@ -1,0 +1,161 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+  .treeLine {
+    position: relative;
+
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+      background-color: $devie__color__line;
+    }
+  }
+
+  .vertical {
+    &::before {
+      width: 1px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+    }
+  }
+
+  .horizontal {
+    &::before {
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+  }
+
+  .cornerTopLeft {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      bottom: 0;
+      left: 50%;
+    }
+  }
+
+  .cornerTopRight {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      bottom: 0;
+      left: 50%;
+    }
+  }
+
+  .cornerBottomLeft {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      top: 0;
+      left: 50%;
+    }
+  }
+
+  .cornerBottomRight {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      top: 0;
+      left: 50%;
+    }
+  }
+
+  .branchRight {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+    }
+
+    &::before {
+      width: 1px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+    }
+  }
+
+  .branchLeft {
+    &::after {
+      width: 50%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+
+    &::before {
+      width: 1px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+    }
+  }
+
+  .branchDown {
+    &::after {
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+    }
+  }
+
+  .branchUp {
+    &::after {
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+
+    &::before {
+      width: 1px;
+      height: 50%;
+      top: 0;
+      left: 50%;
+    }
+  }
+}
+

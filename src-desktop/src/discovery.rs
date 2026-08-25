@@ -8,14 +8,33 @@ use std::{
 use serde_json::Value;
 use uuid::Uuid;
 
-use crate::model::{CaptureState, DiscoveredConnection, Provider, RemoteIdentity};
+use crate::{
+    accounts::ManagedProfileMetadata,
+    executable,
+    model::{CaptureState, DiscoveredConnection, Provider, RemoteIdentity},
+};
 
-pub fn discover() -> Vec<DiscoveredConnection> {
+pub fn discover(app_data_dir: &Path) -> Vec<DiscoveredConnection> {
     let mut connections = Vec::new();
     connections.extend(discover_profile_dirs(Provider::Claude));
     connections.extend(discover_profile_dirs(Provider::Codex));
+    connections.extend(discover_managed_profiles(app_data_dir, Provider::Claude));
+    connections.extend(discover_managed_profiles(app_data_dir, Provider::Codex));
     connections.extend(discover_github_accounts());
     connections
+}
+
+fn discover_managed_profiles(app_data_dir: &Path, provider: Provider) -> Vec<DiscoveredConnection> {
+    let root = app_data_dir.join("profiles").join(provider.as_str());
+    let Ok(entries) = fs::read_dir(root) else {
+        return Vec::new();
+    };
+    entries
+        .flatten()
+        .map(|entry| entry.path())
+        .filter(|path| path.is_dir())
+        .map(|path| profile_connection(provider.clone(), &path, ""))
+        .collect()
 }
 
 fn discover_profile_dirs(provider: Provider) -> Vec<DiscoveredConnection> {
@@ -53,15 +72,24 @@ fn discover_profile_dirs(provider: Provider) -> Vec<DiscoveredConnection> {
         .collect()
 }
 
-fn profile_connection(provider: Provider, path: &Path, base_name: &str) -> DiscoveredConnection {
-    let profile_name = path
-        .file_name()
-        .and_then(|value| value.to_str())
-        .and_then(|name| name.strip_prefix(base_name))
-        .map(|value| value.trim_start_matches('-'))
-        .filter(|value| !value.is_empty())
-        .map(title_case)
-        .unwrap_or_else(|| "Default".to_string());
+pub fn profile_connection(
+    provider: Provider,
+    path: &Path,
+    base_name: &str,
+) -> DiscoveredConnection {
+    let managed_name = fs::read(path.join(".devie-qt-profile.json"))
+        .ok()
+        .and_then(|data| serde_json::from_slice::<ManagedProfileMetadata>(&data).ok())
+        .map(|metadata| metadata.name);
+    let profile_name = managed_name.unwrap_or_else(|| {
+        path.file_name()
+            .and_then(|value| value.to_str())
+            .and_then(|name| name.strip_prefix(base_name))
+            .map(|value| value.trim_start_matches('-'))
+            .filter(|value| !value.is_empty())
+            .map(title_case)
+            .unwrap_or_else(|| "Default".to_string())
+    });
     let provider_name = match provider {
         Provider::Claude => "Claude",
         Provider::Codex => "Codex",
@@ -102,7 +130,10 @@ fn has_managed_status_line(config_dir: &Path) -> bool {
 }
 
 fn discover_github_accounts() -> Vec<DiscoveredConnection> {
-    let output = Command::new("gh")
+    let Ok(binary) = executable::resolve("gh") else {
+        return Vec::new();
+    };
+    let output = Command::new(binary)
         .args(["auth", "status", "--json", "hosts"])
         .env("GH_PROMPT_DISABLED", "1")
         .output();

@@ -1,0 +1,28 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+  .iconContainer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: $devie__spacing__x05;
+    color: $devie__color__primary;
+
+    [data-type="success"] & {
+      color: $devie__color__success;
+    }
+
+    [data-type="error"] & {
+      color: $devie__color__danger;
+    }
+  }
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $devie__spacing__x1;
+    flex: 1;
+    min-width: 0;
+  }
+}

@@ -1,0 +1,13 @@
+@use "../ui/_devie.scss" as *;
+
+.trigger {
+  width: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  justify-content: center;
+  padding: $devie__spacing__x1;
+}
+
+.popup {
+  min-width: 190px;
+}

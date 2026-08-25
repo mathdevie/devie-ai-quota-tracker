@@ -1,0 +1,116 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+        overflow: hidden;
+        background: $devie__color__background;
+    }
+
+    .item {
+        &:not(:last-child) {
+            border-bottom: 1px solid $devie__color__line;
+        }
+    }
+
+    .header {
+        margin: 0;
+    }
+
+    .trigger {
+        box-sizing: border-box;
+        position: relative;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        padding: $devie__spacing__x2 $devie__spacing__x2;
+        color: $devie__color__text;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__normal;
+        background: $devie__color__background;
+        border: none;
+        outline: none;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 0;
+        transition: none;
+
+        .item:first-child & {
+            border-top-left-radius: $devie__radius;
+            border-top-right-radius: $devie__radius;
+        }
+
+        .item:last-child:not([data-open]) & {
+            border-bottom-left-radius: $devie__radius;
+            border-bottom-right-radius: $devie__radius;
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                color: #{devie-hover-color($devie__color__text)};
+                background: #{devie-hover-color($devie__color__background)};
+            }
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+            background: #{devie-disabled-color($devie__color__background)};
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: -2px;
+            z-index: 1;
+        }
+    }
+
+    .triggerIcon {
+        box-sizing: border-box;
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        transition: transform 200ms ease;
+        color: $devie__color__text;
+
+        [data-panel-open]>& {
+            transform: rotate(180deg);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                color: #{devie-hover-color($devie__color__text)};
+            }
+        }
+
+        .trigger[data-disabled] & {
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+    }
+
+    .panel {
+        box-sizing: border-box;
+        height: var(--accordion-panel-height);
+        overflow: hidden;
+        transition: height 200ms ease;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            height: 0;
+        }
+    }
+
+    .content {
+        padding: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        font-size: $devie__font-size__normal;
+        background: $devie__color__background;
+
+        .item:last-child & {
+            border-bottom-left-radius: $devie__radius;
+            border-bottom-right-radius: $devie__radius;
+        }
+    }
+}

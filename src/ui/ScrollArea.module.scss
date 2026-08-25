@@ -1,0 +1,109 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+  .root {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .viewport {
+    height: 100%;
+    overscroll-behavior: contain;
+    border-radius: $devie__radius;
+    outline: 1px solid $devie__color__line;
+    outline-offset: -1px;
+
+    &:focus-visible {
+      outline: 2px solid $devie__color__primary;
+      outline-offset: -2px;
+    }
+  }
+
+  .content {
+    display: block;
+  }
+
+  .scrollbar {
+    display: flex;
+    background-color: transparent;
+    border-radius: $devie__radius;
+    opacity: 0;
+    transition: opacity 150ms;
+    pointer-events: none;
+
+    &[data-orientation="vertical"] {
+      position: absolute;
+      top: 0;
+      right: $devie__spacing__x05;
+      bottom: 0;
+      width: 6px;
+      flex-direction: column;
+    }
+
+    &[data-orientation="horizontal"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: $devie__spacing__x05;
+      height: 6px;
+      flex-direction: row;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+    }
+
+    &[data-orientation="vertical"]::before {
+      top: 0;
+      bottom: 0;
+      left: -8px;
+      right: -4px;
+    }
+
+    &[data-orientation="horizontal"]::before {
+      left: 0;
+      right: 0;
+      top: -8px;
+      bottom: -4px;
+    }
+
+    &[data-scrolling] {
+      transition-duration: 0ms;
+    }
+
+    &[data-hovering],
+    &[data-scrolling] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .thumb {
+    border-radius: inherit;
+    background-color: $devie__color__text-sub;
+    transition: background-color 150ms;
+
+    &:hover {
+      background-color: $devie__color__text;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 100%;
+    }
+
+    &[data-orientation="horizontal"] {
+      height: 100%;
+    }
+  }
+
+  .corner {
+    position: absolute;
+    right: $devie__spacing__x05;
+    bottom: 0;
+    width: 8px;
+    height: calc(8px + #{$devie__spacing__x05});
+    background-color: transparent;
+    border-radius: $devie__radius;
+  }
+}

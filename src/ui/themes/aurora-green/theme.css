@@ -1,0 +1,20 @@
+@layer devie {
+  [data-devie-theme="theme-aurora-green"] {
+    --devie__theme-name: Aurora Green;
+    --devie__color__text: #f0fdfa;
+    --devie__color__text-sub: #94a3b8;
+    --devie__color__line: #334155;
+    --devie__color__background: #0f172a;
+    --devie__color__background-sub: #1e293b;
+    --devie__color__primary: #2dd4bf;
+    --devie__color__primary-label: #0f172a;
+    --devie__color__danger: #fb7185;
+    --devie__color__danger-label: #0f172a;
+    --devie__color__success: #4ade80;
+    --devie__color__success-label: #0f172a;
+    --devie__color__warning: #fbbf24;
+    --devie__color__warning-label: #0f172a;
+    --devie__font-family:
+      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
+}

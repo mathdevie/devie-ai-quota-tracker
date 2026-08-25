@@ -1,0 +1,110 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .trigger {
+        cursor: pointer;
+    }
+
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-open] {
+            opacity: 1;
+        }
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+    }
+
+    .popup {
+        background-color: $devie__color__background;
+        border-radius: $devie__radius;
+        box-shadow: $devie__shadow__menu;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+        min-width: 200px;
+        max-width: var(--available-width, 90vw);
+        max-height: 80vh;
+        transform-origin: var(--transform-origin);
+        transition:
+            transform 150ms ease-out,
+            opacity 150ms ease-out;
+
+        &[data-starting-style] {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        &[data-instant] {
+            transition: none;
+        }
+    }
+
+    .arrow {
+        fill: $devie__color__background;
+        stroke: $devie__color__line;
+        stroke-width: 1px;
+        z-index: 1;
+
+        &[data-side='top'] {
+            bottom: calc(-1 * $devie__spacing__x1);
+            rotate: 180deg;
+        }
+
+        &[data-side='bottom'] {
+            top: calc(-1 * $devie__spacing__x1);
+            rotate: 0deg;
+        }
+
+        &[data-side='left'] {
+            right: -13px;
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: -13px;
+            rotate: -90deg;
+        }
+    }
+
+    .title {
+        margin: 0;
+        font-size: $devie__font-size__normal;
+        font-weight: 500;
+        color: $devie__color__text;
+    }
+
+    .description {
+        margin: 0;
+        font-size: $devie__font-size__small;
+        color: $devie__color__text-sub;
+    }
+
+    .close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: $devie__spacing__x05;
+        cursor: pointer;
+        color: $devie__color__text;
+        border-radius: $devie__radius;
+        transition: none;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+    }
+}

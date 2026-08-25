@@ -1,0 +1,24 @@
+@layer devie {
+  [data-devie-theme="theme-copper-sunset"] {
+    --devie__theme-name: Copper Sunset;
+    --devie__color__text: #412a21;
+    --devie__color__text-sub: #8a7162;
+    --devie__color__line: #d0b191;
+    --devie__color__background: #fff6eb;
+    --devie__color__background-sub: #faf0e2;
+    --devie__color__primary: #d87833;
+    --devie__color__primary-label: #fff;
+    --devie__color__danger: #b22222;
+    --devie__color__danger-label: #fff;
+    --devie__color__success: #228b22;
+    --devie__color__success-label: #fff;
+    --devie__color__warning: #ff8c00;
+    --devie__color__warning-label: #fff;
+    --devie__font-family:
+      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --devie__effect__hover-intensity: 0.025;
+    --devie__effect__disabled-intensity: 0.3;
+    --devie__effect__disabled-desaturate: 0.5;
+    --devie__effect__disabled-target-l: 0.5;
+  }
+}

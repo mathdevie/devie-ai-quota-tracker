@@ -1,0 +1,80 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        box-sizing: border-box;
+        display: flex;
+        width: 1.25rem;
+        height: 1.25rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        outline: 0;
+        padding: 0;
+        margin: 0;
+        border: none;
+        cursor: pointer;
+        transition: none;
+
+        &[data-unchecked] {
+            border: 1px solid $devie__color__line;
+            background-color: $devie__color__background;
+        }
+
+        &[data-checked] {
+            background-color: $devie__color__primary;
+            border: 1px solid $devie__color__primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+
+        &:hover:not([data-disabled]) {
+            &[data-unchecked] {
+                border-color: $devie__color__primary;
+            }
+
+            &[data-checked] {
+                background-color: #{devie-hover-color($devie__color__primary)};
+            }
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+
+            &[data-unchecked] {
+                border-color: #{devie-disabled-color($devie__color__line)};
+                background-color: #{devie-disabled-color($devie__color__background)};
+            }
+
+            &[data-checked] {
+                background-color: #{devie-disabled-color($devie__color__primary)};
+                border-color: #{devie-disabled-color($devie__color__primary)};
+            }
+        }
+    }
+
+    .indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &[data-unchecked] {
+            display: none;
+        }
+    }
+
+    .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background-color: $devie__color__primary-label;
+        flex-shrink: 0;
+
+        [data-disabled] & {
+            background-color: #{devie-disabled-color($devie__color__primary-label)};
+        }
+    }
+}

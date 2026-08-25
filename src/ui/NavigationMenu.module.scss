@@ -1,0 +1,157 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .list {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .item {
+        position: relative;
+    }
+
+    .trigger {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        padding: $devie__spacing__x1 $devie__spacing__x1;
+        border: none;
+        background: transparent;
+        color: $devie__color__text;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__normal;
+        cursor: pointer;
+        border-radius: $devie__radius;
+        outline: none;
+        transition: none;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-popup-open] {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+    }
+
+    .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $devie__color__text-sub;
+        transition: transform 200ms ease;
+
+        [data-popup-open]>& {
+            transform: rotate(180deg);
+        }
+    }
+
+    .content {
+        padding: $devie__spacing__x2;
+    }
+
+    .link {
+        display: block;
+        padding: $devie__spacing__x1 $devie__spacing__x1;
+        color: $devie__color__text;
+        text-decoration: none;
+        font-size: $devie__font-size__normal;
+        border-radius: $devie__radius;
+        outline: none;
+        transition: none;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-active] {
+            color: $devie__color__primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+    }
+
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        background: transparent;
+        opacity: 1;
+        transition: opacity 200ms ease;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+    }
+
+    .positioner {
+        &:not([data-instant]) {
+            transition: left 300ms ease;
+        }
+    }
+
+    .popup {
+        background-color: $devie__color__background;
+        border-radius: $devie__radius;
+        box-shadow: $devie__shadow__menu;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+        opacity: 1;
+        transform: scale(1);
+        transform-origin: var(--transform-origin);
+        transition:
+            opacity 200ms ease,
+            transform 200ms ease;
+
+        &[data-starting-style] {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+    }
+
+    .viewport {
+        overflow: hidden;
+        // Animate viewport size changes when switching between menu items
+        transition:
+            width 300ms ease,
+            height 300ms ease;
+    }
+
+    .arrow {
+        fill: $devie__color__background;
+        stroke: $devie__color__line;
+        stroke-width: 1px;
+        z-index: 1;
+
+        &:not([data-instant]) {
+            transition: left 300ms ease;
+        }
+
+        &[data-side='top'] {
+            bottom: -8px;
+            rotate: 180deg;
+        }
+
+        &[data-side='bottom'] {
+            top: -8px;
+            rotate: 0deg;
+        }
+    }
+}

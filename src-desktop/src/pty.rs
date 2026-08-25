@@ -8,6 +8,8 @@ use std::{
 
 use portable_pty::{native_pty_system, CommandBuilder, PtySize};
 
+use crate::executable;
+
 pub fn run_slash_command(
     binary: &str,
     args: &[&str],
@@ -17,6 +19,7 @@ pub fn run_slash_command(
     expected_labels: &[&str],
     timeout: Duration,
 ) -> Result<String, String> {
+    let resolved_binary = executable::resolve(binary)?;
     let pty = native_pty_system();
     let pair = pty
         .openpty(PtySize {
@@ -27,7 +30,7 @@ pub fn run_slash_command(
         })
         .map_err(|_| "The provider terminal could not start.".to_string())?;
 
-    let mut command = CommandBuilder::new(binary);
+    let mut command = CommandBuilder::new(resolved_binary);
     command.args(args);
     command.cwd(working_directory);
     for (key, value) in environment {

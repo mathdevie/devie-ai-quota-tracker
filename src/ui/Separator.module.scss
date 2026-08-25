@@ -1,0 +1,34 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .separator {
+        background-color: $devie__color__line;
+        width: 100%;
+
+        &[data-orientation="horizontal"] {
+            height: 1px;
+            width: 100%;
+            margin: $devie__spacing__x05 0;
+        }
+
+        &[data-orientation="vertical"] {
+            height: 100%;
+            width: 1px;
+        }
+    }
+
+    .withTextContainer {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: $devie__spacing__x05;
+        margin: $devie__spacing__x05 0;
+    }
+
+    .text {
+        color: $devie__color__text-sub;
+        font-size: $devie__font-size__small;
+        font-family: $devie__font-family;
+        padding: 0 $devie__spacing__x05;
+    }
+}

@@ -1,6 +1,8 @@
+mod accounts;
 mod capture;
 mod db;
 mod discovery;
+mod executable;
 mod model;
 mod providers;
 mod pty;
@@ -30,7 +32,71 @@ fn get_dashboard_state(core: State<'_, Core>) -> Result<DashboardState, String> 
 
 #[tauri::command]
 fn discover_connections(app: AppHandle, core: State<'_, Core>) -> Result<DashboardState, String> {
-    core.database.upsert_discovered(&discovery::discover())?;
+    core.database
+        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+async fn add_provider_account(
+    app: AppHandle,
+    provider: String,
+    profile_name: String,
+) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    let provider = model::Provider::from_db(&provider)
+        .filter(|provider| *provider != model::Provider::Copilot)
+        .ok_or_else(|| "This provider cannot use subscription login yet.".to_string())?;
+    let connection = accounts::create_profile(&core.app_data_dir, provider, &profile_name)?;
+    let connection_id = connection.id.clone();
+    let login_provider = connection.provider.clone();
+    let login_source = connection.source_locator.clone();
+    core.database.upsert_discovered(&[connection.clone()])?;
+
+    let login_result = tauri::async_runtime::spawn_blocking(move || {
+        accounts::login(&login_provider, &login_source)
+    })
+    .await
+    .map_err(|_| "The provider login stopped early.".to_string())?;
+    if let Err(message) = login_result {
+        core.database
+            .save_failure(&connection_id, ConnectionStatus::NeedsLogin, &message)?;
+    } else if let Some(connection) = core.database.connection_by_id(&connection_id)? {
+        refresh_one(&core, &connection).await;
+    }
+
+    core.database
+        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+async fn login_provider_account(
+    app: AppHandle,
+    connection_id: String,
+) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    let connection = core
+        .database
+        .connection_by_id(&connection_id)?
+        .ok_or_else(|| "The provider profile does not exist.".to_string())?;
+    if connection.provider == model::Provider::Copilot {
+        return Err("Copilot login is not available yet.".to_string());
+    }
+    let login_provider = connection.provider.clone();
+    let login_source = connection.source_locator.clone();
+    let login_result = tauri::async_runtime::spawn_blocking(move || {
+        accounts::login(&login_provider, &login_source)
+    })
+    .await
+    .map_err(|_| "The provider login stopped early.".to_string())?;
+
+    if let Err(message) = login_result {
+        core.database
+            .save_failure(&connection_id, ConnectionStatus::NeedsLogin, &message)?;
+    } else {
+        refresh_one(&core, &connection).await;
+    }
     publish_state(&app, &core)
 }
 
@@ -107,7 +173,8 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
 
 async fn refresh_all_internal(app: &AppHandle) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
-    core.database.upsert_discovered(&discovery::discover())?;
+    core.database
+        .upsert_discovered(&discovery::discover(&core.app_data_dir))?;
     let connections = core.database.dashboard_state()?.connections;
     for connection in connections.into_iter().filter(|item| item.enabled) {
         refresh_one(&core, &connection).await;
@@ -185,22 +252,18 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .min_inner_size(780.0, 560.0)
         .center()
         .build()?;
-    WebviewWindowBuilder::new(
-        app,
-        "popover",
-        WebviewUrl::App("?surface=popover".into()),
-    )
-    .title("Devie QT Quotas")
-    .inner_size(420.0, 650.0)
-    .min_inner_size(380.0, 420.0)
-    .max_inner_size(480.0, 760.0)
-    .resizable(true)
-    .decorations(false)
-    .always_on_top(true)
-    .skip_taskbar(true)
-    .shadow(true)
-    .visible(false)
-    .build()?;
+    WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
+        .title("Devie QT Quotas")
+        .inner_size(420.0, 650.0)
+        .min_inner_size(380.0, 420.0)
+        .max_inner_size(480.0, 760.0)
+        .resizable(true)
+        .decorations(false)
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .shadow(true)
+        .visible(false)
+        .build()?;
     Ok(())
 }
 
@@ -260,7 +323,7 @@ pub fn run() {
             let database = Database::open(app_data_dir.join("devie-qt.sqlite3"))
                 .map_err(std::io::Error::other)?;
             database
-                .upsert_discovered(&discovery::discover())
+                .upsert_discovered(&discovery::discover(&app_data_dir))
                 .map_err(std::io::Error::other)?;
             let client = reqwest::Client::builder()
                 .timeout(Duration::from_secs(20))
@@ -295,6 +358,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_dashboard_state,
             discover_connections,
+            add_provider_account,
+            login_provider_account,
             refresh_all,
             refresh_connection,
             set_connection_enabled,

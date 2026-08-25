@@ -1,0 +1,99 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .popup {
+        min-width: 180px;
+        background-color: $devie__color__background;
+        border-radius: $devie__radius;
+        padding: $devie__spacing__x05;
+        box-shadow: $devie__shadow__menu;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        user-select: none;
+        outline: none;
+        color: $devie__color__text;
+        cursor: pointer;
+        font-size: $devie__font-size__small;
+        border-radius: calc($devie__radius - $devie__spacing__x05);
+        transition: none;
+
+        &:hover:not([data-disabled]),
+        &[data-highlighted]:not([data-disabled]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+
+        &[data-popup-open] {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+    }
+
+    .separator {
+        height: 1px;
+        background-color: $devie__color__line;
+        margin: $devie__spacing__x05 0;
+    }
+
+    .groupLabel {
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        font-weight: 500;
+        color: $devie__color__text-sub;
+        font-size: $devie__font-size__small;
+        user-select: none;
+    }
+
+    .radioItem {
+        padding-left: $devie__spacing__x3;
+        position: relative;
+    }
+
+    .checkboxItem {
+        padding-left: $devie__spacing__x4;
+        position: relative;
+    }
+
+    .itemIndicator {
+        position: absolute;
+        left: $devie__spacing__x1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $devie__color__primary;
+    }
+
+    .arrow {
+        fill: $devie__color__background;
+    }
+
+    .submenuChevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        color: $devie__color__text-sub;
+        flex-shrink: 0;
+    }
+
+    .shortcut {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__small;
+        line-height: 1.2;
+        color: $devie__color__text-sub;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+}

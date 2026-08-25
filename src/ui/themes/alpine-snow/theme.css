@@ -1,0 +1,20 @@
+@layer devie {
+  [data-devie-theme="theme-alpine-snow"] {
+    --devie__theme-name: Alpine Snow;
+    --devie__color__text: #0f172a;
+    --devie__color__text-sub: #475569;
+    --devie__color__line: #cbd5e1;
+    --devie__color__background: #ffffff;
+    --devie__color__background-sub: #f1f5f9;
+    --devie__color__primary: #0284c7;
+    --devie__color__primary-label: #ffffff;
+    --devie__color__danger: #dc2626;
+    --devie__color__danger-label: #ffffff;
+    --devie__color__success: #16a34a;
+    --devie__color__success-label: #ffffff;
+    --devie__color__warning: #d97706;
+    --devie__color__warning-label: #ffffff;
+    --devie__font-family:
+      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
+}

@@ -1,0 +1,88 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $devie__spacing__x05;
+        padding: $devie__spacing__x1;
+        border: none;
+        cursor: pointer;
+        border-radius: $devie__radius;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__normal;
+        line-height: 1;
+        transition: background 150ms ease, color 150ms ease, outline-color 150ms ease;
+
+        &[data-disabled] {
+            cursor: not-allowed;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+    }
+
+    .variantSecondary {
+        color: $devie__color__text;
+        background: transparent;
+        outline: 1px solid $devie__color__line;
+
+        &:hover:not([data-disabled]):not([data-pressed]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-pressed] {
+            background: $devie__color__primary;
+            color: $devie__color__primary-label;
+            outline-color: $devie__color__primary;
+
+            &:hover:not([data-disabled]) {
+                background: #{devie-hover-color($devie__color__primary)};
+                color: #{devie-hover-color($devie__color__primary-label)};
+                outline-color: #{devie-hover-color($devie__color__primary)};
+            }
+        }
+
+        &[data-disabled] {
+            color: #{devie-disabled-color($devie__color__text)};
+            outline-color: #{devie-disabled-color($devie__color__line)};
+
+            &[data-pressed] {
+                background: #{devie-disabled-color($devie__color__primary)};
+                color: #{devie-disabled-color($devie__color__primary-label)};
+                outline-color: #{devie-disabled-color($devie__color__primary)};
+            }
+        }
+    }
+
+    .variantNaked {
+        color: $devie__color__text;
+        background: transparent;
+
+        &:hover:not([data-disabled]):not([data-pressed]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-pressed] {
+            background: $devie__color__primary;
+            color: $devie__color__primary-label;
+
+            &:hover:not([data-disabled]) {
+                background: #{devie-hover-color($devie__color__primary)};
+                color: #{devie-hover-color($devie__color__primary-label)};
+            }
+        }
+
+        &[data-disabled] {
+            color: #{devie-disabled-color($devie__color__text)};
+
+            &[data-pressed] {
+                background: #{devie-disabled-color($devie__color__primary)};
+                color: #{devie-disabled-color($devie__color__primary-label)};
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+    }
+}

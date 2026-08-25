@@ -1,0 +1,105 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x05;
+    }
+
+    .group {
+        display: flex;
+    }
+
+    .input {
+        box-sizing: border-box;
+        margin: 0;
+        padding: $devie__spacing__x1;
+        border-radius: 0;
+        border: 1px solid $devie__color__line;
+        background-color: $devie__color__background;
+        color: $devie__color__text;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        width: 6rem;
+
+
+        &:focus-visible {
+            z-index: 1;
+            border-color: $devie__color__primary;
+            outline: 0;
+        }
+
+        &::placeholder {
+            color: $devie__color__text-sub;
+        }
+
+        &[data-invalid] {
+            border-color: $devie__color__danger;
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            background: #{devie-disabled-color($devie__color__background)};
+            border-color: #{devie-disabled-color($devie__color__line)};
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+    }
+
+    .increment,
+    .decrement {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        outline: 0;
+        padding: $devie__spacing__x1;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+        background-color: $devie__color__background-sub;
+        background-clip: padding-box;
+        color: $devie__color__text;
+        user-select: none;
+        cursor: pointer;
+
+        @media (hover: hover) {
+            &:hover:not([data-disabled]) {
+                background-color: #{devie-hover-color($devie__color__background-sub)};
+            }
+        }
+
+        &:active:not([data-disabled]) {
+            background-color: #{devie-hover-color($devie__color__background-sub)};
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            background: #{devie-disabled-color($devie__color__background-sub)};
+            border-color: #{devie-disabled-color($devie__color__line)};
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+    }
+
+    .decrement {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right-width: 0;
+
+    }
+
+    .increment {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left-width: 0;
+    }
+
+    .scrubArea {
+        cursor: ew-resize;
+        user-select: none;
+    }
+
+    .scrubAreaCursor {
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+    }
+}

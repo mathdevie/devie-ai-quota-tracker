@@ -1,0 +1,10 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x2;
+    }
+}

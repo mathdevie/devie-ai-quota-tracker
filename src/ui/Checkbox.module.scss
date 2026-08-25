@@ -1,0 +1,109 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        box-sizing: border-box;
+        display: flex;
+        width: 1.25rem;
+        height: 1.25rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: $devie__radius;
+        outline: 0;
+        padding: 0;
+        margin: 0;
+        border: none;
+        cursor: pointer;
+        transition: none;
+
+        &[data-unchecked] {
+            border: 1px solid $devie__color__line;
+            background-color: $devie__color__background;
+        }
+
+        &[data-checked] {
+            background-color: $devie__color__primary;
+            border: 1px solid $devie__color__primary;
+        }
+
+        &[data-indeterminate] {
+            background-color: $devie__color__primary;
+            border: 1px solid $devie__color__primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 1px;
+        }
+
+        &:hover:not([data-disabled]) {
+            &[data-unchecked] {
+                border-color: $devie__color__primary
+            }
+
+            &[data-checked] {
+                background-color: #{devie-hover-color($devie__color__primary)};
+            }
+
+            &[data-indeterminate] {
+                background-color: #{devie-hover-color($devie__color__primary)};
+            }
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+
+            &[data-unchecked] {
+                border-color: #{devie-disabled-color($devie__color__line)};
+                background-color: #{devie-disabled-color($devie__color__background)};
+            }
+
+            &[data-checked] {
+                background-color: #{devie-disabled-color($devie__color__primary)};
+                border-color: #{devie-disabled-color($devie__color__line)};
+            }
+
+            &[data-indeterminate] {
+                background-color: #{devie-disabled-color($devie__color__primary)};
+                border-color: #{devie-disabled-color($devie__color__line)};
+            }
+        }
+    }
+
+    .indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $devie__color__primary-label;
+
+        &[data-unchecked] {
+            display: none;
+        }
+
+        &[data-disabled] {
+            color: #{devie-disabled-color($devie__color__primary-label)};
+        }
+    }
+
+    .icon {
+        width: 0.75rem;
+        height: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .checkIcon {
+        [data-indeterminate] & {
+            display: none;
+        }
+    }
+
+    .indeterminateIcon {
+        [data-checked] & {
+            display: none;
+        }
+
+        [data-unchecked] & {
+            display: none;
+        }
+    }
+}

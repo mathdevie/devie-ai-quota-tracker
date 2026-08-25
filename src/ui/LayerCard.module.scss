@@ -1,0 +1,22 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        background-color: $devie__color__background-sub;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius-strong;
+        padding: $devie__spacing__x05;
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x05;
+        box-sizing: border-box;
+    }
+
+    .inner {
+        background-color: $devie__color__background;
+        border: 1px solid $devie__color__line;
+        border-radius: calc($devie__radius-strong - $devie__spacing__x05);
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+}

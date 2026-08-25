@@ -12,7 +12,7 @@
   }
 
   body {
-    background: $devie__color__background-sub;
+    background: $devie__color__background;
     color: $devie__color__text;
     font-family: $devie__font-family;
     -webkit-font-smoothing: antialiased;
@@ -25,21 +25,5 @@
 
   ::selection {
     background: color-mix(in srgb, $devie__color__primary 24%, transparent);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --devie__color__text: #f4f3f5;
-    --devie__color__text-sub: #9b99a0;
-    --devie__color__line: #333139;
-    --devie__color__background: #1b191f;
-    --devie__color__background-sub: #141217;
-    --devie__color__primary: #9379ff;
-    --devie__color__primary-label: #ffffff;
-    --devie__color__danger: #ef7068;
-    --devie__color__success: #43c970;
-    --devie__color__warning: #ff9d5b;
-    --devie__shadow__menu: 0 12px 32px rgb(0 0 0 / 30%);
   }
 }
