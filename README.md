@@ -1,89 +1,236 @@
 # Devie QT
 
-A local macOS tracker for AI subscription quotas.
+Devie QT is a local macOS menu bar app for AI subscription quotas.
 
-This branch contains the first working POC. Read the
-[feasibility analysis](plans/feasibility-analysis.md) for the product decisions.
+It keeps separate Claude, Codex, and GitHub Copilot connections in one place.
+The product has no Devie account, cloud database, proxy, or hosted backend.
 
-## What works
+> [!NOTE]
+> This repository contains an early proof of concept. Provider behavior and the
+> interface will change as the product is tested with more subscriptions.
 
-- A Tauri 2 desktop app with a Next.js static frontend.
-- A macOS menu bar item with a quota popover.
-- A Devie UI dashboard for all local connections.
-- Separate Claude and Codex profiles from different config directories.
-- GitHub CLI account discovery without an app-owned login.
-- SQLite connection state and normalized quota history.
-- A five-minute refresh loop and a manual refresh action.
-- A stale snapshot when a provider refresh fails.
+## Product principles
 
-The POC starts with Claude, OpenAI Codex, and GitHub Copilot.
+- Keep the interface minimal, useful, and close to the Mana configuration pages.
+- Keep product data on the Mac.
+- Let each provider CLI own its credentials and token refresh.
+- Treat every account or configuration directory as a separate connection.
+- Keep provider-specific quota logic behind a common Rust model.
+- Preserve the last good quota snapshot when a refresh fails.
 
-## Provider sources
+## Current features
 
-| Provider | Primary source | Fallback |
-| --- | --- | --- |
-| Claude | An optional passive Claude Code status line capture | Claude Code `/usage` in a PTY |
-| Codex | Recent local Codex session quota records | Codex `/status` in a PTY |
-| Copilot | The selected GitHub CLI account | None |
+- A Tauri 2 app with a Next.js static frontend.
+- A macOS menu bar item with a quota summary and popover.
+- A normal window for usage and provider management.
+- Separate connections for multiple Claude or Codex subscriptions.
+- Local discovery of existing Claude, Codex, and GitHub CLI profiles.
+- Provider-owned sign-in for new Claude and Codex profiles.
+- An optional passive Claude status-line capture.
+- Manual refresh and an automatic five-minute refresh loop.
+- Local SQLite storage for connections, identities, snapshots, and failures.
+- Ten bundled Devie UI themes with a persistent theme selector.
+- Signed and notarized Apple silicon builds through GitHub Actions.
 
-The Claude capture installer preserves the previous `statusLine` setting.
-The remover restores that exact setting.
-The remover stops if the user changed the setting after installation.
+## Provider support
 
-## Security boundary
+| Provider | Account source | Quota source | Current account flow |
+| --- | --- | --- | --- |
+| Claude | `CLAUDE_CONFIG_DIR`, `~/.claude*`, or a managed profile | An optional status-line capture, then Claude Code `/usage` | Runs `claude auth login --claudeai` inside an isolated configuration directory |
+| Codex | `CODEX_HOME`, `~/.codex*`, or a managed profile | Recent local session records, then Codex `/status` | Runs `codex login` inside an isolated `CODEX_HOME` |
+| GitHub Copilot | Accounts already stored by GitHub CLI | The Copilot quota response for the selected GitHub CLI account | Discovery only; use `gh auth login` outside the app |
 
-Rust owns provider processes, network calls, SQLite, and the menu bar.
-The webview receives normalized quota values only.
+Devie QT finds CLI commands in the normal shell path and common macOS install
+folders. These folders include Homebrew, `~/.local/bin`, Bun, Cargo, Volta,
+asdf, npm, pnpm, NVM, and FNM locations.
 
-The app does not store provider tokens in SQLite or logs.
-The Copilot adapter reads a selected GitHub CLI token into memory for one request.
-The adapter clears its token buffer after the request starts.
-The app never changes the active GitHub CLI account.
+## Multiple subscriptions
+
+Devie QT does not switch one global CLI account between refreshes. It gives each
+managed Claude or Codex subscription its own configuration directory.
+
+Managed profiles live under the application data folder:
+
+```text
+~/Library/Application Support/com.devie.qt/profiles/
+  claude/<profile>/
+  codex/<profile>/
+```
+
+The provider CLI writes its own credentials into that directory or the macOS
+Keychain. Devie QT stores the profile label and path, but not the provider token.
+
+Existing directories also remain separate. Examples include `~/.claude-work`,
+`~/.claude-personal`, `~/.codex-work`, and `~/.codex-personal`.
+
+## Claude capture
+
+The passive Claude source is optional. It installs a small status-line wrapper
+for one Claude configuration directory.
+
+The installer saves the previous `statusLine` value. The remover restores that
+exact value. The remover stops if another tool changed the value after setup.
+
+Without the capture, Devie QT starts Claude Code in a pseudo-terminal and reads
+the `/usage` result.
+
+## Architecture
+
+```text
+Next.js static interface
+        |
+        | narrow Tauri commands and quota events
+        v
+Tauri and Rust core
+  |-- provider discovery and isolated profiles
+  |-- provider CLI and pseudo-terminal processes
+  |-- direct provider requests where required
+  |-- quota normalization and refresh scheduling
+  |-- SQLite state and quota history
+  `-- macOS menu bar and windows
+```
+
+Rust owns provider processes, network requests, SQLite, and the menu bar. The
+webview receives normalized connection and quota values only.
+
+The main folders are:
+
+```text
+src/                    Next.js interface and application components
+src/ui/                 Complete Devie UI component and theme folder
+src-desktop/            Tauri application and Rust core
+src-desktop/src/providers/
+                        Claude, Codex, and Copilot adapters
+docs/                   Build and signing documentation
+plans/                  Product research and feasibility analysis
+```
+
+`src/ui` mirrors the `src/ui` folder from the
+[Devie UI repository](https://github.com/mathdevie/devie-ui.com). The local
+theme context uses the versioned `devie-qt-theme:v1` storage key.
+
+## Privacy and security
+
+- Devie QT has no product login or remote application database.
+- Provider quota checks can contact Anthropic, OpenAI, or GitHub.
+- Provider tokens never enter the React webview.
+- SQLite does not store provider tokens or complete provider responses.
+- Claude and Codex own their login credentials and refresh behavior.
+- The Copilot adapter reads one GitHub CLI token into memory for one request.
+- The Copilot adapter clears its token buffer after the request starts.
+- Devie QT never changes the active GitHub CLI account.
+
+The local database is stored at:
+
+```text
+~/Library/Application Support/com.devie.qt/devie-qt.sqlite3
+```
+
+## Requirements
+
+- macOS 12 or newer.
+- An Apple silicon Mac for the current signed build.
+- [Bun](https://bun.sh/).
+- A stable Rust toolchain.
+- The [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
+- Claude Code, Codex, or GitHub CLI for the related provider.
 
 ## Development
 
-Install Bun, Rust, and the macOS Tauri prerequisites.
+Install the dependencies:
 
 ```sh
 bun install
-bun run dev
 ```
 
-Run the desktop app:
+Start the complete desktop app:
 
 ```sh
 bun run dev:desktop
 ```
 
-Run the checks:
+Start the browser preview with local fixtures:
+
+```sh
+bun run dev
+```
+
+The browser preview runs on `http://localhost:3002`. It cannot complete a real
+provider login or use native provider data.
+
+Run the frontend checks and Rust tests:
 
 ```sh
 bun run check
 bun run build
-cd src-desktop && cargo test
+cd src-desktop
+cargo fmt --check
+cargo test --locked
 ```
 
-Build a macOS app bundle:
+Build a local debug app bundle:
 
 ```sh
 bunx tauri build --debug --bundles app
 ```
 
-## macOS releases
+The bundle is written under `src-desktop/target/debug/bundle/macos/`.
 
-The CI workflow checks each pull request and each push to `main`.
-The release workflow builds a signed Apple silicon app.
-It runs manually or for a `v*` tag.
+## CI and signed builds
 
-The release workflow uses the GitHub `Release` environment.
-See [docs/macos-signing.md](docs/macos-signing.md) before the first release build.
+The CI workflow runs for each pull request and each push to `main`. It checks the
+frontend, builds the static export, and runs the Rust tests.
 
-## Current POC limits
+The `Build signed macOS app` workflow runs manually or for a `v*` tag. It builds,
+signs, notarizes, and checks an Apple silicon app and DMG.
 
-- The POC targets macOS only.
-- Claude terminal output can change between Claude Code versions.
-- Copilot uses a GitHub internal quota endpoint.
-- The POC does not track token counts or costs.
-- The POC does not add provider logins or refresh provider credentials.
+To download a build:
 
-The selected Devie UI components come from the Mana application structure.
+1. Open the repository **Actions** page.
+2. Open a successful **Build signed macOS app** run.
+3. Find the **Artifacts** section on the run summary.
+4. Download `Devie-QT-arm64`.
+5. Extract the ZIP and open the DMG or app bundle.
+
+GitHub keeps the current build artifacts for 14 days. The workflow does not yet
+create a GitHub release or upload to CrabNebula.
+
+The signed workflow uses the GitHub `Release` environment. Read
+[the macOS signing guide](docs/macos-signing.md) for the required secrets and
+setup steps.
+
+## Known limits
+
+- The app supports macOS only.
+- The signed workflow builds Apple silicon only.
+- Claude and Codex terminal output can change between CLI versions.
+- GitHub Copilot uses an internal endpoint instead of a public quota API.
+- Claude and Codex login uses the provider CLI instead of a direct app callback.
+- The app does not yet remove managed profiles.
+- The app does not yet show charts, alerts, costs, or local token totals.
+- The app does not yet provide automatic updates or permanent releases.
+- Real multi-account testing still needs more plan and organization types.
+
+## Next areas
+
+- Refine the minimal usage and provider interface.
+- Complete provider lifecycle controls.
+- Improve login progress and error handling.
+- Test multiple Claude and Codex subscription combinations.
+- Add quota history and alerts.
+- Add more providers through the shared adapter model.
+- Add permanent release delivery and updates.
+
+## Research and references
+
+The initial design combines useful ideas from these projects:
+
+- [Mana](https://github.com/mathdevie/app.mana.re) for the application structure and interface direction.
+- [Devie UI](https://www.devie-ui.com/) for components, tokens, and themes.
+- [AIUsage](https://github.com/sylearn/AIUsage) for the quota dashboard scope.
+- [CodexBar](https://github.com/steipete/CodexBar) for menu bar and provider-source patterns.
+- [usage4claude](https://github.com/f-is-h/usage4claude) for a compact menu bar presentation.
+- [9router](https://github.com/decolua/9router) for multi-account provider concepts.
+
+Read the full [feasibility analysis](plans/feasibility-analysis.md) for the source
+assessment, security boundaries, and initial product decisions.
