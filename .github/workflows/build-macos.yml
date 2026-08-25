@@ -77,6 +77,18 @@ jobs:
           done
           exit "$missing"
 
+      - name: Validate the Apple notarization credentials
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool history \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            >/dev/null
+
       - name: Build, sign, and notarize the app
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
