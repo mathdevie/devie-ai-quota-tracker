@@ -10,7 +10,7 @@ Updates run only in packaged builds. `tauri dev` never reads the update feed
 
 ## One-time setup
 
-1. Create the `mathdevie/devie-qt` application on https://web.crabnebula.cloud
+1. Create the `mathdev/devie-qt` application on https://web.crabnebula.cloud
    and create an API key. Store it as the `CN_API_KEY` secret in the
    `Release` GitHub environment.
 2. Generate the updater signing key:
