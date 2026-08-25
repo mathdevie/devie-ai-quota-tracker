@@ -47,6 +47,7 @@ jobs:
         with:
           workspaces: src-desktop -> target
           key: ${{ matrix.rust_target }}
+          cache-on-failure: true
 
       - name: Install frontend dependencies
         run: bun install --frozen-lockfile
@@ -99,12 +100,15 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: bunx tauri build --target "${{ matrix.rust_target }}" --bundles app,dmg
 
-      - name: Check the signature and notarization ticket
+      - name: Notarize the DMG and check the artifacts
         id: package
         shell: bash
         env:
           RUST_TARGET: ${{ matrix.rust_target }}
           ARTIFACT_SUFFIX: ${{ matrix.artifact_suffix }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           bundle_root="src-desktop/target/${RUST_TARGET}/release/bundle"
           app_path="$(find "${bundle_root}/macos" -maxdepth 1 -name '*.app' -print -quit)"
@@ -117,6 +121,13 @@ jobs:
 
           codesign --verify --deep --strict --verbose=2 "$app_path"
           xcrun stapler validate "$app_path"
+
+          xcrun notarytool submit "$dmg_path" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+          xcrun stapler staple "$dmg_path"
           xcrun stapler validate "$dmg_path"
 
           zip_path="${RUNNER_TEMP}/Devie-QT-${ARTIFACT_SUFFIX}.app.zip"
