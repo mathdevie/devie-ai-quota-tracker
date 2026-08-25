@@ -3,7 +3,6 @@
 The `Build signed macOS app` workflow creates these artifacts:
 
 - An Apple silicon app ZIP and DMG.
-- An Intel app ZIP and DMG.
 
 The workflow signs each app with a Developer ID Application certificate.
 Tauri submits each app to Apple for notarization.

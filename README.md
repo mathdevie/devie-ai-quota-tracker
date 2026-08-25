@@ -72,7 +72,7 @@ bunx tauri build --debug --bundles app
 ## macOS releases
 
 The CI workflow checks each pull request and each push to `main`.
-The release workflow builds signed Intel and Apple silicon apps.
+The release workflow builds a signed Apple silicon app.
 It runs manually or for a `v*` tag.
 
 The release workflow uses the GitHub `Release` environment.
