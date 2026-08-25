@@ -1,233 +1,466 @@
-# AI Subscription Quota Tracker — feasibility analysis
+# AI subscription quota tracker: feasibility analysis
 
-Date: 2026-08-25. Status: analysis complete, requirements awaiting validation before POC.
+Date: 2026-08-25
 
-## 1. Verdict
+Status: feasible. The product requirements need approval before the POC starts.
 
-**Feasible.** Every hard requirement was verified against real data on this machine
-today, not from memory:
+## 1. Executive verdict
 
-| Requirement | Verdict | Evidence |
+The product is feasible as a local Tauri application.
+
+The Mana architecture is a good base. Mana already uses a Next.js static export,
+React, Devie UI, and a Tauri 2 Rust shell. This project can remove the account and
+cloud backend layers. Rust should own provider access, credential discovery,
+scheduling, persistence, and the menu bar. The webview should receive only safe,
+normalized quota data through Tauri commands and events.
+
+The difficult part is not Tauri or the menu bar. The difficult part is getting
+stable subscription quota data from providers:
+
+- Claude has official local quota surfaces and official multi-account isolation.
+  It also has an undocumented HTTP usage endpoint used by the reference apps.
+- Codex has an official `/status` surface and local credential storage. Its rich
+  HTTP quota endpoint is not documented.
+- GitHub Copilot has a reliable internal quota endpoint in the reference apps.
+  GitHub does not document it as a public individual quota API.
+
+The POC should use official CLI surfaces first. It should keep undocumented HTTP
+sources behind provider adapters. This design limits policy risk and keeps future
+provider changes local to one module.
+
+## 2. Requirement assessment
+
+| Requirement | Verdict | Notes |
 |---|---|---|
-| Tauri desktop app, Mana-style architecture | Yes | Mana already ships a Next.js 16 static export inside Tauri 2.11 (`src-desktop/`). Same shell, minus Convex/Clerk. |
-| Devie UI | Yes | Devie is distributed by copy-paste (`src/ui/`, 41 components + 10 themes). Mana consumes it the same way. |
-| No auth / all local | Yes | All provider data comes from local CLI credentials or app-owned OAuth; storage is local SQLite/JSON + OS keychain. |
-| AIUsage-like feature set | Yes (quota, multi-account, usage stats) | Proxies/gateways are out of scope (and policy-risky). |
-| macOS menu bar (CodexBar / usage4claude style) | Yes | Tauri 2 tray: template icon + title text + popover window via `tauri-plugin-positioner` (`tray-icon` feature). |
-| Claude subscription support (5h / 7d / per-model / extra usage) | Yes | `GET /api/oauth/usage` returned all windows for a Team seat, including `extra_usage` and `spend`. |
-| Multiple accounts for the same provider | Yes | Claude: one account per `CLAUDE_CONFIG_DIR` (keychain item suffix = `sha256(dir)[:8]`, verified). Codex: per `CODEX_HOME` or app-owned login. Copilot: `gh` multi-account or device flow. |
-| Codex, Claude, Copilot first; more later | Yes | Provider trait in Rust; CodexBar's 69 providers are a catalogue of fetch strategies. |
+| Tauri desktop application | Feasible | Tauri officially supports Next.js static exports and tray applications. |
+| Mana-style architecture | Feasible | Mana currently uses Next.js 16, React 19, Bun, Biome, Devie UI, and Tauri 2. |
+| Devie UI | Feasible | Mana keeps 41 themed Base UI components under `src/ui/`. They can be copied with their SCSS tokens and themes. |
+| No product account | Feasible | The app needs no app login, cloud database, telemetry service, or backend. |
+| All product data is local | Feasible | Settings and history stay local. Quota checks still contact each provider directly. |
+| AIUsage-like quota dashboard | Feasible | Quotas, account groups, history, alerts, and local usage statistics fit the design. Proxy and gateway features stay out of scope. |
+| macOS menu bar | Feasible | Tauri supports tray icons, titles, click events, and tray-relative window positioning. |
+| Multiple connections per provider | Feasible | The data model treats each credential or CLI directory as a separate connection. |
+| Multiple Claude subscriptions | Feasible | Claude officially supports side-by-side accounts through separate `CLAUDE_CONFIG_DIR` values. |
+| Claude, Codex, and Copilot first | Feasible | Each provider needs a separate source plan and parser. The shared quota model supports later providers. |
 
-The single real risk is not technical: **Anthropic's policy on OAuth tokens in third-party
-tools** (section 5). The design keeps the Claude data source pluggable so this stays a
-per-account setting, not an architecture decision.
+## 3. Evidence and confidence levels
 
-## 2. Provider endpoints — verified live (2026-08-25)
+This analysis separates three evidence levels:
 
-All calls were read-only `GET`s with credentials already on this machine. No refresh
-endpoint was called (see 6.3 for why that matters).
+1. **Official:** documented by the provider or Tauri.
+2. **Reference implementation:** present in current open-source code, but not in
+   public provider documentation.
+3. **POC validation:** behavior that still needs a local test with real accounts.
 
-### Claude (subscription: Pro / Max / Team / Enterprise)
+No provider credential was read during this analysis. No authenticated quota
+request was made during this analysis.
 
-| Item | Value |
-|---|---|
-| Usage | `GET https://api.anthropic.com/api/oauth/usage` |
-| Profile | `GET https://api.anthropic.com/api/oauth/profile` |
-| Headers | `Authorization: Bearer <claude.ai OAuth access token>`, `anthropic-beta: oauth-2025-04-20` |
-| Result | `200`. `five_hour` / `seven_day` `{utilization %, resets_at}`; `limits[]` with `kind` (`session`, `weekly_all`, `weekly_scoped` per model, e.g. "Fable"), `percent`, `severity`, `is_active`; `extra_usage` (`monthly_limit`, `used_credits`, `utilization`, `spend_limit_reached`); `spend` (money amounts + `severity`). Profile gives `account.uuid`, `organization.{name, organization_type (claude_team / claude_max), rate_limit_tier, seat_tier}`. |
-| Cadence | 9router polls every 10 min and caches 5 min; CodexBar gates 429s. Claude Code docs confirm the endpoint rate-limits (`/usage` shows "last-known usage"). Keep ≥ 5 min per account. |
+### 3.1 Claude
 
-Local credential sources (Claude Code):
+Official evidence:
 
-- File: `<config dir>/.credentials.json` → `claudeAiOauth.{accessToken, refreshToken, expiresAt}` (used when the keychain is unavailable; also on Windows/Linux).
-- macOS Keychain generic password: service `Claude Code-credentials` for `~/.claude`, `Claude Code-credentials-<sha256(CLAUDE_CONFIG_DIR)[:8]>` for custom dirs. Verified: `~/.claude-personal` → `-b546f24b`.
-- `claude auth status --json` → `{loggedIn, authMethod, orgName, subscriptionType}` without tokens (cheap identity/health probe per config dir).
-- Status line JSON (`statusLine` command stdin) carries `rate_limits.five_hour / seven_day.{used_percentage, resets_at}` for claude.ai subscribers after the first response of a session — a **passive, policy-clean** source while Claude Code runs.
-- `<config dir>/projects/**/*.jsonl`: per-message `message.usage` (input, output, cache read/write, model) → offline cost/usage stats (ccusage-style).
+- `CLAUDE_CONFIG_DIR` overrides the full Claude configuration directory. Anthropic
+  documents it as a way to run multiple accounts side by side.
+- A Claude Code status-line command receives `rate_limits.five_hour` and
+  `rate_limits.seven_day`, with percentages and reset times.
+- The `/usage` command shows plan usage limits and activity statistics.
+- macOS stores Claude credentials in Keychain. Linux and Windows use a protected
+  `.credentials.json` file in the Claude configuration directory.
 
-Finding on this machine: for `~/.claude`, the keychain item holds the personal Max org while
-`.credentials.json` holds the Alohi Team org (two different tools wrote them). **Account
-identity must come from the profile endpoint, never from the storage path.**
+Reference implementation evidence:
 
-### Codex (ChatGPT Plus / Pro / Team)
+- 9router, CodexBar, and usage4claude call
+  `GET https://api.anthropic.com/api/oauth/usage`.
+- These projects parse session, weekly, model-scoped weekly, and extra-usage data.
+- CodexBar implements a source planner with `auto`, `api`, `oauth`, `web`, and
+  `cli` sources. Its CLI source starts Claude in a PTY and reads `/usage`.
+- 9router caches successful usage results for five minutes. It also applies a
+  cooldown after an HTTP 429 response.
 
-| Item | Value |
-|---|---|
-| Usage | `GET https://chatgpt.com/backend-api/wham/usage` |
-| Headers | `Authorization: Bearer <ChatGPT OAuth access token>`, `ChatGPT-Account-Id: <account_id>` |
-| Result | `200`. `plan_type`; `rate_limit.{primary_window, secondary_window}` each `{used_percent, limit_window_seconds, reset_after_seconds, reset_at}`; `additional_rate_limits[]` per model family (e.g. Spark: 5h + 7d); `credits` (balance, overage); `spend_control`; `rate_limit_reset_credits`. |
-| Credentials | `~/.codex/auth.json` → `tokens.{access_token (JWT, 8-day life), refresh_token, id_token, account_id}`, `last_refresh`. JWT claim `https://api.openai.com/auth` gives `chatgpt_plan_type`, `chatgpt_account_id`. One account per `CODEX_HOME`. |
-| Refresh | `POST https://auth.openai.com/oauth/token` (`grant_type=refresh_token`, `client_id=app_EMoamEEZ73f0CkXaXp7hrann`). CodexBar reports "refresh token already used" errors → rotation exists. |
-| Offline source | `~/.codex/sessions/**/*.jsonl` `event_msg` / `token_count` payloads embed `rate_limits {primary.used_percent, window_minutes, resets_at, plan_type, credits}` — 215 files here. Zero network. |
+Recommended POC source order:
 
-### GitHub Copilot (Individual / Business / Enterprise)
+1. Read passive status-line snapshots through an opt-in wrapper.
+2. Run the unmodified Claude CLI in a PTY and parse `/usage` after user action.
+3. Keep the undocumented OAuth usage endpoint out of the default POC.
 
-| Item | Value |
-|---|---|
-| Usage | `GET https://api.github.com/copilot_internal/user` |
-| Headers | `Authorization: token <GitHub OAuth token>` (the `gh` CLI token worked as-is; 9router/CodexBar add `Editor-Version` / `User-Agent` headers) |
-| Result | `200`. `copilot_plan`, `quota_snapshots.{premium_interactions, chat, completions}` each `{entitlement, remaining, percent_remaining, unlimited, overage_count}`, `quota_reset_date` (monthly). Verified here: 1238 / 1500 premium interactions (82.5 %). |
-| Credentials | `gh auth token` (keyring `gh:github.com`, multi-account via `gh auth switch`), or app-owned device flow with the VS Code Copilot client `Iv1.b507a08c87ecfe98` (scope `read:user`). |
+The first two sources do not require this app to read or store a Claude OAuth
+token. They also work per `CLAUDE_CONFIG_DIR`.
 
-## 3. Reference products — what to take from each
+POC validation:
 
-| Product | Stack | Take | Leave |
-|---|---|---|---|
-| [AIUsage](https://github.com/sylearn/AIUsage) (Swift, macOS 14+) | SwiftUI | Feature scope: 12 providers, multi-account with independent refresh, one-click CLI account switching, usage stats from local session logs, call analytics. | Claude/Codex proxies, CLIProxyAPI gateway (policy risk, out of scope). |
-| [CodexBar](https://github.com/steipete/CodexBar) (Swift, 20k★) | SwiftUI + WidgetKit | The most mature provider engine: **source planner** per provider (`auto / api / oauth / web / cli`), **delegated refresh** (never refreshes the CLI's token itself; drives the CLI so it refreshes and writes back), keychain prompt gating, 429 gates and backoff, Codex offline rollout parsing, multiple Codex accounts, cost scans, icon meter rendering, `codexbar serve` local endpoint. | Cookie-based providers, WidgetKit specifics. |
-| [usage4claude](https://github.com/f-is-h/usage4claude) (Swift, 366★) | SwiftUI + Combine | Clean multi-account UI for Claude + Codex, per-model weekly limits, extra-usage row, smart refresh cadence, 90 % / reset notifications. | Its own Claude OAuth login using the Claude Code client id (`9d1c250a-…`) — explicitly disallowed by Anthropic's policy text (section 5). |
-| [9router](https://github.com/decolua/9router) (JS/Next.js, 26k★) | Next.js 16 + SQLite | **Core model to mirror**: `providerConnections {id, provider, authType, name, email, priority, isActive, data}`; per-connection usage fetchers (`open-sse/services/usage/{claude,codex,github}.js`) returning a normalized `quotas[]` of `{used, total, remaining, resetAt, unlimited}`; token refresh profiles (JSON body for Claude, form body for Codex, device flow for GitHub); 5-min usage cache with 429 cooldown; quota dashboard sorted by remaining / next reset. | Inference proxying and format translation. 9router itself flags `claude`, `codex`, `github` as `deprecated: RISK_NOTICE`. |
+- Confirm two real Claude configuration directories stay isolated on macOS.
+- Confirm the PTY parser gets all required limits for Pro, Max, Team, and
+  Enterprise seats.
+- Confirm whether the passive status line includes Team and Enterprise limits.
+- Preserve and restore any existing user status-line command exactly.
+- Measure process time and any quota cost from `/usage` checks.
 
-## 4. Proposed architecture
+### 3.2 Codex
 
-Mana layout, without a backend:
+Official evidence from OpenAI documentation:
 
-```
+- Codex supports ChatGPT subscription access and API-key access.
+- Codex stores cached credentials in the operating-system keyring or
+  `auth.json` under `CODEX_HOME`.
+- The official documentation treats `auth.json` like a password.
+- The Codex CLI `/status` command shows remaining limits during a session.
+
+Multiple `CODEX_HOME` directories therefore provide isolated file-based Codex
+profiles. This is a design inference from the documented storage behavior. The
+POC must test keyring-backed profiles as well.
+
+Reference implementation evidence:
+
+- CodexBar starts Codex in a PTY, sends `/status`, and parses limits and credits.
+- CodexBar and 9router also call the undocumented
+  `GET https://chatgpt.com/backend-api/wham/usage` endpoint.
+- Their parsers handle primary, secondary, model-specific, credit, and spend
+  fields. They use an account identifier header for workspace separation.
+- CodexBar reads local session records as an offline quota source.
+
+Recommended POC source order:
+
+1. Read recent quota records from local Codex sessions.
+2. Run the official Codex CLI in a PTY and parse `/status` when data is stale.
+3. Add the undocumented HTTP endpoint only after a separate policy decision.
+
+POC validation:
+
+- Test two `CODEX_HOME` profiles with different ChatGPT workspaces.
+- Test file and keyring credential modes.
+- Confirm that the official CLI refreshes its own credentials without this app
+  handling refresh tokens.
+- Compare offline and PTY quota results with the official usage dashboard.
+
+### 3.3 GitHub Copilot
+
+Official evidence:
+
+- GitHub CLI supports multiple authenticated accounts for one host.
+- `gh auth token --user <name>` can select a stored account token.
+- `gh auth switch` changes the active account, so the app should not use it for
+  background checks.
+
+Reference implementation evidence:
+
+- AIUsage and 9router call
+  `GET https://api.github.com/copilot_internal/user` with a GitHub OAuth token.
+- Their parsers read premium interactions, chat, completions, plan, and the
+  monthly reset date.
+- 9router supports a GitHub device flow for an app-owned connection.
+
+The `copilot_internal` endpoint is not a public quota API. Copilot support is
+technically feasible, but it has the highest endpoint stability risk.
+
+Recommended POC source order:
+
+1. Import an explicitly selected GitHub CLI account.
+2. Read its quota through a provider-owned adapter with tolerant parsing.
+3. Add app-owned device flow only after the import flow works.
+
+POC validation:
+
+- Test Individual, Business, and Enterprise response shapes when accounts are
+  available.
+- Verify the minimum GitHub token scopes.
+- Confirm that the app never changes the active GitHub CLI account.
+
+## 4. Lessons from the reference products
+
+The source audit used these revisions:
+
+| Project | Revision | Useful design |
+|---|---|---|
+| Mana | `a3a54c8` | Next.js static export, Tauri shell, Devie UI, Bun, Biome, updater, and project conventions. |
+| AIUsage | `ab859f8` | Wide provider scope, multi-account dashboard, local statistics, and menu-bar presentation. |
+| CodexBar | `f10b605` | Mature source planning, CLI delegation, stale data, account reconciliation, keychain gates, and tolerant quota parsing. |
+| usage4claude | `25bdf2b` | Compact Claude and Codex menu-bar presentation and multi-account settings. |
+| 9router | `699edac` | A practical connection schema, normalized quotas, token refresh isolation, caching, and cooldowns. |
+
+Recommended reuse by concept:
+
+- Use Mana for the shell, frontend, design system, build, and distribution shape.
+- Use 9router for the connection-centered core model.
+- Use CodexBar for the provider source planner and delegated CLI refresh pattern.
+- Use AIUsage for the user-visible feature map.
+- Do not include inference proxies, account pools, routing gateways, or CLI account
+  switching in the first product scope.
+
+## 5. Proposed architecture
+
+```text
 devie-qt.com/
-  src/                Next.js 16 static export, React 19, TS strict, Base UI + Devie UI (copied src/ui/), SCSS modules, Bun, Biome
-  src-desktop/        Tauri 2 shell (Rust): providers, credentials, scheduler, store, tray, IPC
-  specs/ plans/       same conventions as Mana
+  src/                         Next.js static frontend and Devie UI
+  src-desktop/                 Tauri 2 Rust application
+    src/providers/             Provider adapters and source plans
+    src/connections/           Discovery and connection identity
+    src/process/               Safe CLI and PTY execution
+    src/scheduler/             Refresh gates, jitter, and backoff
+    src/storage/               SQLite migrations and repositories
+    src/tray/                  Menu-bar icon and popover window
+    src/security/              Redaction and secret handles
+  specs/                       Approved product requirements
+  plans/                       Plans and research
 ```
 
-Why the Rust side owns all provider logic (unlike Mana, where the webview talks to
-Convex): the Tauri webview enforces CORS, and `api.anthropic.com`, `chatgpt.com`, and
-`api.github.com` do not allow `tauri://localhost`. Native HTTP (`reqwest`) bypasses CORS
-and keeps tokens out of the webview. This mirrors 9router, where fetchers run server-side.
+### 5.1 Responsibility boundary
 
-Rust modules (`src-desktop/src/`):
+Rust owns:
 
-| Module | Responsibility |
-|---|---|
-| `providers/{claude,codex,copilot}.rs` | `trait QuotaProvider { discover(); fetch(&Account) -> QuotaSnapshot }`. Normalized `QuotaWindow {kind: Session5h | Weekly | WeeklyModel(name) | Monthly, used_pct, reset_at, label}` + `plan`, `extra_usage`, `raw_json` for debugging. Tolerant parsing with legacy fallbacks (9router/usage4claude pattern). |
-| `credentials/` | Read-only importers: Claude file + keychain (`keyring` crate 4.x or `security` CLI), Codex `auth.json`, `gh auth token`. App-owned store (keyring service `com.devie.qt`) for app OAuth tokens (Copilot device flow; optionally Codex). |
-| `scheduler.rs` | Per-account interval (Claude 5–10 min, Codex 1–5 min, Copilot 5 min), jitter, exponential backoff on 429/5xx, refresh-on-popover-open with a minimum spacing, last-good snapshot retained. |
-| `store.rs` | SQLite via `rusqlite` (or `tauri-plugin-sql`): `accounts`, `quota_snapshots` (history for charts), `settings`. |
-| `passive/` | File watchers: `~/.codex/sessions` (`rate_limits`), Claude status-line snapshot files (opt-in hook installed into each config dir's `settings.json`). |
-| `tray.rs` | `TrayIconBuilder` (`tray-icon` feature); runtime `set_title("12% · 43%")` (macOS) and `set_icon_with_as_template` for a rendered meter PNG; left click toggles a frameless always-on-top popover window positioned with `tauri-plugin-positioner::Position::TrayBottomCenter`; hide on blur; `ActivationPolicy::Accessory` hides the Dock icon. Optional `tauri-nspanel` (branch `v2.1`, active Aug 2026) for a non-activating panel. |
-| `notifications.rs` / `autostart` | `tauri-plugin-notification` thresholds (80 / 95 / 100 %, window reset); `tauri-plugin-autostart`. |
-| IPC | Commands `list_accounts`, `add_account`, `remove_account`, `refresh`, `get_snapshots`, `get_settings`; event `quota:updated`. |
+- local credential-source discovery;
+- CLI process execution;
+- provider HTTP requests;
+- quota normalization;
+- local SQLite storage;
+- scheduling and backoff;
+- tray state and notifications;
+- secret redaction.
 
-Frontend (`src/`):
+The webview owns:
 
-- Popover: compact per-account rows (avatar/initial, org + plan badge, `Progress` per window, reset countdown, last-updated, error state).
-- Main window: Accounts (discover / add / reorder / enable), History (charts from snapshots), Usage stats (tokens + cost from local JSONL), Settings (cadence, thresholds, tray content, theme).
-- Onboarding: detect local CLIs (`claude`, `codex`, `gh`), list discovered accounts, let the user pick.
-- Devie components already available: Progress, Badge, Tabs, Popover, Menu, Tooltip, Switch, Select, Callout, Dialog, AlertDialog, Toast, Avatar, Separator, ScrollArea, Kbd.
+- the account and quota views;
+- Devie UI state;
+- settings forms;
+- history charts;
+- requests through narrow Tauri commands.
 
-Account model (from 9router, extended):
+Tokens must never enter the webview. SQLite must store only source references,
+remote identity metadata, and quota data. App-owned tokens, if added later, must
+stay in the operating-system keyring.
 
-```
-Account {
-  id, provider: claude | codex | copilot,
-  label,                       // user-editable
-  auth_type: cli_file | cli_keychain | gh_cli | app_oauth,
-  source_ref,                  // config dir, keychain service, CODEX_HOME, gh user
-  identity: { account_uuid, org_uuid, org_name, plan, tier },   // from profile endpoints
-  is_active, sort_order, created_at
+### 5.2 Provider adapter
+
+Each provider implements the same behavior:
+
+```rust
+trait QuotaProvider {
+    fn discover(&self) -> Vec<DiscoveredConnection>;
+    fn source_plan(&self, connection: &ProviderConnection) -> SourcePlan;
+    async fn fetch(&self, connection: &ProviderConnection) -> Result<QuotaSnapshot>;
 }
 ```
 
-Accounts are deduplicated by `identity`, not by path. The UI shows the storage source so a
-stale file/keychain pair (as found on this machine) is visible.
+A source plan contains ordered candidates. Each candidate declares its trust
+level, data quality, minimum refresh interval, and failure cooldown.
 
-Crate availability (crates.io, checked today): `tauri 2.11.5`, `tauri-plugin-positioner 2.3.3`,
-`tauri-plugin-autostart 2.5.1`, `tauri-plugin-notification 2.3.3`, `tauri-plugin-sql 2.4.0`,
-`tauri-plugin-store 2.4.4`, `keyring 4.1.6`, `rusqlite 0.40`, `reqwest 0.13`. Toolchain present:
-cargo 1.97, bun 1.3, node 22, Xcode CLT.
+The quota model must not hard-code 5-hour and 7-day windows. Providers already
+return session, weekly, model, monthly, credit, and overage limits.
 
-## 5. Policy and risk — the decision that matters
+```text
+QuotaWindow {
+  stable_key,
+  label,
+  scope,                  // account, workspace, model, or feature
+  unit,                   // percent, requests, credits, or money
+  used,
+  limit,
+  used_ratio,
+  reset_at,
+  source,
+  observed_at,
+  stale_after
+}
+```
 
-Anthropic's [Claude Code legal page](https://code.claude.com/docs/en/legal-and-compliance)
-states (verbatim): OAuth authentication "is intended exclusively for purchasers of Claude
-Free, Pro, Max, Team, and Enterprise subscription plans and is designed to support ordinary use
-of Claude Code and other native Anthropic applications", and "developers may not collect,
-store, or intermediate Claude.ai credentials or session tokens — sign-in to a Claude account
-must complete through Anthropic's own flow." Per
-[The Register (2026-02-20)](https://www.theregister.com/2026/02/20/anthropic_clarifies_ban_third_party_claude_access/),
-enforcement (account bans) has targeted inference harnesses; read-only monitoring tools are
-not mentioned, and CodexBar / usage4claude keep operating.
+### 5.3 Connection and identity model
 
-Claude data-source options, ordered from cleanest to riskiest:
+A provider connection and a remote identity are different objects.
 
-| Option | How | Compliance | Data quality | Cost |
-|---|---|---|---|---|
-| A. Passive local | Status-line hook writes `rate_limits` snapshots; `claude auth status --json` for identity; JSONL for stats | Clean | Only while Claude Code runs; 5h + 7d only (no per-model, no extra usage); Pro/Max documented, Team to verify | Low; needs an opt-in hook per config dir |
-| B. Drive the official CLI | Spawn `claude` in a PTY per config dir, send `/usage`, parse (CodexBar "CLI (PTY)") | Clean (unmodified binary, own login) | Full plan bars | Seconds per refresh, brittle TUI parsing, process spawning |
-| C. Reuse the CLI's access token | `GET /api/oauth/usage` with the token from file/keychain (CodexBar default, 9router, AIUsage) | Grey zone: read-only, low volume, but a third-party tool using the token | Full, verified today | Cheap; keychain prompt on first read; must never refresh the CLI's token |
-| D. App-owned Claude OAuth login | PKCE with the Claude Code client id (usage4claude, 9router) | Against the policy text | Full | Not recommended |
+```text
+ProviderConnection {
+  id,
+  provider_id,
+  label,
+  source_kind,            // claude_config, codex_home, gh_cli, app_oauth
+  source_locator,         // path, keychain alias, or GitHub login
+  enabled,
+  priority,
+  created_at
+}
 
-Recommendation: implement the Claude provider as a source planner (like CodexBar) with
-**C as the default and A as passive enrichment, B as a fallback** — and make the default a
-visible, per-account setting with a plain disclosure. The choice is a policy-risk decision for
-the product owner, listed in section 8.
+RemoteIdentity {
+  connection_id,
+  account_id,
+  workspace_id,
+  organization_id,
+  display_name,
+  plan,
+  observed_at
+}
+```
 
-Codex (`wham/usage`) and Copilot (`copilot_internal/user`) are internal endpoints too, used by
-every reference product with the user's own CLI tokens. Risk is lower (no comparable public
-ban) but tolerant parsing and graceful error states are mandatory.
+The app must never delete a connection because another connection resolves to
+the same remote identity. It can group matching identities in the interface.
+This rule preserves multiple configuration directories and multiple providers.
 
-## 6. Other risks and mitigations
+### 5.4 Refresh and stale-data behavior
 
-1. **Undocumented endpoints change.** Keep raw JSON, parse leniently, fall back to the legacy
-   shapes 9router/usage4claude already handle, show "stale since …" instead of failing.
-2. **Keychain prompts on macOS.** Reading Claude Code's keychain items from another app
-   triggers the ACL prompt once ("Always Allow"). Prefer the `.credentials.json` file when it
-   is fresher; offer the `security` CLI read path; never read in a tight loop (CodexBar has
-   gates for exactly this).
-3. **Refresh-token ownership.** Refreshing the CLI's token from our app can rotate the
-   refresh token and break the CLI's login. Rule: the app never calls a refresh endpoint with
-   a CLI-owned refresh token. When a CLI token is expired, delegate (run `claude auth status`
-   / a short `codex` command, then re-read) or show "expired — run the CLI". POC must verify
-   which CLI commands actually refresh.
-4. **Usage endpoint rate limits (429).** ≥ 5 min per account, jitter, cooldown on 429,
-   refresh-on-open limited to once per minute.
-5. **Account identity confusion.** Verified on this machine. Profile-based identity, source
-   shown in UI, explicit per-account enable/disable.
-6. **Tray platform limits.** Windows: no title text (icon only); Linux: no tooltip, `rect()`
-   is `None` (positioner falls back). Ship macOS first, keep icon-only mode for others.
-7. **Distribution.** Signing + notarization + updater already solved in Mana (CrabNebula,
-   Ed25519 updater keys); reuse the workflow.
-8. **Token confidentiality.** Tokens stay in Rust; the webview receives snapshots and
-   identities only; logs redact tokens (Mana rule).
+- Keep one refresh gate per connection and source.
+- Apply a provider minimum interval before any manual or automatic request.
+- Add small random timing changes to avoid synchronized polling.
+- Use exponential backoff for 429 and server errors.
+- Keep the last good snapshot and show its age.
+- Refresh on popover open only when the data is stale.
+- Let passive local sources update the snapshot without a network request.
+- Install a status-line wrapper only after user approval. Chain any existing
+  command, and restore the original settings during removal.
+- Never refresh a CLI-owned OAuth token directly.
+- Ask the official CLI to repair its own session, or show a login action.
 
-## 7. POC plan (proposal, after validation)
+### 5.5 Menu-bar design
 
-Phase 1 — POC (1–2 weeks, macOS):
+Tauri supports the required first version:
 
-1. Scaffold from Mana: Next.js static export + Tauri 2 shell, Devie `src/ui/` copied from
-   devie-ui.com, Bun/Biome, `specs/` + `plans/`.
-2. Rust providers for Claude (file + keychain read, source planner stub), Codex
-   (`auth.json` + offline `rate_limits`), Copilot (`gh auth token`).
-3. Account discovery: `~/.claude` + user-registered `CLAUDE_CONFIG_DIR`s, `CODEX_HOME`,
-   `gh` accounts; identity via profile endpoints.
-4. Tray: title `%` + template icon meter, popover with Devie `Progress` rows, manual refresh,
-   5-min scheduler, SQLite snapshots.
-5. POC validation checks: keychain prompt UX, expired-token path for Claude, Team-plan
-   status-line `rate_limits`, 429 behaviour, Windows build smoke test.
+- one template tray icon;
+- an optional macOS title;
+- a left-click event;
+- a frameless popover window;
+- tray-relative positioning through the positioner plugin;
+- a normal settings window from the popover.
 
-Phase 2: notifications, history charts, usage stats from JSONL (pricing table), autostart,
-updater/signing, onboarding, app-owned Copilot device flow, next providers (Cursor, Gemini
-CLI, Kiro… from CodexBar's catalogue).
+The POC should use a standard Tauri window. A native `NSPanel` bridge can wait
+until the plain window has focus, placement, and multi-monitor tests.
 
-## 8. Requirements to validate (decisions for the product owner)
+Recommended first display:
 
-1. **Claude source default**: C (CLI token, default in the ecosystem) vs A/B (policy-clean).
-2. **App-owned OAuth logins**: import-only (CLI credentials) for the POC, or add device flow
-   (Copilot) / PKCE (Codex) logins in the app?
-3. **Menu bar content**: text percentage vs icon meter vs both; which window (5h or 7d) and
-   which account(s) in the title; merged icon vs one icon per account.
-4. **Popover**: plain Tauri window (portable) vs `tauri-nspanel` (native panel feel, macOS only).
-5. **Storage**: SQLite history from day one (charts) vs JSON store for the POC.
-6. **Usage stats** (tokens/cost from local logs): POC or phase 2?
-7. **Platforms**: macOS-only POC, Windows/Linux later?
-8. **Repo conventions**: mirror Mana (Bun, Biome, `specs/`, `plans/`, AGENTS.md rules)?
-9. **Product name / bundle id** (working name: Devie QT, `com.devie.qt`).
-10. **Cadence and alert thresholds**: 5 min default, alerts at 80 / 95 / 100 % and on reset?
+- Use one tray item for the complete application.
+- Show the lowest remaining short quota for enabled connections.
+- Show all enabled connections in the popover.
+- Let the user pin one connection or choose icon-only mode.
 
-## Sources
+## 6. Local storage
 
-- Claude Code legal and compliance: https://code.claude.com/docs/en/legal-and-compliance
-- The Register, Anthropic clarifies ban on third-party tool access: https://www.theregister.com/2026/02/20/anthropic_clarifies_ban_third_party_claude_access/
-- Claude Code status line (`rate_limits` fields): https://code.claude.com/docs/en/statusline
-- Claude Code costs (`/usage`, endpoint rate limiting): https://code.claude.com/docs/en/costs
-- Tauri system tray: https://v2.tauri.app/learn/system-tray/ ; positioner: https://v2.tauri.app/plugin/positioner/ ; `TrayIcon` runtime API: https://docs.rs/tauri/latest/tauri/tray/struct.TrayIcon.html
-- Reference code read: CodexBar `Sources/CodexBarCore/Providers/{Claude,Codex,Copilot}`, 9router `open-sse/services/usage/*`, `open-sse/services/tokenRefresh/providers.js`, `src/lib/db/schema.js`, usage4claude `Services/*`, AIUsage README.
+Use SQLite from the Rust layer from the first POC. History is a core product
+feature, and SQLite avoids a later store migration.
+
+Initial tables:
+
+- `provider_connections`
+- `remote_identities`
+- `quota_snapshots`
+- `quota_windows`
+- `settings`
+- `provider_failures`
+
+Do not store provider tokens in these tables. Do not store complete raw provider
+responses by default. A user-initiated diagnostic export can include a redacted
+response and parser information.
+
+## 7. Main risks
+
+| Risk | Impact | Control |
+|---|---|---|
+| Anthropic credential policy | High | Use passive data and the unmodified CLI first. Do not read Claude OAuth tokens in the default POC. |
+| Undocumented HTTP endpoints | High | Isolate each endpoint, use tolerant parsers, keep fixtures, and retain stale snapshots. |
+| CLI output changes | Medium | Version parsers, test fixtures, and show a clear parser error. |
+| Token refresh races | High | Never refresh CLI-owned tokens. Let the owning CLI update its store. |
+| macOS Keychain prompts | Medium | Prefer CLI delegation. Request keychain access only after a clear user action. |
+| Claude settings changes | Medium | Make the wrapper opt-in. Preserve, chain, and restore the existing status line. |
+| Wrong account grouping | High | Keep connections separate. Group only by verified remote identity fields. |
+| Rate limits on quota checks | Medium | Use source-specific minimum intervals, jitter, caching, and 429 cooldowns. |
+| Tray focus and placement | Medium | Test multiple monitors, Spaces, full-screen apps, and menu-bar auto-hide. |
+| Cross-platform differences | Medium | Ship a macOS POC first. Keep the provider core platform-neutral. |
+| Local privacy | High | Keep tokens in native code, redact logs, and make diagnostics explicit. |
+
+### 7.1 Anthropic policy decision
+
+Anthropic states that third-party developers may not collect, store, or
+intermediate Claude.ai credentials or session tokens. It also disallows a
+third-party Claude.ai login in another application.
+
+This text makes an app-owned Claude login unsuitable. Directly reading the
+Claude CLI token also creates policy risk, even for a read-only quota call.
+
+The safest first product therefore uses the official Claude process and passive
+status-line output. A direct OAuth usage source should require a later product
+and legal decision.
+
+## 8. POC proposal
+
+The POC should target macOS first. A focused technical POC should take about one
+week after the requirements are approved.
+
+### Stage 1: shell and data contracts
+
+- Copy the Mana static frontend and Tauri shell shape.
+- Copy Devie UI and its themes without product-specific Mana code.
+- Add the connection, identity, and normalized quota contracts.
+- Add SQLite migrations and fixture-based provider tests.
+
+### Stage 2: provider spikes
+
+- Discover two Claude configuration directories.
+- Capture passive Claude status-line data without replacing existing output.
+- Run Claude `/usage` through a PTY.
+- Read recent Codex local quota records.
+- Run Codex `/status` through a PTY.
+- Import one GitHub CLI account and read Copilot quota data.
+
+### Stage 3: menu bar and popover
+
+- Create one tray icon and a frameless popover.
+- Render all connections with Devie `Progress`, `Badge`, and `Callout`.
+- Add manual refresh, stale time, and a clear error state.
+- Add a settings window for connection paths and enabled state.
+
+### POC acceptance criteria
+
+1. The app shows two Claude connections at the same time.
+2. Each Claude connection keeps its own label, identity, and quota windows.
+3. Codex and Copilot each show one real quota snapshot.
+4. The menu-bar popover opens in the correct place on two displays.
+5. The app restarts without losing connections or history.
+6. A provider outage keeps the last good data and shows its age.
+7. No token appears in the webview, SQLite database, or normal logs.
+8. An expired CLI session gives a safe login action and does not rotate its token.
+9. Installing and removing passive capture preserves the prior Claude settings.
+
+Local tools are ready for the POC: Rust 1.97, Cargo 1.97, Bun 1.3, Node 22,
+and the Xcode Command Line Tools are installed.
+
+## 9. Requirements that need approval
+
+Recommended defaults appear in the second column.
+
+| Decision | Recommended POC default | Alternative |
+|---|---|---|
+| Claude quota source | Passive status line plus official CLI `/usage` | Direct OAuth usage endpoint with explicit risk acceptance |
+| Codex quota source | Local records plus official CLI `/status` | Direct undocumented HTTP endpoint |
+| App-owned logins | No; import local CLI connections | Add Copilot device flow during the POC |
+| Scope | Quota tracking only | Include proxies, gateways, or CLI account switching |
+| Platforms | macOS first | Build Windows and Linux during the POC |
+| Connection behavior | Keep every connection separate | Merge connections with matching identities |
+| Tray | One icon and one popover | One tray item per connection |
+| Tray metric | Lowest remaining short window | A pinned provider or weekly window |
+| Popover technology | Standard Tauri window | Native macOS `NSPanel` bridge |
+| History | SQLite from the first POC | Settings store only |
+| Token and cost statistics | Phase 2 | Include local JSONL analysis in the POC |
+| Product identity | Working name `Devie QT`, bundle `com.devie.qt` | A different name and bundle identifier |
+
+The POC should not start until the Claude source policy, scope, platform, and
+connection behavior are approved.
+
+## 10. Sources
+
+Official documentation:
+
+- [Tauri with Next.js](https://v2.tauri.app/start/frontend/nextjs/)
+- [Tauri system tray](https://v2.tauri.app/learn/system-tray/)
+- [Tauri positioner](https://v2.tauri.app/plugin/positioner/)
+- [Claude Code environment variables](https://code.claude.com/docs/en/env-vars)
+- [Claude Code status line](https://code.claude.com/docs/en/statusline)
+- [Claude Code commands](https://code.claude.com/docs/en/commands)
+- [Claude Code costs and `/usage`](https://code.claude.com/docs/en/costs)
+- [Claude Code legal and compliance](https://code.claude.com/docs/en/legal-and-compliance)
+- [OpenAI Codex authentication](https://developers.openai.com/codex/auth)
+- [OpenAI Codex pricing and usage limits](https://developers.openai.com/codex/pricing)
+- [GitHub CLI account switching](https://cli.github.com/manual/gh_auth_switch)
+- [GitHub CLI command reference](https://cli.github.com/manual/gh_help_reference)
+
+Reference implementations:
+
+- [Mana](https://github.com/mathdevie/app.mana.re)
+- [AIUsage](https://github.com/sylearn/AIUsage)
+- [CodexBar](https://github.com/steipete/CodexBar)
+- [usage4claude](https://github.com/f-is-h/usage4claude)
+- [9router](https://github.com/decolua/9router)
