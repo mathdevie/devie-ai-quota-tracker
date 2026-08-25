@@ -1,0 +1,7 @@
+.DS_Store
+.worktrees/
+node_modules/
+.next/
+out/
+target/
+
