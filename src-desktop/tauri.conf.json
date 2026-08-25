@@ -51,7 +51,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4Njc1MkVGMkUxNEY0RjYKUldUMjlCUXU3MUpuV0ZFaWJITFhEWHVWbWdZOWlwV2xmQmZEaEU0Y0hGeGI2ZGZNNm82RlYvSksK",
       "endpoints": [
-        "https://cdn.crabnebula.app/update/mathdevie/devie-qt/{{target}}-{{arch}}/{{current_version}}"
+        "https://cdn.crabnebula.app/update/mathdev/devie-qt/{{target}}-{{arch}}/{{current_version}}"
       ]
     }
   }

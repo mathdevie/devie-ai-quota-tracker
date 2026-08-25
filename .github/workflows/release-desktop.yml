@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  CN_APPLICATION: "mathdevie/devie-qt"
+  CN_APPLICATION: "mathdev/devie-qt"
 
 jobs:
   draft:
