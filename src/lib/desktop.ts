@@ -11,6 +11,13 @@ export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
 }
 
+/**
+ * True only for packaged builds (`tauri build`). `tauri dev` must not read
+ * the production update feed or install over the development binary.
+ */
+export const IS_DESKTOP_BUILD =
+  process.env.NEXT_PUBLIC_IS_DESKTOP_BUILD === "true";
+
 async function call<T>(command: string, args?: Record<string, unknown>) {
   const { invoke } = await import("@tauri-apps/api/core");
   return invoke<T>(command, args);
@@ -110,6 +117,36 @@ export async function setConnectionEnabled(
     };
   }
   return call("set_connection_enabled", { connectionId, enabled });
+}
+
+export async function renameConnection(
+  connectionId: string,
+  label: string,
+): Promise<DashboardState> {
+  const trimmed = label.trim();
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      connections: previewState.connections.map((connection) =>
+        connection.id === connectionId
+          ? { ...connection, customLabel: trimmed || undefined }
+          : connection,
+      ),
+    };
+  }
+  return call("rename_connection", { connectionId, label: trimmed || null });
+}
+
+export async function setMenuBarItemVisible(
+  visible: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      settings: { ...previewState.settings, showMenuBarItem: visible },
+    };
+  }
+  return call("set_menu_bar_item_visible", { visible });
 }
 
 export async function openMainWindow(): Promise<void> {

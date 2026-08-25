@@ -84,8 +84,8 @@ fn read_tail(path: &Path, maximum: u64) -> Result<String, String> {
 
 fn parse_rate_limits(limits: &Map<String, Value>) -> Result<QuotaReading, String> {
     let mut windows = Vec::new();
-    add_window(limits, "primary", "5-hour limit", &mut windows);
-    add_window(limits, "secondary", "Weekly limit", &mut windows);
+    add_window(limits, "primary", "Session (5h)", &mut windows);
+    add_window(limits, "secondary", "Weekly", &mut windows);
     if windows.is_empty() {
         return Err("The Codex rate limit record has no quota windows.".to_string());
     }
@@ -123,9 +123,9 @@ fn add_window(
     let label = number(window.get("window_minutes"))
         .map(|minutes| {
             if minutes >= 10_000.0 {
-                "Weekly limit".to_string()
+                "Weekly".to_string()
             } else if minutes >= 60.0 {
-                format!("{}-hour limit", (minutes / 60.0).round())
+                format!("Session ({}h)", (minutes / 60.0).round())
             } else {
                 fallback_label.to_string()
             }
@@ -157,7 +157,7 @@ fn parse_cli(text: &str) -> Result<QuotaReading, String> {
     if let Some(used) = used_near_label(text, "5h limit") {
         windows.push(QuotaWindow {
             key: "primary".into(),
-            label: "5-hour limit".into(),
+            label: "Session (5h)".into(),
             used_percent: used,
             resets_at: None,
         });
@@ -165,7 +165,7 @@ fn parse_cli(text: &str) -> Result<QuotaReading, String> {
     if let Some(used) = used_near_label(text, "Weekly limit") {
         windows.push(QuotaWindow {
             key: "secondary".into(),
-            label: "Weekly limit".into(),
+            label: "Weekly".into(),
             used_percent: used,
             resets_at: None,
         });
@@ -225,7 +225,7 @@ mod tests {
         )
         .expect("fixture");
         let reading = parse_rate_limits(json.as_object().expect("object")).expect("reading");
-        assert_eq!(reading.windows[0].label, "5-hour limit");
+        assert_eq!(reading.windows[0].label, "Session (5h)");
         assert_eq!(reading.windows[1].used_percent, 54.0);
         assert_eq!(
             reading.identity.and_then(|value| value.plan),

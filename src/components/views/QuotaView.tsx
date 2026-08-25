@@ -6,39 +6,27 @@ import type {
   Provider,
   ProviderConnection,
 } from "@/lib/contracts";
+import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Select from "@/ui/Select";
-import ConnectionCard from "../ConnectionCard";
-import { PROVIDER_NAMES } from "../ProviderIcon";
+import ConnectionCard, { type ConnectionActions } from "../ConnectionCard";
 import styles from "./views.module.scss";
 
 type ProviderFilter = "all" | Provider;
-type StatusFilter = "all" | "ready" | "attention";
 type Sort = "expiring" | "least-left" | "most-left" | "name";
 
 interface Filters {
   provider: ProviderFilter;
-  status: StatusFilter;
   sort: Sort;
 }
 
-const STORAGE_KEY = "devie-qt-quota-filters:v1";
-const DEFAULT_FILTERS: Filters = {
-  provider: "all",
-  status: "all",
-  sort: "expiring",
-};
+const STORAGE_KEY = "devie-qt-quota-filters:v2";
+const DEFAULT_FILTERS: Filters = { provider: "all", sort: "expiring" };
 
 const PROVIDER_OPTIONS: { value: ProviderFilter; label: string }[] = [
   { value: "all", label: "All providers" },
   { value: "claude", label: PROVIDER_NAMES.claude },
   { value: "codex", label: PROVIDER_NAMES.codex },
   { value: "copilot", label: PROVIDER_NAMES.copilot },
-];
-
-const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
-  { value: "all", label: "All statuses" },
-  { value: "ready", label: "Ready" },
-  { value: "attention", label: "Needs attention" },
 ];
 
 const SORT_OPTIONS: { value: Sort; label: string }[] = [
@@ -81,7 +69,10 @@ const SORTERS: Record<
   expiring: (a, b) => nextReset(a) - nextReset(b),
   "least-left": (a, b) => leastLeft(a) - leastLeft(b),
   "most-left": (a, b) => leastLeft(b) - leastLeft(a),
-  name: (a, b) => a.label.localeCompare(b.label),
+  name: (a, b) =>
+    `${PROVIDER_NAMES[a.provider]} ${accountLabel(a)}`.localeCompare(
+      `${PROVIDER_NAMES[b.provider]} ${accountLabel(b)}`,
+    ),
 };
 
 function FilterSelect<T extends string>({
@@ -126,12 +117,11 @@ function FilterSelect<T extends string>({
 export default function QuotaView({
   state,
   busyId,
-  onRefresh,
+  ...actions
 }: {
   state: DashboardState;
   busyId?: string;
-  onRefresh: (id: string) => void;
-}) {
+} & ConnectionActions) {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
 
   useEffect(() => {
@@ -159,11 +149,6 @@ export default function QuotaView({
             filters.provider === "all" ||
             connection.provider === filters.provider,
         )
-        .filter((connection) => {
-          if (filters.status === "all") return true;
-          if (filters.status === "ready") return connection.status === "ready";
-          return connection.status !== "ready";
-        })
         .sort(SORTERS[filters.sort]),
     [state.connections, filters],
   );
@@ -178,21 +163,11 @@ export default function QuotaView({
           value={filters.provider}
         />
         <FilterSelect
-          label="Status"
-          onChange={(status) => update({ status })}
-          options={STATUS_OPTIONS}
-          value={filters.status}
-        />
-        <FilterSelect
           label="Sort"
           onChange={(sort) => update({ sort })}
           options={SORT_OPTIONS}
           value={filters.sort}
         />
-        <span className={styles.filterCount}>
-          {connections.length} of{" "}
-          {state.connections.filter((c) => c.enabled).length}
-        </span>
       </div>
 
       <div className={styles.cardGrid}>
@@ -201,12 +176,12 @@ export default function QuotaView({
             busy={busyId === connection.id}
             connection={connection}
             key={connection.id}
-            onRefresh={onRefresh}
+            {...actions}
           />
         ))}
       </div>
       {connections.length === 0 && (
-        <p className={styles.empty}>No connections match these filters</p>
+        <p className={styles.empty}>No enabled accounts</p>
       )}
     </section>
   );

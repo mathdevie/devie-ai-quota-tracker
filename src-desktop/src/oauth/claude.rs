@@ -394,8 +394,8 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         .as_object()
         .ok_or_else(|| "Claude returned invalid quota data.".to_string())?;
     let mut windows = Vec::new();
-    add_window(object, "five_hour", "Current session", &mut windows);
-    add_window(object, "seven_day", "Weekly limit", &mut windows);
+    add_window(object, "five_hour", "Session (5h)", &mut windows);
+    add_window(object, "seven_day", "Weekly", &mut windows);
     let mut model_keys = object
         .keys()
         .filter(|key| key.starts_with("seven_day_") && *key != "seven_day")
@@ -407,7 +407,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         add_window(
             object,
             &key,
-            &format!("Weekly {}", title_case(model)),
+            &format!("{} (weekly)", title_case(model)),
             &mut windows,
         );
     }
@@ -507,7 +507,7 @@ mod tests {
         let reading = parse_usage(&json).expect("reading");
         assert_eq!(reading.windows.len(), 3);
         assert_eq!(reading.windows[0].used_percent, 37.5);
-        assert_eq!(reading.windows[2].label, "Weekly Opus");
+        assert_eq!(reading.windows[2].label, "Opus (weekly)");
     }
 
     #[test]

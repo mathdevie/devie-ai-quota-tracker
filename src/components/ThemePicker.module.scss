@@ -1,77 +1,26 @@
 @use "../ui/_devie.scss" as *;
 
-.grid {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  gap: $devie__spacing__x2;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+.trigger {
+  min-width: 180px;
 }
 
-.legend {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-.option {
-  position: relative;
-  display: grid;
+.value,
+.item {
+  display: flex;
+  align-items: center;
   gap: $devie__spacing__x1;
-  color: $devie__color__text;
-  cursor: pointer;
 }
 
-.input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: 0;
-  opacity: 0;
-  pointer-events: none;
-
-  &:focus-visible ~ .thumbnail {
-    outline: 2px solid $devie__color__primary;
-    outline-offset: 2px;
-  }
-
-  &:checked ~ .thumbnail {
-    border-color: $devie__color__primary;
-    box-shadow: 0 0 0 1px $devie__color__primary;
-  }
+.item {
+  flex: 1;
 }
 
 .thumbnail {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
-  aspect-ratio: 16 / 10;
-
-  svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  flex-shrink: 0;
+  border-radius: 4px;
 }
 
-.check {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  display: grid;
-  width: 18px;
-  height: 18px;
-  place-items: center;
-  border-radius: 50%;
-  background: $devie__color__primary;
-  color: $devie__color__primary-label;
-}
-
-.name {
-  font-size: $devie__font-size__small;
+// The list is wider than the trigger so theme names never wrap.
+.popup {
+  min-width: 220px;
 }
