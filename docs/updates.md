@@ -30,5 +30,5 @@ Updates run only in packaged builds. `tauri dev` never reads the update feed
 
 1. Bump `version` in `src-desktop/tauri.conf.json` and commit.
 2. Tag the commit `v<version>` and push the tag.
-3. The `Release Desktop App` workflow drafts the release, builds both macOS
-   targets, uploads them, and publishes the release.
+3. The `Release Desktop App` workflow drafts the release and builds Apple
+   silicon. It uploads the build and publishes the release.
