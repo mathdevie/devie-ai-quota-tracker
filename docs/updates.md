@@ -20,9 +20,10 @@ Updates run only in packaged builds. `tauri dev` never reads the update feed
    ```
 
    - Put the public key in `src-desktop/tauri.conf.json` under
-     `plugins.updater.pubkey` (replace `REPLACE_WITH_TAURI_UPDATER_PUBLIC_KEY`).
+     `plugins.updater.pubkey`.
    - Store the private key as `TAURI_SIGNING_PRIVATE_KEY` and its password as
      `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` in the `Release` environment.
+   - Keep a local backup of the private key and its password.
 3. Keep the Apple signing secrets from `docs/macos-signing.md`.
 
 ## Release

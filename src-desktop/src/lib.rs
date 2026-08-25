@@ -234,33 +234,6 @@ fn update_tray_title(app: &AppHandle, state: &DashboardState) {
     }
 }
 
-/// Moves the data written by the app while it was named "Devie QT"
-/// (`com.devie.qt`) into the current data folder. Runs once.
-fn migrate_legacy_data(app_data_dir: &std::path::Path) {
-    let Some(parent) = app_data_dir.parent() else {
-        return;
-    };
-    let legacy = parent.join("com.devie.qt");
-    let new_database = app_data_dir.join("devie-quota.sqlite3");
-    if !legacy.is_dir() || new_database.exists() {
-        return;
-    }
-    if std::fs::create_dir_all(app_data_dir).is_err() {
-        return;
-    }
-    for (from, to) in [
-        ("devie-qt.sqlite3", "devie-quota.sqlite3"),
-        ("devie-qt.sqlite3-wal", "devie-quota.sqlite3-wal"),
-        ("devie-qt.sqlite3-shm", "devie-quota.sqlite3-shm"),
-        ("credentials", "credentials"),
-    ] {
-        let source = legacy.join(from);
-        if source.exists() {
-            let _ = std::fs::rename(&source, app_data_dir.join(to));
-        }
-    }
-}
-
 fn show_main_window(app: &AppHandle) -> Result<(), String> {
     let window = app
         .get_webview_window("main")
@@ -368,7 +341,6 @@ pub fn run() {
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
             let app_data_dir = app.path().app_data_dir()?;
-            migrate_legacy_data(&app_data_dir);
             let database = Database::open(app_data_dir.join("devie-quota.sqlite3"))
                 .map_err(std::io::Error::other)?;
             let client = reqwest::Client::builder()
