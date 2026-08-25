@@ -20,7 +20,6 @@ import {
   refreshAll,
   refreshConnection,
   removeConnection,
-  setClaudeCapture,
   setConnectionEnabled,
 } from "@/lib/desktop";
 import Button from "@/ui/Button";
@@ -231,7 +230,15 @@ export default function AppShell() {
         )}
 
         <main className={styles.main}>
-          {view === "quota" && <QuotaView state={state} />}
+          {view === "quota" && (
+            <QuotaView
+              busyId={busyId}
+              onRefresh={(id) =>
+                void run(() => refreshConnection(id), withBusyId(id))
+              }
+              state={state}
+            />
+          )}
           {view === "usage" && <UsageView state={state} />}
           {view === "providers" && !onProviderPage && (
             <ProvidersView onOpen={setProviderPage} state={state} />
@@ -240,9 +247,6 @@ export default function AppShell() {
             <ProviderDetailView
               busyId={busyId}
               onAdd={() => setLoginOpen(true)}
-              onCaptureChange={(id, install) =>
-                void run(() => setClaudeCapture(id, install), withBusyId(id))
-              }
               onEnabledChange={(id, enabled) =>
                 void run(
                   () => setConnectionEnabled(id, enabled),
@@ -259,7 +263,7 @@ export default function AppShell() {
               state={state}
             />
           )}
-          {view === "settings" && <SettingsView state={state} />}
+          {view === "settings" && <SettingsView />}
         </main>
       </div>
 

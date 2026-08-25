@@ -4,19 +4,13 @@ use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
-    AppSettings, CaptureState, ConnectionKind, ConnectionStatus, DashboardState,
-    DiscoveredConnection, Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
+    ConnectionKind, ConnectionStatus, DashboardState, DiscoveredConnection, Provider,
+    ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
 };
 
 #[derive(Clone, Debug)]
 pub struct Database {
     path: PathBuf,
-}
-
-#[derive(Clone, Debug)]
-pub struct CaptureBackup {
-    pub previous_status_line: Option<String>,
-    pub installed_status_line: String,
 }
 
 impl Database {
@@ -49,7 +43,7 @@ impl Database {
                    source TEXT NOT NULL DEFAULT 'Not refreshed',
                    last_updated_at TEXT,
                    last_error TEXT,
-                   capture_state TEXT,
+                   capture_state TEXT, -- unused since the capture feature was removed
                    identity_user_id TEXT,
                    identity_display_name TEXT,
                    identity_plan TEXT,
@@ -73,16 +67,7 @@ impl Database {
                    resets_at TEXT,
                    PRIMARY KEY(snapshot_id, window_key)
                  );
-                 CREATE TABLE IF NOT EXISTS managed_settings_backups (
-                   connection_id TEXT PRIMARY KEY REFERENCES provider_connections(id) ON DELETE CASCADE,
-                   previous_status_line TEXT,
-                   installed_status_line TEXT NOT NULL,
-                   created_at TEXT NOT NULL
-                 );
-                 CREATE TABLE IF NOT EXISTS app_settings (
-                   key TEXT PRIMARY KEY,
-                   value TEXT NOT NULL
-                 );",
+                 ",
             )
             .map_err(|error| error.to_string())?;
         Self::add_column_if_missing(
@@ -116,33 +101,6 @@ impl Database {
                 )
                 .map_err(|error| error.to_string())?;
         }
-        Ok(())
-    }
-
-    pub fn settings(&self) -> Result<AppSettings, String> {
-        let connection = self.connection()?;
-        let value = connection
-            .query_row(
-                "SELECT value FROM app_settings WHERE key = 'app'",
-                [],
-                |row| row.get::<_, String>(0),
-            )
-            .optional()
-            .map_err(|error| error.to_string())?;
-        Ok(value
-            .and_then(|text| serde_json::from_str(&text).ok())
-            .unwrap_or_else(AppSettings::defaults))
-    }
-
-    pub fn save_settings(&self, settings: &AppSettings) -> Result<(), String> {
-        let text = serde_json::to_string(settings).map_err(|error| error.to_string())?;
-        self.connection()?
-            .execute(
-                "INSERT INTO app_settings(key, value) VALUES ('app', ?1)
-                 ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-                [text],
-            )
-            .map_err(|error| error.to_string())?;
         Ok(())
     }
 
@@ -196,14 +154,13 @@ impl Database {
             transaction
                 .execute(
                     "INSERT INTO provider_connections (
-                       id, provider, label, source_locator, capture_state,
+                       id, provider, label, source_locator,
                        identity_user_id, identity_display_name, identity_plan, updated_at, kind
-                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
                      ON CONFLICT(id) DO UPDATE SET
                        source_locator = excluded.source_locator,
                        label = excluded.label,
                        kind = excluded.kind,
-                       capture_state = COALESCE(provider_connections.capture_state, excluded.capture_state),
                        identity_user_id = COALESCE(excluded.identity_user_id, provider_connections.identity_user_id),
                        identity_display_name = COALESCE(excluded.identity_display_name, provider_connections.identity_display_name),
                        identity_plan = COALESCE(excluded.identity_plan, provider_connections.identity_plan),
@@ -213,7 +170,6 @@ impl Database {
                         item.provider.as_str(),
                         item.label,
                         item.source_locator,
-                        item.capture_state.as_ref().map(CaptureState::as_str),
                         item.identity.as_ref().and_then(|value| value.provider_user_id.as_deref()),
                         item.identity.as_ref().and_then(|value| value.display_name.as_deref()),
                         item.identity.as_ref().and_then(|value| value.plan.as_deref()),
@@ -232,7 +188,7 @@ impl Database {
         let mut statement = connection
             .prepare(
                 "SELECT id, provider, label, source_locator, enabled, status, source,
-                        last_updated_at, last_error, capture_state,
+                        last_updated_at, last_error,
                         identity_user_id, identity_display_name, identity_plan, kind
                  FROM provider_connections
                  ORDER BY CASE provider WHEN 'claude' THEN 0 WHEN 'codex' THEN 1 ELSE 2 END,
@@ -244,9 +200,9 @@ impl Database {
             .query_map([], |row| {
                 let provider_text: String = row.get(1)?;
                 let provider = Provider::from_db(&provider_text).unwrap_or(Provider::Claude);
-                let user_id: Option<String> = row.get(10)?;
-                let display_name: Option<String> = row.get(11)?;
-                let plan: Option<String> = row.get(12)?;
+                let user_id: Option<String> = row.get(9)?;
+                let display_name: Option<String> = row.get(10)?;
+                let plan: Option<String> = row.get(11)?;
                 let identity = if user_id.is_some() || display_name.is_some() || plan.is_some() {
                     Some(RemoteIdentity {
                         provider_user_id: user_id,
@@ -260,7 +216,7 @@ impl Database {
                 Ok(ProviderConnection {
                     id: row.get(0)?,
                     provider,
-                    kind: ConnectionKind::from_db(&row.get::<_, String>(13)?),
+                    kind: ConnectionKind::from_db(&row.get::<_, String>(12)?),
                     label: row.get(2)?,
                     source_locator: row.get(3)?,
                     enabled: row.get::<_, i64>(4)? != 0,
@@ -268,9 +224,6 @@ impl Database {
                     source: row.get(6)?,
                     last_updated_at: row.get(7)?,
                     last_error: row.get(8)?,
-                    capture_state: CaptureState::from_db(
-                        row.get::<_, Option<String>>(9)?.as_deref(),
-                    ),
                     identity,
                     windows: Vec::new(),
                 })
@@ -417,69 +370,6 @@ impl Database {
             .map_err(|error| error.to_string())?;
         Ok(())
     }
-
-    pub fn set_capture_state(&self, id: &str, state: CaptureState) -> Result<(), String> {
-        self.connection()?
-            .execute(
-                "UPDATE provider_connections SET capture_state = ?2, updated_at = ?3 WHERE id = ?1",
-                params![id, state.as_str(), Utc::now().to_rfc3339()],
-            )
-            .map_err(|error| error.to_string())?;
-        Ok(())
-    }
-
-    pub fn save_capture_backup(
-        &self,
-        id: &str,
-        previous_status_line: Option<&str>,
-        installed_status_line: &str,
-    ) -> Result<(), String> {
-        self.connection()?
-            .execute(
-                "INSERT INTO managed_settings_backups(
-                   connection_id, previous_status_line, installed_status_line, created_at
-                 ) VALUES (?1, ?2, ?3, ?4)
-                 ON CONFLICT(connection_id) DO UPDATE SET
-                   previous_status_line = excluded.previous_status_line,
-                   installed_status_line = excluded.installed_status_line,
-                   created_at = excluded.created_at",
-                params![
-                    id,
-                    previous_status_line,
-                    installed_status_line,
-                    Utc::now().to_rfc3339()
-                ],
-            )
-            .map_err(|error| error.to_string())?;
-        Ok(())
-    }
-
-    pub fn capture_backup(&self, id: &str) -> Result<Option<CaptureBackup>, String> {
-        self.connection()?
-            .query_row(
-                "SELECT previous_status_line, installed_status_line
-                 FROM managed_settings_backups WHERE connection_id = ?1",
-                [id],
-                |row| {
-                    Ok(CaptureBackup {
-                        previous_status_line: row.get(0)?,
-                        installed_status_line: row.get(1)?,
-                    })
-                },
-            )
-            .optional()
-            .map_err(|error| error.to_string())
-    }
-
-    pub fn delete_capture_backup(&self, id: &str) -> Result<(), String> {
-        self.connection()?
-            .execute(
-                "DELETE FROM managed_settings_backups WHERE connection_id = ?1",
-                [id],
-            )
-            .map_err(|error| error.to_string())?;
-        Ok(())
-    }
 }
 
 #[cfg(test)]
@@ -497,7 +387,6 @@ mod tests {
                 kind: ConnectionKind::Local,
                 label: "Claude · One".into(),
                 source_locator: "/tmp/.claude-one".into(),
-                capture_state: Some(CaptureState::Available),
                 identity: None,
             },
             DiscoveredConnection {
@@ -506,7 +395,6 @@ mod tests {
                 kind: ConnectionKind::Oauth,
                 label: "Claude · Two".into(),
                 source_locator: "/tmp/.claude-two".into(),
-                capture_state: Some(CaptureState::Available),
                 identity: None,
             },
         ];
@@ -547,16 +435,5 @@ mod tests {
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections.len(), 1);
         assert_eq!(state.connections[0].kind, ConnectionKind::Oauth);
-    }
-
-    #[test]
-    fn stores_settings() {
-        let directory = tempfile::tempdir().expect("temporary directory");
-        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
-        assert!(database.settings().expect("defaults").translucent);
-        database
-            .save_settings(&AppSettings { translucent: false })
-            .expect("save");
-        assert!(!database.settings().expect("saved").translucent);
     }
 }

@@ -30,10 +30,9 @@ strip-ansi-escapes = "0.2"
 tauri = { version = "=2.11.3", features = ["tray-icon", "macos-private-api"] }
 tauri-plugin-positioner = { version = "2.3.1", features = ["tray-icon"] }
 thiserror = "2"
-tokio = { version = "1", features = ["time"] }
+tokio = { version = "1", features = ["time", "sync"] }
 uuid = { version = "1", features = ["v5", "serde"] }
 walkdir = "2"
-window-vibrancy = "0.6"
 zeroize = "1"
 
 [dev-dependencies]

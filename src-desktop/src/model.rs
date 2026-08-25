@@ -82,33 +82,6 @@ impl ConnectionStatus {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum CaptureState {
-    Available,
-    Installed,
-    Unsupported,
-}
-
-impl CaptureState {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Available => "available",
-            Self::Installed => "installed",
-            Self::Unsupported => "unsupported",
-        }
-    }
-
-    pub fn from_db(value: Option<&str>) -> Option<Self> {
-        match value {
-            Some("available") => Some(Self::Available),
-            Some("installed") => Some(Self::Installed),
-            Some("unsupported") => Some(Self::Unsupported),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct QuotaWindow {
@@ -146,8 +119,6 @@ pub struct ProviderConnection {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub capture_state: Option<CaptureState>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub identity: Option<RemoteIdentity>,
     pub windows: Vec<QuotaWindow>,
 }
@@ -169,20 +140,7 @@ pub struct DiscoveredConnection {
     pub kind: ConnectionKind,
     pub label: String,
     pub source_locator: String,
-    pub capture_state: Option<CaptureState>,
     pub identity: Option<RemoteIdentity>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct AppSettings {
-    pub translucent: bool,
-}
-
-impl AppSettings {
-    pub fn defaults() -> Self {
-        Self { translucent: true }
-    }
 }
 
 #[derive(Clone, Debug)]

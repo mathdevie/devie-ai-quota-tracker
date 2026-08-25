@@ -1,9 +1,4 @@
-import type {
-  AppSettings,
-  DashboardState,
-  LoginStart,
-  Provider,
-} from "./contracts";
+import type { DashboardState, LoginStart, Provider } from "./contracts";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -115,25 +110,6 @@ export async function setConnectionEnabled(
     };
   }
   return call("set_connection_enabled", { connectionId, enabled });
-}
-
-export async function setClaudeCapture(
-  connectionId: string,
-  install: boolean,
-): Promise<DashboardState> {
-  if (!isDesktop()) return previewState;
-  const command = install ? "install_claude_capture" : "remove_claude_capture";
-  return call(command, { connectionId });
-}
-
-export async function getAppSettings(): Promise<AppSettings | undefined> {
-  if (!isDesktop()) return undefined;
-  return call("get_app_settings");
-}
-
-export async function setTranslucency(enabled: boolean): Promise<void> {
-  if (!isDesktop()) return;
-  await call("set_translucency", { enabled });
 }
 
 export async function openMainWindow(): Promise<void> {

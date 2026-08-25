@@ -1,6 +1,5 @@
 export type Provider = "claude" | "codex" | "copilot";
 export type ConnectionStatus = "ready" | "stale" | "needs_login" | "error";
-export type CaptureState = "available" | "installed" | "unsupported";
 /** `oauth`: the app holds tokens it obtained. `local`: a CLI on this Mac owns them. */
 export type ConnectionKind = "oauth" | "local";
 
@@ -28,7 +27,6 @@ export interface ProviderConnection {
   source: string;
   lastUpdatedAt?: string;
   lastError?: string;
-  captureState?: CaptureState;
   identity?: RemoteIdentity;
   windows: QuotaWindow[];
 }
@@ -38,10 +36,6 @@ export interface DashboardState {
   connections: ProviderConnection[];
   databasePath?: string;
   refreshedAt?: string;
-}
-
-export interface AppSettings {
-  translucent: boolean;
 }
 
 export interface LoginStart {

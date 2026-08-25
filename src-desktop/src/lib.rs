@@ -1,4 +1,3 @@
-mod capture;
 mod credentials;
 mod db;
 mod discovery;
@@ -11,7 +10,7 @@ mod pty;
 use std::{path::PathBuf, time::Duration};
 
 use db::Database;
-use model::{AppSettings, ConnectionStatus, DashboardState};
+use model::{ConnectionStatus, DashboardState};
 use oauth::{LoginSessions, LoginStart};
 use tauri::{
     menu::{Menu, MenuItem},
@@ -68,7 +67,7 @@ async fn finish_login(
     core.database.set_enabled(&connection.id, true)?;
     credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
     if let Some(connection) = core.database.connection_by_id(&connection.id)? {
-        refresh_one(&core, &connection).await;
+        refresh_one(&core, &connection, true).await;
     }
     publish_state(&app, &core)
 }
@@ -100,7 +99,7 @@ fn remove_connection(
 
 #[tauri::command]
 async fn refresh_all(app: AppHandle) -> Result<DashboardState, String> {
-    refresh_all_internal(&app).await
+    refresh_all_internal(&app, true).await
 }
 
 #[tauri::command]
@@ -113,7 +112,7 @@ async fn refresh_connection(
         .database
         .connection_by_id(&connection_id)?
         .ok_or_else(|| "The connection does not exist.".to_string())?;
-    refresh_one(&core, &connection).await;
+    refresh_one(&core, &connection, true).await;
     publish_state(&app, &core)
 }
 
@@ -126,52 +125,6 @@ fn set_connection_enabled(
 ) -> Result<DashboardState, String> {
     core.database.set_enabled(&connection_id, enabled)?;
     publish_state(&app, &core)
-}
-
-#[tauri::command]
-fn install_claude_capture(
-    app: AppHandle,
-    core: State<'_, Core>,
-    connection_id: String,
-) -> Result<DashboardState, String> {
-    let connection = core
-        .database
-        .connection_by_id(&connection_id)?
-        .ok_or_else(|| "The Claude connection does not exist.".to_string())?;
-    capture::install(&core.database, &core.app_data_dir, &connection)?;
-    publish_state(&app, &core)
-}
-
-#[tauri::command]
-fn remove_claude_capture(
-    app: AppHandle,
-    core: State<'_, Core>,
-    connection_id: String,
-) -> Result<DashboardState, String> {
-    let connection = core
-        .database
-        .connection_by_id(&connection_id)?
-        .ok_or_else(|| "The Claude connection does not exist.".to_string())?;
-    capture::remove(&core.database, &connection)?;
-    publish_state(&app, &core)
-}
-
-#[tauri::command]
-fn get_app_settings(core: State<'_, Core>) -> Result<AppSettings, String> {
-    core.database.settings()
-}
-
-#[tauri::command]
-fn set_translucency(
-    app: AppHandle,
-    core: State<'_, Core>,
-    enabled: bool,
-) -> Result<AppSettings, String> {
-    let mut settings = core.database.settings()?;
-    settings.translucent = enabled;
-    core.database.save_settings(&settings)?;
-    apply_translucency(&app, enabled);
-    Ok(settings)
 }
 
 #[tauri::command]
@@ -197,18 +150,20 @@ async fn sync_discovery(core: &Core) -> Result<(), String> {
     Ok(())
 }
 
-async fn refresh_all_internal(app: &AppHandle) -> Result<DashboardState, String> {
+/// Refreshes every enabled connection. `force` skips the short quota cache,
+/// which the user expects from a refresh button but not from the timer.
+async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
     sync_discovery(&core).await?;
     let connections = core.database.dashboard_state()?.connections;
     for connection in connections.into_iter().filter(|item| item.enabled) {
-        refresh_one(&core, &connection).await;
+        refresh_one(&core, &connection, force).await;
     }
     publish_state(app, &core)
 }
 
-async fn refresh_one(core: &Core, connection: &model::ProviderConnection) {
-    match providers::refresh(connection, &core.app_data_dir, &core.client).await {
+async fn refresh_one(core: &Core, connection: &model::ProviderConnection, force: bool) {
+    match providers::refresh(connection, &core.app_data_dir, &core.client, force).await {
         Ok(reading) => {
             let _ = core.database.save_reading(&connection.id, &reading);
         }
@@ -272,56 +227,25 @@ fn toggle_popover(app: &AppHandle) {
     let _ = window.set_focus();
 }
 
-/// Turns the macOS sidebar vibrancy on or off for the main window.
-fn apply_translucency(app: &AppHandle, enabled: bool) {
-    #[cfg(target_os = "macos")]
-    {
-        use window_vibrancy::{
-            apply_vibrancy, clear_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,
-        };
-        let Some(window) = app.get_webview_window("main") else {
-            return;
-        };
-        if enabled {
-            let _ = apply_vibrancy(
-                &window,
-                NSVisualEffectMaterial::Sidebar,
-                Some(NSVisualEffectState::Active),
-                None,
-            );
-        } else {
-            let _ = clear_vibrancy(&window);
-        }
-    }
-    #[cfg(not(target_os = "macos"))]
-    let _ = (app, enabled);
-}
-
-fn build_windows(
-    app: &tauri::App,
-    settings: &AppSettings,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
         .title("Devie QT")
         .inner_size(1120.0, 760.0)
         .min_inner_size(780.0, 560.0)
         .center();
     // The interface draws its own title bar. macOS keeps the native traffic
-    // lights, placed inside the sidebar header, and the window stays
-    // transparent so the sidebar can show the desktop vibrancy behind it.
+    // lights, placed inside the sidebar header.
     #[cfg(target_os = "macos")]
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(18.0, 20.0))
-        .transparent(true);
-    let _main = main.build()?;
-    apply_translucency(app.handle(), settings.translucent);
+        .traffic_light_position(tauri::LogicalPosition::new(18.0, 20.0));
+    main.build()?;
 
     WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
         .title("Devie QT Quotas")
-        .inner_size(420.0, 650.0)
-        .min_inner_size(380.0, 420.0)
+        .inner_size(380.0, 480.0)
+        .min_inner_size(320.0, 320.0)
         .max_inner_size(480.0, 760.0)
         .resizable(true)
         .decorations(false)
@@ -351,7 +275,7 @@ fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             "refresh" => {
                 let app = app.clone();
                 tauri::async_runtime::spawn(async move {
-                    let _ = refresh_all_internal(&app).await;
+                    let _ = refresh_all_internal(&app, true).await;
                 });
             }
             "quit" => app.exit(0),
@@ -388,7 +312,6 @@ pub fn run() {
             let app_data_dir = app.path().app_data_dir()?;
             let database = Database::open(app_data_dir.join("devie-qt.sqlite3"))
                 .map_err(std::io::Error::other)?;
-            let settings = database.settings().map_err(std::io::Error::other)?;
             let client = reqwest::Client::builder()
                 .timeout(Duration::from_secs(20))
                 .build()?;
@@ -398,13 +321,13 @@ pub fn run() {
                 client,
                 logins: LoginSessions::default(),
             });
-            build_windows(app, &settings)?;
+            build_windows(app)?;
             build_tray(app)?;
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 loop {
-                    let _ = refresh_all_internal(&handle).await;
+                    let _ = refresh_all_internal(&handle, false).await;
                     tokio::time::sleep(Duration::from_secs(300)).await;
                 }
             });
@@ -430,10 +353,6 @@ pub fn run() {
             refresh_all,
             refresh_connection,
             set_connection_enabled,
-            install_claude_capture,
-            remove_claude_capture,
-            get_app_settings,
-            set_translucency,
             open_main_window,
             hide_popover,
         ])

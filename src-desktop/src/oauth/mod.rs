@@ -240,7 +240,6 @@ pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> Discovered
         kind: ConnectionKind::Oauth,
         label: format!("{provider_name} · {who}"),
         source_locator: locator,
-        capture_state: None,
         identity: Some(outcome.identity.clone()),
     }
 }
@@ -250,6 +249,7 @@ pub async fn refresh_quota(
     connection: &ProviderConnection,
     app_data_dir: &Path,
     client: &reqwest::Client,
+    force: bool,
 ) -> Result<QuotaReading, String> {
     let mut current = credentials::load(app_data_dir, &connection.id)?;
     let lead = match connection.provider {
@@ -260,11 +260,11 @@ pub async fn refresh_quota(
     if current.refresh_token.is_some() && current.expires_within(lead) {
         current = renew(connection, app_data_dir, client, &current).await?;
     }
-    match read_quota(connection, client, &current).await {
+    match read_quota(connection, client, &current, force).await {
         Err(message) if message.contains("expired") && current.refresh_token.is_some() => {
             // The token may have been revoked early. Renew once, then retry.
             let renewed = renew(connection, app_data_dir, client, &current).await?;
-            read_quota(connection, client, &renewed).await
+            read_quota(connection, client, &renewed, force).await
         }
         result => result,
     }
@@ -290,9 +290,10 @@ async fn read_quota(
     connection: &ProviderConnection,
     client: &reqwest::Client,
     current: &Credentials,
+    force: bool,
 ) -> Result<QuotaReading, String> {
     match connection.provider {
-        Provider::Claude => claude::usage(client, &current.access_token).await,
+        Provider::Claude => claude::cached_usage(client, &current.access_token, force).await,
         Provider::Codex => codex::usage(client, current).await,
         Provider::Copilot => {
             let login = connection

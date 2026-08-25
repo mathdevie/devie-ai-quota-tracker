@@ -26,10 +26,9 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - In-app OAuth sign-in for Claude, Codex, and GitHub Copilot accounts.
 - Any number of accounts per provider.
 - Local discovery of existing Claude, Codex, and GitHub CLI profiles.
-- An optional passive Claude status-line capture.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
-- Ten bundled Devie UI themes and an optional translucent sidebar.
+- Ten bundled Devie UI themes.
 - Signed and notarized Apple silicon builds through GitHub Actions.
 
 ## Provider support
@@ -40,9 +39,17 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 
-Existing CLI profiles are also listed as read-only "CLI" connections. Claude
-CLI folders use the status-line capture or `/usage`; Codex folders use local
-session records or `/status`; GitHub CLI accounts use `gh auth token`.
+Existing CLI profiles are also listed as "CLI" connections. Claude CLI
+folders use the usage endpoint with the token Claude Code stored for that folder (macOS Keychain `Claude Code-credentials`
+plus a short SHA-256 suffix for `CLAUDE_CONFIG_DIR` folders, or
+`.credentials.json`). The app never renews a CLI-owned token; when it expires,
+the card asks you to run `claude` once. Codex folders use local session
+records or `/status`; GitHub CLI accounts use `gh auth token`.
+
+Claude usage reads share one cache, in the same way as 9router: a read stays
+fresh for five minutes on the timer (a refresh button always fetches), one
+request per token runs at a time, a `429` pauses the endpoint for three
+minutes, and a failed read shows the last good data as "Stale".
 
 Devie QT finds CLI commands in the normal shell path and common macOS install
 folders. These folders include Homebrew, `~/.local/bin`, Bun, Cargo, Volta,
@@ -59,17 +66,6 @@ per connection with `0600` permissions:
 
 The app renews Claude and Codex tokens before they expire. Removing an account
 deletes its token file.
-
-## Claude capture
-
-The passive Claude source is optional. It installs a small status-line wrapper
-for one Claude configuration directory.
-
-The installer saves the previous `statusLine` value. The remover restores that
-exact value. The remover stops if another tool changed the value after setup.
-
-Without the capture, Devie QT starts Claude Code in a pseudo-terminal and reads
-the `/usage` result.
 
 ## Architecture
 

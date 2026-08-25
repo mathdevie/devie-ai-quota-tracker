@@ -15,7 +15,6 @@ export const previewState: DashboardState = {
       status: "ready",
       source: "Claude Code status line",
       lastUpdatedAt: "2026-08-25T13:42:00Z",
-      captureState: "installed",
       identity: { displayName: "Work team", plan: "Max" },
       windows: [
         {
@@ -42,7 +41,6 @@ export const previewState: DashboardState = {
       status: "stale",
       source: "Claude Code /usage",
       lastUpdatedAt: "2026-08-25T13:28:00Z",
-      captureState: "available",
       identity: { displayName: "Personal", plan: "Pro" },
       windows: [
         {

@@ -9,10 +9,6 @@
   border-right: 1px solid $devie__color__line;
   background: $devie__color__background-sub;
   user-select: none;
-
-  :global(html[data-translucent="true"]) & {
-    background: color-mix(in srgb, $devie__color__background-sub 55%, transparent);
-  }
 }
 
 // Space for the native macOS traffic lights.
