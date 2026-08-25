@@ -628,7 +628,6 @@ dependencies = [
  "tokio",
  "uuid",
  "walkdir",
- "window-vibrancy",
  "zeroize",
 ]
 

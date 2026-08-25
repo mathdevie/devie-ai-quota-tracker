@@ -1,4 +1,4 @@
-import { RefreshCw, TerminalSquare, Trash2 } from "lucide-react";
+import { RefreshCw, Trash2 } from "lucide-react";
 import type {
   DashboardState,
   Provider,
@@ -43,7 +43,6 @@ export default function ProviderDetailView({
   state,
   busyId,
   onEnabledChange,
-  onCaptureChange,
   onRefresh,
   onRemove,
   onAdd,
@@ -52,7 +51,6 @@ export default function ProviderDetailView({
   state: DashboardState;
   busyId?: string;
   onEnabledChange: (id: string, enabled: boolean) => void;
-  onCaptureChange: (id: string, install: boolean) => void;
   onRefresh: (id: string) => void;
   onRemove: (id: string) => void;
   onAdd: () => void;
@@ -89,26 +87,6 @@ export default function ProviderDetailView({
                   <span className={styles.rowHint}>
                     Sign in with the CLI in a terminal.
                   </span>
-                )}
-              {connection.provider === "claude" &&
-                connection.kind === "local" &&
-                connection.captureState !== "unsupported" && (
-                  <Button
-                    disabled={busyId === connection.id}
-                    onClick={() =>
-                      onCaptureChange(
-                        connection.id,
-                        connection.captureState !== "installed",
-                      )
-                    }
-                    size="sm"
-                    variant="secondary"
-                  >
-                    <TerminalSquare size={14} />
-                    {connection.captureState === "installed"
-                      ? "Remove capture"
-                      : "Enable capture"}
-                  </Button>
                 )}
               <Button
                 aria-label={`Refresh ${connection.label}`}

@@ -6,6 +6,37 @@
   margin: 0 auto;
   padding: $devie__spacing__x1 $devie__spacing__x3 $devie__spacing__x6;
   gap: $devie__spacing__x3;
+
+  &[data-wide] {
+    width: 100%;
+    gap: $devie__spacing__x2;
+  }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.filterTrigger {
+  min-height: 28px;
+  font-size: $devie__font-size__small;
+}
+
+.filterCount {
+  margin-left: auto;
+  color: $devie__color__text-sub;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardGrid {
+  display: grid;
+  align-items: start;
+  gap: $devie__spacing__x2;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
 }
 
 .list {

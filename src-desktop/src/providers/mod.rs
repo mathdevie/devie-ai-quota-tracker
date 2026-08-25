@@ -1,4 +1,5 @@
 mod claude;
+pub mod claude_credentials;
 mod codex;
 pub mod copilot;
 
@@ -12,12 +13,13 @@ pub async fn refresh(
     connection: &ProviderConnection,
     app_data_dir: &Path,
     client: &reqwest::Client,
+    force: bool,
 ) -> Result<QuotaReading, String> {
     if connection.kind == ConnectionKind::Oauth {
-        return crate::oauth::refresh_quota(connection, app_data_dir, client).await;
+        return crate::oauth::refresh_quota(connection, app_data_dir, client, force).await;
     }
     match connection.provider {
-        Provider::Claude => claude::refresh(connection, app_data_dir).await,
+        Provider::Claude => claude::refresh(connection, client, force).await,
         Provider::Codex => codex::refresh(connection).await,
         Provider::Copilot => copilot::refresh(connection, client).await,
     }
@@ -54,7 +56,10 @@ fn timestamp_string(timestamp: f64) -> Option<String> {
     chrono::DateTime::from_timestamp(seconds as i64, 0).map(|date| date.to_rfc3339())
 }
 
-fn find_object_with_key<'a>(value: &'a Value, key: &str) -> Option<&'a Map<String, Value>> {
+pub(crate) fn find_object_with_key<'a>(
+    value: &'a Value,
+    key: &str,
+) -> Option<&'a Map<String, Value>> {
     match value {
         Value::Object(object) => {
             if let Some(found) = object.get(key).and_then(Value::as_object) {
