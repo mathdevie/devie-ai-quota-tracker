@@ -222,11 +222,25 @@
   padding: 1px 6px;
   border: 1px solid $devie__color__line;
   border-radius: 999px;
+  background: transparent;
   color: $devie__color__text-sub;
+  font: inherit;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.04em;
   vertical-align: middle;
+  cursor: help;
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: 1px;
+  }
+}
+
+.kindTip {
+  max-width: 280px;
+  font-size: $devie__font-size__small;
+  line-height: 1.4;
 }
 
 .rowHint {
