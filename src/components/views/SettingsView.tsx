@@ -1,9 +1,11 @@
 "use client";
 
 import { RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { DashboardState } from "@/lib/contracts";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
+import LanguagePicker from "../LanguagePicker";
 import SettingRow from "../SettingRow";
 import ThemePicker from "../ThemePicker";
 import { useAppUpdater } from "../updater/AppUpdater";
@@ -12,6 +14,7 @@ import styles from "./views.module.scss";
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 
 function UpdateRow() {
+  const { t } = useTranslation();
   const {
     enabled,
     status,
@@ -23,13 +26,21 @@ function UpdateRow() {
   } = useAppUpdater();
 
   const statusText = (() => {
-    if (!enabled) return "Updates work in the packaged app only.";
-    if (status === "checking") return "Checking…";
-    if (status === "downloading") return `Downloading ${progress}%`;
-    if (status === "ready") return `Version ${info?.version} is ready.`;
-    if (status === "installing") return "Installing…";
-    if (status === "error") return error ?? "The update failed.";
-    return `Devie Quota ${APP_VERSION} is up to date.`;
+    if (!enabled) return t("Settings.Updates.Status.PackagedOnly");
+    if (status === "checking") return t("Settings.Updates.Status.Checking");
+    if (status === "downloading") {
+      return t("Settings.Updates.Status.Downloading", { progress });
+    }
+    if (status === "ready") {
+      return t("Settings.Updates.Status.Ready", { version: info?.version });
+    }
+    if (status === "installing") {
+      return t("Settings.Updates.Status.Installing");
+    }
+    if (status === "error") {
+      return error ?? t("Settings.Updates.Status.Failed");
+    }
+    return t("Settings.Updates.Status.UpToDate", { version: APP_VERSION });
   })();
 
   return (
@@ -39,11 +50,11 @@ function UpdateRow() {
           {statusText}
         </span>
       }
-      title="Updates"
+      title={t("Settings.Updates.Title")}
     >
       {status === "ready" ? (
         <Button onClick={() => void installUpdate()} size="sm">
-          Restart to update
+          {t("Settings.Updates.RestartToUpdate")}
         </Button>
       ) : (
         <Button
@@ -58,7 +69,7 @@ function UpdateRow() {
           variant="secondary"
         >
           <RefreshCw size={14} />
-          Check for updates
+          {t("Settings.Updates.CheckForUpdates")}
         </Button>
       )}
     </SettingRow.Row>
@@ -74,18 +85,28 @@ export default function SettingsView({
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <section className={styles.page}>
       <SettingRow.List>
-        <SettingRow.Row subtitle="Colors of the app windows" title="Theme">
+        <SettingRow.Row
+          subtitle={t("Settings.ThemeDescription")}
+          title={t("Settings.Theme")}
+        >
           <ThemePicker />
         </SettingRow.Row>
         <SettingRow.Row
-          subtitle="Show the quotas in the macOS menu bar"
-          title="Menu bar item"
+          subtitle={t("Settings.LanguageDescription")}
+          title={t("Settings.Language")}
+        >
+          <LanguagePicker />
+        </SettingRow.Row>
+        <SettingRow.Row
+          subtitle={t("Settings.MenuBarItemDescription")}
+          title={t("Settings.MenuBarItem")}
         >
           <Switch.Root
-            aria-label="Show the menu bar item"
+            aria-label={t("Settings.ShowMenuBarItem")}
             checked={state.settings.showMenuBarItem}
             disabled={busy}
             onCheckedChange={(checked) => onMenuBarItemChange(checked)}

@@ -212,6 +212,12 @@ export async function setMenuBarItemVisible(
   return call("set_menu_bar_item_visible", { visible });
 }
 
+/** Tells the Rust side which language to use for the tray menu and alerts. */
+export async function setLanguage(locale: string): Promise<void> {
+  if (!isDesktop()) return;
+  await call("set_language", { locale });
+}
+
 export async function openMainWindow(): Promise<void> {
   if (!isDesktop()) return;
   await call("open_main_window");

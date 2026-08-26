@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { fullName } from "@/lib/labels";
 import Button from "@/ui/Button";
@@ -26,6 +27,7 @@ export default function AutoPingDialog({
   /** Resolves to true when the setting was saved and the dialog can close. */
   onSubmit: (id: string, enabled: boolean) => Promise<boolean>;
 }) {
+  const { t, i18n } = useTranslation();
   const [enabled, setEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -59,7 +61,7 @@ export default function AutoPingDialog({
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>Auto-ping</Dialog.Title>
+              <Dialog.Title>{t("AutoPing.Title")}</Dialog.Title>
               {connection && (
                 <Dialog.Description>{fullName(connection)}</Dialog.Description>
               )}
@@ -71,11 +73,11 @@ export default function AutoPingDialog({
                     checked={supported && enabled}
                     description={
                       supported
-                        ? "Send one small request after a session resets."
-                        : "Auto-ping needs a Claude or Codex sign-in made in this app. Other accounts cannot use it."
+                        ? t("AutoPing.SupportedDescription")
+                        : t("AutoPing.UnsupportedDescription")
                     }
                     disabled={!supported}
-                    label="Start the next session"
+                    label={t("AutoPing.StartNextSession")}
                     onChange={setEnabled}
                   />
                 </OptionRow.List>
@@ -86,8 +88,11 @@ export default function AutoPingDialog({
                 )}
                 {connection?.autoPing.lastPingAt && (
                   <OptionRow.Note>
-                    Last request:{" "}
-                    {new Date(connection.autoPing.lastPingAt).toLocaleString()}
+                    {t("AutoPing.LastRequest", {
+                      date: new Date(
+                        connection.autoPing.lastPingAt,
+                      ).toLocaleString(i18n.language),
+                    })}
                   </OptionRow.Note>
                 )}
               </div>
@@ -98,10 +103,10 @@ export default function AutoPingDialog({
                 type="button"
                 variant="secondary"
               >
-                Cancel
+                {t("Common.Cancel")}
               </Button>
               <Button isLoading={saving} type="submit">
-                Save
+                {t("Common.Save")}
               </Button>
             </Dialog.Footer>
           </form>

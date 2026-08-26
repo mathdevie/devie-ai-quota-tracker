@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "fi-FI",
+    "EndonymName": "Suomi"
+  },
+  "Metadata": {
+    "Description": "Paikallinen tekoälytilausten kiintiöiden seuranta"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Peruuta",
+    "Save": "Tallenna",
+    "Close": "Sulje",
+    "Refresh": "Päivitä",
+    "TryAgain": "Yritä uudelleen",
+    "Theme": "Teema"
+  },
+  "Nav": {
+    "Sections": "Osiot",
+    "Quota": "Kiintiö",
+    "Providers": "Palveluntarjoajat",
+    "Settings": "Asetukset",
+    "BackToProviders": "Takaisin palveluntarjoajiin"
+  },
+  "Connection": {
+    "ActionsFor": "Toiminnot: {{name}}",
+    "NoQuotaData": "Ei kiintiötietoja",
+    "Status": {
+      "Ready": "Valmis",
+      "Stale": "Vanhentunut",
+      "Login": "Kirjaudu",
+      "SignInNeeded": "Kirjautuminen vaaditaan",
+      "Error": "Virhe"
+    },
+    "Menu": {
+      "Rename": "Nimeä uudelleen",
+      "Alerts": "Hälytykset",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Päivitä",
+      "Enable": "Ota käyttöön",
+      "Disable": "Poista käytöstä",
+      "Remove": "Poista"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Palveluntarjoaja",
+    "FilterSort": "Järjestys",
+    "AllProviders": "Kaikki palveluntarjoajat",
+    "Sort": {
+      "Expiring": "Pian vanhenevat ensin",
+      "LeastLeft": "Vähiten jäljellä",
+      "MostLeft": "Eniten jäljellä",
+      "Name": "Nimi"
+    },
+    "NoMatch": "Yksikään käytössä oleva tili ei vastaa näitä suodattimia.",
+    "NoAccounts": "Ei vielä tilejä. Yhdistä palveluntarjoaja nähdäksesi sen kiintiöt.",
+    "OpenProviders": "Avaa palveluntarjoajat",
+    "RefreshQuotas": "Päivitä kiintiöt",
+    "Reset": {
+      "Now": "nyt",
+      "InDaysHours": "{{days}} pv {{hours}} t kuluttua",
+      "InHoursMinutes": "{{hours}} t {{minutes}} min kuluttua",
+      "InMinutes": "{{minutes}} min kuluttua"
+    },
+    "Pin": {
+      "Shown": "{{label}} näkyy valikkorivillä",
+      "Show": "Näytä {{label}} valikkorivillä",
+      "Title": "Näytä valikkorivillä"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Avaa hallintapaneeli",
+    "NoProviders": "Ei palveluntarjoajia"
+  },
+  "Providers": {
+    "Active": "Aktiiviset",
+    "Available": "Saatavilla",
+    "NotSupportedYet": "Ei vielä tuettu",
+    "Connected": "Yhdistetty {{total}}",
+    "Attention": "Huomio {{total}}",
+    "AddAccount": "Lisää tili",
+    "AddProviderAccount": "Lisää {{name}}-tili",
+    "NoAccountsYet": "Ei vielä {{name}}-tilejä.",
+    "SignInWithCli": "Kirjaudu CLI:llä päätteessä.",
+    "AutoDetected": "Tunnistettu automaattisesti",
+    "AutoDetectedTip": "Tämä tili lisättiin automaattisesti, koska olet kirjautunut CLI:n kautta. Kaikkien ominaisuuksien käyttöä varten suosittelemme <link>manuaalista kirjautumista</link>.",
+    "EnableAccount": "Ota käyttöön {{name}}",
+    "DisableAccount": "Poista käytöstä {{name}}"
+  },
+  "Login": {
+    "Title": "Lisää {{name}}-tili",
+    "OpeningBrowser": "Avataan selainta…",
+    "WaitingFor": "Odotetaan: {{name}}…",
+    "OpenPageAgain": "Avaa sivu uudelleen",
+    "PasteCode": "Tai liitä koodi sivulta",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Käytä koodia",
+    "Connected": "Yhdistetty",
+    "Hint": {
+      "claude": "Kirjaudu Claudeen selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
+      "codex": "Kirjaudu ChatGPT-tililläsi selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
+      "gemini-cli": "Kirjaudu Googlella selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
+      "copilot": "Syötä tämä koodi GitHub-sivulla selaimessa ja hyväksy sitten pyyntö."
+    }
+  },
+  "Rename": {
+    "Title": "Nimeä tili uudelleen",
+    "Label": "Nimike",
+    "Description": "Jätä kenttä tyhjäksi näyttääksesi tilin tunnuksen uudelleen."
+  },
+  "Alerts": {
+    "Title": "Hälytykset",
+    "LowQuota": "Kiintiö vähissä",
+    "LowQuotaDescription": "Hälytä, kun kiintiötä on jäljellä 20 %.",
+    "ResetSoon": "Nollaus pian",
+    "ResetSoonDescription": "Hälytä 30 minuuttia ennen kiintiön nollausta.",
+    "ResetComplete": "Nollaus valmis",
+    "ResetCompleteDescription": "Hälytä kiintiön nollauksen jälkeen.",
+    "PermissionRequired": "Salli ilmoitukset macOS:n asetuksissa käyttääksesi kiintiöhälytyksiä."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "Aloita seuraava istunto",
+    "SupportedDescription": "Lähetä yksi pieni pyyntö istunnon nollauksen jälkeen.",
+    "UnsupportedDescription": "Auto-ping vaatii tässä sovelluksessa tehdyn Claude- tai Codex-kirjautumisen. Muut tilit eivät voi käyttää sitä.",
+    "LastRequest": "Viimeisin pyyntö: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Teema",
+    "ThemeDescription": "Sovelluksen ikkunoiden värit",
+    "Language": "Kieli",
+    "LanguageDescription": "Sovelluksen ikkunoiden kieli",
+    "MenuBarItem": "Valikkorivin kohde",
+    "MenuBarItemDescription": "Näytä kiintiöt macOS:n valikkorivillä",
+    "ShowMenuBarItem": "Näytä valikkorivin kohde",
+    "Updates": {
+      "Title": "Päivitykset",
+      "RestartToUpdate": "Käynnistä uudelleen päivittääksesi",
+      "CheckForUpdates": "Tarkista päivitykset",
+      "UpdateAvailable": "Päivitys saatavilla",
+      "Status": {
+        "PackagedOnly": "Päivitykset toimivat vain paketoidussa sovelluksessa.",
+        "Checking": "Tarkistetaan…",
+        "Downloading": "Ladataan {{progress}} %",
+        "Ready": "Versio {{version}} on valmis.",
+        "Installing": "Asennetaan…",
+        "Failed": "Päivitys epäonnistui.",
+        "UpToDate": "Devie Quota {{version}} on ajan tasalla."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Avaa Devie Quota",
+    "RefreshAll": "Päivitä kaikki",
+    "Quit": "Lopeta Devie Quota",
+    "Tooltip": "Devie Quota -tilauskiintiöt"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}}-kiintiö on vähissä",
+    "LowQuotaBody": "Tilillä {{account}} on {{percent}} % jäljellä ({{window}}).",
+    "ResetSoonTitle": "{{provider}}-kiintiö nollautuu pian",
+    "ResetSoonBody": "{{window}} ({{account}}) nollautuu {{minutes}} minuutin kuluttua.",
+    "ResetHappenedTitle": "{{provider}}-kiintiö nollattu",
+    "ResetHappenedBody": "{{window}} ({{account}}) on taas käytettävissä."
+  }
+}

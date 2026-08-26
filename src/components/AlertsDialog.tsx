@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ConnectionAlerts, ProviderConnection } from "@/lib/contracts";
 import { fullName } from "@/lib/labels";
 import Button from "@/ui/Button";
@@ -24,6 +25,7 @@ export default function AlertsDialog({
   /** Resolves to true when the alerts were saved and the dialog can close. */
   onSubmit: (id: string, alerts: ConnectionAlerts) => Promise<boolean>;
 }) {
+  const { t } = useTranslation();
   const [alerts, setAlerts] = useState<ConnectionAlerts>(NONE);
   const [saving, setSaving] = useState(false);
 
@@ -58,7 +60,7 @@ export default function AlertsDialog({
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>Alerts</Dialog.Title>
+              <Dialog.Title>{t("Alerts.Title")}</Dialog.Title>
               {connection && (
                 <Dialog.Description>{fullName(connection)}</Dialog.Description>
               )}
@@ -67,20 +69,20 @@ export default function AlertsDialog({
               <OptionRow.List>
                 <OptionRow.Row
                   checked={alerts.lowQuota}
-                  description="Alert me when a quota has 20% left."
-                  label="Low quota"
+                  description={t("Alerts.LowQuotaDescription")}
+                  label={t("Alerts.LowQuota")}
                   onChange={(lowQuota) => patch({ lowQuota })}
                 />
                 <OptionRow.Row
                   checked={alerts.resetSoon}
-                  description="Alert me 30 minutes before a quota resets."
-                  label="Reset soon"
+                  description={t("Alerts.ResetSoonDescription")}
+                  label={t("Alerts.ResetSoon")}
                   onChange={(resetSoon) => patch({ resetSoon })}
                 />
                 <OptionRow.Row
                   checked={alerts.resetHappened}
-                  description="Alert me after a quota resets."
-                  label="Reset complete"
+                  description={t("Alerts.ResetCompleteDescription")}
+                  label={t("Alerts.ResetComplete")}
                   onChange={(resetHappened) => patch({ resetHappened })}
                 />
               </OptionRow.List>
@@ -91,10 +93,10 @@ export default function AlertsDialog({
                 type="button"
                 variant="secondary"
               >
-                Cancel
+                {t("Common.Cancel")}
               </Button>
               <Button isLoading={saving} type="submit">
-                Save
+                {t("Common.Save")}
               </Button>
             </Dialog.Footer>
           </form>

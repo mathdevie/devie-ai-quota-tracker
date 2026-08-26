@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "de-DE",
+    "EndonymName": "Deutsch"
+  },
+  "Metadata": {
+    "Description": "Ein lokaler Kontingent-Tracker für KI-Abonnements"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Abbrechen",
+    "Save": "Speichern",
+    "Close": "Schließen",
+    "Refresh": "Aktualisieren",
+    "TryAgain": "Erneut versuchen",
+    "Theme": "Design"
+  },
+  "Nav": {
+    "Sections": "Bereiche",
+    "Quota": "Kontingent",
+    "Providers": "Anbieter",
+    "Settings": "Einstellungen",
+    "BackToProviders": "Zurück zu den Anbietern"
+  },
+  "Connection": {
+    "ActionsFor": "Aktionen für {{name}}",
+    "NoQuotaData": "Keine Kontingentdaten",
+    "Status": {
+      "Ready": "Bereit",
+      "Stale": "Veraltet",
+      "Login": "Anmelden",
+      "SignInNeeded": "Anmeldung erforderlich",
+      "Error": "Fehler"
+    },
+    "Menu": {
+      "Rename": "Umbenennen",
+      "Alerts": "Hinweise",
+      "AutoPing": "Auto-Ping",
+      "Refresh": "Aktualisieren",
+      "Enable": "Aktivieren",
+      "Disable": "Deaktivieren",
+      "Remove": "Entfernen"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Anbieter",
+    "FilterSort": "Sortierung",
+    "AllProviders": "Alle Anbieter",
+    "Sort": {
+      "Expiring": "Bald ablaufend zuerst",
+      "LeastLeft": "Am wenigsten übrig",
+      "MostLeft": "Am meisten übrig",
+      "Name": "Name"
+    },
+    "NoMatch": "Kein aktives Konto passt zu diesen Filtern.",
+    "NoAccounts": "Noch keine Konten. Verbinde einen Anbieter, um seine Kontingente zu sehen.",
+    "OpenProviders": "Anbieter öffnen",
+    "RefreshQuotas": "Kontingente aktualisieren",
+    "Reset": {
+      "Now": "jetzt",
+      "InDaysHours": "in {{days}} T {{hours}} Std",
+      "InHoursMinutes": "in {{hours}} Std {{minutes}} Min",
+      "InMinutes": "in {{minutes}} Min"
+    },
+    "Pin": {
+      "Shown": "{{label}} wird in der Menüleiste angezeigt",
+      "Show": "{{label}} in der Menüleiste anzeigen",
+      "Title": "In der Menüleiste anzeigen"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Dashboard öffnen",
+    "NoProviders": "Keine Anbieter"
+  },
+  "Providers": {
+    "Active": "Aktiv",
+    "Available": "Verfügbar",
+    "NotSupportedYet": "Noch nicht unterstützt",
+    "Connected": "Verbunden {{total}}",
+    "Attention": "Achtung {{total}}",
+    "AddAccount": "Konto hinzufügen",
+    "AddProviderAccount": "{{name}}-Konto hinzufügen",
+    "NoAccountsYet": "Noch keine {{name}}-Konten.",
+    "SignInWithCli": "Melde dich mit der CLI in einem Terminal an.",
+    "AutoDetected": "Automatisch erkannt",
+    "AutoDetectedTip": "Dieses Konto wurde automatisch hinzugefügt, weil du über die CLI angemeldet bist. Für den vollen Funktionsumfang empfiehlt es sich, dich <link>manuell zu authentifizieren</link>.",
+    "EnableAccount": "{{name}} aktivieren",
+    "DisableAccount": "{{name}} deaktivieren"
+  },
+  "Login": {
+    "Title": "{{name}}-Konto hinzufügen",
+    "OpeningBrowser": "Browser wird geöffnet…",
+    "WaitingFor": "Warten auf {{name}}…",
+    "OpenPageAgain": "Seite erneut öffnen",
+    "PasteCode": "Oder füge den Code von der Seite ein",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Code verwenden",
+    "Connected": "Verbunden",
+    "Hint": {
+      "claude": "Melde dich im Browser bei Claude an. Die App empfängt das Ergebnis auf diesem Mac.",
+      "codex": "Melde dich im Browser mit deinem ChatGPT-Konto an. Die App empfängt das Ergebnis auf diesem Mac.",
+      "gemini-cli": "Melde dich im Browser mit Google an. Die App empfängt das Ergebnis auf diesem Mac.",
+      "copilot": "Gib diesen Code auf der GitHub-Seite im Browser ein und bestätige dann die Anfrage."
+    }
+  },
+  "Rename": {
+    "Title": "Konto umbenennen",
+    "Label": "Bezeichnung",
+    "Description": "Lass das Feld leer, um wieder die Konto-ID anzuzeigen."
+  },
+  "Alerts": {
+    "Title": "Hinweise",
+    "LowQuota": "Niedriges Kontingent",
+    "LowQuotaDescription": "Benachrichtigen, wenn ein Kontingent noch 20 % übrig hat.",
+    "ResetSoon": "Bald zurückgesetzt",
+    "ResetSoonDescription": "30 Minuten vor dem Zurücksetzen eines Kontingents benachrichtigen.",
+    "ResetComplete": "Zurücksetzen abgeschlossen",
+    "ResetCompleteDescription": "Nach dem Zurücksetzen eines Kontingents benachrichtigen.",
+    "PermissionRequired": "Erlaube Mitteilungen in den macOS-Einstellungen, um Kontingenthinweise zu nutzen."
+  },
+  "AutoPing": {
+    "Title": "Auto-Ping",
+    "StartNextSession": "Nächste Sitzung starten",
+    "SupportedDescription": "Nach dem Zurücksetzen einer Sitzung eine kleine Anfrage senden.",
+    "UnsupportedDescription": "Auto-Ping braucht eine in dieser App vorgenommene Claude- oder Codex-Anmeldung. Andere Konten können es nicht nutzen.",
+    "LastRequest": "Letzte Anfrage: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Design",
+    "ThemeDescription": "Farben der App-Fenster",
+    "Language": "Sprache",
+    "LanguageDescription": "Sprache der App-Fenster",
+    "MenuBarItem": "Menüleistensymbol",
+    "MenuBarItemDescription": "Kontingente in der macOS-Menüleiste anzeigen",
+    "ShowMenuBarItem": "Menüleistensymbol anzeigen",
+    "Updates": {
+      "Title": "Updates",
+      "RestartToUpdate": "Zum Aktualisieren neu starten",
+      "CheckForUpdates": "Nach Updates suchen",
+      "UpdateAvailable": "Update verfügbar",
+      "Status": {
+        "PackagedOnly": "Updates funktionieren nur in der paketierten App.",
+        "Checking": "Suche…",
+        "Downloading": "Wird geladen {{progress}} %",
+        "Ready": "Version {{version}} ist bereit.",
+        "Installing": "Wird installiert…",
+        "Failed": "Das Update ist fehlgeschlagen.",
+        "UpToDate": "Devie Quota {{version}} ist aktuell."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Devie Quota öffnen",
+    "RefreshAll": "Alle aktualisieren",
+    "Quit": "Devie Quota beenden",
+    "Tooltip": "Devie Quota Abonnement-Kontingente"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}}-Kontingent ist niedrig",
+    "LowQuotaBody": "{{account}} hat noch {{percent}} % in {{window}}.",
+    "ResetSoonTitle": "{{provider}}-Kontingent wird bald zurückgesetzt",
+    "ResetSoonBody": "{{window}} für {{account}} wird in {{minutes}} Minuten zurückgesetzt.",
+    "ResetHappenedTitle": "{{provider}}-Kontingent zurückgesetzt",
+    "ResetHappenedBody": "{{window}} für {{account}} ist wieder verfügbar."
+  }
+}
