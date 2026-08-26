@@ -83,7 +83,12 @@
       "Shown": "{{label}} wird in der Menüleiste angezeigt",
       "Show": "{{label}} in der Menüleiste anzeigen",
       "Title": "In der Menüleiste anzeigen"
-    }
+    },
+    "Unlimited": "Unbegrenzt",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} darüber",
+    "Balance": "{{balance}} übrig",
+    "LimitReached": "Limit erreicht"
   },
   "Popover": {
     "OpenDashboard": "Dashboard öffnen",

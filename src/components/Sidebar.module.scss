@@ -16,10 +16,25 @@ $sidebar-inset: 8px;
   user-select: none;
 }
 
-// Space for the native macOS traffic lights, plus some air above the menu.
+// The native macOS traffic lights sit at the left of this row; the app
+// name follows them. The margin under it gives some air above the menu.
 .handle {
-  height: 64px;
+  display: flex;
+  height: 40px;
   flex-shrink: 0;
+  align-items: center;
+  margin-bottom: $devie__spacing__x3;
+  padding-left: 68px;
+}
+
+.brand {
+  overflow: hidden;
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .nav {
@@ -84,18 +99,4 @@ $sidebar-inset: 8px;
 
 .footer {
   display: grid;
-  padding-bottom: $devie__spacing__x1;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  padding: 0 $devie__spacing__x1;
-  color: $devie__color__text-sub;
-
-  strong {
-    font-size: $devie__font-size__small;
-    font-weight: 500;
-    pointer-events: none;
-  }
 }

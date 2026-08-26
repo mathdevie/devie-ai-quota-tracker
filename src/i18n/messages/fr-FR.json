@@ -83,7 +83,12 @@
       "Shown": "{{label}} est affiché dans la barre de menus",
       "Show": "Afficher {{label}} dans la barre de menus",
       "Title": "Afficher dans la barre de menus"
-    }
+    },
+    "Unlimited": "Illimité",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} au-delà",
+    "Balance": "{{balance}} restants",
+    "LimitReached": "Limite atteinte"
   },
   "Popover": {
     "OpenDashboard": "Ouvrir le tableau de bord",

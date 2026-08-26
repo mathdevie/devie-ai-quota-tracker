@@ -54,18 +54,20 @@ function ProviderRow({
         </span>
         <ChevronRight className={styles.chevron} size={16} />
       </span>
-      <span className={styles.providerBadges}>
-        {connected > 0 && (
-          <Badge variant="success">
-            {t("Providers.Connected", { total: connected })}
-          </Badge>
-        )}
-        {attention > 0 && (
-          <Badge variant="warning">
-            {t("Providers.Attention", { total: attention })}
-          </Badge>
-        )}
-      </span>
+      {(connected > 0 || attention > 0) && (
+        <span className={styles.providerBadges}>
+          {connected > 0 && (
+            <Badge variant="success">
+              {t("Providers.Connected", { total: connected })}
+            </Badge>
+          )}
+          {attention > 0 && (
+            <Badge variant="warning">
+              {t("Providers.Attention", { total: attention })}
+            </Badge>
+          )}
+        </span>
+      )}
     </button>
   );
 }

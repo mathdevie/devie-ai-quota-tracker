@@ -28,7 +28,9 @@ export default function Sidebar<T extends string>({
   const { t } = useTranslation();
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.handle} data-tauri-drag-region />
+      <div className={styles.handle} data-tauri-drag-region>
+        <strong className={styles.brand}>{t("Common.AppName")}</strong>
+      </div>
       <nav aria-label={t("Nav.Sections")} className={styles.nav}>
         {items.map((item) => {
           const Icon = item.icon;
@@ -54,9 +56,6 @@ export default function Sidebar<T extends string>({
       </nav>
       <div className={styles.grow} data-tauri-drag-region />
       {footer && <div className={styles.footer}>{footer}</div>}
-      <div className={styles.brand} data-tauri-drag-region>
-        <strong>{t("Common.AppName")}</strong>
-      </div>
     </aside>
   );
 }
