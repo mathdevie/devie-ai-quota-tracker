@@ -8,6 +8,7 @@ pub enum Provider {
     #[serde(rename = "gemini-cli")]
     Gemini,
     Copilot,
+    Cursor,
 }
 
 impl Provider {
@@ -17,6 +18,7 @@ impl Provider {
             Self::Codex => "codex",
             Self::Gemini => "gemini-cli",
             Self::Copilot => "copilot",
+            Self::Cursor => "cursor",
         }
     }
 
@@ -26,6 +28,7 @@ impl Provider {
             "codex" => Some(Self::Codex),
             "gemini-cli" => Some(Self::Gemini),
             "copilot" => Some(Self::Copilot),
+            "cursor" => Some(Self::Cursor),
             _ => None,
         }
     }

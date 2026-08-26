@@ -6,11 +6,13 @@
 //! - Codex: authorization code with PKCE, callback on `localhost:1455`.
 //! - Gemini CLI: authorization code with a dynamic loopback callback.
 //! - GitHub Copilot: device code flow.
+//! - Cursor: PKCE deep link, polled on `api2.cursor.sh` (no callback port).
 
 pub mod callback;
 pub mod claude;
 pub mod codex;
 pub mod copilot;
+pub mod cursor;
 pub mod gemini;
 
 use std::{
@@ -91,6 +93,7 @@ pub struct PendingLogin {
     pub redirect_uri: String,
     pub callback: Option<callback::CallbackServer>,
     pub device: Option<copilot::DeviceCode>,
+    pub cursor: Option<cursor::DeepLogin>,
 }
 
 #[derive(Default)]
@@ -179,6 +182,7 @@ pub async fn start(
                     redirect_uri,
                     callback: Some(server),
                     device: None,
+                    cursor: None,
                 },
             ))
         }
@@ -202,6 +206,7 @@ pub async fn start(
                     redirect_uri,
                     callback: Some(server),
                     device: None,
+                    cursor: None,
                 },
             ))
         }
@@ -222,6 +227,29 @@ pub async fn start(
                     redirect_uri: String::new(),
                     callback: None,
                     device: Some(device),
+                    cursor: None,
+                },
+            ))
+        }
+        Provider::Cursor => {
+            let login = cursor::deep_login(pkce());
+            let url = cursor::authorize_url(&login);
+            open_browser(&url)?;
+            Ok((
+                LoginStart {
+                    session_id,
+                    provider: provider.clone(),
+                    url,
+                    user_code: None,
+                    accepts_manual_code: false,
+                },
+                PendingLogin {
+                    provider,
+                    pkce: None,
+                    redirect_uri: String::new(),
+                    callback: None,
+                    device: None,
+                    cursor: Some(login),
                 },
             ))
         }
@@ -241,6 +269,12 @@ pub async fn finish(
                 .device
                 .ok_or_else(|| "The GitHub sign-in session is invalid.".to_string())?;
             copilot::wait_for_approval(client, &device).await
+        }
+        Provider::Cursor => {
+            let login = login
+                .cursor
+                .ok_or_else(|| "The Cursor sign-in session is invalid.".to_string())?;
+            cursor::wait_for_login(client, &login).await
         }
         Provider::Claude | Provider::Codex | Provider::Gemini => {
             let pair = login
@@ -282,7 +316,7 @@ pub async fn finish(
                     gemini::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
                         .await
                 }
-                Provider::Copilot => unreachable!(),
+                Provider::Copilot | Provider::Cursor => unreachable!(),
             }
         }
     }
@@ -304,6 +338,7 @@ pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> NewConnect
         Provider::Codex => "Codex",
         Provider::Gemini => "Gemini CLI",
         Provider::Copilot => "Copilot",
+        Provider::Cursor => "Cursor",
     };
     let locator = format!("oauth/{}/{}", provider.as_str(), outcome.account_key);
     let who = outcome
@@ -350,6 +385,7 @@ pub async fn credentials_for_request(
         Provider::Codex => codex::REFRESH_LEAD,
         Provider::Gemini => gemini::REFRESH_LEAD,
         Provider::Copilot => chrono::Duration::zero(),
+        Provider::Cursor => cursor::REFRESH_LEAD,
     };
     if current.refresh_token.is_some() && current.expires_within(lead) {
         current = renew(connection, app_data_dir, client, &current).await?;
@@ -368,6 +404,7 @@ async fn renew(
         Provider::Codex => codex::refresh_tokens(client, current).await,
         Provider::Gemini => gemini::refresh_tokens(client, current).await,
         Provider::Copilot => Err("GitHub tokens do not renew. Sign in again.".to_string()),
+        Provider::Cursor => Err("Cursor tokens do not renew. Sign in again.".to_string()),
     }
     .map_err(|message| format!("{message} Sign in again to renew the login."))?;
     credentials::save(app_data_dir, &connection.id, &renewed)?;
@@ -392,6 +429,7 @@ async fn read_quota(
                 .unwrap_or("github");
             copilot::usage(client, current, login).await
         }
+        Provider::Cursor => cursor::usage(client, current).await,
     }
 }
 

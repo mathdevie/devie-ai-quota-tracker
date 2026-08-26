@@ -114,7 +114,8 @@
       "claude": "Connectez-vous à Claude dans le navigateur. L'app reçoit le résultat sur ce Mac.",
       "codex": "Connectez-vous avec votre compte ChatGPT dans le navigateur. L'app reçoit le résultat sur ce Mac.",
       "gemini-cli": "Connectez-vous avec Google dans le navigateur. L'app reçoit le résultat sur ce Mac.",
-      "copilot": "Saisissez ce code sur la page GitHub dans le navigateur, puis approuvez la demande."
+      "copilot": "Saisissez ce code sur la page GitHub dans le navigateur, puis approuvez la demande.",
+      "cursor": "Confirmez la connexion sur la page Cursor dans le navigateur. L'app reçoit le résultat sur ce Mac."
     }
   },
   "Rename": {

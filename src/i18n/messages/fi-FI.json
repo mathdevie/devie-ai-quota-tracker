@@ -114,7 +114,8 @@
       "claude": "Kirjaudu Claudeen selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
       "codex": "Kirjaudu ChatGPT-tililläsi selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
       "gemini-cli": "Kirjaudu Googlella selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
-      "copilot": "Syötä tämä koodi GitHub-sivulla selaimessa ja hyväksy sitten pyyntö."
+      "copilot": "Syötä tämä koodi GitHub-sivulla selaimessa ja hyväksy sitten pyyntö.",
+      "cursor": "Vahvista kirjautuminen Cursor-sivulla selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla."
     }
   },
   "Rename": {

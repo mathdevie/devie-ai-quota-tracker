@@ -114,7 +114,8 @@
       "claude": "Melde dich im Browser bei Claude an. Die App empfängt das Ergebnis auf diesem Mac.",
       "codex": "Melde dich im Browser mit deinem ChatGPT-Konto an. Die App empfängt das Ergebnis auf diesem Mac.",
       "gemini-cli": "Melde dich im Browser mit Google an. Die App empfängt das Ergebnis auf diesem Mac.",
-      "copilot": "Gib diesen Code auf der GitHub-Seite im Browser ein und bestätige dann die Anfrage."
+      "copilot": "Gib diesen Code auf der GitHub-Seite im Browser ein und bestätige dann die Anfrage.",
+      "cursor": "Bestätige die Anmeldung auf der Cursor-Seite im Browser. Die App empfängt das Ergebnis auf diesem Mac."
     }
   },
   "Rename": {

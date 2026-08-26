@@ -114,7 +114,8 @@
       "claude": "Log ind på Claude i browseren. Appen modtager resultatet på denne Mac.",
       "codex": "Log ind med din ChatGPT-konto i browseren. Appen modtager resultatet på denne Mac.",
       "gemini-cli": "Log ind med Google i browseren. Appen modtager resultatet på denne Mac.",
-      "copilot": "Indtast denne kode på GitHub-siden i browseren, og godkend derefter anmodningen."
+      "copilot": "Indtast denne kode på GitHub-siden i browseren, og godkend derefter anmodningen.",
+      "cursor": "Bekræft login på Cursor-siden i browseren. Appen modtager resultatet på denne Mac."
     }
   },
   "Rename": {
