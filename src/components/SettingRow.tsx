@@ -6,8 +6,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>{title}</h2>
-      <Separator />
-      {children}
+      <div className={styles.sectionBody}>{children}</div>
     </section>
   );
 }

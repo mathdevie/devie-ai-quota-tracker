@@ -2,13 +2,15 @@
 
 .titleBar {
   display: flex;
-  height: 64px;
+  height: 76px;
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
   gap: $devie__spacing__x2;
   margin: 0 $devie__spacing__x4;
+  padding-top: $devie__spacing__x1;
   border-bottom: 1px solid $devie__color__line;
+  box-sizing: border-box;
   user-select: none;
 }
 

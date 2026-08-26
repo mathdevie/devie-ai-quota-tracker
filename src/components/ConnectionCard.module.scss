@@ -4,15 +4,15 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: $devie__spacing__x2;
-  padding: $devie__spacing__x2 $devie__spacing__x2 $devie__spacing__x2;
+  gap: $devie__spacing__x05;
+  padding: $devie__spacing__x05;
   border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
-  background: $devie__color__background;
+  border-radius: $devie__radius-strong;
+  background: $devie__color__background-sub;
 
   &[data-compact] {
-    gap: $devie__spacing__x1;
-    padding: $devie__spacing__x1;
+    gap: 2px;
+    padding: 2px;
   }
 }
 
@@ -21,6 +21,11 @@
   min-height: 28px;
   align-items: center;
   gap: $devie__spacing__x1;
+  padding: $devie__spacing__x1 $devie__spacing__x1 $devie__spacing__x05;
+}
+
+.card[data-compact] .header {
+  padding: $devie__spacing__x05 $devie__spacing__x1 2px;
 }
 
 .identity {
@@ -53,7 +58,16 @@
 
 .windows {
   display: grid;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x2;
+  border: 1px solid $devie__color__line;
+  border-radius: calc($devie__radius-strong - $devie__spacing__x05);
+  background: $devie__color__background;
+}
+
+.card[data-compact] .windows {
   gap: $devie__spacing__x05;
+  padding: $devie__spacing__x1;
 }
 
 // The label column has a fixed width so every bar starts on the same line.
@@ -64,16 +78,6 @@
   grid-template-columns: 8px 104px minmax(48px, 1fr) 36px 64px;
   min-height: 22px;
   font-size: $devie__font-size__small;
-
-  --tone: #{$devie__color__success};
-
-  &[data-tone="warn"] {
-    --tone: #{$devie__color__warning};
-  }
-
-  &[data-tone="danger"] {
-    --tone: #{$devie__color__danger};
-  }
 }
 
 .card[data-compact] .window {
@@ -85,7 +89,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--tone);
+  background: $devie__color__primary;
 }
 
 .label {
@@ -108,11 +112,11 @@
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: 999px;
-  background: var(--tone);
+  background: $devie__color__primary;
 }
 
 .percent {
-  color: var(--tone);
+  color: $devie__color__primary;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -128,6 +132,10 @@
 
 .empty {
   margin: 0;
+  padding: $devie__spacing__x2;
+  border: 1px solid $devie__color__line;
+  border-radius: calc($devie__radius-strong - $devie__spacing__x05);
+  background: $devie__color__background;
   color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
 }

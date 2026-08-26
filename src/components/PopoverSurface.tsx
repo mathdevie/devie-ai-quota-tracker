@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { ExternalLink, RefreshCw } from "lucide-react";
 import type { DashboardState, ProviderConnection } from "@/lib/contracts";
 import { openMainWindow } from "@/lib/desktop";
 import Button from "@/ui/Button";
@@ -41,9 +41,18 @@ export default function PopoverSurface({
       <header className={styles.header} data-tauri-drag-region>
         <strong>Quotas</strong>
         <div className={styles.actions}>
+          <span className={styles.updated}>Updated {latestUpdate(state)}</span>
           <span className={styles.minimum}>
             {lowest === undefined ? "—" : `${Math.round(lowest)}% left`}
           </span>
+          <Button
+            aria-label="Open Devie Quota"
+            onClick={() => void openMainWindow()}
+            size="sm"
+            variant="icon-naked"
+          >
+            <ExternalLink size={14} />
+          </Button>
           <Button
             aria-label="Refresh quotas"
             disabled={refreshing}
@@ -65,13 +74,6 @@ export default function PopoverSurface({
         ))}
         {enabled.length === 0 && <p className={styles.empty}>No providers</p>}
       </section>
-
-      <footer className={styles.footer}>
-        <span>Updated {latestUpdate(state)}</span>
-        <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
-          Open Devie Quota
-        </Button>
-      </footer>
     </main>
   );
 }

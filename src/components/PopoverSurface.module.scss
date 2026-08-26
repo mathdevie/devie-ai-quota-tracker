@@ -8,15 +8,13 @@
 }
 
 .header,
-.footer,
 .actions {
   display: flex;
   flex-shrink: 0;
   align-items: center;
 }
 
-.header,
-.footer {
+.header {
   justify-content: space-between;
   gap: $devie__spacing__x2;
   padding: $devie__spacing__x1 $devie__spacing__x2;
@@ -53,8 +51,7 @@
   overflow-y: auto;
 }
 
-.footer {
-  border-top: 1px solid $devie__color__line;
+.updated {
   color: $devie__color__text-sub;
   font-size: 11px;
 }

@@ -42,23 +42,31 @@ function ProviderRow({
   ).length;
   return (
     <button
-      className={styles.providerRow}
+      className={styles.providerCard}
       onClick={() => onOpen(provider)}
       type="button"
     >
-      <ProviderIcon provider={provider} size={20} />
-      <strong>{PROVIDER_NAMES[provider]}</strong>
+      <span className={styles.providerCardHeader}>
+        <ProviderIcon provider={provider} size={26} />
+        <span className={styles.providerCardTitle}>
+          <strong>{PROVIDER_NAMES[provider]}</strong>
+          <small>
+            {connections.length === 0
+              ? "Ready to connect"
+              : `${connections.length} account${connections.length === 1 ? "" : "s"}`}
+          </small>
+        </span>
+        <ChevronRight className={styles.chevron} size={16} />
+      </span>
       <span className={styles.providerBadges}>
         {connected > 0 && (
-          <Badge variant="success">{connected} connected</Badge>
+          <Badge variant="success">Connected {connected}</Badge>
         )}
         {attention > 0 && (
-          <Badge variant="warning">
-            {attention} need{attention === 1 ? "s" : ""} attention
-          </Badge>
+          <Badge variant="warning">Attention {attention}</Badge>
         )}
+        {connections.length === 0 && <Badge>Available</Badge>}
       </span>
-      <ChevronRight className={styles.chevron} size={16} />
     </button>
   );
 }
@@ -80,7 +88,7 @@ export default function ProvidersView({
       {active.length > 0 && (
         <div className={styles.group}>
           <h2 className={styles.groupTitle}>Active</h2>
-          <div className={styles.list}>
+          <div className={styles.providerGrid}>
             {active.map((provider) => (
               <ProviderRow
                 key={provider}
@@ -95,7 +103,7 @@ export default function ProvidersView({
       {available.length > 0 && (
         <div className={styles.group}>
           <h2 className={styles.groupTitle}>Available</h2>
-          <div className={styles.list}>
+          <div className={styles.providerGrid}>
             {available.map((provider) => (
               <ProviderRow
                 key={provider}
@@ -109,12 +117,16 @@ export default function ProvidersView({
       )}
       <div className={styles.group}>
         <h2 className={styles.groupTitle}>Not supported yet</h2>
-        <div className={styles.list}>
+        <div className={styles.providerGrid}>
           {UNSUPPORTED.map((name) => (
-            <div className={styles.providerRow} data-muted key={name}>
+            <article className={styles.providerCard} data-muted key={name}>
               <LetterIcon name={name} />
-              <strong>{name}</strong>
-            </div>
+              <span className={styles.providerCardTitle}>
+                <strong>{name}</strong>
+                <small>Planned provider</small>
+              </span>
+              <Badge>Planned</Badge>
+            </article>
           ))}
         </div>
       </div>
