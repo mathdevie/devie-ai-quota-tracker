@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 pub enum Provider {
     Claude,
     Codex,
+    #[serde(rename = "gemini-cli")]
+    Gemini,
     Copilot,
 }
 
@@ -13,6 +15,7 @@ impl Provider {
         match self {
             Self::Claude => "claude",
             Self::Codex => "codex",
+            Self::Gemini => "gemini-cli",
             Self::Copilot => "copilot",
         }
     }
@@ -21,6 +24,7 @@ impl Provider {
         match value {
             "claude" => Some(Self::Claude),
             "codex" => Some(Self::Codex),
+            "gemini-cli" => Some(Self::Gemini),
             "copilot" => Some(Self::Copilot),
             _ => None,
         }
@@ -205,4 +209,19 @@ pub struct QuotaReading {
     pub source: String,
     pub identity: Option<RemoteIdentity>,
     pub windows: Vec<QuotaWindow>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gemini_uses_the_interface_provider_id() {
+        assert_eq!(Provider::Gemini.as_str(), "gemini-cli");
+        assert_eq!(
+            serde_json::to_string(&Provider::Gemini).expect("serialize"),
+            "\"gemini-cli\""
+        );
+        assert_eq!(Provider::from_db("gemini-cli"), Some(Provider::Gemini));
+    }
 }

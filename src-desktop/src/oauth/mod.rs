@@ -4,12 +4,14 @@
 //! also what 9router does:
 //! - Claude: authorization code with PKCE, callback on `localhost:54545`.
 //! - Codex: authorization code with PKCE, callback on `localhost:1455`.
+//! - Gemini CLI: authorization code with a dynamic loopback callback.
 //! - GitHub Copilot: device code flow.
 
 pub mod callback;
 pub mod claude;
 pub mod codex;
 pub mod copilot;
+pub mod gemini;
 
 use std::{
     collections::HashMap,
@@ -148,6 +150,29 @@ pub async fn start(
                 },
             ))
         }
+        Provider::Gemini => {
+            let pair = pkce();
+            let server = callback::CallbackServer::start(0, gemini::CALLBACK_PATH)?;
+            let redirect_uri = gemini::redirect_uri(server.port());
+            let url = gemini::authorize_url(&pair, &redirect_uri);
+            open_browser(&url)?;
+            Ok((
+                LoginStart {
+                    session_id,
+                    provider: provider.clone(),
+                    url,
+                    user_code: None,
+                    accepts_manual_code: false,
+                },
+                PendingLogin {
+                    provider,
+                    pkce: Some(pair),
+                    redirect_uri,
+                    callback: Some(server),
+                    device: None,
+                },
+            ))
+        }
         Provider::Copilot => {
             let device = copilot::request_device_code(client).await?;
             open_browser(&device.verification_uri)?;
@@ -185,7 +210,7 @@ pub async fn finish(
                 .ok_or_else(|| "The GitHub sign-in session is invalid.".to_string())?;
             copilot::wait_for_approval(client, &device).await
         }
-        Provider::Claude | Provider::Codex => {
+        Provider::Claude | Provider::Codex | Provider::Gemini => {
             let pair = login
                 .pkce
                 .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
@@ -212,10 +237,20 @@ pub async fn finish(
                     (code, params.state)
                 }
             };
-            if login.provider == Provider::Claude {
-                claude::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref()).await
-            } else {
-                codex::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref()).await
+            match login.provider {
+                Provider::Claude => {
+                    claude::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
+                        .await
+                }
+                Provider::Codex => {
+                    codex::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
+                        .await
+                }
+                Provider::Gemini => {
+                    gemini::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
+                        .await
+                }
+                Provider::Copilot => unreachable!(),
             }
         }
     }
@@ -226,6 +261,7 @@ pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> Discovered
     let provider_name = match provider {
         Provider::Claude => "Claude",
         Provider::Codex => "Codex",
+        Provider::Gemini => "Gemini CLI",
         Provider::Copilot => "Copilot",
     };
     let locator = format!("oauth/{}/{}", provider.as_str(), outcome.account_key);
@@ -272,6 +308,7 @@ pub async fn credentials_for_request(
     let lead = match connection.provider {
         Provider::Claude => claude::REFRESH_LEAD,
         Provider::Codex => codex::REFRESH_LEAD,
+        Provider::Gemini => gemini::REFRESH_LEAD,
         Provider::Copilot => chrono::Duration::zero(),
     };
     if current.refresh_token.is_some() && current.expires_within(lead) {
@@ -289,6 +326,7 @@ async fn renew(
     let renewed = match connection.provider {
         Provider::Claude => claude::refresh_tokens(client, current).await,
         Provider::Codex => codex::refresh_tokens(client, current).await,
+        Provider::Gemini => gemini::refresh_tokens(client, current).await,
         Provider::Copilot => Err("GitHub tokens do not renew. Sign in again.".to_string()),
     }
     .map_err(|message| format!("{message} Sign in again to renew the login."))?;
@@ -305,6 +343,7 @@ async fn read_quota(
     match connection.provider {
         Provider::Claude => claude::cached_usage(client, &current.access_token, force).await,
         Provider::Codex => codex::usage(client, current).await,
+        Provider::Gemini => gemini::usage(client, current).await,
         Provider::Copilot => {
             let login = connection
                 .identity

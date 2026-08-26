@@ -120,6 +120,7 @@ pub fn parse(data: &[u8]) -> Option<CliCredentials> {
             refresh_token: None,
             expires_at,
             account_id: None,
+            project_id: None,
         },
         plan,
     })

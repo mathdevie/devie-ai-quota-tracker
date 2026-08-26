@@ -123,6 +123,7 @@ pub async fn wait_for_approval(
                 .and_then(Value::as_i64)
                 .map(|seconds| Utc::now() + Duration::seconds(seconds)),
             account_id: None,
+            project_id: None,
         };
         let identity = user(client, &credentials.access_token).await?;
         let account_key = identity

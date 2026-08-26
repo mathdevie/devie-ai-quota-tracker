@@ -18,6 +18,7 @@ export const PROVIDER_OPTIONS: { value: ProviderFilter; label: string }[] = [
   { value: "all", label: "All providers" },
   { value: "claude", label: PROVIDER_NAMES.claude },
   { value: "codex", label: PROVIDER_NAMES.codex },
+  { value: "gemini-cli", label: PROVIDER_NAMES["gemini-cli"] },
   { value: "copilot", label: PROVIDER_NAMES.copilot },
 ];
 
