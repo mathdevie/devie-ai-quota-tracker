@@ -42,7 +42,8 @@
       "Remove": "Remover",
       "On": "Ativado",
       "Off": "Desativado"
-    }
+    },
+    "MoreActions": "Mais ações"
   },
   "Quota": {
     "FilterProvider": "Provedor",
@@ -78,7 +79,7 @@
     "Active": "Ativos",
     "Available": "Disponíveis",
     "NotSupportedYet": "Ainda não suportados",
-    "Connected": "Conectados {{total}}",
+    "Connected": "{{total}} conectadas",
     "Attention": "Atenção {{total}}",
     "AddAccount": "Adicionar conta",
     "AddProviderAccount": "Adicionar uma conta {{name}}",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Otimizador de cota",
-    "StartNextSession": "Iniciar cada sessão mais cedo",
-    "SupportedDescription": "Os limites de sessão são redefinidos em horários fixos. Logo após cada redefinição, o Devie Quota envia uma solicitação mínima para que a próxima sessão comece na hora. Você ganha mais sessões por semana e nunca perde cota enquanto está fora.",
+    "StartNextSession": "Iniciar sessões automaticamente",
+    "SupportedDescription": "Por padrão, o temporizador de redefinição só começa a contar no primeiro uso. Esta opção envia automaticamente uma pequena solicitação para iniciar o temporizador logo após cada redefinição. Na prática, sua próxima redefinição chegará mais cedo.",
     "UnsupportedDescription": "O otimizador de cota funciona apenas com contas Claude e Codex.",
     "LastRequest": "Última solicitação: {{date}}"
   },
   "Settings": {
     "Theme": "Tema",
-    "ThemeDescription": "Cores das janelas do app",
     "Language": "Idioma",
-    "LanguageDescription": "Idioma das janelas do app",
     "MenuBarItem": "Item da barra de menus",
     "MenuBarItemDescription": "Mostrar as cotas na barra de menus do macOS",
     "ShowMenuBarItem": "Mostrar o item da barra de menus",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Atualização disponível",
       "Status": {
         "PackagedOnly": "As atualizações funcionam apenas no app empacotado.",
-        "Checking": "Verificando…",
         "Downloading": "Baixando {{progress}}%",
         "Ready": "A versão {{version}} está pronta.",
         "Installing": "Instalando…",
-        "Failed": "A atualização falhou.",
-        "UpToDate": "O Devie Quota {{version}} está atualizado."
-      }
+        "Failed": "A atualização falhou."
+      },
+      "Version": "Versão: {{version}}",
+      "UpToDateToast": "Você está na versão mais recente."
     }
   },
   "Tray": {

@@ -28,16 +28,15 @@ pub struct CallbackServer {
 impl CallbackServer {
     /// Listens on `127.0.0.1:port` and answers the first request on `path`.
     pub fn start(port: u16, path: &'static str) -> Result<Self, String> {
-        let listener =
-            TcpListener::bind(SocketAddrV4::new(Ipv4Addr::LOCALHOST, port)).map_err(|_| {
-                if port == 0 {
-                    "The app could not start a local sign-in callback. Try again.".to_string()
-                } else {
-                    format!(
-                        "Port {port} is busy. Close the other program that uses it, then try again."
-                    )
-                }
-            })?;
+        let listener = bind_with_retry(port).map_err(|_| {
+            if port == 0 {
+                "The app could not start a local sign-in callback. Try again.".to_string()
+            } else {
+                format!(
+                    "Port {port} is busy. Close the other program that uses it, then try again."
+                )
+            }
+        })?;
         let port = listener
             .local_addr()
             .map_err(|error| error.to_string())?
@@ -85,6 +84,23 @@ impl CallbackServer {
             }
         }
         None
+    }
+}
+
+/// A previous sign-in on the same fixed port may still be closing its
+/// listener. Wait a little before the port counts as busy.
+fn bind_with_retry(port: u16) -> std::io::Result<TcpListener> {
+    let address = SocketAddrV4::new(Ipv4Addr::LOCALHOST, port);
+    let deadline = Instant::now() + Duration::from_secs(2);
+    loop {
+        match TcpListener::bind(address) {
+            Ok(listener) => return Ok(listener),
+            Err(error) if port != 0 && Instant::now() < deadline => {
+                let _ = error;
+                thread::sleep(Duration::from_millis(100));
+            }
+            Err(error) => return Err(error),
+        }
     }
 }
 

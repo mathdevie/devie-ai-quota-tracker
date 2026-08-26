@@ -14,6 +14,7 @@ import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
 import styles from "./ConnectionCard.module.scss";
+import IconTip from "./IconTip";
 import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
 
@@ -76,30 +77,32 @@ function FeatureFlags({
   return (
     <div className={styles.flags}>
       {onAlerts && (
-        <button
-          aria-label={t("Connection.Menu.Alerts")}
-          aria-pressed={alerts}
-          className={styles.flag}
-          data-active={alerts || undefined}
-          onClick={() => onAlerts(connection)}
-          title={t("Connection.Menu.Alerts")}
-          type="button"
-        >
-          <BellRing size={13} />
-        </button>
+        <IconTip label={t("Connection.Menu.Alerts")}>
+          <button
+            aria-label={t("Connection.Menu.Alerts")}
+            aria-pressed={alerts}
+            className={styles.flag}
+            data-active={alerts || undefined}
+            onClick={() => onAlerts(connection)}
+            type="button"
+          >
+            <BellRing size={13} />
+          </button>
+        </IconTip>
       )}
       {onAutoPing && (
-        <button
-          aria-label={t("Connection.Menu.AutoPing")}
-          aria-pressed={optimizer}
-          className={styles.flag}
-          data-active={optimizer || undefined}
-          onClick={() => onAutoPing(connection)}
-          title={t("Connection.Menu.AutoPing")}
-          type="button"
-        >
-          <Zap size={13} />
-        </button>
+        <IconTip label={t("Connection.Menu.AutoPing")}>
+          <button
+            aria-label={t("Connection.Menu.AutoPing")}
+            aria-pressed={optimizer}
+            className={styles.flag}
+            data-active={optimizer || undefined}
+            onClick={() => onAutoPing(connection)}
+            type="button"
+          >
+            <Zap size={13} />
+          </button>
+        </IconTip>
       )}
     </div>
   );
@@ -120,18 +123,20 @@ export function ConnectionMenu({
   const name = fullName(connection);
   return (
     <Menu.Root>
-      <Menu.Trigger
-        render={
-          <Button
-            aria-label={t("Connection.ActionsFor", { name })}
-            disabled={busy}
-            size="sm"
-            variant="icon-naked"
-          />
-        }
-      >
-        <Ellipsis size={15} />
-      </Menu.Trigger>
+      <IconTip label={t("Connection.MoreActions")}>
+        <Menu.Trigger
+          render={
+            <Button
+              aria-label={t("Connection.ActionsFor", { name })}
+              disabled={busy}
+              size="sm"
+              variant="icon-naked"
+            />
+          }
+        >
+          <Ellipsis size={15} />
+        </Menu.Trigger>
+      </IconTip>
       <Menu.Portal>
         <Menu.Positioner align="end" sideOffset={4}>
           <Menu.Popup className={styles.menu}>

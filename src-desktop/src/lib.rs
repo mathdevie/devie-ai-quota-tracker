@@ -401,9 +401,11 @@ fn toggle_popover(app: &AppHandle) {
         return;
     }
     let _ = window.move_window(Position::TrayCenter);
-    // `show` makes the panel key without activating the app, so the main
-    // window stays where it is.
+    // The panel is non-activating: it becomes key without activating the
+    // app, so the main window stays where it is. It must be key so that a
+    // click elsewhere makes it lose focus and hide.
     let _ = window.show();
+    let _ = window.set_focus();
 }
 
 fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
@@ -418,7 +420,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(18.0, 20.0));
+        .traffic_light_position(tauri::LogicalPosition::new(20.0, 22.0));
     main.build()?;
 
     let popover =

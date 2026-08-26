@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
-import { fullName } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
 import OptionRow from "./OptionRow";
@@ -43,7 +42,7 @@ export default function AutoPingDialog({
     >
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup>
+        <Dialog.Popup className={styles.dialog}>
           <form
             className={styles.form}
             onSubmit={async (event) => {
@@ -59,25 +58,21 @@ export default function AutoPingDialog({
           >
             <Dialog.Header>
               <Dialog.Title>{t("AutoPing.Title")}</Dialog.Title>
-              {connection && (
-                <Dialog.Description>{fullName(connection)}</Dialog.Description>
-              )}
             </Dialog.Header>
             <Dialog.Body>
               <div className={styles.group}>
-                <OptionRow.List>
-                  <OptionRow.Row
-                    checked={supported && enabled}
-                    description={
-                      supported
-                        ? t("AutoPing.SupportedDescription")
-                        : t("AutoPing.UnsupportedDescription")
-                    }
-                    disabled={!supported}
-                    label={t("AutoPing.StartNextSession")}
-                    onChange={setEnabled}
-                  />
-                </OptionRow.List>
+                <OptionRow.Row
+                  checked={supported && enabled}
+                  description={
+                    supported
+                      ? t("AutoPing.SupportedDescription")
+                      : t("AutoPing.UnsupportedDescription")
+                  }
+                  disabled={!supported}
+                  label={t("AutoPing.StartNextSession")}
+                  onChange={setEnabled}
+                  plain
+                />
                 {connection?.autoPing.lastError && (
                   <OptionRow.Note tone="danger">
                     {connection.autoPing.lastError}

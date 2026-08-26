@@ -35,6 +35,14 @@ export default function LoginDialog({
   const [code, setCode] = useState("");
   const [copied, setCopied] = useState(false);
   const sessionRef = useRef<string>(undefined);
+  // The parent passes new callbacks on every render. The effect must not
+  // restart the sign-in when that happens, so it reads them through refs.
+  const onConnectedRef = useRef(onConnected);
+  const onOpenChangeRef = useRef(onOpenChange);
+  useEffect(() => {
+    onConnectedRef.current = onConnected;
+    onOpenChangeRef.current = onOpenChange;
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -59,8 +67,8 @@ export default function LoginDialog({
         if (cancelled) return;
         sessionRef.current = undefined;
         setPhase("done");
-        onConnected(state);
-        window.setTimeout(() => onOpenChange(false), 900);
+        onConnectedRef.current(state);
+        window.setTimeout(() => onOpenChangeRef.current(false), 900);
       } catch (reason) {
         if (cancelled) return;
         sessionRef.current = undefined;
@@ -75,7 +83,7 @@ export default function LoginDialog({
       sessionRef.current = undefined;
       if (session) void cancelLogin(session);
     };
-  }, [open, provider, onConnected, onOpenChange]);
+  }, [open, provider]);
 
   async function handleManualCode(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -24,6 +24,9 @@ export type UpdateStatus =
   | "installing"
   | "error";
 
+/** What a check found. `busy` means a download or install is in progress. */
+export type CheckResult = "ready" | "up-to-date" | "error" | "busy";
+
 export interface UpdateInfo {
   version: string;
   currentVersion: string;
@@ -36,8 +39,8 @@ interface AppUpdaterValue {
   progress: number;
   info?: UpdateInfo;
   error?: string;
-  /** Looks for an update and downloads it. Returns true when one is ready. */
-  checkForUpdates: () => Promise<boolean>;
+  /** Looks for an update and downloads it. */
+  checkForUpdates: () => Promise<CheckResult>;
   /** Installs the downloaded update and restarts the app. */
   installUpdate: () => Promise<void>;
 }
@@ -98,11 +101,11 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
     }
   }, [commit]);
 
-  const checkForUpdates = useCallback(async (): Promise<boolean> => {
-    if (!IS_DESKTOP_BUILD) return false;
+  const checkForUpdates = useCallback(async (): Promise<CheckResult> => {
+    if (!IS_DESKTOP_BUILD) return "up-to-date";
     const current = statusRef.current;
-    if (current === "ready") return true;
-    if (current === "downloading" || current === "installing") return false;
+    if (current === "ready") return "ready";
+    if (current === "downloading" || current === "installing") return "busy";
     commit("checking");
     setError(undefined);
     try {
@@ -110,7 +113,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
       const update = await check();
       if (!update) {
         commit("idle");
-        return false;
+        return "up-to-date";
       }
       updateRef.current = update;
       setInfo({
@@ -118,11 +121,11 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
         currentVersion: update.currentVersion,
         body: update.body,
       });
-      return download();
+      return (await download()) ? "ready" : "error";
     } catch (reason) {
       setError(message(reason));
       commit("error");
-      return false;
+      return "error";
     }
   }, [commit, download]);
 
@@ -143,8 +146,8 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!IS_DESKTOP_BUILD || startedRef.current) return;
     startedRef.current = true;
-    void checkForUpdates().then((ready) => {
-      if (ready) void installUpdate();
+    void checkForUpdates().then((result) => {
+      if (result === "ready") void installUpdate();
     });
     const timer = window.setInterval(
       () => void checkForUpdates(),
@@ -177,7 +180,7 @@ const disabled: AppUpdaterValue = {
   enabled: false,
   status: "idle",
   progress: 0,
-  checkForUpdates: async () => false,
+  checkForUpdates: async () => "up-to-date",
   installUpdate: async () => {},
 };
 
