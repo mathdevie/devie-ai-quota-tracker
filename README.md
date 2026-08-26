@@ -200,7 +200,8 @@ setup steps.
 - GitHub Copilot uses an internal endpoint instead of a public quota API.
 - Claude and Codex login uses the provider CLI instead of a direct app callback.
 - The app does not yet remove managed profiles.
-- The app does not yet show charts, alerts, costs, or local token totals.
+- The app does not yet show full history charts, costs, or local token totals.
+- Auto-ping supports Claude and Codex accounts signed in through the app.
 - Real multi-account testing still needs more plan and organization types.
 
 ## Next areas
@@ -209,7 +210,7 @@ setup steps.
 - Complete provider lifecycle controls.
 - Improve login progress and error handling.
 - Test multiple Claude and Codex subscription combinations.
-- Add quota history and alerts.
+- Expand the quota history and usage charts.
 - Add more providers through the shared adapter model.
 
 ## Research and references

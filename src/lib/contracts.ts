@@ -16,6 +16,18 @@ export interface RemoteIdentity {
   plan?: string;
 }
 
+export interface ConnectionAlerts {
+  lowQuota: boolean;
+  resetSoon: boolean;
+  resetHappened: boolean;
+}
+
+export interface AutoPingState {
+  enabled: boolean;
+  lastPingAt?: string;
+  lastError?: string;
+}
+
 export interface ProviderConnection {
   id: string;
   provider: Provider;
@@ -30,6 +42,8 @@ export interface ProviderConnection {
   /** A name the user typed for this account. */
   customLabel?: string;
   identity?: RemoteIdentity;
+  alerts: ConnectionAlerts;
+  autoPing: AutoPingState;
   windows: QuotaWindow[];
 }
 

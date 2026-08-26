@@ -1,4 +1,9 @@
-import type { DashboardState, LoginStart, Provider } from "./contracts";
+import type {
+  ConnectionAlerts,
+  DashboardState,
+  LoginStart,
+  Provider,
+} from "./contracts";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -135,6 +140,41 @@ export async function renameConnection(
     };
   }
   return call("rename_connection", { connectionId, label: trimmed || null });
+}
+
+export async function setConnectionAutomation(
+  connectionId: string,
+  alerts: ConnectionAlerts,
+  autoPingEnabled: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      connections: previewState.connections.map((connection) =>
+        connection.id === connectionId
+          ? {
+              ...connection,
+              alerts,
+              autoPing: { ...connection.autoPing, enabled: autoPingEnabled },
+            }
+          : connection,
+      ),
+    };
+  }
+  return call("set_connection_automation", {
+    connectionId,
+    alerts,
+    autoPingEnabled,
+  });
+}
+
+export async function ensureNotificationPermission(): Promise<boolean> {
+  if (!isDesktop()) return true;
+  const { isPermissionGranted, requestPermission } = await import(
+    "@tauri-apps/plugin-notification"
+  );
+  if (await isPermissionGranted()) return true;
+  return (await requestPermission()) === "granted";
 }
 
 export async function setMenuBarItemVisible(

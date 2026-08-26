@@ -100,6 +100,7 @@ export default function ProviderDetailView({
                 onRefresh={actions.onRefresh}
                 onRemove={actions.onRemove}
                 onRename={actions.onRename}
+                onConfigure={actions.onConfigure}
               />
             </div>
           </article>

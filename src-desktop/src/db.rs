@@ -4,8 +4,8 @@ use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
-    AppSettings, ConnectionKind, ConnectionStatus, DashboardState, DiscoveredConnection,
-    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
+    AppSettings, AutoPingState, ConnectionAlerts, ConnectionKind, ConnectionStatus, DashboardState,
+    DiscoveredConnection, Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
@@ -73,6 +73,12 @@ impl Database {
                    key TEXT PRIMARY KEY,
                    value TEXT NOT NULL
                  );
+                 CREATE TABLE IF NOT EXISTS notification_events (
+                   event_key TEXT PRIMARY KEY,
+                   connection_id TEXT NOT NULL REFERENCES provider_connections(id) ON DELETE CASCADE,
+                   kind TEXT NOT NULL,
+                   created_at TEXT NOT NULL
+                 );
                  ",
             )
             .map_err(|error| error.to_string())?;
@@ -83,6 +89,60 @@ impl Database {
             "TEXT NOT NULL DEFAULT 'local'",
         )?;
         Self::add_column_if_missing(&connection, "provider_connections", "custom_label", "TEXT")?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "alert_low_quota",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "alert_reset_soon",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "alert_reset_happened",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "auto_ping_enabled",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "last_auto_ping_reset_key",
+            "TEXT",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "last_auto_ping_at",
+            "TEXT",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "last_auto_ping_error",
+            "TEXT",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "auto_ping_observed_reset_at",
+            "TEXT",
+        )?;
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "last_auto_ping_attempt_at",
+            "TEXT",
+        )?;
         Ok(())
     }
 
@@ -239,7 +299,11 @@ impl Database {
                 "SELECT id, provider, label, source_locator, enabled, status, source,
                         last_updated_at, last_error,
                         identity_user_id, identity_display_name, identity_plan, kind,
-                        custom_label
+                        custom_label, alert_low_quota, alert_reset_soon,
+                        alert_reset_happened, auto_ping_enabled,
+                        last_auto_ping_reset_key, last_auto_ping_at,
+                        last_auto_ping_error, auto_ping_observed_reset_at,
+                        last_auto_ping_attempt_at
                  FROM provider_connections
                  ORDER BY CASE provider WHEN 'claude' THEN 0 WHEN 'codex' THEN 1 ELSE 2 END,
                           label",
@@ -276,6 +340,19 @@ impl Database {
                     last_error: row.get(8)?,
                     custom_label: row.get(13)?,
                     identity,
+                    alerts: ConnectionAlerts {
+                        low_quota: row.get::<_, i64>(14)? != 0,
+                        reset_soon: row.get::<_, i64>(15)? != 0,
+                        reset_happened: row.get::<_, i64>(16)? != 0,
+                    },
+                    auto_ping: AutoPingState {
+                        enabled: row.get::<_, i64>(17)? != 0,
+                        last_reset_key: row.get(18)?,
+                        last_ping_at: row.get(19)?,
+                        last_error: row.get(20)?,
+                        observed_reset_at: row.get(21)?,
+                        last_attempt_at: row.get(22)?,
+                    },
                     windows: Vec::new(),
                 })
             })
@@ -361,6 +438,115 @@ impl Database {
             return Err("The connection does not exist.".to_string());
         }
         Ok(())
+    }
+
+    pub fn set_connection_automation(
+        &self,
+        id: &str,
+        alerts: &ConnectionAlerts,
+        auto_ping_enabled: bool,
+    ) -> Result<(), String> {
+        let changed = self
+            .connection()?
+            .execute(
+                "UPDATE provider_connections SET
+                   alert_low_quota = ?2, alert_reset_soon = ?3,
+                   alert_reset_happened = ?4, auto_ping_enabled = ?5,
+                   auto_ping_observed_reset_at = CASE
+                     WHEN auto_ping_enabled = 0 AND ?5 = 1 THEN NULL
+                     ELSE auto_ping_observed_reset_at
+                   END,
+                   last_auto_ping_error = CASE
+                     WHEN ?5 = 0 THEN NULL ELSE last_auto_ping_error
+                   END,
+                   updated_at = ?6
+                 WHERE id = ?1",
+                params![
+                    id,
+                    alerts.low_quota as i64,
+                    alerts.reset_soon as i64,
+                    alerts.reset_happened as i64,
+                    auto_ping_enabled as i64,
+                    Utc::now().to_rfc3339(),
+                ],
+            )
+            .map_err(|error| error.to_string())?;
+        if changed == 0 {
+            return Err("The connection does not exist.".to_string());
+        }
+        Ok(())
+    }
+
+    pub fn set_auto_ping_observation(&self, id: &str, reset_at: &str) -> Result<(), String> {
+        self.connection()?
+            .execute(
+                "UPDATE provider_connections
+                 SET auto_ping_observed_reset_at = ?2, updated_at = ?3
+                 WHERE id = ?1",
+                params![id, reset_at, Utc::now().to_rfc3339()],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
+    pub fn save_auto_ping_success(
+        &self,
+        id: &str,
+        reset_key: &str,
+        observed_reset_at: &str,
+    ) -> Result<(), String> {
+        let now = Utc::now().to_rfc3339();
+        self.connection()?
+            .execute(
+                "UPDATE provider_connections SET
+                   last_auto_ping_reset_key = ?2, last_auto_ping_at = ?3,
+                   last_auto_ping_attempt_at = ?3, last_auto_ping_error = NULL,
+                   auto_ping_observed_reset_at = ?4, updated_at = ?3
+                 WHERE id = ?1",
+                params![id, reset_key, now, observed_reset_at],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
+    pub fn save_auto_ping_failure(&self, id: &str, message: &str) -> Result<(), String> {
+        let now = Utc::now().to_rfc3339();
+        self.connection()?
+            .execute(
+                "UPDATE provider_connections SET
+                   last_auto_ping_attempt_at = ?2, last_auto_ping_error = ?3,
+                   updated_at = ?2
+                 WHERE id = ?1",
+                params![id, now, message],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
+    pub fn claim_notification(
+        &self,
+        event_key: &str,
+        connection_id: &str,
+        kind: &str,
+    ) -> Result<bool, String> {
+        let changed = self
+            .connection()?
+            .execute(
+                "INSERT OR IGNORE INTO notification_events(event_key, connection_id, kind, created_at)
+                 VALUES (?1, ?2, ?3, ?4)",
+                params![event_key, connection_id, kind, Utc::now().to_rfc3339()],
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(changed == 1)
+    }
+
+    pub fn release_notification_claim(&self, event_key: &str) {
+        if let Ok(connection) = self.connection() {
+            let _ = connection.execute(
+                "DELETE FROM notification_events WHERE event_key = ?1",
+                [event_key],
+            );
+        }
     }
 
     pub fn save_reading(&self, id: &str, reading: &QuotaReading) -> Result<(), String> {
@@ -509,9 +695,29 @@ mod tests {
             .expect("label");
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections[0].custom_label.as_deref(), Some("Work"));
-        database.set_custom_label("claude-one", Some("")).expect("clear");
+        database
+            .set_custom_label("claude-one", Some(""))
+            .expect("clear");
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections[0].custom_label, None);
+
+        let alerts = ConnectionAlerts {
+            low_quota: true,
+            reset_soon: false,
+            reset_happened: true,
+        };
+        database
+            .set_connection_automation("claude-one", &alerts, true)
+            .expect("automation");
+        let state = database.dashboard_state().expect("state");
+        assert_eq!(state.connections[0].alerts, alerts);
+        assert!(state.connections[0].auto_ping.enabled);
+        assert!(database
+            .claim_notification("low:one", "claude-one", "low_quota")
+            .expect("first notification"));
+        assert!(!database
+            .claim_notification("low:one", "claude-one", "low_quota")
+            .expect("duplicate notification"));
 
         assert!(state.settings.show_menu_bar_item);
         database.set_show_menu_bar_item(false).expect("setting");
