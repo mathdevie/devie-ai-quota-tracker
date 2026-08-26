@@ -63,7 +63,21 @@
       "Now": "adesso",
       "InDaysHours": "tra {{days}}g {{hours}}h",
       "InHoursMinutes": "tra {{hours}}h {{minutes}}min",
-      "InMinutes": "tra {{minutes}}min"
+      "InMinutes": "tra {{minutes}}min",
+      "On": "Si azzera il {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Crediti di azzeramento",
+      "Description": "Un credito azzera tutte le finestre di quota di questo account in una volta.",
+      "DefaultTitle": "Azzeramento del limite",
+      "Expires": "Scade il {{date}}",
+      "NoExpiry": "Nessuna scadenza",
+      "Use": "Usa",
+      "Available_one": "{{count}} azzeramento disponibile",
+      "Available_other": "{{count}} azzeramenti disponibili",
+      "ConfirmTitle": "Azzerare i limiti Codex?",
+      "ConfirmDescription": "Usa 1 credito di azzeramento per {{account}}. Tutte le finestre di quota si azzerano ora. L’operazione non può essere annullata. Crediti rimanenti dopo: {{remaining}}.",
+      "Confirm": "Azzera limiti"
     },
     "Pin": {
       "Shown": "{{label}} è mostrato nella barra dei menu",

@@ -1,6 +1,8 @@
+import dayjs from "dayjs";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { setLanguage } from "@/lib/desktop";
+import { getDayjsLocale } from "./dayjs-locale";
 import {
   DEFAULT_LOCALE,
   isSupportedLocale,
@@ -94,6 +96,12 @@ i18n.on("languageChanged", (lng) => {
     // Storage unavailable
   }
 });
+
+// Dates follow the interface language.
+i18n.on("languageChanged", (lng) => {
+  dayjs.locale(getDayjsLocale(lng));
+});
+dayjs.locale(getDayjsLocale(i18n.language));
 
 // The tray menu and notifications follow the interface language.
 i18n.on("languageChanged", (lng) => {

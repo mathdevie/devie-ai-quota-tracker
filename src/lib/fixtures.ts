@@ -98,6 +98,14 @@ export const previewState: DashboardState = {
           resetsAt: "2026-08-28T09:00:00Z",
         },
       ],
+      resetCredits: [
+        {
+          id: "RateLimitResetCredit_preview-1",
+          title: "Rate limit reset",
+          grantedAt: "2026-08-20T09:00:00Z",
+          expiresAt: "2026-09-04T14:00:00Z",
+        },
+      ],
     },
     {
       id: "gemini-personal",

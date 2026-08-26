@@ -2,8 +2,33 @@ import type { TFunction } from "i18next";
 import { Pin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { QuotaWindow } from "@/lib/contracts";
+import { formatDateTime } from "@/lib/date";
+import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
 import styles from "./QuotaBars.module.scss";
+
+/** The reset countdown; the full date shows on hover. */
+function ResetTime({ value }: { value?: string }) {
+  const { t, i18n } = useTranslation();
+  const text = untilText(t, value);
+  if (!value || !text) return <span className={styles.reset}>—</span>;
+  return (
+    <Tooltip.Root>
+      <Tooltip.Trigger render={<span className={styles.reset} />}>
+        {text}
+      </Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Positioner side="top" sideOffset={6}>
+          <Tooltip.Popup>
+            {t("Quota.Reset.On", {
+              date: formatDateTime(value, i18n.language),
+            })}
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  );
+}
 
 /** "in 4h 13m", "in 6d 4h", or "now" for a past reset. */
 export function untilText(t: TFunction, value?: string): string | undefined {
@@ -67,9 +92,7 @@ export default function QuotaBars({
               />
             </span>
             <span className={styles.percent}>{left}%</span>
-            <span className={styles.reset}>
-              {untilText(t, window.resetsAt) ?? "—"}
-            </span>
+            <ResetTime value={window.resetsAt} />
             {onPin && (
               <IconTip label={t("Quota.Pin.Title")}>
                 <button

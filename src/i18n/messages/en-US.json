@@ -63,7 +63,21 @@
       "Now": "now",
       "InDaysHours": "in {{days}}d {{hours}}h",
       "InHoursMinutes": "in {{hours}}h {{minutes}}m",
-      "InMinutes": "in {{minutes}}m"
+      "InMinutes": "in {{minutes}}m",
+      "On": "Resets on {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Reset credits",
+      "Description": "A reset credit resets every quota window of this account at once.",
+      "DefaultTitle": "Rate limit reset",
+      "Expires": "Expires on {{date}}",
+      "NoExpiry": "No expiration",
+      "Use": "Use",
+      "Available_one": "{{count}} reset available",
+      "Available_other": "{{count}} resets available",
+      "ConfirmTitle": "Reset Codex limits?",
+      "ConfirmDescription": "Use 1 reset credit for {{account}}. Every quota window resets now. This cannot be undone. Credits left after: {{remaining}}.",
+      "Confirm": "Reset limits"
     },
     "Pin": {
       "Shown": "{{label}} is shown in the menu bar",

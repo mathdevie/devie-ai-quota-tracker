@@ -63,7 +63,21 @@
       "Now": "nyt",
       "InDaysHours": "{{days}} pv {{hours}} t kuluttua",
       "InHoursMinutes": "{{hours}} t {{minutes}} min kuluttua",
-      "InMinutes": "{{minutes}} min kuluttua"
+      "InMinutes": "{{minutes}} min kuluttua",
+      "On": "Nollautuu {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Nollaushyvitykset",
+      "Description": "Nollaushyvitys nollaa kerralla kaikki tämän tilin kiintiöikkunat.",
+      "DefaultTitle": "Rajan nollaus",
+      "Expires": "Vanhenee {{date}}",
+      "NoExpiry": "Ei vanhenemista",
+      "Use": "Käytä",
+      "Available_one": "{{count}} nollaus käytettävissä",
+      "Available_other": "{{count}} nollausta käytettävissä",
+      "ConfirmTitle": "Nollataanko Codex-rajat?",
+      "ConfirmDescription": "Käytä 1 nollaushyvitys tilille {{account}}. Kaikki kiintiöikkunat nollautuvat nyt. Tätä ei voi kumota. Hyvityksiä jäljellä sen jälkeen: {{remaining}}.",
+      "Confirm": "Nollaa rajat"
     },
     "Pin": {
       "Shown": "{{label}} näkyy valikkorivillä",
