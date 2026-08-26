@@ -244,6 +244,9 @@ mod tests {
             label: "Session (5h)".into(),
             used_percent: 90.0,
             resets_at: Some("2026-08-26T11:59:00Z".into()),
+            unlimited: false,
+            amount: None,
+            paid: false,
         };
         let connection = connection(
             ConnectionAlerts {
@@ -261,6 +264,9 @@ mod tests {
                 label: "Session (5h)".into(),
                 used_percent: 85.0,
                 resets_at: Some("2026-08-26T12:20:00Z".into()),
+                unlimited: false,
+                amount: None,
+                paid: false,
             }],
             reset_credits: None,
         };
@@ -282,6 +288,9 @@ mod tests {
             label: "Session".into(),
             used_percent: 99.0,
             resets_at: Some((now + Duration::minutes(5)).to_rfc3339()),
+            unlimited: false,
+            amount: None,
+            paid: false,
         };
         let connection = connection(ConnectionAlerts::default(), window.clone());
         let reading = QuotaReading {

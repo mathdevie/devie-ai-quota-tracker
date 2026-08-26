@@ -238,21 +238,21 @@ export default function ConnectionCard({
 
       <div className={styles.body}>
         {connection.windows.length > 0 ? (
-          <>
-            <QuotaBars windows={connection.windows} />
-            {actions.onUseReset && (
-              <ResetCredits
-                connection={connection}
-                onUseReset={actions.onUseReset}
-              />
-            )}
-          </>
+          <QuotaBars windows={connection.windows} />
         ) : (
           <p className={styles.empty}>
             {connection.lastError ?? t("Connection.NoQuotaData")}
           </p>
         )}
       </div>
+      {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
+        <footer className={styles.footer}>
+          <ResetCredits
+            connection={connection}
+            onUseReset={actions.onUseReset}
+          />
+        </footer>
+      )}
     </article>
   );
 }

@@ -56,8 +56,9 @@ function nextReset(connection: ProviderConnection): number {
 
 /** The lowest remaining percent across the windows, or 101 without data. */
 function leastLeft(connection: ProviderConnection): number {
-  if (connection.windows.length === 0) return 101;
-  return 100 - Math.max(...connection.windows.map((w) => w.usedPercent));
+  const windows = connection.windows.filter((w) => !w.paid && !w.unlimited);
+  if (windows.length === 0) return 101;
+  return 100 - Math.max(...windows.map((w) => w.usedPercent));
 }
 
 const SORTERS: Record<

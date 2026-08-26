@@ -6,6 +6,23 @@ export interface QuotaWindow {
   label: string;
   usedPercent: number;
   resetsAt?: string;
+  /** True when the provider sets no cap. `usedPercent` is 0. */
+  unlimited?: boolean;
+  /** The absolute count behind the percent, when the provider gives one. */
+  amount?: QuotaAmount;
+  /** A paid allowance past the plan: extra usage, credits. Never drives the menu bar. */
+  paid?: boolean;
+}
+
+/** "677 of 1,500 credits, plus 12 over the cap". */
+export interface QuotaAmount {
+  /** Absent for a balance the provider only reports as "left". */
+  used?: number;
+  total: number;
+  /** A short unit name ("credits") or an ISO currency code ("USD"). */
+  unit?: string;
+  /** Usage past the cap, billed extra. Absent when the provider allows none. */
+  overage?: number;
 }
 
 export interface RemoteIdentity {

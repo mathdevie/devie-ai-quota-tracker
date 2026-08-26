@@ -10,7 +10,7 @@ use serde_json::{Map, Value};
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, QuotaWindow, RemoteIdentity},
+    model::{QuotaAmount, QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{describe_http_failure, LoginOutcome, USER_AGENT},
     parse::{number, reset_time},
 };
@@ -215,23 +215,54 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
         .get("quota_snapshots")
         .and_then(Value::as_object)
         .ok_or_else(|| "GitHub Copilot returned no quota snapshots.".to_string())?;
-    let reset = reset_time(object.get("quota_reset_date"));
+    let reset = reset_time(
+        object
+            .get("quota_reset_date_utc")
+            .or_else(|| object.get("quota_reset_date")),
+    );
+    // Since June 2026 the premium allowance is billed in AI Credits (one
+    // credit is one US cent). Annual subscribers may still count requests.
+    let credits = object
+        .get("token_based_billing")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let (label, unit) = if credits {
+        ("AI Credits", "credits")
+    } else {
+        ("Premium", "requests")
+    };
     let mut windows = Vec::new();
     add_snapshot(
         snapshots,
         "premium_interactions",
-        "Premium",
+        label,
+        unit,
         reset.clone(),
         &mut windows,
     );
-    add_snapshot(snapshots, "chat", "Chat", reset, &mut windows);
+    add_snapshot(
+        snapshots,
+        "chat",
+        "Chat",
+        "messages",
+        reset.clone(),
+        &mut windows,
+    );
+    add_snapshot(
+        snapshots,
+        "completions",
+        "Completions",
+        "completions",
+        reset,
+        &mut windows,
+    );
     if windows.is_empty() {
         return Err("GitHub Copilot returned no usable subscription quota.".to_string());
     }
     let plan = object
         .get("copilot_plan")
         .and_then(Value::as_str)
-        .map(title_case);
+        .map(plan_label);
     Ok(QuotaReading {
         source: "GitHub CLI + Copilot quota".to_string(),
         identity: Some(RemoteIdentity {
@@ -244,10 +275,26 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
     })
 }
 
+/// The marketing name of a `copilot_plan` value. "individual" is the old
+/// name of Copilot Pro, still used by the API.
+pub fn plan_label(plan: &str) -> String {
+    match plan.to_lowercase().as_str() {
+        "free" | "free_limited" | "free_limited_copilot" => "Free".to_string(),
+        "individual" | "pro" | "copilot_pro" => "Pro".to_string(),
+        "individual_pro" | "pro_plus" | "copilot_pro_plus" => "Pro+".to_string(),
+        "individual_max" | "max" | "copilot_max" => "Max".to_string(),
+        "business" | "copilot_business" => "Business".to_string(),
+        "enterprise" | "copilot_enterprise" => "Enterprise".to_string(),
+        "student" | "education" => "Student".to_string(),
+        other => title_case(other),
+    }
+}
+
 fn add_snapshot(
     snapshots: &Map<String, Value>,
     key: &str,
     label: &str,
+    unit: &str,
     resets_at: Option<String>,
     windows: &mut Vec<QuotaWindow>,
 ) {
@@ -262,28 +309,56 @@ fn add_snapshot(
     if !unlimited && entitlement.is_some_and(|value| value <= 0.0) {
         return;
     }
+    if unlimited {
+        windows.push(QuotaWindow {
+            key: key.to_string(),
+            label: label.to_string(),
+            used_percent: 0.0,
+            resets_at: None,
+            unlimited: true,
+            amount: None,
+            paid: false,
+        });
+        return;
+    }
+    let remaining = number(
+        snapshot
+            .get("remaining")
+            .or_else(|| snapshot.get("quota_remaining")),
+    );
     let percent_remaining = number(snapshot.get("percent_remaining")).or_else(|| {
         let total = entitlement?;
-        let remaining = number(
-            snapshot
-                .get("remaining")
-                .or_else(|| snapshot.get("quota_remaining")),
-        )?;
-        (total > 0.0).then_some(remaining / total * 100.0)
+        (total > 0.0).then_some(remaining? / total * 100.0)
     });
-    let used = if unlimited {
-        0.0
-    } else {
-        let Some(remaining) = percent_remaining else {
-            return;
-        };
-        (100.0 - remaining).clamp(0.0, 100.0)
+    let Some(percent_remaining) = percent_remaining else {
+        return;
     };
+    let amount = entitlement.map(|total| {
+        let used = number(snapshot.get("credits_used"))
+            .or_else(|| remaining.map(|left| total - left))
+            .unwrap_or(total * (100.0 - percent_remaining) / 100.0)
+            .max(0.0);
+        let overage_allowed = snapshot
+            .get("overage_permitted")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
+        let overage =
+            number(snapshot.get("overage_count")).filter(|count| overage_allowed || *count > 0.0);
+        QuotaAmount {
+            used: Some(used.round()),
+            total,
+            unit: Some(unit.to_string()),
+            overage,
+        }
+    });
     windows.push(QuotaWindow {
         key: key.to_string(),
         label: label.to_string(),
-        used_percent: used,
+        used_percent: (100.0 - percent_remaining).clamp(0.0, 100.0),
         resets_at,
+        unlimited: false,
+        amount,
+        paid: false,
     });
 }
 
@@ -313,10 +388,49 @@ mod tests {
         .expect("fixture");
         let reading = parse_payload(&payload, "octocat").expect("reading");
         assert_eq!(reading.windows[0].used_percent, 25.0);
+        assert_eq!(reading.windows[0].label, "Premium");
+        let amount = reading.windows[0].amount.clone().expect("amount");
+        assert_eq!((amount.used, amount.total), (Some(75.0), 300.0));
+        assert_eq!(amount.overage, None);
         assert_eq!(
             reading.identity.and_then(|value| value.plan),
-            Some("Individual".into())
+            Some("Pro".into())
         );
+    }
+
+    #[test]
+    fn reads_ai_credits_and_unlimited_windows() {
+        let payload: Value = serde_json::from_str(
+            r#"{"copilot_plan":"individual","token_based_billing":true,"quota_reset_date":"2026-09-01","quota_reset_date_utc":"2026-09-01T00:00:00.000Z",
+            "quota_snapshots":{
+              "chat":{"unlimited":true,"entitlement":0,"remaining":0,"percent_remaining":100.0},
+              "premium_interactions":{"unlimited":false,"entitlement":1500,"remaining":823,"percent_remaining":54.9,"credits_used":676,"overage_permitted":true,"overage_count":12}}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_payload(&payload, "octocat").expect("reading");
+        let premium = &reading.windows[0];
+        assert_eq!(premium.label, "AI Credits");
+        assert_eq!(
+            premium.resets_at.as_deref(),
+            Some("2026-09-01T00:00:00.000Z")
+        );
+        let amount = premium.amount.clone().expect("amount");
+        assert_eq!(
+            (amount.used, amount.total, amount.overage),
+            (Some(676.0), 1500.0, Some(12.0))
+        );
+        assert_eq!(amount.unit.as_deref(), Some("credits"));
+        let chat = &reading.windows[1];
+        assert!(chat.unlimited);
+        assert_eq!(chat.used_percent, 0.0);
+        assert_eq!(chat.resets_at, None);
+    }
+
+    #[test]
+    fn maps_plan_names() {
+        assert_eq!(plan_label("individual"), "Pro");
+        assert_eq!(plan_label("business"), "Business");
+        assert_eq!(plan_label("some_new_plan"), "Some New Plan");
     }
 
     #[test]

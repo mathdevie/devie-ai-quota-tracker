@@ -36,7 +36,7 @@ zeroize = "1"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.6"
-objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSPanel", "NSResponder", "NSWindow", "NSEvent", "block2"] }
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSPanel", "NSResponder", "NSWindow", "NSEvent", "NSApplication", "NSRunningApplication", "block2"] }
 block2 = "0.6"
 
 [dev-dependencies]

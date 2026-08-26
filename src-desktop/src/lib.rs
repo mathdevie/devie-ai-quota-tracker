@@ -173,7 +173,11 @@ async fn use_reset_credit(
     if connection.provider != model::Provider::Codex {
         return Err("Reset credits exist for Codex accounts only.".to_string());
     }
-    if !connection.reset_credits.iter().any(|credit| credit.id == credit_id) {
+    if !connection
+        .reset_credits
+        .iter()
+        .any(|credit| credit.id == credit_id)
+    {
         return Err("This reset credit is not available any more.".to_string());
     }
     let credentials =
@@ -382,6 +386,7 @@ fn tray_window<'a>(
     picked.or_else(|| {
         enabled()
             .flat_map(|connection| connection.windows.iter().map(move |w| (connection, w)))
+            .filter(|(_, window)| !window.paid && !window.unlimited)
             .min_by(|(_, a), (_, b)| a.used_percent.total_cmp(&b.used_percent).reverse())
     })
 }
@@ -414,7 +419,24 @@ fn show_main_window(app: &AppHandle) -> Result<(), String> {
         .ok_or_else(|| "The main window does not exist.".to_string())?;
     window.show().map_err(|error| error.to_string())?;
     window.unminimize().map_err(|error| error.to_string())?;
+    #[cfg(target_os = "macos")]
+    activate_app();
     window.set_focus().map_err(|error| error.to_string())
+}
+
+/// Brings the app to the front. A relaunch after an update starts the new
+/// process from the old one, not from Finder or Launch Services, so macOS
+/// does not activate it. An inactive app gets no clicks: each click only
+/// tries to activate the app, and the buttons never react. Menu bar apps
+/// (`ActivationPolicy::Accessory`) never activate on their own.
+#[cfg(target_os = "macos")]
+fn activate_app() {
+    use objc2_app_kit::NSApplication;
+    // SAFETY: Tauri runs setup and commands on the main thread.
+    let mtm = unsafe { objc2::MainThreadMarker::new_unchecked() };
+    let app = NSApplication::sharedApplication(mtm);
+    #[allow(deprecated)]
+    app.activateIgnoringOtherApps(true);
 }
 
 fn toggle_popover(app: &AppHandle) {
@@ -508,7 +530,8 @@ fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow)
         return;
     };
     let panel_pointer = panel_pointer as usize;
-    let mask = NSEventMask::LeftMouseDown | NSEventMask::RightMouseDown | NSEventMask::OtherMouseDown;
+    let mask =
+        NSEventMask::LeftMouseDown | NSEventMask::RightMouseDown | NSEventMask::OtherMouseDown;
 
     let hide = {
         let app = app.clone();
@@ -527,8 +550,11 @@ fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow)
     });
     let local = block2::RcBlock::new(move |event: std::ptr::NonNull<NSEvent>| {
         // SAFETY: AppKit hands the monitor a live event for the duration of the call.
-        let event_window =
-            unsafe { event.as_ref().window(objc2::MainThreadMarker::new_unchecked()) };
+        let event_window = unsafe {
+            event
+                .as_ref()
+                .window(objc2::MainThreadMarker::new_unchecked())
+        };
         let inside = event_window
             .map(|window| objc2::rc::Retained::as_ptr(&window) as usize == panel_pointer)
             .unwrap_or(false);
@@ -616,6 +642,8 @@ pub fn run() {
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
             });
             build_windows(app)?;
+            #[cfg(target_os = "macos")]
+            activate_app();
             let locale = current_language(&app.state::<Core>());
             build_tray(app, &locale)?;
             let settings = app.state::<Core>().database.settings().unwrap_or_default();

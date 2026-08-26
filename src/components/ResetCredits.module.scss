@@ -1,12 +1,20 @@
 @use "../ui/_devie.scss" as *;
 
+// A badge-like pill, like the status badges of the card header.
 .trigger {
-  align-self: flex-start;
-  margin-top: $devie__spacing__x1;
-  margin-left: calc(-1 * $devie__spacing__x05);
+  min-height: 0;
+  padding: 2px 8px 2px 6px;
+  border: 1px solid color-mix(in srgb, $devie__color__primary 22%, $devie__color__background);
+  border-radius: calc($devie__radius / 2);
+  background: color-mix(in srgb, $devie__color__primary 13%, $devie__color__background);
   color: $devie__color__primary;
-  font-size: $devie__font-size__small;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+
+  &:hover {
+    background: color-mix(in srgb, $devie__color__primary 18%, $devie__color__background);
+  }
 }
 
 .popup {

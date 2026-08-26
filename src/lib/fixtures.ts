@@ -43,6 +43,13 @@ export const previewState: DashboardState = {
           usedPercent: 12,
           resetsAt: "2026-08-29T07:00:00Z",
         },
+        {
+          key: "extra_usage",
+          label: "Extra usage",
+          usedPercent: 100,
+          amount: { used: 600.34, total: 600, unit: "USD" },
+          paid: true,
+        },
       ],
     },
     {
@@ -97,6 +104,13 @@ export const previewState: DashboardState = {
           usedPercent: 71,
           resetsAt: "2026-08-28T09:00:00Z",
         },
+        {
+          key: "credits",
+          label: "Credits",
+          usedPercent: 0,
+          amount: { total: 12.5, unit: "USD" },
+          paid: true,
+        },
       ],
       resetCredits: [
         {
@@ -137,21 +151,29 @@ export const previewState: DashboardState = {
     {
       id: "copilot-mathdevie",
       provider: "copilot",
-      label: "GitHub CLI · mathdevie",
+      label: "GitHub Copilot · mathdevie",
       sourceLocator: "github.com/mathdevie",
       enabled: true,
       status: "ready",
-      source: "GitHub CLI",
+      source: "GitHub Copilot API",
       lastUpdatedAt: "2026-08-25T13:40:00Z",
-      identity: { displayName: "mathdevie", plan: "Copilot Pro" },
+      identity: { displayName: "mathdevie", plan: "Pro" },
       alerts: { lowQuota: false, resetSoon: false, resetHappened: false },
       autoPing: { enabled: false },
       windows: [
         {
           key: "premium_interactions",
-          label: "Premium",
-          usedPercent: 22,
+          label: "AI Credits",
+          usedPercent: 45,
           resetsAt: "2026-09-01T00:00:00Z",
+          amount: { used: 677, total: 1500, unit: "credits", overage: 12 },
+        },
+        { key: "chat", label: "Chat", usedPercent: 0, unlimited: true },
+        {
+          key: "completions",
+          label: "Completions",
+          usedPercent: 0,
+          unlimited: true,
         },
       ],
     },

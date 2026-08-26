@@ -83,7 +83,12 @@
       "Shown": "{{label}} vises i menulinjen",
       "Show": "Vis {{label}} i menulinjen",
       "Title": "Vis i menulinjen"
-    }
+    },
+    "Unlimited": "Ubegrænset",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} over",
+    "Balance": "{{balance}} tilbage",
+    "LimitReached": "Grænse nået"
   },
   "Popover": {
     "OpenDashboard": "Åbn dashboard",

@@ -95,6 +95,20 @@ impl Database {
             .execute("DELETE FROM provider_connections WHERE kind = 'local'", [])
             .map_err(|error| error.to_string())?;
         Self::add_column_if_missing(&connection, "provider_connections", "custom_label", "TEXT")?;
+        Self::add_column_if_missing(
+            &connection,
+            "quota_windows",
+            "unlimited",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
+        // JSON of `QuotaAmount`, absent when the provider gives only a percent.
+        Self::add_column_if_missing(&connection, "quota_windows", "amount", "TEXT")?;
+        Self::add_column_if_missing(
+            &connection,
+            "quota_windows",
+            "paid",
+            "INTEGER NOT NULL DEFAULT 0",
+        )?;
         Self::add_column_if_missing(&connection, "provider_connections", "reset_credits", "TEXT")?;
         Self::add_column_if_missing(
             &connection,
@@ -416,7 +430,7 @@ impl Database {
 
         let mut statement = connection
             .prepare(
-                "SELECT window_key, label, used_percent, resets_at
+                "SELECT window_key, label, used_percent, resets_at, unlimited, amount, paid
                  FROM quota_windows WHERE snapshot_id = ?1 ORDER BY rowid",
             )
             .map_err(|error| error.to_string())?;
@@ -427,6 +441,11 @@ impl Database {
                     label: row.get(1)?,
                     used_percent: row.get(2)?,
                     resets_at: row.get(3)?,
+                    unlimited: row.get::<_, i64>(4)? != 0,
+                    amount: row
+                        .get::<_, Option<String>>(5)?
+                        .and_then(|json| serde_json::from_str(&json).ok()),
+                    paid: row.get::<_, i64>(6)? != 0,
                 })
             })
             .map_err(|error| error.to_string())?;
@@ -593,9 +612,21 @@ impl Database {
         for window in &reading.windows {
             transaction
                 .execute(
-                    "INSERT INTO quota_windows(snapshot_id, window_key, label, used_percent, resets_at)
-                     VALUES (?1, ?2, ?3, ?4, ?5)",
-                    params![snapshot_id, window.key, window.label, window.used_percent, window.resets_at],
+                    "INSERT INTO quota_windows(snapshot_id, window_key, label, used_percent, resets_at, unlimited, amount, paid)
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                    params![
+                        snapshot_id,
+                        window.key,
+                        window.label,
+                        window.used_percent,
+                        window.resets_at,
+                        window.unlimited as i64,
+                        window
+                            .amount
+                            .as_ref()
+                            .and_then(|amount| serde_json::to_string(amount).ok()),
+                        window.paid as i64,
+                    ],
                 )
                 .map_err(|error| error.to_string())?;
         }
@@ -681,6 +712,9 @@ mod tests {
                             label: "Current session".into(),
                             used_percent: used,
                             resets_at: None,
+                            unlimited: false,
+                            amount: None,
+                            paid: false,
                         }],
                         reset_credits: None,
                     },
