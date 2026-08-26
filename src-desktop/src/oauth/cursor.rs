@@ -17,7 +17,7 @@ use serde_json::Value;
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, QuotaWindow, RemoteIdentity},
+    model::{QuotaAmount, QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{
         claude::{encode_query, title_case},
         decode_jwt_claims, describe_http_failure, LoginOutcome, Pkce, USER_AGENT,
@@ -244,6 +244,9 @@ pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
                 label: "Plan".to_string(),
                 used_percent: percent.clamp(0.0, 100.0),
                 resets_at: resets_at.clone(),
+                unlimited: false,
+                amount: None,
+                paid: false,
             });
         }
     }
@@ -306,11 +309,20 @@ fn add_cents_window(
         return;
     };
     let used = number(block.get("used")).unwrap_or(0.0);
+    // The dollar amounts show under the bar; these caps are paid usage.
     windows.push(QuotaWindow {
         key: key.to_string(),
-        label: format!("{label} (${:.0})", limit / 100.0),
+        label: label.to_string(),
         used_percent: (used / limit * 100.0).clamp(0.0, 100.0),
         resets_at: resets_at.clone(),
+        unlimited: false,
+        amount: Some(QuotaAmount {
+            used: Some(used / 100.0),
+            total: limit / 100.0,
+            unit: Some("USD".to_string()),
+            overage: None,
+        }),
+        paid: true,
     });
 }
 
@@ -389,8 +401,12 @@ mod tests {
             reading.windows[0].resets_at.as_deref(),
             Some("2026-09-01T00:00:00+00:00")
         );
-        assert_eq!(reading.windows[1].label, "On-demand ($50)");
+        assert_eq!(reading.windows[1].label, "On-demand");
         assert_eq!(reading.windows[1].used_percent, 6.0);
+        assert!(reading.windows[1].paid);
+        let amount = reading.windows[1].amount.clone().expect("amount");
+        assert_eq!((amount.used, amount.total), (Some(3.0), 50.0));
+        assert_eq!(amount.unit.as_deref(), Some("USD"));
         assert_eq!(
             reading.identity.and_then(|value| value.plan).as_deref(),
             Some("Pro Plus")
