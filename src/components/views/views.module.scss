@@ -170,30 +170,36 @@
   }
 }
 
-.providerRow {
+.providerGrid {
+  display: grid;
+  gap: $devie__spacing__x2;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.providerCard {
   display: flex;
   width: 100%;
-  min-height: 56px;
+  min-height: 104px;
+  flex-wrap: wrap;
   align-items: center;
-  gap: $devie__spacing__x2;
-  padding: $devie__spacing__x1 $devie__spacing__x2;
-  border: 0;
-  background: $devie__color__background;
+  justify-content: space-between;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x2;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius-strong;
+  background: $devie__color__background-sub;
   color: $devie__color__text;
   font: inherit;
   text-align: left;
   cursor: default;
-
-  & + & {
-    border-top: 1px solid $devie__color__line;
-  }
 
   strong {
     font-weight: 500;
   }
 
   &:is(button):hover {
-    background: color-mix(in srgb, $devie__color__text 4%, $devie__color__background);
+    border-color: color-mix(in srgb, $devie__color__primary 40%, $devie__color__line);
+    background: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background-sub);
   }
 
   &:focus-visible {
@@ -206,12 +212,36 @@
   }
 }
 
+.providerCardHeader {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.providerCardTitle {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+
+  strong,
+  small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    color: $devie__color__text-sub;
+    font-size: 11px;
+  }
+}
+
 .providerBadges {
   display: flex;
-  flex: 1;
   flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: $devie__spacing__x1;
+  gap: $devie__spacing__x05;
 }
 
 .chevron {
@@ -254,4 +284,15 @@
   padding: 0 $devie__spacing__x1;
   color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
+}
+
+.databasePath {
+  max-width: min(440px, 48vw);
+  overflow: hidden;
+  color: $devie__color__text-sub;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: text;
 }

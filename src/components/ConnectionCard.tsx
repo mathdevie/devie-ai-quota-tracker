@@ -1,5 +1,5 @@
 import { Ellipsis, Pencil, Power, RefreshCw, Trash2 } from "lucide-react";
-import type { ProviderConnection, QuotaWindow } from "@/lib/contracts";
+import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
@@ -18,12 +18,6 @@ export function untilText(value?: string): string | undefined {
   if (days > 0) return `in ${days}d ${hours}h`;
   if (hours > 0) return `in ${hours}h ${rest}m`;
   return `in ${rest}m`;
-}
-
-function tone(window: QuotaWindow): "ok" | "warn" | "danger" {
-  if (window.usedPercent >= 85) return "danger";
-  if (window.usedPercent >= 65) return "warn";
-  return "ok";
 }
 
 function StatusBadge({ connection }: { connection: ProviderConnection }) {
@@ -148,11 +142,7 @@ export default function ConnectionCard({
           {connection.windows.map((window) => {
             const left = Math.max(0, Math.round(100 - window.usedPercent));
             return (
-              <div
-                className={styles.window}
-                data-tone={tone(window)}
-                key={window.key}
-              >
+              <div className={styles.window} key={window.key}>
                 <span className={styles.dot} />
                 <span className={styles.label} title={window.label}>
                   {window.label}

@@ -511,6 +511,24 @@ mod tests {
     }
 
     #[test]
+    fn parses_fable_weekly_limit() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":10,"resets_at":null},
+                "seven_day":{"utilization":20,"resets_at":"2026-08-30T07:00:00Z"},
+                "seven_day_fable":{"utilization":36,"resets_at":"2026-08-30T07:00:00Z"}}"#,
+        )
+        .expect("json");
+        let reading = parse_usage(&json).expect("reading");
+        let fable = reading
+            .windows
+            .iter()
+            .find(|window| window.key == "seven_day_fable")
+            .expect("Fable window");
+        assert_eq!(fable.label, "Fable (weekly)");
+        assert_eq!(fable.used_percent, 36.0);
+    }
+
+    #[test]
     fn parses_profile_identity() {
         let json: Value = serde_json::from_str(
             r#"{"account":{"uuid":"u-1","email":"me@example.com"},

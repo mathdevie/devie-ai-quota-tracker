@@ -2,6 +2,7 @@
 
 import { RefreshCw } from "lucide-react";
 import type { DashboardState } from "@/lib/contracts";
+import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
 import SettingRow from "../SettingRow";
@@ -22,7 +23,7 @@ function UpdateRow() {
     installUpdate,
   } = useAppUpdater();
 
-  const subtitle = (() => {
+  const statusText = (() => {
     if (!enabled) return "Updates work in the packaged app only.";
     if (status === "checking") return "Checking…";
     if (status === "downloading") return `Downloading ${progress}%`;
@@ -33,7 +34,10 @@ function UpdateRow() {
   })();
 
   return (
-    <SettingRow.Row subtitle={subtitle} title="Updates">
+    <SettingRow.Row title="Updates">
+      <Badge variant={status === "error" ? "danger" : "outline"}>
+        {statusText}
+      </Badge>
       {status === "ready" ? (
         <Button onClick={() => void installUpdate()} size="sm">
           Restart to update
@@ -76,10 +80,7 @@ export default function SettingsView({
       </SettingRow.Section>
 
       <SettingRow.Section title="Menu bar">
-        <SettingRow.Row
-          subtitle="Shows the lowest remaining quota next to the clock."
-          title="Show the menu bar item"
-        >
+        <SettingRow.Row title="Show the menu bar item">
           <Switch.Root
             aria-label="Show the menu bar item"
             checked={state.settings.showMenuBarItem}
@@ -94,12 +95,11 @@ export default function SettingsView({
       <SettingRow.Section title="About">
         <UpdateRow />
         <SettingRow.Separator />
-        <SettingRow.Row
-          subtitle={
-            <span className={styles.mono}>{state.databasePath ?? "—"}</span>
-          }
-          title="Database"
-        />
+        <SettingRow.Row title="Database">
+          <span className={styles.databasePath}>
+            {state.databasePath ?? "—"}
+          </span>
+        </SettingRow.Row>
       </SettingRow.Section>
     </section>
   );
