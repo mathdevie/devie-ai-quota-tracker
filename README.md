@@ -25,7 +25,6 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - A native-style window with a sidebar: Quota, Providers, Settings.
 - In-app OAuth sign-in for Claude, Codex, Gemini CLI, and GitHub Copilot accounts.
 - Any number of accounts per provider.
-- Local discovery of existing Claude, Codex, and GitHub CLI profiles.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
 - Ten bundled Devie UI themes.
@@ -41,21 +40,10 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 | Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 
-Existing CLI profiles are also listed as "CLI" connections. Claude CLI
-folders use the usage endpoint with the token Claude Code stored for that folder (macOS Keychain `Claude Code-credentials`
-plus a short SHA-256 suffix for `CLAUDE_CONFIG_DIR` folders, or
-`.credentials.json`). The app never renews a CLI-owned token; when it expires,
-the card asks you to run `claude` once. Codex folders use local session
-records or `/status`; GitHub CLI accounts use `gh auth token`.
-
 Claude usage reads share one cache, in the same way as 9router: a read stays
 fresh for five minutes on the timer (a refresh button always fetches), one
 request per token runs at a time, a `429` pauses the endpoint for three
 minutes, and a failed read shows the last good data as "Stale".
-
-Devie Quota finds CLI commands in the normal shell path and common macOS install
-folders. These folders include Homebrew, `~/.local/bin`, Bun, Cargo, Volta,
-asdf, npm, pnpm, NVM, and FNM locations.
 
 ## Accounts and tokens
 
@@ -77,15 +65,14 @@ Next.js static interface
         | narrow Tauri commands and quota events
         v
 Tauri and Rust core
-  |-- provider discovery and isolated profiles
-  |-- provider CLI and pseudo-terminal processes
-  |-- direct provider requests where required
+  |-- provider OAuth sign-ins and token renewal
+  |-- direct provider quota requests
   |-- quota normalization and refresh scheduling
   |-- SQLite state and quota history
   `-- macOS menu bar and windows
 ```
 
-Rust owns provider processes, network requests, SQLite, and the menu bar. The
+Rust owns network requests, SQLite, and the menu bar. The
 webview receives normalized connection and quota values only.
 
 The main folders are:
@@ -94,8 +81,7 @@ The main folders are:
 src/                    Next.js interface and application components
 src/ui/                 Complete Devie UI component and theme folder
 src-desktop/            Tauri application and Rust core
-src-desktop/src/providers/
-                        Claude, Codex, Gemini, and Copilot adapters
+src-desktop/src/oauth/  Claude, Codex, Gemini, and Copilot sign-in and quota adapters
 docs/                   Build and signing documentation
 plans/                  Product research and feasibility analysis
 ```
@@ -110,10 +96,8 @@ theme context uses the versioned `devie-quota-theme:v1` storage key.
 - Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
 - Provider tokens never enter the React webview.
 - SQLite does not store provider tokens or complete provider responses.
-- The app owns refresh tokens for in-app Claude, Codex, and Gemini sign-ins.
-- The Copilot adapter reads one GitHub CLI token into memory for one request.
-- The Copilot adapter clears its token buffer after the request starts.
-- Devie Quota never changes the active GitHub CLI account.
+- The app owns the tokens for every Claude, Codex, Gemini, and Copilot sign-in.
+- Devie Quota never reads or changes the CLI logins on this Mac.
 
 The local database is stored at:
 
@@ -128,7 +112,6 @@ The local database is stored at:
 - [Bun](https://bun.sh/).
 - A stable Rust toolchain.
 - The [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
-- Claude Code, Codex, or GitHub CLI for the related provider.
 
 ## Development
 
@@ -198,12 +181,11 @@ setup steps.
 
 - The app supports macOS only.
 - The signed workflow builds Apple silicon only.
-- Claude and Codex terminal output can change between CLI versions.
 - GitHub Copilot uses an internal endpoint instead of a public quota API.
 - Gemini CLI uses internal Code Assist endpoints exposed by the official CLI.
 - The app does not yet remove managed profiles.
 - The app does not yet show full history charts, costs, or local token totals.
-- Auto-ping supports Claude and Codex accounts signed in through the app.
+- Auto-ping supports Claude and Codex accounts.
 - Real multi-account testing still needs more plan and organization types.
 
 ## Next areas

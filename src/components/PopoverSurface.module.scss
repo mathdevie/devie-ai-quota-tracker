@@ -1,9 +1,13 @@
 @use "../ui/_devie.scss" as *;
 
+// A rounded panel, like a native menu bar popover. The window is transparent.
 .popover {
   display: flex;
+  overflow: hidden;
   height: 100vh;
   flex-direction: column;
+  border: 1px solid $devie__color__line;
+  border-radius: 12px;
   background: $devie__color__background;
 }
 
@@ -13,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   gap: $devie__spacing__x2;
-  padding: $devie__spacing__x1 $devie__spacing__x1;
+  padding: $devie__spacing__x05 $devie__spacing__x1;
   border-bottom: 1px solid $devie__color__line;
   user-select: none;
 }
@@ -22,7 +26,11 @@
 .list {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+}
+
+.viewport {
+  border-radius: 0;
+  outline: none;
 
   > div > * + * {
     border-top: 1px solid $devie__color__line;

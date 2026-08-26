@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Rename",
       "Alerts": "Alerts",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Quota Optimizer",
       "Refresh": "Refresh",
       "Enable": "Enable",
       "Disable": "Disable",
-      "Remove": "Remove"
+      "Remove": "Remove",
+      "On": "On",
+      "Off": "Off"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Add account",
     "AddProviderAccount": "Add a {{name}} account",
     "NoAccountsYet": "No {{name}} accounts yet.",
-    "SignInWithCli": "Sign in with the CLI in a terminal.",
-    "AutoDetected": "Auto-detected",
-    "AutoDetectedTip": "This account was automatically added because you are logged in from the CLI. For full feature support, it is recommended to <link>authenticate manually</link>.",
     "EnableAccount": "Enable {{name}}",
     "DisableAccount": "Disable {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Allow notifications in macOS Settings to use quota alerts."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Start the next session",
-    "SupportedDescription": "Send one small request after a session resets.",
-    "UnsupportedDescription": "Auto-ping needs a Claude or Codex sign-in made in this app. Other accounts cannot use it.",
+    "Title": "Quota Optimizer",
+    "StartNextSession": "Start each session early",
+    "SupportedDescription": "Session limits reset on a fixed clock. Right after each reset, Devie Quota sends one tiny request so the next session starts at once. You get more sessions each week and never lose quota while you are away.",
+    "UnsupportedDescription": "The Quota Optimizer works with Claude and Codex accounts only.",
     "LastRequest": "Last request: {{date}}"
   },
   "Settings": {

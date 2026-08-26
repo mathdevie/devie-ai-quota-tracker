@@ -16,7 +16,12 @@
 
 .main {
   flex: 1;
-  overflow-y: auto;
+  min-height: 0;
+}
+
+.viewport {
+  border-radius: 0;
+  outline: none;
 }
 
 .loading {

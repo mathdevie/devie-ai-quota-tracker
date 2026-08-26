@@ -15,7 +15,10 @@ pub mod gemini;
 
 use std::{
     collections::HashMap,
-    sync::{Arc, Mutex},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
+    },
     time::Duration,
 };
 
@@ -28,10 +31,7 @@ use std::path::Path;
 
 use crate::{
     credentials::{self, Credentials},
-    model::{
-        ConnectionKind, DiscoveredConnection, Provider, ProviderConnection, QuotaReading,
-        RemoteIdentity,
-    },
+    model::{NewConnection, Provider, ProviderConnection, QuotaReading, RemoteIdentity},
 };
 
 pub const LOGIN_TIMEOUT: Duration = Duration::from_secs(300);
@@ -93,23 +93,55 @@ pub struct PendingLogin {
     pub device: Option<copilot::DeviceCode>,
 }
 
+#[derive(Default)]
+struct LoginRegistry {
+    /// Sign-ins that started but did not begin waiting for the browser.
+    pending: HashMap<String, PendingLogin>,
+    /// Sign-ins waiting for the browser: their callback stop flags.
+    waiting: HashMap<String, Arc<AtomicBool>>,
+}
+
 #[derive(Clone, Default)]
-pub struct LoginSessions(Arc<Mutex<HashMap<String, PendingLogin>>>);
+pub struct LoginSessions(Arc<Mutex<LoginRegistry>>);
 
 impl LoginSessions {
-    pub fn insert(&self, id: String, login: PendingLogin) {
-        let mut sessions = self.0.lock().unwrap_or_else(|poison| poison.into_inner());
-        // Only one sign-in at a time: a new one cancels the previous one so
-        // the fixed callback ports become free again.
-        sessions.clear();
-        sessions.insert(id, login);
+    fn lock(&self) -> std::sync::MutexGuard<'_, LoginRegistry> {
+        self.0.lock().unwrap_or_else(|poison| poison.into_inner())
     }
 
+    pub fn insert(&self, id: String, login: PendingLogin) {
+        let mut registry = self.lock();
+        // Only one sign-in at a time: a new one cancels the previous ones so
+        // the fixed callback ports become free again.
+        registry.pending.clear();
+        for stop in registry.waiting.drain().map(|(_, stop)| stop) {
+            stop.store(true, Ordering::Relaxed);
+        }
+        registry.pending.insert(id, login);
+    }
+
+    /// Moves a sign-in to the waiting stage. `cancel` can still stop it.
     pub fn take(&self, id: &str) -> Option<PendingLogin> {
-        self.0
-            .lock()
-            .unwrap_or_else(|poison| poison.into_inner())
-            .remove(id)
+        let mut registry = self.lock();
+        let login = registry.pending.remove(id)?;
+        if let Some(stop) = login.callback.as_ref().map(|server| server.stop_handle()) {
+            registry.waiting.insert(id.to_string(), stop);
+        }
+        Some(login)
+    }
+
+    /// Ends a sign-in at any stage and frees its callback port.
+    pub fn cancel(&self, id: &str) {
+        let mut registry = self.lock();
+        registry.pending.remove(id);
+        if let Some(stop) = registry.waiting.remove(id) {
+            stop.store(true, Ordering::Relaxed);
+        }
+    }
+
+    /// Forgets a sign-in that finished, one way or the other.
+    pub fn finish(&self, id: &str) {
+        self.lock().waiting.remove(id);
     }
 }
 
@@ -256,8 +288,17 @@ pub async fn finish(
     }
 }
 
+/// A stable id for one provider account, the same across sign-ins.
+pub fn connection_id(provider: &str, locator: &str) -> String {
+    uuid::Uuid::new_v5(
+        &uuid::Uuid::NAMESPACE_URL,
+        format!("com.devie.quota/{provider}/{locator}").as_bytes(),
+    )
+    .to_string()
+}
+
 /// Builds the connection record for a finished sign-in.
-pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> DiscoveredConnection {
+pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> NewConnection {
     let provider_name = match provider {
         Provider::Claude => "Claude",
         Provider::Codex => "Codex",
@@ -270,10 +311,9 @@ pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> Discovered
         .display_name
         .clone()
         .unwrap_or_else(|| "Account".to_string());
-    DiscoveredConnection {
-        id: crate::discovery::connection_id(provider.as_str(), &locator),
+    NewConnection {
+        id: connection_id(provider.as_str(), &locator),
         provider: provider.clone(),
-        kind: ConnectionKind::Oauth,
         label: format!("{provider_name} · {who}"),
         source_locator: locator,
         identity: Some(outcome.identity.clone()),

@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Gi nytt navn",
       "Alerts": "Varsler",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Kvoteoptimalisering",
       "Refresh": "Oppdater",
       "Enable": "Aktiver",
       "Disable": "Deaktiver",
-      "Remove": "Fjern"
+      "Remove": "Fjern",
+      "On": "På",
+      "Off": "Av"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Legg til konto",
     "AddProviderAccount": "Legg til en {{name}}-konto",
     "NoAccountsYet": "Ingen {{name}}-kontoer ennå.",
-    "SignInWithCli": "Logg inn med CLI-en i en terminal.",
-    "AutoDetected": "Oppdaget automatisk",
-    "AutoDetectedTip": "Denne kontoen ble lagt til automatisk fordi du er logget inn fra CLI-en. For full funksjonalitet anbefales det å <link>logge inn manuelt</link>.",
     "EnableAccount": "Aktiver {{name}}",
     "DisableAccount": "Deaktiver {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Tillat varslinger i macOS-innstillingene for å bruke kvotevarsler."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Start neste økt",
-    "SupportedDescription": "Send én liten forespørsel etter at en økt nullstilles.",
-    "UnsupportedDescription": "Auto-ping krever en Claude- eller Codex-innlogging gjort i denne appen. Andre kontoer kan ikke bruke det.",
+    "Title": "Kvoteoptimalisering",
+    "StartNextSession": "Start hver økt tidlig",
+    "SupportedDescription": "Øktgrenser tilbakestilles på faste tidspunkter. Rett etter hver tilbakestilling sender Devie Quota én liten forespørsel, slik at neste økt starter med en gang. Du får flere økter per uke og mister aldri kvote mens du er borte.",
+    "UnsupportedDescription": "Kvoteoptimalisering fungerer bare med Claude- og Codex-kontoer.",
     "LastRequest": "Siste forespørsel: {{date}}"
   },
   "Settings": {
