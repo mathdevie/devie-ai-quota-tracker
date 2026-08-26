@@ -1,3 +1,5 @@
+mod alerts;
+mod auto_ping;
 mod credentials;
 mod db;
 mod discovery;
@@ -7,10 +9,10 @@ mod oauth;
 mod providers;
 mod pty;
 
-use std::{path::PathBuf, time::Duration};
+use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use db::Database;
-use model::{ConnectionStatus, DashboardState};
+use model::{ConnectionAlerts, ConnectionStatus, DashboardState};
 use oauth::{LoginSessions, LoginStart};
 use tauri::{
     menu::{Menu, MenuItem},
@@ -25,6 +27,7 @@ struct Core {
     app_data_dir: PathBuf,
     client: reqwest::Client,
     logins: LoginSessions,
+    refresh_gate: Arc<tokio::sync::Mutex<()>>,
 }
 
 #[tauri::command]
@@ -67,7 +70,7 @@ async fn finish_login(
     core.database.set_enabled(&connection.id, true)?;
     credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
     if let Some(connection) = core.database.connection_by_id(&connection.id)? {
-        refresh_one(&core, &connection, true).await;
+        refresh_one(&app, &core, &connection, true).await;
     }
     publish_state(&app, &core)
 }
@@ -112,7 +115,7 @@ async fn refresh_connection(
         .database
         .connection_by_id(&connection_id)?
         .ok_or_else(|| "The connection does not exist.".to_string())?;
-    refresh_one(&core, &connection, true).await;
+    refresh_one(&app, &core, &connection, true).await;
     publish_state(&app, &core)
 }
 
@@ -136,6 +139,26 @@ fn rename_connection(
 ) -> Result<DashboardState, String> {
     core.database
         .set_custom_label(&connection_id, label.as_deref())?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+fn set_connection_automation(
+    app: AppHandle,
+    core: State<'_, Core>,
+    connection_id: String,
+    alerts: ConnectionAlerts,
+    auto_ping_enabled: bool,
+) -> Result<DashboardState, String> {
+    let connection = core
+        .database
+        .connection_by_id(&connection_id)?
+        .ok_or_else(|| "The connection does not exist.".to_string())?;
+    if auto_ping_enabled && !auto_ping::supported(&connection) {
+        return Err("Auto-ping supports Claude and Codex app sign-ins only.".to_string());
+    }
+    core.database
+        .set_connection_automation(&connection_id, &alerts, auto_ping_enabled)?;
     publish_state(&app, &core)
 }
 
@@ -186,15 +209,36 @@ async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardS
     sync_discovery(&core).await?;
     let connections = core.database.dashboard_state()?.connections;
     for connection in connections.into_iter().filter(|item| item.enabled) {
-        refresh_one(&core, &connection, force).await;
+        refresh_one(app, &core, &connection, force).await;
     }
     publish_state(app, &core)
 }
 
-async fn refresh_one(core: &Core, connection: &model::ProviderConnection, force: bool) {
-    match providers::refresh(connection, &core.app_data_dir, &core.client, force).await {
+async fn refresh_one(
+    app: &AppHandle,
+    core: &Core,
+    connection: &model::ProviderConnection,
+    force: bool,
+) {
+    let _guard = core.refresh_gate.lock().await;
+    let current = core
+        .database
+        .connection_by_id(&connection.id)
+        .ok()
+        .flatten()
+        .unwrap_or_else(|| connection.clone());
+    match providers::refresh(&current, &core.app_data_dir, &core.client, force).await {
         Ok(reading) => {
-            let _ = core.database.save_reading(&connection.id, &reading);
+            let _ = core.database.save_reading(&current.id, &reading);
+            alerts::after_reading(app, &core.database, &current, &reading);
+            auto_ping::after_reading(
+                &core.database,
+                &core.app_data_dir,
+                &core.client,
+                &current,
+                &reading,
+            )
+            .await;
         }
         Err(message) => {
             let lower = message.to_lowercase();
@@ -203,13 +247,33 @@ async fn refresh_one(core: &Core, connection: &model::ProviderConnection, force:
                 || lower.contains("expired")
             {
                 ConnectionStatus::NeedsLogin
-            } else if !connection.windows.is_empty() {
+            } else if !current.windows.is_empty() {
                 ConnectionStatus::Stale
             } else {
                 ConnectionStatus::Error
             };
-            let _ = core.database.save_failure(&connection.id, status, &message);
+            let _ = core.database.save_failure(&current.id, status, &message);
         }
+    }
+}
+
+async fn auto_ping_tick(app: &AppHandle) {
+    let core = app.state::<Core>().inner().clone();
+    let Ok(state) = core.database.dashboard_state() else {
+        return;
+    };
+    let now = chrono::Utc::now();
+    let mut refreshed = false;
+    for connection in state
+        .connections
+        .into_iter()
+        .filter(|connection| auto_ping::refresh_due(connection, now))
+    {
+        refresh_one(app, &core, &connection, true).await;
+        refreshed = true;
+    }
+    if refreshed {
+        let _ = publish_state(app, &core);
     }
 }
 
@@ -334,6 +398,7 @@ fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_positioner::init())
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
@@ -351,6 +416,7 @@ pub fn run() {
                 app_data_dir,
                 client,
                 logins: LoginSessions::default(),
+                refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
             });
             build_windows(app)?;
             build_tray(app)?;
@@ -362,6 +428,13 @@ pub fn run() {
                 loop {
                     let _ = refresh_all_internal(&handle, false).await;
                     tokio::time::sleep(Duration::from_secs(300)).await;
+                }
+            });
+            let handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    auto_ping_tick(&handle).await;
+                    tokio::time::sleep(Duration::from_secs(60)).await;
                 }
             });
             Ok(())
@@ -387,6 +460,7 @@ pub fn run() {
             refresh_connection,
             set_connection_enabled,
             rename_connection,
+            set_connection_automation,
             set_menu_bar_item_visible,
             open_main_window,
             hide_popover,

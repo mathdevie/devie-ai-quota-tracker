@@ -19,6 +19,11 @@ export const previewState: DashboardState = {
       lastUpdatedAt: "2026-08-25T13:42:00Z",
       customLabel: "Work",
       identity: { displayName: "work@example.com", plan: "Max 5x" },
+      alerts: { lowQuota: true, resetSoon: true, resetHappened: true },
+      autoPing: {
+        enabled: true,
+        lastPingAt: "2026-08-25T10:00:03Z",
+      },
       windows: [
         {
           key: "five_hour",
@@ -51,6 +56,8 @@ export const previewState: DashboardState = {
       source: "Claude subscription API (cached)",
       lastUpdatedAt: "2026-08-25T13:28:00Z",
       identity: { displayName: "me@example.com", plan: "Pro" },
+      alerts: { lowQuota: false, resetSoon: false, resetHappened: false },
+      autoPing: { enabled: false },
       windows: [
         {
           key: "five_hour",
@@ -77,6 +84,8 @@ export const previewState: DashboardState = {
       source: "Codex local records",
       lastUpdatedAt: "2026-08-25T13:41:00Z",
       identity: { plan: "Plus" },
+      alerts: { lowQuota: false, resetSoon: false, resetHappened: false },
+      autoPing: { enabled: false },
       windows: [
         {
           key: "primary",
@@ -103,6 +112,8 @@ export const previewState: DashboardState = {
       source: "GitHub CLI",
       lastUpdatedAt: "2026-08-25T13:40:00Z",
       identity: { displayName: "mathdevie", plan: "Copilot Pro" },
+      alerts: { lowQuota: false, resetSoon: false, resetHappened: false },
+      autoPing: { enabled: false },
       windows: [
         {
           key: "premium_interactions",

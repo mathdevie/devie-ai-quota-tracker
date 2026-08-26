@@ -123,7 +123,33 @@ pub struct ProviderConnection {
     pub custom_label: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub identity: Option<RemoteIdentity>,
+    pub alerts: ConnectionAlerts,
+    pub auto_ping: AutoPingState,
     pub windows: Vec<QuotaWindow>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ConnectionAlerts {
+    pub low_quota: bool,
+    pub reset_soon: bool,
+    pub reset_happened: bool,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AutoPingState {
+    pub enabled: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_ping_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_error: Option<String>,
+    #[serde(skip)]
+    pub last_reset_key: Option<String>,
+    #[serde(skip)]
+    pub observed_reset_at: Option<String>,
+    #[serde(skip)]
+    pub last_attempt_at: Option<String>,
 }
 
 /// User preferences stored in the database.

@@ -251,6 +251,23 @@ pub async fn refresh_quota(
     client: &reqwest::Client,
     force: bool,
 ) -> Result<QuotaReading, String> {
+    let current = credentials_for_request(connection, app_data_dir, client).await?;
+    match read_quota(connection, client, &current, force).await {
+        Err(message) if message.contains("expired") && current.refresh_token.is_some() => {
+            // The token may have been revoked early. Renew once, then retry.
+            let renewed = renew(connection, app_data_dir, client, &current).await?;
+            read_quota(connection, client, &renewed, force).await
+        }
+        result => result,
+    }
+}
+
+/// Loads credentials and renews them before a provider request when required.
+pub async fn credentials_for_request(
+    connection: &ProviderConnection,
+    app_data_dir: &Path,
+    client: &reqwest::Client,
+) -> Result<Credentials, String> {
     let mut current = credentials::load(app_data_dir, &connection.id)?;
     let lead = match connection.provider {
         Provider::Claude => claude::REFRESH_LEAD,
@@ -260,14 +277,7 @@ pub async fn refresh_quota(
     if current.refresh_token.is_some() && current.expires_within(lead) {
         current = renew(connection, app_data_dir, client, &current).await?;
     }
-    match read_quota(connection, client, &current, force).await {
-        Err(message) if message.contains("expired") && current.refresh_token.is_some() => {
-            // The token may have been revoked early. Renew once, then retry.
-            let renewed = renew(connection, app_data_dir, client, &current).await?;
-            read_quota(connection, client, &renewed, force).await
-        }
-        result => result,
-    }
+    Ok(current)
 }
 
 async fn renew(

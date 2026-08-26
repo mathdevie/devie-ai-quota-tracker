@@ -1,0 +1,73 @@
+@use "../ui/_devie.scss" as *;
+
+.form {
+  display: contents;
+}
+
+.group {
+  display: grid;
+  gap: $devie__spacing__x1;
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    color: $devie__color__text-sub;
+    font-size: $devie__font-size__small;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.options {
+  overflow: hidden;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius;
+}
+
+.option {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: $devie__spacing__x2;
+  padding: $devie__spacing__x1 $devie__spacing__x2;
+  & + & {
+    border-top: 1px solid $devie__color__line;
+  }
+
+  > span {
+    display: grid;
+    gap: 1px;
+  }
+
+  strong {
+    font-size: $devie__font-size__normal;
+    font-weight: 500;
+  }
+
+  small {
+    color: $devie__color__text-sub;
+    font-size: $devie__font-size__small;
+  }
+
+  &[data-disabled] {
+    opacity: 0.58;
+  }
+}
+
+.status,
+.error {
+  font-size: $devie__font-size__small;
+}
+
+.status {
+  color: $devie__color__text-sub;
+}
+
+.error {
+  color: $devie__color__danger;
+}

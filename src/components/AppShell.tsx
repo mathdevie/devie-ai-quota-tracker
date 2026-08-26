@@ -12,23 +12,27 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type {
+  ConnectionAlerts,
   DashboardState,
   Provider,
   ProviderConnection,
 } from "@/lib/contracts";
 import {
+  ensureNotificationPermission,
   getDashboardState,
   isDesktop,
   refreshAll,
   refreshConnection,
   removeConnection,
   renameConnection,
+  setConnectionAutomation,
   setConnectionEnabled,
   setMenuBarItemVisible,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import styles from "./AppShell.module.scss";
+import AutomationDialog from "./AutomationDialog";
 import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
 import RenameDialog from "./RenameDialog";
@@ -72,6 +76,7 @@ export default function AppShell() {
   const [error, setError] = useState<string>();
   const [loginOpen, setLoginOpen] = useState(false);
   const [renaming, setRenaming] = useState<ProviderConnection>();
+  const [configuring, setConfiguring] = useState<ProviderConnection>();
   const [surface, setSurface] = useState<"main" | "popover">("main");
 
   const load = useCallback(async () => {
@@ -127,6 +132,7 @@ export default function AppShell() {
     onRefresh: (id: string) =>
       void run(() => refreshConnection(id), withBusyId(id)),
     onRename: setRenaming,
+    onConfigure: setConfiguring,
     onEnabledChange: (id: string, enabled: boolean) =>
       void run(() => setConnectionEnabled(id, enabled), withBusyId(id)),
     onRemove: (id: string) =>
@@ -137,6 +143,34 @@ export default function AppShell() {
     setState(nextState);
     setError(undefined);
   }, []);
+
+  const handleAutomationSubmit = useCallback(
+    async (
+      id: string,
+      alerts: ConnectionAlerts,
+      autoPingEnabled: boolean,
+    ): Promise<boolean> => {
+      setBusyId(id);
+      try {
+        const alertsEnabled = Object.values(alerts).some(Boolean);
+        if (alertsEnabled && !(await ensureNotificationPermission())) {
+          setError(
+            "Allow notifications in macOS Settings to use quota alerts.",
+          );
+          return false;
+        }
+        setState(await setConnectionAutomation(id, alerts, autoPingEnabled));
+        setError(undefined);
+        return true;
+      } catch (reason) {
+        setError(errorMessage(reason));
+        return false;
+      } finally {
+        setBusyId(undefined);
+      }
+    },
+    [],
+  );
 
   function changeView(next: View) {
     setView(next);
@@ -272,6 +306,11 @@ export default function AppShell() {
             setRenaming(undefined);
             void run(() => renameConnection(id, label), withBusyId(id));
           }}
+        />
+        <AutomationDialog
+          connection={configuring}
+          onOpenChange={(open) => !open && setConfiguring(undefined)}
+          onSubmit={handleAutomationSubmit}
         />
       </div>
     </AppUpdaterProvider>

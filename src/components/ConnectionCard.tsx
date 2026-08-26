@@ -1,4 +1,11 @@
-import { Ellipsis, Pencil, Power, RefreshCw, Trash2 } from "lucide-react";
+import {
+  BellRing,
+  Ellipsis,
+  Pencil,
+  Power,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
@@ -34,6 +41,7 @@ function StatusBadge({ connection }: { connection: ProviderConnection }) {
 export interface ConnectionActions {
   onRefresh?: (id: string) => void;
   onRename?: (connection: ProviderConnection) => void;
+  onConfigure?: (connection: ProviderConnection) => void;
   onEnabledChange?: (id: string, enabled: boolean) => void;
   onRemove?: (id: string) => void;
 }
@@ -44,6 +52,7 @@ export function ConnectionMenu({
   busy = false,
   onRefresh,
   onRename,
+  onConfigure,
   onEnabledChange,
   onRemove,
 }: { connection: ProviderConnection; busy?: boolean } & ConnectionActions) {
@@ -69,6 +78,12 @@ export function ConnectionMenu({
               <Menu.Item onClick={() => onRename(connection)}>
                 <Pencil size={14} />
                 Rename
+              </Menu.Item>
+            )}
+            {onConfigure && (
+              <Menu.Item onClick={() => onConfigure(connection)}>
+                <BellRing size={14} />
+                Alerts and auto-ping
               </Menu.Item>
             )}
             {onRefresh && (
