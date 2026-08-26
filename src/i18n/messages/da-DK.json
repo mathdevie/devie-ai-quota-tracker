@@ -63,7 +63,21 @@
       "Now": "nu",
       "InDaysHours": "om {{days}}d {{hours}}t",
       "InHoursMinutes": "om {{hours}}t {{minutes}}m",
-      "InMinutes": "om {{minutes}}m"
+      "InMinutes": "om {{minutes}}m",
+      "On": "Nulstilles den {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Nulstillingskreditter",
+      "Description": "En kredit nulstiller alle kvotevinduer for denne konto på én gang.",
+      "DefaultTitle": "Nulstilling af grænse",
+      "Expires": "Udløber den {{date}}",
+      "NoExpiry": "Ingen udløb",
+      "Use": "Brug",
+      "Available_one": "{{count}} nulstilling tilgængelig",
+      "Available_other": "{{count}} nulstillinger tilgængelige",
+      "ConfirmTitle": "Nulstil Codex-grænser?",
+      "ConfirmDescription": "Brug 1 nulstillingskredit til {{account}}. Alle kvotevinduer nulstilles nu. Dette kan ikke fortrydes. Kreditter tilbage bagefter: {{remaining}}.",
+      "Confirm": "Nulstil grænser"
     },
     "Pin": {
       "Shown": "{{label}} vises i menulinjen",

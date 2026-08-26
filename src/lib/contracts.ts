@@ -42,6 +42,16 @@ export interface ProviderConnection {
   alerts: ConnectionAlerts;
   autoPing: AutoPingState;
   windows: QuotaWindow[];
+  /** Codex only: banked reset credits the user can spend. */
+  resetCredits?: ResetCredit[];
+}
+
+/** One Codex reset credit. Spending it resets every window of the account. */
+export interface ResetCredit {
+  id: string;
+  title?: string;
+  grantedAt?: string;
+  expiresAt?: string;
 }
 
 /** The quota window the menu bar item shows: one provider logo, one percent. */

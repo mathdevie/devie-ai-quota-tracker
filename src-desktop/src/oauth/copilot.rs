@@ -240,6 +240,7 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
             plan,
         }),
         windows,
+        reset_credits: None,
     })
 }
 

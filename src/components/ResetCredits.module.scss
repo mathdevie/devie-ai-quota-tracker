@@ -1,0 +1,64 @@
+@use "../ui/_devie.scss" as *;
+
+.trigger {
+  align-self: flex-start;
+  margin-top: $devie__spacing__x1;
+  margin-left: calc(-1 * $devie__spacing__x05);
+  color: $devie__color__primary;
+  font-size: $devie__font-size__small;
+  font-weight: 500;
+}
+
+.popup {
+  display: grid;
+  width: 320px;
+  gap: $devie__spacing__x05;
+  padding: $devie__spacing__x2;
+}
+
+.title {
+  font-size: $devie__font-size__small;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 11px;
+}
+
+.list {
+  display: grid;
+  gap: $devie__spacing__x1;
+  margin: $devie__spacing__x1 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credit {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x1;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius;
+  background: $devie__color__background-sub;
+}
+
+.creditText {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  font-size: $devie__font-size__small;
+}
+
+.creditTitle {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creditExpiry {
+  color: $devie__color__text-sub;
+  font-size: 11px;
+  line-height: 1.35;
+}

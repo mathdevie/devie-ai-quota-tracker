@@ -63,7 +63,21 @@
       "Now": "agora",
       "InDaysHours": "em {{days}}d {{hours}}h",
       "InHoursMinutes": "em {{hours}}h {{minutes}}min",
-      "InMinutes": "em {{minutes}}min"
+      "InMinutes": "em {{minutes}}min",
+      "On": "Redefine em {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Créditos de redefinição",
+      "Description": "Um crédito redefine de uma vez todas as janelas de cota desta conta.",
+      "DefaultTitle": "Redefinição de limite",
+      "Expires": "Expira em {{date}}",
+      "NoExpiry": "Sem expiração",
+      "Use": "Usar",
+      "Available_one": "{{count}} redefinição disponível",
+      "Available_other": "{{count}} redefinições disponíveis",
+      "ConfirmTitle": "Redefinir os limites do Codex?",
+      "ConfirmDescription": "Usar 1 crédito de redefinição para {{account}}. Todas as janelas de cota são redefinidas agora. Isso não pode ser desfeito. Créditos restantes depois: {{remaining}}.",
+      "Confirm": "Redefinir limites"
     },
     "Pin": {
       "Shown": "{{label}} está na barra de menus",

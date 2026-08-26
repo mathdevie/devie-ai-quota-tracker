@@ -171,6 +171,26 @@ export async function setAutoPing(
   return call("set_auto_ping", { connectionId, enabled });
 }
 
+/** Spends one Codex reset credit. The account quota is read again after. */
+export async function spendResetCredit(
+  connectionId: string,
+  creditId: string,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    await delay(600);
+    return withConnection(connectionId, (connection) => ({
+      resetCredits: connection.resetCredits?.filter(
+        (credit) => credit.id !== creditId,
+      ),
+      windows: connection.windows.map((window) => ({
+        ...window,
+        usedPercent: 0,
+      })),
+    }));
+  }
+  return call("use_reset_credit", { connectionId, creditId });
+}
+
 export async function setTraySummary(
   summary: TraySummary | null,
 ): Promise<DashboardState> {

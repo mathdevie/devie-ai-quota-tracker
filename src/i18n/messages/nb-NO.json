@@ -63,7 +63,21 @@
       "Now": "nå",
       "InDaysHours": "om {{days}}d {{hours}}t",
       "InHoursMinutes": "om {{hours}}t {{minutes}}m",
-      "InMinutes": "om {{minutes}}m"
+      "InMinutes": "om {{minutes}}m",
+      "On": "Tilbakestilles {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Tilbakestillingskreditter",
+      "Description": "En kreditt tilbakestiller alle kvotevinduer for denne kontoen på én gang.",
+      "DefaultTitle": "Tilbakestilling av grense",
+      "Expires": "Utløper {{date}}",
+      "NoExpiry": "Ingen utløp",
+      "Use": "Bruk",
+      "Available_one": "{{count}} tilbakestilling tilgjengelig",
+      "Available_other": "{{count}} tilbakestillinger tilgjengelige",
+      "ConfirmTitle": "Tilbakestille Codex-grenser?",
+      "ConfirmDescription": "Bruk 1 tilbakestillingskreditt for {{account}}. Alle kvotevinduer tilbakestilles nå. Dette kan ikke angres. Kreditter igjen etterpå: {{remaining}}.",
+      "Confirm": "Tilbakestill grenser"
     },
     "Pin": {
       "Shown": "{{label}} vises i menylinjen",

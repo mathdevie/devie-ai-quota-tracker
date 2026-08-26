@@ -419,6 +419,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         source: "Claude subscription API".to_string(),
         identity: None,
         windows,
+        reset_credits: None,
     })
 }
 

@@ -95,6 +95,7 @@ impl Database {
             .execute("DELETE FROM provider_connections WHERE kind = 'local'", [])
             .map_err(|error| error.to_string())?;
         Self::add_column_if_missing(&connection, "provider_connections", "custom_label", "TEXT")?;
+        Self::add_column_if_missing(&connection, "provider_connections", "reset_credits", "TEXT")?;
         Self::add_column_if_missing(
             &connection,
             "provider_connections",
@@ -311,7 +312,7 @@ impl Database {
                         alert_reset_happened, auto_ping_enabled,
                         last_auto_ping_reset_key, last_auto_ping_at,
                         last_auto_ping_error, auto_ping_observed_reset_at,
-                        last_auto_ping_attempt_at
+                        last_auto_ping_attempt_at, reset_credits
                  FROM provider_connections
                  ORDER BY CASE provider
                    WHEN 'claude' THEN 0
@@ -366,6 +367,10 @@ impl Database {
                         last_attempt_at: row.get(21)?,
                     },
                     windows: Vec::new(),
+                    reset_credits: row
+                        .get::<_, Option<String>>(22)?
+                        .and_then(|json| serde_json::from_str(&json).ok())
+                        .unwrap_or_default(),
                 })
             })
             .map_err(|error| error.to_string())?;
@@ -602,7 +607,8 @@ impl Database {
                    status = 'ready', source = ?2, last_updated_at = ?3, last_error = NULL,
                    identity_user_id = COALESCE(?4, identity_user_id),
                    identity_display_name = COALESCE(?5, identity_display_name),
-                   identity_plan = COALESCE(?6, identity_plan), updated_at = ?3
+                   identity_plan = COALESCE(?6, identity_plan), updated_at = ?3,
+                   reset_credits = COALESCE(?7, reset_credits)
                  WHERE id = ?1",
                 params![
                     id,
@@ -611,6 +617,10 @@ impl Database {
                     identity.and_then(|value| value.provider_user_id.as_deref()),
                     identity.and_then(|value| value.display_name.as_deref()),
                     identity.and_then(|value| value.plan.as_deref()),
+                    reading
+                        .reset_credits
+                        .as_ref()
+                        .and_then(|credits| serde_json::to_string(credits).ok()),
                 ],
             )
             .map_err(|error| error.to_string())?;
@@ -672,6 +682,7 @@ mod tests {
                             used_percent: used,
                             resets_at: None,
                         }],
+                        reset_credits: None,
                     },
                 )
                 .expect("reading");

@@ -371,6 +371,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         source: "Gemini Code Assist API".to_string(),
         identity: None,
         windows: windows.into_values().collect(),
+        reset_credits: None,
     })
 }
 
