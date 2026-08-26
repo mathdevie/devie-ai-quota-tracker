@@ -21,8 +21,8 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 ## Current features
 
 - A Tauri 2 app with a Next.js static frontend.
-- A macOS menu bar item with a quota summary and popover.
-- A native-style window with a sidebar: Quota, Usage, Providers, Settings.
+- A macOS menu bar item with one provider logo and percent left (pin a quota window in the popover), plus a popover.
+- A native-style window with a sidebar: Quota, Providers, Settings.
 - In-app OAuth sign-in for Claude, Codex, and GitHub Copilot accounts.
 - Any number of accounts per provider.
 - Local discovery of existing Claude, Codex, and GitHub CLI profiles.

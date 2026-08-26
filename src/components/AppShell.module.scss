@@ -19,17 +19,6 @@
   overflow-y: auto;
 }
 
-.errorBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $devie__spacing__x2;
-  padding: $devie__spacing__x1 $devie__spacing__x3;
-  border-bottom: 1px solid $devie__color__danger;
-  color: $devie__color__danger;
-  font-size: $devie__font-size__small;
-}
-
 .loading {
   display: grid;
   min-height: 100vh;

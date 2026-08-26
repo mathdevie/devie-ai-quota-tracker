@@ -152,18 +152,30 @@ pub struct AutoPingState {
     pub last_attempt_at: Option<String>,
 }
 
+/// The quota window the menu bar item shows: one provider logo and one percent.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TraySummary {
+    pub connection_id: String,
+    pub window_key: String,
+}
+
 /// User preferences stored in the database.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AppSettings {
     /// Whether the macOS menu bar item is visible.
     pub show_menu_bar_item: bool,
+    /// None: the menu bar shows the window with the least quota left.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tray_summary: Option<TraySummary>,
 }
 
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
             show_menu_bar_item: true,
+            tray_summary: None,
         }
     }
 }
@@ -173,7 +185,6 @@ impl Default for AppSettings {
 pub struct DashboardState {
     pub mode: String,
     pub connections: Vec<ProviderConnection>,
-    pub database_path: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub refreshed_at: Option<String>,
     pub settings: AppSettings,

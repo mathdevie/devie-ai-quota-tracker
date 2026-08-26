@@ -8,17 +8,8 @@
   display: grid;
   gap: $devie__spacing__x1;
 
-  h3,
   p {
     margin: 0;
-  }
-
-  h3 {
-    color: $devie__color__text-sub;
-    font-size: $devie__font-size__small;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
 }
 
@@ -52,10 +43,6 @@
   small {
     color: $devie__color__text-sub;
     font-size: $devie__font-size__small;
-  }
-
-  &[data-disabled] {
-    opacity: 0.58;
   }
 }
 

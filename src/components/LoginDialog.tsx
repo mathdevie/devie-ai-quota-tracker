@@ -123,7 +123,7 @@ export default function LoginDialog({
           <Dialog.Header>
             <Dialog.Title>
               <span className={styles.title}>
-                <ProviderIcon framed={false} provider={provider} size={18} />
+                <ProviderIcon provider={provider} size={18} />
                 Add a {name} account
               </span>
             </Dialog.Title>

@@ -6,9 +6,11 @@ use rusqlite::{params, Connection, OptionalExtension};
 use crate::model::{
     AppSettings, AutoPingState, ConnectionAlerts, ConnectionKind, ConnectionStatus, DashboardState,
     DiscoveredConnection, Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
+    TraySummary,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
+const TRAY_SUMMARY: &str = "tray_summary";
 
 #[derive(Clone, Debug)]
 pub struct Database {
@@ -146,30 +148,53 @@ impl Database {
         Ok(())
     }
 
+    fn setting(connection: &Connection, key: &str) -> Result<Option<String>, String> {
+        connection
+            .query_row("SELECT value FROM settings WHERE key = ?1", [key], |row| {
+                row.get::<_, String>(0)
+            })
+            .optional()
+            .map_err(|error| error.to_string())
+    }
+
+    fn put_setting(&self, key: &str, value: Option<&str>) -> Result<(), String> {
+        let connection = self.connection()?;
+        match value {
+            Some(value) => connection.execute(
+                "INSERT INTO settings(key, value) VALUES (?1, ?2)
+                 ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                params![key, value],
+            ),
+            None => connection.execute("DELETE FROM settings WHERE key = ?1", [key]),
+        }
+        .map_err(|error| error.to_string())?;
+        Ok(())
+    }
+
     pub fn settings(&self) -> Result<AppSettings, String> {
         let connection = self.connection()?;
         let defaults = AppSettings::default();
-        let show_menu_bar_item = connection
-            .query_row(
-                "SELECT value FROM settings WHERE key = ?1",
-                [SHOW_MENU_BAR_ITEM],
-                |row| row.get::<_, String>(0),
-            )
-            .optional()
-            .map_err(|error| error.to_string())?
+        let show_menu_bar_item = Self::setting(&connection, SHOW_MENU_BAR_ITEM)?
             .map_or(defaults.show_menu_bar_item, |value| value == "1");
-        Ok(AppSettings { show_menu_bar_item })
+        // A summary that no longer parses falls back to the default silently.
+        let tray_summary = Self::setting(&connection, TRAY_SUMMARY)?
+            .and_then(|value| serde_json::from_str::<TraySummary>(&value).ok());
+        Ok(AppSettings {
+            show_menu_bar_item,
+            tray_summary,
+        })
     }
 
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
-        self.connection()?
-            .execute(
-                "INSERT INTO settings(key, value) VALUES (?1, ?2)
-                 ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-                params![SHOW_MENU_BAR_ITEM, if visible { "1" } else { "0" }],
-            )
+        self.put_setting(SHOW_MENU_BAR_ITEM, Some(if visible { "1" } else { "0" }))
+    }
+
+    pub fn set_tray_summary(&self, summary: Option<&TraySummary>) -> Result<(), String> {
+        let value = summary
+            .map(serde_json::to_string)
+            .transpose()
             .map_err(|error| error.to_string())?;
-        Ok(())
+        self.put_setting(TRAY_SUMMARY, value.as_deref())
     }
 
     /// Stores the user's name for a connection. An empty name clears it.
@@ -376,7 +401,6 @@ impl Database {
         Ok(DashboardState {
             mode: "native".to_string(),
             connections,
-            database_path: self.path.display().to_string(),
             refreshed_at,
             settings: self.settings()?,
         })
@@ -440,35 +464,47 @@ impl Database {
         Ok(())
     }
 
-    pub fn set_connection_automation(
-        &self,
-        id: &str,
-        alerts: &ConnectionAlerts,
-        auto_ping_enabled: bool,
-    ) -> Result<(), String> {
+    pub fn set_connection_alerts(&self, id: &str, alerts: &ConnectionAlerts) -> Result<(), String> {
         let changed = self
             .connection()?
             .execute(
                 "UPDATE provider_connections SET
                    alert_low_quota = ?2, alert_reset_soon = ?3,
-                   alert_reset_happened = ?4, auto_ping_enabled = ?5,
-                   auto_ping_observed_reset_at = CASE
-                     WHEN auto_ping_enabled = 0 AND ?5 = 1 THEN NULL
-                     ELSE auto_ping_observed_reset_at
-                   END,
-                   last_auto_ping_error = CASE
-                     WHEN ?5 = 0 THEN NULL ELSE last_auto_ping_error
-                   END,
-                   updated_at = ?6
+                   alert_reset_happened = ?4, updated_at = ?5
                  WHERE id = ?1",
                 params![
                     id,
                     alerts.low_quota as i64,
                     alerts.reset_soon as i64,
                     alerts.reset_happened as i64,
-                    auto_ping_enabled as i64,
                     Utc::now().to_rfc3339(),
                 ],
+            )
+            .map_err(|error| error.to_string())?;
+        if changed == 0 {
+            return Err("The connection does not exist.".to_string());
+        }
+        Ok(())
+    }
+
+    /// Turning auto-ping on forgets the last observed reset, so the first
+    /// ping waits for a reset that happens from now on.
+    pub fn set_auto_ping_enabled(&self, id: &str, enabled: bool) -> Result<(), String> {
+        let changed = self
+            .connection()?
+            .execute(
+                "UPDATE provider_connections SET
+                   auto_ping_enabled = ?2,
+                   auto_ping_observed_reset_at = CASE
+                     WHEN auto_ping_enabled = 0 AND ?2 = 1 THEN NULL
+                     ELSE auto_ping_observed_reset_at
+                   END,
+                   last_auto_ping_error = CASE
+                     WHEN ?2 = 0 THEN NULL ELSE last_auto_ping_error
+                   END,
+                   updated_at = ?3
+                 WHERE id = ?1",
+                params![id, enabled as i64, Utc::now().to_rfc3339()],
             )
             .map_err(|error| error.to_string())?;
         if changed == 0 {
@@ -707,8 +743,11 @@ mod tests {
             reset_happened: true,
         };
         database
-            .set_connection_automation("claude-one", &alerts, true)
-            .expect("automation");
+            .set_connection_alerts("claude-one", &alerts)
+            .expect("alerts");
+        database
+            .set_auto_ping_enabled("claude-one", true)
+            .expect("auto-ping");
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections[0].alerts, alerts);
         assert!(state.connections[0].auto_ping.enabled);
@@ -722,5 +761,18 @@ mod tests {
         assert!(state.settings.show_menu_bar_item);
         database.set_show_menu_bar_item(false).expect("setting");
         assert!(!database.settings().expect("settings").show_menu_bar_item);
+
+        assert_eq!(state.settings.tray_summary, None);
+        let summary = TraySummary {
+            connection_id: "claude-one".into(),
+            window_key: "five_hour".into(),
+        };
+        database.set_tray_summary(Some(&summary)).expect("summary");
+        assert_eq!(
+            database.settings().expect("settings").tray_summary,
+            Some(summary)
+        );
+        database.set_tray_summary(None).expect("clear summary");
+        assert_eq!(database.settings().expect("settings").tray_summary, None);
     }
 }

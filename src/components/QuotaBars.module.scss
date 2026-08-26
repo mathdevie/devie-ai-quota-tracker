@@ -1,0 +1,115 @@
+@use "../ui/_devie.scss" as *;
+
+// One grid for every row, so the columns line up across rows. The label
+// column has a fixed width; the bar column shrinks first; the reset time
+// takes its natural width and is never cut.
+.bars {
+  display: grid;
+  gap: $devie__spacing__x1;
+  grid-template-columns: 8px 104px minmax(24px, 1fr) 36px auto;
+  font-size: $devie__font-size__small;
+
+  &:has(.pin) {
+    grid-template-columns: 8px 104px minmax(24px, 1fr) 36px auto 20px;
+  }
+
+  &[data-size="sm"] {
+    gap: $devie__spacing__x05;
+    grid-template-columns: 8px 88px minmax(20px, 1fr) 32px auto;
+    font-size: 11px;
+
+    &:has(.pin) {
+      grid-template-columns: 8px 88px minmax(20px, 1fr) 32px auto 20px;
+    }
+  }
+}
+
+.window {
+  display: grid;
+  align-items: center;
+  gap: $devie__spacing__x1;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  min-height: 22px;
+  --quota-color: #{$devie__color__primary};
+
+  &[data-level="warning"] {
+    --quota-color: #{$devie__color__warning};
+  }
+
+  &[data-level="danger"] {
+    --quota-color: #{$devie__color__danger};
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--quota-color);
+}
+
+.label {
+  overflow: hidden;
+  color: $devie__color__text;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, $devie__color__text 12%, transparent);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--quota-color);
+}
+
+.percent {
+  color: var(--quota-color);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.reset {
+  color: $devie__color__text-sub;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pin {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: $devie__radius;
+  background: transparent;
+  color: $devie__color__text-sub;
+  opacity: 0.55;
+  cursor: default;
+
+  &:hover {
+    background: color-mix(in srgb, $devie__color__text 8%, transparent);
+    opacity: 1;
+  }
+
+  &[aria-pressed="true"] {
+    color: $devie__color__primary;
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
+  }
+}

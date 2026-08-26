@@ -4,56 +4,29 @@
   display: flex;
   height: 100vh;
   flex-direction: column;
-  background: $devie__color__background-sub;
+  background: $devie__color__background;
 }
 
-.header,
-.actions {
+.header {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-}
-
-.header {
   justify-content: space-between;
   gap: $devie__spacing__x2;
-  padding: $devie__spacing__x1 $devie__spacing__x2;
-}
-
-.header {
+  padding: $devie__spacing__x1 $devie__spacing__x1;
   border-bottom: 1px solid $devie__color__line;
   user-select: none;
-
-  strong {
-    font-size: $devie__font-size__small;
-    font-weight: 600;
-    pointer-events: none;
-  }
 }
 
-.actions {
-  gap: $devie__spacing__x05;
-}
-
-.minimum {
-  color: $devie__color__text-sub;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-
+// Flat rows with a line between them, no card frames.
 .list {
-  display: grid;
   flex: 1;
-  align-content: start;
-  gap: $devie__spacing__x1;
   min-height: 0;
-  padding: $devie__spacing__x1 $devie__spacing__x2;
   overflow-y: auto;
-}
 
-.updated {
-  color: $devie__color__text-sub;
-  font-size: 11px;
+  > div > * + * {
+    border-top: 1px solid $devie__color__line;
+  }
 }
 
 .empty {

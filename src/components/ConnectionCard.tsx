@@ -5,29 +5,23 @@ import {
   Power,
   RefreshCw,
   Trash2,
+  Zap,
 } from "lucide-react";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
+import { autoPingSupported } from "./AutoPingDialog";
 import styles from "./ConnectionCard.module.scss";
 import ProviderIcon from "./ProviderIcon";
+import QuotaBars from "./QuotaBars";
 
-/** "in 4h 13m", "in 6d 4h", or "now" for a past reset. */
-export function untilText(value?: string): string | undefined {
-  if (!value) return undefined;
-  const minutes = Math.round((new Date(value).getTime() - Date.now()) / 60000);
-  if (minutes <= 0) return "now";
-  const days = Math.floor(minutes / 1440);
-  const hours = Math.floor((minutes % 1440) / 60);
-  const rest = minutes % 60;
-  if (days > 0) return `in ${days}d ${hours}h`;
-  if (hours > 0) return `in ${hours}h ${rest}m`;
-  return `in ${rest}m`;
-}
-
-function StatusBadge({ connection }: { connection: ProviderConnection }) {
+export function StatusBadge({
+  connection,
+}: {
+  connection: ProviderConnection;
+}) {
   if (connection.status === "ready") return null;
   if (connection.status === "stale") {
     return <Badge variant="warning">Stale</Badge>;
@@ -41,7 +35,8 @@ function StatusBadge({ connection }: { connection: ProviderConnection }) {
 export interface ConnectionActions {
   onRefresh?: (id: string) => void;
   onRename?: (connection: ProviderConnection) => void;
-  onConfigure?: (connection: ProviderConnection) => void;
+  onAlerts?: (connection: ProviderConnection) => void;
+  onAutoPing?: (connection: ProviderConnection) => void;
   onEnabledChange?: (id: string, enabled: boolean) => void;
   onRemove?: (id: string) => void;
 }
@@ -52,7 +47,8 @@ export function ConnectionMenu({
   busy = false,
   onRefresh,
   onRename,
-  onConfigure,
+  onAlerts,
+  onAutoPing,
   onEnabledChange,
   onRemove,
 }: { connection: ProviderConnection; busy?: boolean } & ConnectionActions) {
@@ -80,10 +76,16 @@ export function ConnectionMenu({
                 Rename
               </Menu.Item>
             )}
-            {onConfigure && (
-              <Menu.Item onClick={() => onConfigure(connection)}>
+            {onAlerts && (
+              <Menu.Item onClick={() => onAlerts(connection)}>
                 <BellRing size={14} />
-                Alerts and auto-ping
+                Alerts
+              </Menu.Item>
+            )}
+            {onAutoPing && autoPingSupported(connection) && (
+              <Menu.Item onClick={() => onAutoPing(connection)}>
+                <Zap size={14} />
+                Auto-ping
               </Menu.Item>
             )}
             {onRefresh && (
@@ -121,23 +123,22 @@ export function ConnectionMenu({
   );
 }
 
+/** One account on the Quota page. The menu bar popover uses `PopoverRow`. */
 export default function ConnectionCard({
   connection,
-  compact = false,
   busy = false,
   ...actions
 }: {
   connection: ProviderConnection;
-  compact?: boolean;
   busy?: boolean;
 } & ConnectionActions) {
   const hasActions = Object.values(actions).some(Boolean);
   const plan = connection.identity?.plan;
 
   return (
-    <article className={styles.card} data-compact={compact || undefined}>
+    <article className={styles.card}>
       <header className={styles.header}>
-        <ProviderIcon provider={connection.provider} size={compact ? 16 : 18} />
+        <ProviderIcon provider={connection.provider} size={24} />
         <div className={styles.identity}>
           <h2>{PROVIDER_NAMES[connection.provider]}</h2>
           <p>
@@ -147,40 +148,20 @@ export default function ConnectionCard({
         </div>
         <StatusBadge connection={connection} />
         {busy && <RefreshCw className={styles.spinning} size={13} />}
-        {hasActions && !compact && (
+        {hasActions && (
           <ConnectionMenu busy={busy} connection={connection} {...actions} />
         )}
       </header>
 
-      {connection.windows.length > 0 ? (
-        <div className={styles.windows}>
-          {connection.windows.map((window) => {
-            const left = Math.max(0, Math.round(100 - window.usedPercent));
-            return (
-              <div className={styles.window} key={window.key}>
-                <span className={styles.dot} />
-                <span className={styles.label} title={window.label}>
-                  {window.label}
-                </span>
-                <span className={styles.track}>
-                  <span
-                    className={styles.fill}
-                    style={{ width: `${Math.min(100, left)}%` }}
-                  />
-                </span>
-                <span className={styles.percent}>{left}%</span>
-                <span className={styles.reset}>
-                  {untilText(window.resetsAt) ?? "—"}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <p className={styles.empty}>
-          {connection.lastError ?? "No quota data"}
-        </p>
-      )}
+      <div className={styles.body}>
+        {connection.windows.length > 0 ? (
+          <QuotaBars windows={connection.windows} />
+        ) : (
+          <p className={styles.empty}>
+            {connection.lastError ?? "No quota data"}
+          </p>
+        )}
+      </div>
     </article>
   );
 }

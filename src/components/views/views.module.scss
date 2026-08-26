@@ -13,11 +13,16 @@
   }
 }
 
-.filters {
+// Page actions sit here, under the title bar, never in it.
+.toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: $devie__spacing__x1;
+}
+
+.toolbarEnd {
+  margin-left: auto;
 }
 
 .filterTrigger {
@@ -109,47 +114,6 @@
   letter-spacing: 0.04em;
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: $devie__font-size__small;
-
-  th,
-  td {
-    padding: $devie__spacing__x1 $devie__spacing__x2;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  th {
-    border-bottom: 1px solid $devie__color__line;
-    color: $devie__color__text-sub;
-    font-weight: 500;
-  }
-
-  tbody tr + tr td {
-    border-top: 1px solid $devie__color__line;
-  }
-}
-
-.cellIdentity {
-  display: flex;
-  align-items: center;
-  gap: $devie__spacing__x1;
-
-  > span {
-    display: grid;
-  }
-
-  small {
-    color: $devie__color__text-sub;
-  }
-}
-
-.numeric {
-  font-variant-numeric: tabular-nums;
-}
-
 .empty {
   margin: 0;
   padding: $devie__spacing__x3;
@@ -187,7 +151,7 @@
   padding: $devie__spacing__x2;
   border: 1px solid $devie__color__line;
   border-radius: $devie__radius-strong;
-  background: $devie__color__background-sub;
+  background: $devie__color__background;
   color: $devie__color__text;
   font: inherit;
   text-align: left;
@@ -199,12 +163,16 @@
 
   &:is(button):hover {
     border-color: color-mix(in srgb, $devie__color__primary 40%, $devie__color__line);
-    background: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background-sub);
+    background: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background);
   }
 
   &:focus-visible {
     outline: 2px solid $devie__color__primary;
     outline-offset: -2px;
+  }
+
+  &[data-muted] {
+    min-height: 0;
   }
 
   &[data-muted] strong {
@@ -279,20 +247,16 @@
   }
 }
 
-.footnote {
-  margin: 0;
-  padding: 0 $devie__spacing__x1;
-  color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
+.dangerText {
+  color: $devie__color__danger;
 }
 
-.databasePath {
-  max-width: min(440px, 48vw);
-  overflow: hidden;
-  color: $devie__color__text-sub;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  user-select: text;
+.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
