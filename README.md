@@ -2,7 +2,7 @@
 
 Devie Quota is a local macOS menu bar app for AI subscription quotas.
 
-It keeps separate Claude, Codex, Gemini CLI, and GitHub Copilot accounts in one place.
+It keeps separate Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor accounts in one place.
 The product has no Devie account, cloud database, proxy, or hosted backend.
 
 > [!NOTE]
@@ -23,7 +23,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - A Tauri 2 app with a Next.js static frontend.
 - A macOS menu bar item with one provider logo and percent left (pin a quota window in the popover), plus a popover.
 - A native-style window with a sidebar: Quota, Providers, Settings.
-- In-app OAuth sign-in for Claude, Codex, Gemini CLI, and GitHub Copilot accounts.
+- In-app OAuth sign-in for Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor accounts.
 - Any number of accounts per provider.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
@@ -39,6 +39,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
 | Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
+| Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
 
 Claude usage reads share one cache, in the same way as 9router: a read stays
 fresh for five minutes on the timer (a refresh button always fetches), one
@@ -182,6 +183,7 @@ setup steps.
 - The app supports macOS only.
 - The signed workflow builds Apple silicon only.
 - GitHub Copilot uses an internal endpoint instead of a public quota API.
+- Cursor has no public OAuth client. The sign-in copies the desktop app flow, tokens do not renew, and the dashboard endpoints are undocumented.
 - Gemini CLI uses internal Code Assist endpoints exposed by the official CLI.
 - The app does not yet remove managed profiles.
 - The app does not yet show full history charts, costs, or local token totals.

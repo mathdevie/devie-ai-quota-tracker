@@ -12,6 +12,7 @@ const CLAUDE: &[u8] = include_bytes!("../../public/providers/claude.png");
 const CODEX: &[u8] = include_bytes!("../../public/providers/codex.png");
 const GEMINI: &[u8] = include_bytes!("../../public/providers/gemini-cli.png");
 const COPILOT: &[u8] = include_bytes!("../../public/providers/copilot.png");
+const CURSOR: &[u8] = include_bytes!("../../public/providers/cursor.png");
 
 /// Corner radius as a share of the icon size, the macOS app icon ratio.
 const CORNER_RATIO: f64 = 0.225;
@@ -24,6 +25,7 @@ fn cache() -> &'static HashMap<&'static str, Image<'static>> {
             ("codex", CODEX),
             ("gemini-cli", GEMINI),
             ("copilot", COPILOT),
+            ("cursor", CURSOR),
         ]
         .into_iter()
         .filter_map(|(id, bytes)| Some((id, rounded(Image::from_bytes(bytes).ok()?))))
@@ -79,6 +81,7 @@ mod tests {
             Provider::Codex,
             Provider::Gemini,
             Provider::Copilot,
+            Provider::Cursor,
         ] {
             let icon = provider_icon(&provider).expect("logo decodes");
             assert_eq!(icon.width(), 128);

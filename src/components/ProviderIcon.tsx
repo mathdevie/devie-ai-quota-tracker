@@ -8,7 +8,6 @@ import styles from "./ProviderIcon.module.scss";
 export type BrandId =
   | Provider
   | "antigravity"
-  | "cursor"
   | "gemini-cli"
   | "kiro"
   | "kimchi"

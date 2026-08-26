@@ -100,6 +100,7 @@ fn ping_reset_key(
         Provider::Codex => current - observed >= Duration::seconds(RESET_DRIFT_SECONDS),
         Provider::Gemini => false,
         Provider::Copilot => false,
+        Provider::Cursor => false,
     };
     should_ping.then(|| {
         let key_time = if connection.provider == Provider::Claude {
@@ -169,6 +170,7 @@ async fn send(
         Provider::Codex => send_codex(client, connection, &credentials).await,
         Provider::Gemini => Err("The Quota Optimizer does not support Gemini CLI.".to_string()),
         Provider::Copilot => Err("The Quota Optimizer does not support Copilot.".to_string()),
+        Provider::Cursor => Err("The Quota Optimizer does not support Cursor.".to_string()),
     }
 }
 

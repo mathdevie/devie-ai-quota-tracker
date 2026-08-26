@@ -21,6 +21,7 @@ export const PROVIDER_FILTERS: ProviderFilter[] = [
   "codex",
   "gemini-cli",
   "copilot",
+  "cursor",
 ];
 
 export const SORTS: Sort[] = ["expiring", "least-left", "most-left", "name"];

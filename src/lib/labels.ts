@@ -5,6 +5,7 @@ export const PROVIDER_NAMES: Record<Provider, string> = {
   codex: "Codex",
   "gemini-cli": "Gemini CLI",
   copilot: "GitHub Copilot",
+  cursor: "Cursor",
 };
 
 export const PROVIDERS: Provider[] = [
@@ -12,6 +13,7 @@ export const PROVIDERS: Provider[] = [
   "codex",
   "gemini-cli",
   "copilot",
+  "cursor",
 ];
 
 /**
