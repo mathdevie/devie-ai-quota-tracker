@@ -63,7 +63,21 @@
       "Now": "jetzt",
       "InDaysHours": "in {{days}} T {{hours}} Std",
       "InHoursMinutes": "in {{hours}} Std {{minutes}} Min",
-      "InMinutes": "in {{minutes}} Min"
+      "InMinutes": "in {{minutes}} Min",
+      "On": "Zurücksetzung am {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Reset-Guthaben",
+      "Description": "Ein Reset-Guthaben setzt alle Kontingentfenster dieses Kontos auf einmal zurück.",
+      "DefaultTitle": "Limit-Zurücksetzung",
+      "Expires": "Läuft ab am {{date}}",
+      "NoExpiry": "Kein Ablaufdatum",
+      "Use": "Verwenden",
+      "Available_one": "{{count}} Reset verfügbar",
+      "Available_other": "{{count}} Resets verfügbar",
+      "ConfirmTitle": "Codex-Limits zurücksetzen?",
+      "ConfirmDescription": "1 Reset-Guthaben für {{account}} verwenden. Alle Kontingentfenster werden jetzt zurückgesetzt. Das kann nicht rückgängig gemacht werden. Verbleibendes Guthaben danach: {{remaining}}.",
+      "Confirm": "Limits zurücksetzen"
     },
     "Pin": {
       "Shown": "{{label}} wird in der Menüleiste angezeigt",

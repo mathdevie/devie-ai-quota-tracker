@@ -229,6 +229,7 @@ mod tests {
             alerts,
             auto_ping: AutoPingState::default(),
             windows: vec![previous],
+            reset_credits: Vec::new(),
         }
     }
 
@@ -260,6 +261,7 @@ mod tests {
                 used_percent: 85.0,
                 resets_at: Some("2026-08-26T12:20:00Z".into()),
             }],
+            reset_credits: None,
         };
         let notices = notices("fr-FR", &connection, &reading, now);
         assert_eq!(notices.len(), 3);
@@ -285,6 +287,7 @@ mod tests {
             source: "test".into(),
             identity: None,
             windows: vec![window],
+            reset_credits: None,
         };
         assert!(notices("en-US", &connection, &reading, now).is_empty());
     }

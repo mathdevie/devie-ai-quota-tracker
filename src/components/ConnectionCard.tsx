@@ -17,6 +17,7 @@ import styles from "./ConnectionCard.module.scss";
 import IconTip from "./IconTip";
 import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
+import ResetCredits from "./ResetCredits";
 
 export function StatusBadge({
   connection,
@@ -41,6 +42,8 @@ export interface ConnectionActions {
   onAutoPing?: (connection: ProviderConnection) => void;
   onEnabledChange?: (id: string, enabled: boolean) => void;
   onRemove?: (id: string) => void;
+  /** Codex only: spends one reset credit. Resolves to true on success. */
+  onUseReset?: (id: string, creditId: string) => Promise<boolean>;
 }
 
 /** "On" or "Off" at the end of a menu item. */
@@ -235,7 +238,15 @@ export default function ConnectionCard({
 
       <div className={styles.body}>
         {connection.windows.length > 0 ? (
-          <QuotaBars windows={connection.windows} />
+          <>
+            <QuotaBars windows={connection.windows} />
+            {actions.onUseReset && (
+              <ResetCredits
+                connection={connection}
+                onUseReset={actions.onUseReset}
+              />
+            )}
+          </>
         ) : (
           <p className={styles.empty}>
             {connection.lastError ?? t("Connection.NoQuotaData")}

@@ -265,6 +265,7 @@ mod tests {
                 ..AutoPingState::default()
             },
             windows: Vec::new(),
+            reset_credits: Vec::new(),
         }
     }
 

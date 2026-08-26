@@ -158,6 +158,31 @@ fn set_auto_ping(
     publish_state(&app, &core)
 }
 
+/// Spends one Codex reset credit, then reads the quota again.
+#[tauri::command]
+async fn use_reset_credit(
+    app: AppHandle,
+    connection_id: String,
+    credit_id: String,
+) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    let connection = core
+        .database
+        .connection_by_id(&connection_id)?
+        .ok_or_else(|| "The connection does not exist.".to_string())?;
+    if connection.provider != model::Provider::Codex {
+        return Err("Reset credits exist for Codex accounts only.".to_string());
+    }
+    if !connection.reset_credits.iter().any(|credit| credit.id == credit_id) {
+        return Err("This reset credit is not available any more.".to_string());
+    }
+    let credentials =
+        oauth::credentials_for_request(&connection, &core.app_data_dir, &core.client).await?;
+    oauth::codex::consume_reset_credit(&core.client, &credentials, &credit_id).await?;
+    refresh_one(&app, &core, &connection, true).await;
+    publish_state(&app, &core)
+}
+
 #[tauri::command]
 fn set_tray_summary(
     app: AppHandle,
@@ -634,6 +659,7 @@ pub fn run() {
             rename_connection,
             set_connection_alerts,
             set_auto_ping,
+            use_reset_credit,
             set_tray_summary,
             set_menu_bar_item_visible,
             set_language,

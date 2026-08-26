@@ -8,7 +8,7 @@ use serde_json::Value;
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, QuotaWindow, RemoteIdentity},
+    model::{QuotaReading, QuotaWindow, RemoteIdentity, ResetCredit},
     oauth::{
         claude::{encode_query, title_case},
         decode_jwt_claims, describe_http_failure, LoginOutcome, Pkce, USER_AGENT,
@@ -20,6 +20,9 @@ pub const CLIENT_ID: &str = "app_EMoamEEZ73f0CkXaXp7hrann";
 pub const AUTHORIZE_URL: &str = "https://auth.openai.com/oauth/authorize";
 pub const TOKEN_URL: &str = "https://auth.openai.com/oauth/token";
 pub const USAGE_URL: &str = "https://chatgpt.com/backend-api/wham/usage";
+/// Banked rate-limit reset credits. Undocumented; the Codex VS Code
+/// extension and 9router use the same route.
+pub const RESET_CREDITS_URL: &str = "https://chatgpt.com/backend-api/wham/rate-limit-reset-credits";
 pub const SCOPE: &str = "openid profile email offline_access";
 pub const CALLBACK_PORT: u16 = 1455;
 pub const CALLBACK_PATH: &str = "/auth/callback";
@@ -175,12 +178,12 @@ fn interpret(
     ))
 }
 
-pub async fn usage(
-    client: &reqwest::Client,
+/// A request to the ChatGPT backend with the headers the Codex CLI sends.
+fn backend_request(
+    request: reqwest::RequestBuilder,
     credentials: &Credentials,
-) -> Result<QuotaReading, String> {
-    let mut request = client
-        .get(USAGE_URL)
+) -> reqwest::RequestBuilder {
+    let mut request = request
         .bearer_auth(&credentials.access_token)
         .header(reqwest::header::ACCEPT, "application/json")
         .header(reqwest::header::USER_AGENT, "codex_cli_rs/0.50.0")
@@ -188,6 +191,11 @@ pub async fn usage(
     if let Some(account_id) = &credentials.account_id {
         request = request.header("ChatGPT-Account-ID", account_id);
     }
+    request
+}
+
+/// Sends the request and returns the JSON body, or a user-facing error.
+async fn backend_json(request: reqwest::RequestBuilder, invalid: &str) -> Result<Value, String> {
     let response = request
         .send()
         .await
@@ -200,9 +208,98 @@ pub async fn usage(
     if !status.is_success() {
         return Err(describe_http_failure("Codex", status, &text));
     }
-    let json: Value = serde_json::from_str(&text)
-        .map_err(|_| "Codex returned invalid quota data.".to_string())?;
-    parse_usage(&json)
+    serde_json::from_str(&text).map_err(|_| invalid.to_string())
+}
+
+pub async fn usage(
+    client: &reqwest::Client,
+    credentials: &Credentials,
+) -> Result<QuotaReading, String> {
+    let json = backend_json(
+        backend_request(client.get(USAGE_URL), credentials),
+        "Codex returned invalid quota data.",
+    )
+    .await?;
+    let mut reading = parse_usage(&json)?;
+    // The credits list is a bonus. A failure must not hide the quota.
+    reading.reset_credits = reset_credits(client, credentials).await.ok();
+    Ok(reading)
+}
+
+/// Lists the reset credits the account can still spend.
+pub async fn reset_credits(
+    client: &reqwest::Client,
+    credentials: &Credentials,
+) -> Result<Vec<ResetCredit>, String> {
+    let json = backend_json(
+        backend_request(client.get(RESET_CREDITS_URL), credentials),
+        "Codex returned invalid reset credit data.",
+    )
+    .await?;
+    Ok(parse_reset_credits(&json))
+}
+
+/// Keeps the credits with status `available`, soonest to expire first.
+pub fn parse_reset_credits(json: &Value) -> Vec<ResetCredit> {
+    let text = |value: &Value, key: &str| {
+        value
+            .get(key)
+            .and_then(Value::as_str)
+            .map(str::to_string)
+    };
+    let mut credits: Vec<ResetCredit> = json
+        .get("credits")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter(|credit| {
+            credit
+                .get("status")
+                .and_then(Value::as_str)
+                .is_none_or(|status| status == "available")
+        })
+        .filter_map(|credit| {
+            Some(ResetCredit {
+                id: text(credit, "id")?,
+                title: text(credit, "title"),
+                granted_at: reset_time(credit.get("granted_at")),
+                expires_at: reset_time(credit.get("expires_at")),
+            })
+        })
+        .collect();
+    credits.sort_by(|a, b| a.expires_at.cmp(&b.expires_at));
+    credits
+}
+
+/// Spends one reset credit. Every quota window of the account resets.
+pub async fn consume_reset_credit(
+    client: &reqwest::Client,
+    credentials: &Credentials,
+    credit_id: &str,
+) -> Result<(), String> {
+    let body = serde_json::json!({
+        "credit_id": credit_id,
+        "redeem_request_id": uuid::Uuid::new_v4().to_string(),
+    });
+    let json = backend_json(
+        backend_request(
+            client.post(format!("{RESET_CREDITS_URL}/consume")).json(&body),
+            credentials,
+        ),
+        "Codex returned an invalid reset response.",
+    )
+    .await?;
+    let redeemed = json
+        .get("credit")
+        .and_then(|credit| credit.get("status"))
+        .and_then(Value::as_str)
+        .is_some_and(|status| status == "redeemed")
+        || json.get("windows_reset").is_some();
+    if redeemed {
+        Ok(())
+    } else {
+        Err("Codex did not accept the reset credit.".to_string())
+    }
 }
 
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
@@ -241,6 +338,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
             plan: Some(plan),
         }),
         windows,
+        reset_credits: None,
     })
 }
 
@@ -334,6 +432,23 @@ mod tests {
         assert_eq!(credentials.account_id.as_deref(), Some("acc-1"));
         assert_eq!(identity.plan.as_deref(), Some("Plus"));
         assert_eq!(key, "acc-1");
+    }
+
+    #[test]
+    fn parses_available_reset_credits_soonest_first() {
+        let json: Value = serde_json::json!({
+            "available_count": 2,
+            "credits": [
+                {"id": "b", "status": "available", "title": "Weekly reset",
+                 "granted_at": "2026-08-01T00:00:00Z", "expires_at": "2026-09-30T00:00:00Z"},
+                {"id": "used", "status": "redeemed", "expires_at": "2026-09-01T00:00:00Z"},
+                {"id": "a", "status": "available", "expires_at": "2026-09-04T16:00:00Z"}
+            ]
+        });
+        let credits = parse_reset_credits(&json);
+        assert_eq!(credits.len(), 2);
+        assert_eq!(credits[0].id, "a");
+        assert_eq!(credits[1].title.as_deref(), Some("Weekly reset"));
     }
 
     #[test]
