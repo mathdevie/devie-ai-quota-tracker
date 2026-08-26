@@ -3,6 +3,9 @@
 #
 # Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
 #   must match the tag, because the updater endpoint reads that version.
+# Runner: the macOS build runs on a self-hosted Mac (Settings → Actions →
+#   Runners) with Bun, rustup, and the Xcode command line tools installed.
+#   Manual dispatch can pick the GitHub-hosted macos-15 runner instead.
 #
 # Required secrets (Release environment):
 #   - CN_API_KEY: CrabNebula Cloud API key
@@ -18,6 +21,14 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner for the macOS build"
+        type: choice
+        default: self-hosted
+        options:
+          - self-hosted
+          - macos-15
 
 permissions:
   contents: read
@@ -58,10 +69,11 @@ jobs:
       matrix:
         include:
           - name: Apple silicon
-            runner: macos-15
             target: aarch64-apple-darwin
     name: Build ${{ matrix.name }}
-    runs-on: ${{ matrix.runner }}
+    # The self-hosted runner is a Mac registered to this repo: no macOS
+    # minutes are billed. Dispatch with runner=macos-15 to build on GitHub.
+    runs-on: ${{ inputs.runner == 'macos-15' && 'macos-15' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     environment: Release
     timeout-minutes: 60
     steps:
