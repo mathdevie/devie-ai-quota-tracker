@@ -17,7 +17,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, QuotaWindow, RemoteIdentity},
+    model::{QuotaAmount, QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{describe_http_failure, LoginOutcome, Pkce, USER_AGENT},
     parse::{number, reset_time},
 };
@@ -353,8 +353,10 @@ pub fn tier_label(tier: &str) -> String {
         "Team".to_string()
     } else if lower.contains("enterprise") {
         "Enterprise".to_string()
+    } else if lower == "default_claude_ai" || lower.ends_with("_free") {
+        "Free".to_string()
     } else {
-        title_case(tier)
+        title_case(lower.trim_start_matches("default_claude_"))
     }
 }
 
@@ -415,6 +417,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     if windows.is_empty() {
         return Err("Claude returned no active quota windows.".to_string());
     }
+    add_extra_usage(object, &mut windows);
     Ok(QuotaReading {
         source: "Claude subscription API".to_string(),
         identity: None,
@@ -440,6 +443,48 @@ fn add_window(
         label: label.to_string(),
         used_percent: used.clamp(0.0, 100.0),
         resets_at: reset_time(window.get("resets_at")),
+        unlimited: false,
+        amount: None,
+        paid: false,
+    });
+}
+
+/// The paid "extra usage" past the plan: a monthly spend limit in cents.
+fn add_extra_usage(object: &serde_json::Map<String, Value>, windows: &mut Vec<QuotaWindow>) {
+    let Some(extra) = object.get("extra_usage").and_then(Value::as_object) else {
+        return;
+    };
+    if !extra
+        .get("is_enabled")
+        .and_then(Value::as_bool)
+        .unwrap_or(false)
+    {
+        return;
+    }
+    let scale = 10f64.powi(number(extra.get("decimal_places")).unwrap_or(2.0) as i32);
+    let Some(limit) = number(extra.get("monthly_limit")).filter(|limit| *limit > 0.0) else {
+        return;
+    };
+    let used = number(extra.get("used_credits")).unwrap_or(0.0);
+    let used_percent = number(extra.get("utilization")).unwrap_or(used / limit * 100.0);
+    let currency = extra
+        .get("currency")
+        .and_then(Value::as_str)
+        .unwrap_or("USD")
+        .to_string();
+    windows.push(QuotaWindow {
+        key: "extra_usage".to_string(),
+        label: "Extra usage".to_string(),
+        used_percent: used_percent.clamp(0.0, 100.0),
+        resets_at: None,
+        unlimited: false,
+        amount: Some(QuotaAmount {
+            used: Some(used / scale),
+            total: limit / scale,
+            unit: Some(currency),
+            overage: None,
+        }),
+        paid: true,
     });
 }
 
@@ -482,6 +527,32 @@ pub fn title_case(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn adds_the_paid_extra_usage_window() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":54.0,"resets_at":"2026-08-26T16:30:00Z"},
+            "extra_usage":{"is_enabled":true,"monthly_limit":60000,"used_credits":60034.0,"utilization":100.0,"currency":"USD","decimal_places":2}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_usage(&json).expect("reading");
+        let extra = reading
+            .windows
+            .iter()
+            .find(|w| w.key == "extra_usage")
+            .expect("extra");
+        assert!(extra.paid);
+        assert_eq!(extra.used_percent, 100.0);
+        let amount = extra.amount.clone().expect("amount");
+        assert_eq!((amount.used, amount.total), (Some(600.34), 600.0));
+        assert_eq!(amount.unit.as_deref(), Some("USD"));
+
+        let off: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":1.0},"extra_usage":{"is_enabled":false,"monthly_limit":60000}}"#,
+        )
+        .expect("fixture");
+        assert_eq!(parse_usage(&off).expect("reading").windows.len(), 1);
+    }
 
     #[test]
     fn builds_the_claude_code_authorize_url() {

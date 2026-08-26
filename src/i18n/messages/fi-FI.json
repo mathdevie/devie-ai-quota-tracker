@@ -83,7 +83,12 @@
       "Shown": "{{label}} näkyy valikkorivillä",
       "Show": "Näytä {{label}} valikkorivillä",
       "Title": "Näytä valikkorivillä"
-    }
+    },
+    "Unlimited": "Rajaton",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} yli",
+    "Balance": "{{balance}} jäljellä",
+    "LimitReached": "Raja saavutettu"
   },
   "Popover": {
     "OpenDashboard": "Avaa hallintapaneeli",

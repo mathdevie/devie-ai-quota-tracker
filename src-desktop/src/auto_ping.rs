@@ -139,7 +139,7 @@ fn pinged_too_recently(connection: &ProviderConnection, now: DateTime<Utc>) -> b
 fn has_exhausted_blocking_window(windows: &[QuotaWindow], session_key: &str) -> bool {
     windows
         .iter()
-        .any(|window| window.key != session_key && window.used_percent >= 100.0)
+        .any(|window| !window.paid && window.key != session_key && window.used_percent >= 100.0)
 }
 
 fn session_window(windows: &[QuotaWindow]) -> Option<&QuotaWindow> {
@@ -317,12 +317,18 @@ mod tests {
                 label: "Session".into(),
                 used_percent: 0.0,
                 resets_at: None,
+                unlimited: false,
+                amount: None,
+                paid: false,
             },
             QuotaWindow {
                 key: "secondary".into(),
                 label: "Weekly".into(),
                 used_percent: 100.0,
                 resets_at: None,
+                unlimited: false,
+                amount: None,
+                paid: false,
             },
         ];
         assert!(has_exhausted_blocking_window(&windows, "primary"));

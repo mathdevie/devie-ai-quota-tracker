@@ -361,6 +361,9 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
                     .get("resetTime")
                     .and_then(Value::as_str)
                     .map(str::to_string),
+                unlimited: false,
+                amount: None,
+                paid: false,
             },
         );
     }
@@ -399,10 +402,14 @@ fn plan_name(json: &Value) -> Option<String> {
 
 fn plan_label(value: &str) -> String {
     let value = value.trim_end_matches("-tier");
-    if value.eq_ignore_ascii_case("legacy") || value.eq_ignore_ascii_case("free") {
-        return "Free".to_string();
+    match value.to_lowercase().as_str() {
+        "legacy" | "free" | "g1-free" => "Free".to_string(),
+        "standard" => "Code Assist Standard".to_string(),
+        "enterprise" => "Code Assist Enterprise".to_string(),
+        "g1-pro" => "AI Pro".to_string(),
+        "g1-ultra" => "AI Ultra".to_string(),
+        _ => title_words(value),
     }
-    title_words(value)
 }
 
 fn model_label(model_id: &str) -> String {
@@ -491,6 +498,11 @@ mod tests {
         assert_eq!(
             plan_name(&json!({ "currentTier": { "id": "free-tier" } })).as_deref(),
             Some("Free")
+        );
+        assert_eq!(
+            plan_name(&json!({ "paidTier": { "id": "g1-ultra-tier" }, "currentTier": { "id": "standard-tier" } }))
+                .as_deref(),
+            Some("AI Ultra")
         );
         assert_eq!(
             plan_name(&json!({

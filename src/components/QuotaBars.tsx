@@ -1,8 +1,9 @@
 import type { TFunction } from "i18next";
 import { Pin } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { QuotaWindow } from "@/lib/contracts";
+import type { QuotaAmount, QuotaWindow } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/date";
+import Badge from "@/ui/Badge";
 import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
 import styles from "./QuotaBars.module.scss";
@@ -42,6 +43,47 @@ export function untilText(t: TFunction, value?: string): string | undefined {
   if (hours > 0)
     return t("Quota.Reset.InHoursMinutes", { hours, minutes: rest });
   return t("Quota.Reset.InMinutes", { minutes: rest });
+}
+
+/** One GitHub AI Credit is one US cent. */
+const CENTS_PER_CREDIT = 0.01;
+
+/**
+ * "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", or
+ * "$12.50 left", in small print under the bar.
+ */
+function Amount({ amount }: { amount: QuotaAmount }) {
+  const { t, i18n } = useTranslation();
+  const currency = /^[A-Z]{3}$/.test(amount.unit ?? "")
+    ? amount.unit
+    : undefined;
+  const format = (value: number, code = currency) =>
+    new Intl.NumberFormat(
+      i18n.language,
+      code
+        ? { style: "currency", currency: code }
+        : { maximumFractionDigits: 0 },
+    ).format(value);
+  const overage = amount.overage ?? 0;
+  return (
+    <span className={styles.amount}>
+      {amount.used === undefined
+        ? t("Quota.Balance", { balance: format(amount.total) })
+        : t("Quota.Amount", {
+            used: format(amount.used),
+            total: format(amount.total),
+            unit: currency ? "" : (amount.unit ?? ""),
+          }).trim()}
+      {overage > 0 && (
+        <span className={styles.overage}>
+          {" · "}
+          {t("Quota.Overage", { overage: format(overage) })}
+          {amount.unit === "credits" &&
+            ` (${format(overage * CENTS_PER_CREDIT, "USD")})`}
+        </span>
+      )}
+    </span>
+  );
 }
 
 export type QuotaLevel = "ok" | "warning" | "danger";
@@ -85,14 +127,33 @@ export default function QuotaBars({
             <span className={styles.label} title={window.label}>
               {window.label}
             </span>
-            <span className={styles.track}>
-              <span
-                className={styles.fill}
-                style={{ width: `${Math.min(100, left)}%` }}
-              />
-            </span>
-            <span className={styles.percent}>{left}%</span>
-            <ResetTime value={window.resetsAt} />
+            {window.unlimited ? (
+              <Badge className={styles.unlimited} variant="success">
+                {t("Quota.Unlimited")}
+              </Badge>
+            ) : (
+              <>
+                <span className={styles.track}>
+                  <span
+                    className={styles.fill}
+                    style={{ width: `${Math.min(100, left)}%` }}
+                  />
+                </span>
+                <span className={styles.percent}>
+                  {window.amount?.used === undefined && window.amount
+                    ? ""
+                    : `${left}%`}
+                </span>
+                {window.paid && left === 0 ? (
+                  <Badge className={styles.reached} variant="danger">
+                    {t("Quota.LimitReached")}
+                  </Badge>
+                ) : (
+                  <ResetTime value={window.resetsAt} />
+                )}
+                {window.amount && <Amount amount={window.amount} />}
+              </>
+            )}
             {onPin && (
               <IconTip label={t("Quota.Pin.Title")}>
                 <button
