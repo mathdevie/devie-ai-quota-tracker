@@ -3,9 +3,10 @@
 #
 # Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
 #   must match the tag, because the updater endpoint reads that version.
-# Runner: the macOS build runs on a self-hosted Mac (Settings → Actions →
-#   Runners) with Bun, rustup, and the Xcode command line tools installed.
-#   Manual dispatch can pick the GitHub-hosted macos-15 runner instead.
+# Runner: every job runs on a self-hosted Mac (Settings → Actions → Runners)
+#   with Bun, rustup, jq, and the Xcode command line tools installed, so no
+#   GitHub minutes are billed. A manual dispatch with runner=macos-15 uses
+#   the GitHub-hosted macos-15 and ubuntu-24.04 runners instead.
 #
 # Required secrets (Release environment):
 #   - CN_API_KEY: CrabNebula Cloud API key
@@ -42,7 +43,7 @@ env:
 
 jobs:
   draft:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     environment: Release
     steps:
       - uses: actions/checkout@v7
@@ -148,7 +149,7 @@ jobs:
 
   publish:
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     environment: Release
     steps:
       - uses: actions/checkout@v7
