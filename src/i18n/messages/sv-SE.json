@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "sv-SE",
+    "EndonymName": "Svenska"
+  },
+  "Metadata": {
+    "Description": "En lokal kvotspårare för AI-prenumerationer"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Avbryt",
+    "Save": "Spara",
+    "Close": "Stäng",
+    "Refresh": "Uppdatera",
+    "TryAgain": "Försök igen",
+    "Theme": "Tema"
+  },
+  "Nav": {
+    "Sections": "Sektioner",
+    "Quota": "Kvot",
+    "Providers": "Leverantörer",
+    "Settings": "Inställningar",
+    "BackToProviders": "Tillbaka till leverantörer"
+  },
+  "Connection": {
+    "ActionsFor": "Åtgärder för {{name}}",
+    "NoQuotaData": "Inga kvotdata",
+    "Status": {
+      "Ready": "Klar",
+      "Stale": "Inaktuell",
+      "Login": "Logga in",
+      "SignInNeeded": "Inloggning krävs",
+      "Error": "Fel"
+    },
+    "Menu": {
+      "Rename": "Byt namn",
+      "Alerts": "Aviseringar",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Uppdatera",
+      "Enable": "Aktivera",
+      "Disable": "Inaktivera",
+      "Remove": "Ta bort"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Leverantör",
+    "FilterSort": "Sortering",
+    "AllProviders": "Alla leverantörer",
+    "Sort": {
+      "Expiring": "Går ut snart först",
+      "LeastLeft": "Minst kvar",
+      "MostLeft": "Mest kvar",
+      "Name": "Namn"
+    },
+    "NoMatch": "Inget aktivt konto matchar dessa filter.",
+    "NoAccounts": "Inga konton ännu. Anslut en leverantör för att se dess kvoter.",
+    "OpenProviders": "Öppna leverantörer",
+    "RefreshQuotas": "Uppdatera kvoter",
+    "Reset": {
+      "Now": "nu",
+      "InDaysHours": "om {{days}}d {{hours}}h",
+      "InHoursMinutes": "om {{hours}}h {{minutes}}m",
+      "InMinutes": "om {{minutes}}m"
+    },
+    "Pin": {
+      "Shown": "{{label}} visas i menyraden",
+      "Show": "Visa {{label}} i menyraden",
+      "Title": "Visa i menyraden"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Öppna instrumentpanelen",
+    "NoProviders": "Inga leverantörer"
+  },
+  "Providers": {
+    "Active": "Aktiva",
+    "Available": "Tillgängliga",
+    "NotSupportedYet": "Stöds inte ännu",
+    "Connected": "Anslutna {{total}}",
+    "Attention": "Observera {{total}}",
+    "AddAccount": "Lägg till konto",
+    "AddProviderAccount": "Lägg till ett {{name}}-konto",
+    "NoAccountsYet": "Inga {{name}}-konton ännu.",
+    "SignInWithCli": "Logga in med CLI:n i en terminal.",
+    "AutoDetected": "Upptäckt automatiskt",
+    "AutoDetectedTip": "Det här kontot lades till automatiskt eftersom du är inloggad via CLI:n. För fullt stöd rekommenderas att du <link>loggar in manuellt</link>.",
+    "EnableAccount": "Aktivera {{name}}",
+    "DisableAccount": "Inaktivera {{name}}"
+  },
+  "Login": {
+    "Title": "Lägg till ett {{name}}-konto",
+    "OpeningBrowser": "Öppnar webbläsaren…",
+    "WaitingFor": "Väntar på {{name}}…",
+    "OpenPageAgain": "Öppna sidan igen",
+    "PasteCode": "Eller klistra in koden från sidan",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Använd kod",
+    "Connected": "Ansluten",
+    "Hint": {
+      "claude": "Logga in på Claude i webbläsaren. Appen tar emot resultatet på den här datorn.",
+      "codex": "Logga in med ditt ChatGPT-konto i webbläsaren. Appen tar emot resultatet på den här datorn.",
+      "gemini-cli": "Logga in med Google i webbläsaren. Appen tar emot resultatet på den här datorn.",
+      "copilot": "Ange den här koden på GitHub-sidan i webbläsaren och godkänn sedan begäran."
+    }
+  },
+  "Rename": {
+    "Title": "Byt namn på konto",
+    "Label": "Etikett",
+    "Description": "Lämna fältet tomt för att visa konto-id:t igen."
+  },
+  "Alerts": {
+    "Title": "Aviseringar",
+    "LowQuota": "Låg kvot",
+    "LowQuotaDescription": "Meddela mig när en kvot har 20 % kvar.",
+    "ResetSoon": "Återställs snart",
+    "ResetSoonDescription": "Meddela mig 30 minuter innan en kvot återställs.",
+    "ResetComplete": "Återställning klar",
+    "ResetCompleteDescription": "Meddela mig efter att en kvot har återställts.",
+    "PermissionRequired": "Tillåt notiser i macOS-inställningarna för att använda kvotaviseringar."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "Starta nästa session",
+    "SupportedDescription": "Skicka en liten förfrågan efter att en session har återställts.",
+    "UnsupportedDescription": "Auto-ping kräver en Claude- eller Codex-inloggning gjord i den här appen. Andra konton kan inte använda det.",
+    "LastRequest": "Senaste förfrågan: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Tema",
+    "ThemeDescription": "Färger i appens fönster",
+    "Language": "Språk",
+    "LanguageDescription": "Språk i appens fönster",
+    "MenuBarItem": "Menyradsobjekt",
+    "MenuBarItemDescription": "Visa kvoterna i macOS-menyraden",
+    "ShowMenuBarItem": "Visa menyradsobjektet",
+    "Updates": {
+      "Title": "Uppdateringar",
+      "RestartToUpdate": "Starta om för att uppdatera",
+      "CheckForUpdates": "Sök efter uppdateringar",
+      "UpdateAvailable": "Uppdatering tillgänglig",
+      "Status": {
+        "PackagedOnly": "Uppdateringar fungerar bara i den paketerade appen.",
+        "Checking": "Söker…",
+        "Downloading": "Laddar ner {{progress}} %",
+        "Ready": "Version {{version}} är klar.",
+        "Installing": "Installerar…",
+        "Failed": "Uppdateringen misslyckades.",
+        "UpToDate": "Devie Quota {{version}} är uppdaterad."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Öppna Devie Quota",
+    "RefreshAll": "Uppdatera alla",
+    "Quit": "Avsluta Devie Quota",
+    "Tooltip": "Devie Quota prenumerationskvoter"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}}-kvoten är låg",
+    "LowQuotaBody": "{{account}} har {{percent}} % kvar i {{window}}.",
+    "ResetSoonTitle": "{{provider}}-kvoten återställs snart",
+    "ResetSoonBody": "{{window}} för {{account}} återställs om {{minutes}} minuter.",
+    "ResetHappenedTitle": "{{provider}}-kvoten har återställts",
+    "ResetHappenedBody": "{{window}} för {{account}} är tillgänglig igen."
+  }
+}

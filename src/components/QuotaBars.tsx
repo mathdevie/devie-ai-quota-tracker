@@ -1,18 +1,21 @@
+import type { TFunction } from "i18next";
 import { Pin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { QuotaWindow } from "@/lib/contracts";
 import styles from "./QuotaBars.module.scss";
 
 /** "in 4h 13m", "in 6d 4h", or "now" for a past reset. */
-export function untilText(value?: string): string | undefined {
+export function untilText(t: TFunction, value?: string): string | undefined {
   if (!value) return undefined;
   const minutes = Math.round((new Date(value).getTime() - Date.now()) / 60000);
-  if (minutes <= 0) return "now";
+  if (minutes <= 0) return t("Quota.Reset.Now");
   const days = Math.floor(minutes / 1440);
   const hours = Math.floor((minutes % 1440) / 60);
   const rest = minutes % 60;
-  if (days > 0) return `in ${days}d ${hours}h`;
-  if (hours > 0) return `in ${hours}h ${rest}m`;
-  return `in ${rest}m`;
+  if (days > 0) return t("Quota.Reset.InDaysHours", { days, hours });
+  if (hours > 0)
+    return t("Quota.Reset.InHoursMinutes", { hours, minutes: rest });
+  return t("Quota.Reset.InMinutes", { minutes: rest });
 }
 
 export type QuotaLevel = "ok" | "warning" | "danger";
@@ -40,6 +43,7 @@ export default function QuotaBars({
   pinnedKey?: string;
   onPin?: (key: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={styles.bars} data-size={size}>
       {windows.map((window) => {
@@ -63,19 +67,19 @@ export default function QuotaBars({
             </span>
             <span className={styles.percent}>{left}%</span>
             <span className={styles.reset}>
-              {untilText(window.resetsAt) ?? "—"}
+              {untilText(t, window.resetsAt) ?? "—"}
             </span>
             {onPin && (
               <button
                 aria-label={
                   pinned
-                    ? `${window.label} is shown in the menu bar`
-                    : `Show ${window.label} in the menu bar`
+                    ? t("Quota.Pin.Shown", { label: window.label })
+                    : t("Quota.Pin.Show", { label: window.label })
                 }
                 aria-pressed={pinned}
                 className={styles.pin}
                 onClick={() => onPin(window.key)}
-                title="Show in the menu bar"
+                title={t("Quota.Pin.Title")}
                 type="button"
               >
                 <Pin fill={pinned ? "currentColor" : "none"} size={12} />

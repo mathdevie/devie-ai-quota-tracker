@@ -2,21 +2,31 @@
 
 import { Plug, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { DashboardState } from "@/lib/contracts";
 import { broadcastFilters } from "@/lib/desktop";
 import {
   applyFilters,
   DEFAULT_FILTERS,
   type Filters,
-  PROVIDER_OPTIONS,
+  PROVIDER_FILTERS,
   readFilters,
-  SORT_OPTIONS,
+  SORTS,
+  type Sort,
   writeFilters,
 } from "@/lib/filters";
+import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Select from "@/ui/Select";
 import ConnectionCard, { type ConnectionActions } from "../ConnectionCard";
 import styles from "./views.module.scss";
+
+const SORT_LABELS: Record<Sort, string> = {
+  expiring: "Quota.Sort.Expiring",
+  "least-left": "Quota.Sort.LeastLeft",
+  "most-left": "Quota.Sort.MostLeft",
+  name: "Quota.Sort.Name",
+};
 
 function FilterSelect<T extends string>({
   label,
@@ -71,7 +81,17 @@ export default function QuotaView({
   onRefreshAll: () => void;
   onOpenProviders: () => void;
 } & ConnectionActions) {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+
+  const providerOptions = PROVIDER_FILTERS.map((value) => ({
+    value,
+    label: value === "all" ? t("Quota.AllProviders") : PROVIDER_NAMES[value],
+  }));
+  const sortOptions = SORTS.map((value) => ({
+    value,
+    label: t(SORT_LABELS[value]),
+  }));
 
   useEffect(() => {
     setFilters(readFilters());
@@ -94,15 +114,15 @@ export default function QuotaView({
     <section className={styles.page} data-wide>
       <div className={styles.toolbar}>
         <FilterSelect
-          label="Provider"
+          label={t("Quota.FilterProvider")}
           onChange={(provider) => update({ provider })}
-          options={PROVIDER_OPTIONS}
+          options={providerOptions}
           value={filters.provider}
         />
         <FilterSelect
-          label="Sort"
+          label={t("Quota.FilterSort")}
           onChange={(sort) => update({ sort })}
-          options={SORT_OPTIONS}
+          options={sortOptions}
           value={filters.sort}
         />
         <Button
@@ -116,7 +136,7 @@ export default function QuotaView({
             className={refreshing ? styles.spinning : undefined}
             size={14}
           />
-          Refresh
+          {t("Common.Refresh")}
         </Button>
       </div>
 
@@ -132,14 +152,10 @@ export default function QuotaView({
       </div>
       {connections.length === 0 && (
         <div className={styles.emptyState}>
-          <p>
-            {hasAccounts
-              ? "No enabled account matches these filters."
-              : "No accounts yet. Connect a provider to see its quotas."}
-          </p>
+          <p>{hasAccounts ? t("Quota.NoMatch") : t("Quota.NoAccounts")}</p>
           <Button onClick={onOpenProviders} size="sm">
             <Plug size={14} />
-            Open Providers
+            {t("Quota.OpenProviders")}
           </Button>
         </div>
       )}

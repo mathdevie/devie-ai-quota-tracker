@@ -14,20 +14,16 @@ const STORAGE_KEY = "devie-quota-filters:v1";
 
 export const DEFAULT_FILTERS: Filters = { provider: "all", sort: "expiring" };
 
-export const PROVIDER_OPTIONS: { value: ProviderFilter; label: string }[] = [
-  { value: "all", label: "All providers" },
-  { value: "claude", label: PROVIDER_NAMES.claude },
-  { value: "codex", label: PROVIDER_NAMES.codex },
-  { value: "gemini-cli", label: PROVIDER_NAMES["gemini-cli"] },
-  { value: "copilot", label: PROVIDER_NAMES.copilot },
+/** In menu order. The labels live in the locale files. */
+export const PROVIDER_FILTERS: ProviderFilter[] = [
+  "all",
+  "claude",
+  "codex",
+  "gemini-cli",
+  "copilot",
 ];
 
-export const SORT_OPTIONS: { value: Sort; label: string }[] = [
-  { value: "expiring", label: "Expiring first" },
-  { value: "least-left", label: "Least left" },
-  { value: "most-left", label: "Most left" },
-  { value: "name", label: "Name" },
-];
+export const SORTS: Sort[] = ["expiring", "least-left", "most-left", "name"];
 
 export function readFilters(): Filters {
   if (typeof window === "undefined") return DEFAULT_FILTERS;

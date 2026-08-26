@@ -2,6 +2,7 @@
 
 import { AppWindowMac, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { DashboardState, TraySummary } from "@/lib/contracts";
 import {
   listenFilters,
@@ -34,6 +35,7 @@ export default function PopoverSurface({
   onRefresh: () => void;
   onStateChange: (next: DashboardState) => void;
 }) {
+  const { t } = useTranslation();
   // The Quota page owns the filters and broadcasts every change.
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   useEffect(() => {
@@ -84,10 +86,10 @@ export default function PopoverSurface({
       <header className={styles.header} data-tauri-drag-region ref={headerRef}>
         <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
           <AppWindowMac size={14} />
-          Open Dashboard
+          {t("Popover.OpenDashboard")}
         </Button>
         <Button
-          aria-label="Refresh quotas"
+          aria-label={t("Quota.RefreshQuotas")}
           disabled={refreshing}
           onClick={onRefresh}
           size="sm"
@@ -117,7 +119,7 @@ export default function PopoverSurface({
             />
           ))}
           {connections.length === 0 && (
-            <p className={styles.empty}>No providers</p>
+            <p className={styles.empty}>{t("Popover.NoProviders")}</p>
           )}
         </div>
       </section>

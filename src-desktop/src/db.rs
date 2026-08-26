@@ -11,6 +11,7 @@ use crate::model::{
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
 const TRAY_SUMMARY: &str = "tray_summary";
+const LANGUAGE: &str = "language";
 
 #[derive(Clone, Debug)]
 pub struct Database {
@@ -187,6 +188,15 @@ impl Database {
 
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
         self.put_setting(SHOW_MENU_BAR_ITEM, Some(if visible { "1" } else { "0" }))
+    }
+
+    /// The interface language the frontend last reported, when any.
+    pub fn language(&self) -> Result<Option<String>, String> {
+        Self::setting(&self.connection()?, LANGUAGE)
+    }
+
+    pub fn set_language(&self, locale: &str) -> Result<(), String> {
+        self.put_setting(LANGUAGE, Some(locale))
     }
 
     pub fn set_tray_summary(&self, summary: Option<&TraySummary>) -> Result<(), String> {
@@ -762,6 +772,12 @@ mod tests {
         assert!(!database
             .claim_notification("low:one", "claude-one", "low_quota")
             .expect("duplicate notification"));
+        assert_eq!(database.language().expect("language"), None);
+        database.set_language("fr-FR").expect("set language");
+        assert_eq!(
+            database.language().expect("language").as_deref(),
+            Some("fr-FR")
+        );
 
         assert!(state.settings.show_menu_bar_item);
         database.set_show_menu_bar_item(false).expect("setting");

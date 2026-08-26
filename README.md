@@ -29,6 +29,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
 - Ten bundled Devie UI themes.
+- Thirteen interface languages, with the same i18next setup as Mana.
 - Signed and notarized Apple silicon builds through GitHub Actions.
 
 ## Provider support
@@ -227,3 +228,18 @@ The initial design combines useful ideas from these projects:
 
 Read the full [feasibility analysis](plans/feasibility-analysis.md) for the source
 assessment, security boundaries, and initial product decisions.
+
+## Languages
+
+The interface uses i18next. Messages live in `src/i18n/messages/<locale>.json`;
+`en-US` is the source. The app picks the saved language, else the closest
+system language. The main window and the menu bar popover share the setting.
+
+- `bun run i18n:verify` checks lint, missing, undefined, and unused keys.
+- `bun run i18n:untranslated` lists values still identical to English.
+- `bun run i18n:extract` previews new keys found in the code.
+
+The Rust side reads the same JSON files at compile time
+(`src-desktop/src/messages.rs`) for the tray menu and the alert notifications.
+The frontend sends each language change through the `set_language` command,
+and the app stores it in SQLite so alerts use it after a restart.

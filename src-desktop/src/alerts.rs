@@ -4,6 +4,7 @@ use tauri_plugin_notification::NotificationExt;
 
 use crate::{
     db::Database,
+    messages,
     model::{Provider, ProviderConnection, QuotaReading, QuotaWindow},
 };
 
@@ -24,7 +25,12 @@ pub fn after_reading(
     connection: &ProviderConnection,
     reading: &QuotaReading,
 ) {
-    for notice in notices(connection, reading, Utc::now()) {
+    let locale = database
+        .language()
+        .ok()
+        .flatten()
+        .unwrap_or_else(|| messages::DEFAULT_LOCALE.to_string());
+    for notice in notices(&locale, connection, reading, Utc::now()) {
         let Ok(true) = database.claim_notification(&notice.event_key, &connection.id, notice.kind)
         else {
             continue;
@@ -43,6 +49,7 @@ pub fn after_reading(
 }
 
 fn notices(
+    locale: &str,
     connection: &ProviderConnection,
     reading: &QuotaReading,
     now: DateTime<Utc>,
@@ -67,8 +74,20 @@ fn notices(
                     connection.id, window.key, reset_scope, LOW_QUOTA_REMAINING_PERCENT
                 ),
                 kind: "low_quota",
-                title: format!("{provider} quota is low"),
-                body: format!("{account} has {:.0}% left in {}.", remaining, window.label),
+                title: messages::t(
+                    locale,
+                    "Notifications.LowQuotaTitle",
+                    &[("provider", provider)],
+                ),
+                body: messages::t(
+                    locale,
+                    "Notifications.LowQuotaBody",
+                    &[
+                        ("account", &account),
+                        ("percent", &format!("{remaining:.0}")),
+                        ("window", &window.label),
+                    ],
+                ),
             });
         }
 
@@ -82,11 +101,19 @@ fn notices(
                             connection.id, window.key, reset_scope
                         ),
                         kind: "reset_soon",
-                        title: format!("{provider} quota resets soon"),
-                        body: format!(
-                            "{} for {account} resets in {} minutes.",
-                            window.label,
-                            until.num_minutes().max(1)
+                        title: messages::t(
+                            locale,
+                            "Notifications.ResetSoonTitle",
+                            &[("provider", provider)],
+                        ),
+                        body: messages::t(
+                            locale,
+                            "Notifications.ResetSoonBody",
+                            &[
+                                ("window", &window.label),
+                                ("account", &account),
+                                ("minutes", &until.num_minutes().max(1).to_string()),
+                            ],
                         ),
                     });
                 }
@@ -112,8 +139,16 @@ fn notices(
                             connection.id, window.key, previous_scope
                         ),
                         kind: "reset_happened",
-                        title: format!("{provider} quota reset"),
-                        body: format!("{} for {account} is available again.", window.label),
+                        title: messages::t(
+                            locale,
+                            "Notifications.ResetHappenedTitle",
+                            &[("provider", provider)],
+                        ),
+                        body: messages::t(
+                            locale,
+                            "Notifications.ResetHappenedBody",
+                            &[("window", &window.label), ("account", &account)],
+                        ),
                     });
                 }
             }
@@ -229,8 +264,11 @@ mod tests {
                 resets_at: Some("2026-08-26T12:20:00Z".into()),
             }],
         };
-        let notices = notices(&connection, &reading, now);
+        let notices = notices("fr-FR", &connection, &reading, now);
         assert_eq!(notices.len(), 3);
+        assert!(notices
+            .iter()
+            .any(|notice| notice.title == "Le quota Claude est faible"));
         assert!(notices.iter().any(|notice| notice.kind == "low_quota"));
         assert!(notices.iter().any(|notice| notice.kind == "reset_soon"));
         assert!(notices.iter().any(|notice| notice.kind == "reset_happened"));
@@ -251,6 +289,6 @@ mod tests {
             identity: None,
             windows: vec![window],
         };
-        assert!(notices(&connection, &reading, now).is_empty());
+        assert!(notices("en-US", &connection, &reading, now).is_empty());
     }
 }

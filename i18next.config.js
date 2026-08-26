@@ -1,0 +1,57 @@
+/** @type {import("i18next-cli").I18nextToolkitConfig} */
+module.exports = {
+  locales: [
+    "en-US",
+    "en-GB",
+    "fr-FR",
+    "de-DE",
+    "it-IT",
+    "es-ES",
+    "es-419",
+    "pt-BR",
+    "fi-FI",
+    "da-DK",
+    "nl-NL",
+    "nb-NO",
+    "sv-SE",
+  ],
+  extract: {
+    input: ["src/**/*.{ts,tsx}"],
+    ignore: ["src/i18n/messages/**", "src/ui/**", "**/*.d.ts"],
+    output: "src/i18n/messages/{{language}}.json",
+    defaultNS: false,
+    keySeparator: ".",
+    nsSeparator: false,
+    primaryLanguage: "en-US",
+    secondaryLanguages: [
+      "en-GB",
+      "fr-FR",
+      "de-DE",
+      "it-IT",
+      "es-ES",
+      "es-419",
+      "pt-BR",
+      "fi-FI",
+      "da-DK",
+      "nl-NL",
+      "nb-NO",
+      "sv-SE",
+    ],
+    removeUnusedKeys: false,
+    sort: false,
+    indentation: 2,
+    extractFromComments: false,
+    preservePatterns: [
+      // Keys addressed through `${status}` / `${provider}` template literals.
+      "Connection.Status.*",
+      "Login.Hint.*",
+      "Settings.Updates.Status.*",
+      // Read by the Rust side (src-desktop/src/messages.rs), not by TypeScript.
+      "Tray.*",
+      "Notifications.*",
+    ],
+  },
+  lint: {
+    ignore: ["src/ui/**"],
+  },
+};
