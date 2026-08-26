@@ -42,7 +42,8 @@
       "Remove": "Rimuovi",
       "On": "Attivo",
       "Off": "Disattivo"
-    }
+    },
+    "MoreActions": "Altre azioni"
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -78,7 +79,7 @@
     "Active": "Attivi",
     "Available": "Disponibili",
     "NotSupportedYet": "Non ancora supportati",
-    "Connected": "Collegati {{total}}",
+    "Connected": "{{total}} connessi",
     "Attention": "Attenzione {{total}}",
     "AddAccount": "Aggiungi account",
     "AddProviderAccount": "Aggiungi un account {{name}}",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Ottimizzatore quota",
-    "StartNextSession": "Avvia ogni sessione in anticipo",
-    "SupportedDescription": "I limiti di sessione si azzerano a orari fissi. Subito dopo ogni azzeramento, Devie Quota invia una richiesta minima così la sessione successiva parte subito. Ottieni più sessioni ogni settimana e non perdi mai quota mentre sei via.",
+    "StartNextSession": "Avvia le sessioni automaticamente",
+    "SupportedDescription": "Per impostazione predefinita, il timer di ripristino parte solo al primo utilizzo. Questa opzione invia automaticamente una piccola richiesta per avviare il timer subito dopo ogni ripristino. In pratica, il prossimo ripristino arriverà prima.",
     "UnsupportedDescription": "L’ottimizzatore quota funziona solo con gli account Claude e Codex.",
     "LastRequest": "Ultima richiesta: {{date}}"
   },
   "Settings": {
     "Theme": "Tema",
-    "ThemeDescription": "Colori delle finestre dell'app",
     "Language": "Lingua",
-    "LanguageDescription": "Lingua delle finestre dell'app",
     "MenuBarItem": "Elemento nella barra dei menu",
     "MenuBarItemDescription": "Mostra le quote nella barra dei menu di macOS",
     "ShowMenuBarItem": "Mostra l'elemento nella barra dei menu",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Aggiornamento disponibile",
       "Status": {
         "PackagedOnly": "Gli aggiornamenti funzionano solo nell'app pacchettizzata.",
-        "Checking": "Controllo…",
         "Downloading": "Download {{progress}}%",
         "Ready": "La versione {{version}} è pronta.",
         "Installing": "Installazione…",
-        "Failed": "L'aggiornamento non è riuscito.",
-        "UpToDate": "Devie Quota {{version}} è aggiornato."
-      }
+        "Failed": "L'aggiornamento non è riuscito."
+      },
+      "Version": "Versione: {{version}}",
+      "UpToDateToast": "Stai usando l’ultima versione."
     }
   },
   "Tray": {

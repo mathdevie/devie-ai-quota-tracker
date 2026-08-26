@@ -42,7 +42,8 @@
       "Remove": "Poista",
       "On": "Päällä",
       "Off": "Pois"
-    }
+    },
+    "MoreActions": "Lisää toimintoja"
   },
   "Quota": {
     "FilterProvider": "Palveluntarjoaja",
@@ -78,7 +79,7 @@
     "Active": "Aktiiviset",
     "Available": "Saatavilla",
     "NotSupportedYet": "Ei vielä tuettu",
-    "Connected": "Yhdistetty {{total}}",
+    "Connected": "{{total}} yhdistetty",
     "Attention": "Huomio {{total}}",
     "AddAccount": "Lisää tili",
     "AddProviderAccount": "Lisää {{name}}-tili",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Kiintiön optimointi",
-    "StartNextSession": "Aloita jokainen istunto ajoissa",
-    "SupportedDescription": "Istuntorajat nollautuvat kiinteinä aikoina. Heti jokaisen nollauksen jälkeen Devie Quota lähettää yhden pienen pyynnön, jotta seuraava istunto alkaa heti. Saat enemmän istuntoja viikossa etkä koskaan menetä kiintiötä poissa ollessasi.",
+    "StartNextSession": "Käynnistä istunnot automaattisesti",
+    "SupportedDescription": "Oletuksena nollausajastin alkaa laskea vasta ensimmäisellä käyttökerralla. Tämä asetus lähettää automaattisesti pienen pyynnön, joka käynnistää ajastimen heti jokaisen nollauksen jälkeen. Käytännössä seuraava nollaus tulee aikaisemmin.",
     "UnsupportedDescription": "Kiintiön optimointi toimii vain Claude- ja Codex-tileillä.",
     "LastRequest": "Viimeisin pyyntö: {{date}}"
   },
   "Settings": {
     "Theme": "Teema",
-    "ThemeDescription": "Sovelluksen ikkunoiden värit",
     "Language": "Kieli",
-    "LanguageDescription": "Sovelluksen ikkunoiden kieli",
     "MenuBarItem": "Valikkorivin kohde",
     "MenuBarItemDescription": "Näytä kiintiöt macOS:n valikkorivillä",
     "ShowMenuBarItem": "Näytä valikkorivin kohde",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Päivitys saatavilla",
       "Status": {
         "PackagedOnly": "Päivitykset toimivat vain paketoidussa sovelluksessa.",
-        "Checking": "Tarkistetaan…",
         "Downloading": "Ladataan {{progress}} %",
         "Ready": "Versio {{version}} on valmis.",
         "Installing": "Asennetaan…",
-        "Failed": "Päivitys epäonnistui.",
-        "UpToDate": "Devie Quota {{version}} on ajan tasalla."
-      }
+        "Failed": "Päivitys epäonnistui."
+      },
+      "Version": "Versio: {{version}}",
+      "UpToDateToast": "Käytössäsi on uusin versio."
     }
   },
   "Tray": {

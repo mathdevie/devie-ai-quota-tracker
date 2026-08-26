@@ -42,7 +42,8 @@
       "Remove": "Eliminar",
       "On": "Activado",
       "Off": "Desactivado"
-    }
+    },
+    "MoreActions": "Más acciones"
   },
   "Quota": {
     "FilterProvider": "Proveedor",
@@ -78,7 +79,7 @@
     "Active": "Activos",
     "Available": "Disponibles",
     "NotSupportedYet": "Aún no compatibles",
-    "Connected": "Conectados {{total}}",
+    "Connected": "{{total}} conectadas",
     "Attention": "Atención {{total}}",
     "AddAccount": "Añadir cuenta",
     "AddProviderAccount": "Añadir una cuenta de {{name}}",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Optimizador de cuota",
-    "StartNextSession": "Iniciar cada sesión cuanto antes",
-    "SupportedDescription": "Los límites de sesión se reinician a una hora fija. Justo después de cada reinicio, Devie Quota envía una petición mínima para que la siguiente sesión empiece al momento. Consigues más sesiones por semana y nunca pierdes cuota mientras estás fuera.",
+    "StartNextSession": "Iniciar sesiones automáticamente",
+    "SupportedDescription": "Por defecto, el temporizador de reinicio solo empieza a contar con el primer uso. Esta opción envía automáticamente una pequeña solicitud para iniciar el temporizador justo después de cada reinicio. En la práctica, tu próximo reinicio llegará antes.",
     "UnsupportedDescription": "El optimizador de cuota solo funciona con cuentas de Claude y Codex.",
     "LastRequest": "Última solicitud: {{date}}"
   },
   "Settings": {
     "Theme": "Tema",
-    "ThemeDescription": "Colores de las ventanas de la app",
     "Language": "Idioma",
-    "LanguageDescription": "Idioma de las ventanas de la app",
     "MenuBarItem": "Elemento de la barra de menús",
     "MenuBarItemDescription": "Mostrar las cuotas en la barra de menús de macOS",
     "ShowMenuBarItem": "Mostrar el elemento de la barra de menús",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Actualización disponible",
       "Status": {
         "PackagedOnly": "Las actualizaciones solo funcionan en la app empaquetada.",
-        "Checking": "Comprobando…",
         "Downloading": "Descargando {{progress}} %",
         "Ready": "La versión {{version}} está lista.",
         "Installing": "Instalando…",
-        "Failed": "La actualización ha fallado.",
-        "UpToDate": "Devie Quota {{version}} está actualizado."
-      }
+        "Failed": "La actualización ha fallado."
+      },
+      "Version": "Versión: {{version}}",
+      "UpToDateToast": "Ya tienes la última versión."
     }
   },
   "Tray": {

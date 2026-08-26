@@ -4,6 +4,12 @@
   display: contents;
 }
 
+// The Alerts and Quota Optimizer dialogs: a little wider than the small size.
+.dialog {
+  width: 460px;
+  max-width: 90vw;
+}
+
 .group {
   display: grid;
   gap: $devie__spacing__x1;
@@ -47,6 +53,11 @@
 
   &[data-disabled] {
     opacity: 0.58;
+  }
+
+  &[data-plain] {
+    min-height: 0;
+    padding: 0;
   }
 }
 

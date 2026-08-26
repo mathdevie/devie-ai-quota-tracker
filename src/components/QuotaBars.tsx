@@ -2,6 +2,7 @@ import type { TFunction } from "i18next";
 import { Pin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { QuotaWindow } from "@/lib/contracts";
+import IconTip from "./IconTip";
 import styles from "./QuotaBars.module.scss";
 
 /** "in 4h 13m", "in 6d 4h", or "now" for a past reset. */
@@ -70,20 +71,21 @@ export default function QuotaBars({
               {untilText(t, window.resetsAt) ?? "—"}
             </span>
             {onPin && (
-              <button
-                aria-label={
-                  pinned
-                    ? t("Quota.Pin.Shown", { label: window.label })
-                    : t("Quota.Pin.Show", { label: window.label })
-                }
-                aria-pressed={pinned}
-                className={styles.pin}
-                onClick={() => onPin(window.key)}
-                title={t("Quota.Pin.Title")}
-                type="button"
-              >
-                <Pin fill={pinned ? "currentColor" : "none"} size={12} />
-              </button>
+              <IconTip label={t("Quota.Pin.Title")}>
+                <button
+                  aria-label={
+                    pinned
+                      ? t("Quota.Pin.Shown", { label: window.label })
+                      : t("Quota.Pin.Show", { label: window.label })
+                  }
+                  aria-pressed={pinned}
+                  className={styles.pin}
+                  onClick={() => onPin(window.key)}
+                  type="button"
+                >
+                  <Pin fill={pinned ? "currentColor" : "none"} size={12} />
+                </button>
+              </IconTip>
             )}
           </div>
         );

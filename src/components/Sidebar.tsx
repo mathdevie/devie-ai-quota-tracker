@@ -9,6 +9,8 @@ export interface SidebarItem<T extends string> {
   /** A translation key. */
   label: string;
   icon: LucideIcon;
+  /** The color of the rounded square behind the icon. */
+  tint: string;
 }
 
 export default function Sidebar<T extends string>({
@@ -39,7 +41,12 @@ export default function Sidebar<T extends string>({
               onClick={() => onChange(item.value)}
               type="button"
             >
-              <Icon aria-hidden size={16} strokeWidth={1.8} />
+              <span
+                className={styles.tile}
+                style={{ "--tile": item.tint } as React.CSSProperties}
+              >
+                <Icon aria-hidden size={13} strokeWidth={2.2} />
+              </span>
               <span>{t(item.label)}</span>
             </button>
           );
