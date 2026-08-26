@@ -73,6 +73,7 @@
 .brand {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: $devie__spacing__x1;
   padding: 0 $devie__spacing__x1;
   color: $devie__color__text-sub;

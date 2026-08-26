@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import type {
   DashboardState,
   Provider,
@@ -10,12 +11,6 @@ import Switch from "@/ui/Switch";
 import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";
 import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
-
-const CLI_HINTS: Record<Provider, string> = {
-  claude: "Devie Quota also lists Claude Code folders it finds on this Mac.",
-  codex: "Devie Quota also lists Codex folders it finds on this Mac.",
-  copilot: "Devie Quota also lists accounts signed in with the GitHub CLI.",
-};
 
 function ProviderStatus({ connection }: { connection: ProviderConnection }) {
   if (connection.status === "ready") {
@@ -58,11 +53,24 @@ export default function ProviderDetailView({
 
   return (
     <section className={styles.page}>
+      {connections.length > 0 && (
+        <div className={styles.toolbar}>
+          <Button
+            className={styles.toolbarEnd}
+            onClick={onAdd}
+            size="sm"
+            variant="secondary"
+          >
+            <Plus size={14} />
+            Add account
+          </Button>
+        </div>
+      )}
       <div className={styles.list}>
         {connections.map((connection) => (
           <article className={styles.row} key={connection.id}>
             <div className={styles.rowMain}>
-              <ProviderIcon provider={connection.provider} />
+              <ProviderIcon provider={connection.provider} size={28} />
               <div>
                 <h2>
                   {accountLabel(connection)}
@@ -100,22 +108,23 @@ export default function ProviderDetailView({
                 onRefresh={actions.onRefresh}
                 onRemove={actions.onRemove}
                 onRename={actions.onRename}
-                onConfigure={actions.onConfigure}
+                onAlerts={actions.onAlerts}
+                onAutoPing={actions.onAutoPing}
               />
             </div>
           </article>
         ))}
         {connections.length === 0 && (
           <div className={styles.emptyState}>
-            <ProviderIcon provider={provider} size={26} />
+            <ProviderIcon provider={provider} size={40} />
             <p>No {name} accounts yet.</p>
             <Button onClick={onAdd} size="sm">
+              <Plus size={14} />
               Add a {name} account
             </Button>
           </div>
         )}
       </div>
-      <p className={styles.footnote}>{CLI_HINTS[provider]}</p>
     </section>
   );
 }

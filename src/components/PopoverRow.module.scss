@@ -1,0 +1,39 @@
+@use "../ui/_devie.scss" as *;
+
+.row {
+  display: grid;
+  gap: $devie__spacing__x05;
+  padding: $devie__spacing__x1 $devie__spacing__x2;
+}
+
+.header {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.identity {
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  font-size: $devie__font-size__small;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  strong {
+    font-weight: 600;
+  }
+
+  span {
+    color: $devie__color__text-sub;
+  }
+}
+
+.empty {
+  margin: 0;
+  padding-left: calc(20px + #{$devie__spacing__x1});
+  color: $devie__color__text-sub;
+  font-size: 11px;
+}

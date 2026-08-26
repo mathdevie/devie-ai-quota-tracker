@@ -3,11 +3,10 @@ import styles from "./TitleBar.module.scss";
 export default function TitleBar({
   title,
   leading,
-  children,
 }: {
   title: string;
+  /** Navigation only, for example a back button. Actions live in the content. */
   leading?: React.ReactNode;
-  children?: React.ReactNode;
 }) {
   return (
     <header className={styles.titleBar} data-tauri-drag-region>
@@ -15,7 +14,6 @@ export default function TitleBar({
         {leading}
         <h1 className={styles.title}>{title}</h1>
       </div>
-      {children && <div className={styles.actions}>{children}</div>}
     </header>
   );
 }

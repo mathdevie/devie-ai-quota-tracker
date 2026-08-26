@@ -8,11 +8,12 @@ mod model;
 mod oauth;
 mod providers;
 mod pty;
+mod tray_icons;
 
 use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use db::Database;
-use model::{ConnectionAlerts, ConnectionStatus, DashboardState};
+use model::{ConnectionAlerts, ConnectionStatus, DashboardState, TraySummary};
 use oauth::{LoginSessions, LoginStart};
 use tauri::{
     menu::{Menu, MenuItem},
@@ -143,22 +144,43 @@ fn rename_connection(
 }
 
 #[tauri::command]
-fn set_connection_automation(
+fn set_connection_alerts(
     app: AppHandle,
     core: State<'_, Core>,
     connection_id: String,
     alerts: ConnectionAlerts,
-    auto_ping_enabled: bool,
+) -> Result<DashboardState, String> {
+    core.database
+        .set_connection_alerts(&connection_id, &alerts)?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+fn set_auto_ping(
+    app: AppHandle,
+    core: State<'_, Core>,
+    connection_id: String,
+    enabled: bool,
 ) -> Result<DashboardState, String> {
     let connection = core
         .database
         .connection_by_id(&connection_id)?
         .ok_or_else(|| "The connection does not exist.".to_string())?;
-    if auto_ping_enabled && !auto_ping::supported(&connection) {
+    if enabled && !auto_ping::supported(&connection) {
         return Err("Auto-ping supports Claude and Codex app sign-ins only.".to_string());
     }
     core.database
-        .set_connection_automation(&connection_id, &alerts, auto_ping_enabled)?;
+        .set_auto_ping_enabled(&connection_id, enabled)?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
+fn set_tray_summary(
+    app: AppHandle,
+    core: State<'_, Core>,
+    summary: Option<TraySummary>,
+) -> Result<DashboardState, String> {
+    core.database.set_tray_summary(summary.as_ref())?;
     publish_state(&app, &core)
 }
 
@@ -284,17 +306,51 @@ fn publish_state(app: &AppHandle, core: &Core) -> Result<DashboardState, String>
     Ok(state)
 }
 
+/// The window the menu bar summarizes: the user's pick when it still exists
+/// and is enabled, else the enabled window with the least quota left.
+fn tray_window<'a>(
+    state: &'a DashboardState,
+) -> Option<(&'a model::ProviderConnection, &'a model::QuotaWindow)> {
+    let enabled = || {
+        state
+            .connections
+            .iter()
+            .filter(|connection| connection.enabled)
+    };
+    let picked = state.settings.tray_summary.as_ref().and_then(|summary| {
+        let connection = enabled().find(|connection| connection.id == summary.connection_id)?;
+        let window = connection
+            .windows
+            .iter()
+            .find(|window| window.key == summary.window_key)?;
+        Some((connection, window))
+    });
+    picked.or_else(|| {
+        enabled()
+            .flat_map(|connection| connection.windows.iter().map(move |w| (connection, w)))
+            .min_by(|(_, a), (_, b)| a.used_percent.total_cmp(&b.used_percent).reverse())
+    })
+}
+
+/// Shows one provider logo and its percent left in the menu bar.
 fn update_tray_title(app: &AppHandle, state: &DashboardState) {
-    let minimum = state
-        .connections
-        .iter()
-        .filter(|connection| connection.enabled)
-        .flat_map(|connection| connection.windows.iter())
-        .map(|window| (100.0 - window.used_percent).clamp(0.0, 100.0))
-        .reduce(f64::min);
-    if let Some(tray) = app.tray_by_id("main-tray") {
-        let title = minimum.map_or_else(|| "—".to_string(), |value| format!("{:.0}%", value));
-        let _ = tray.set_title(Some(title));
+    let Some(tray) = app.tray_by_id("main-tray") else {
+        return;
+    };
+    match tray_window(state) {
+        Some((connection, window)) => {
+            let left = (100.0 - window.used_percent).clamp(0.0, 100.0);
+            let _ = tray.set_title(Some(format!("{left:.0}%")));
+            if let Some(icon) = tray_icons::provider_icon(&connection.provider) {
+                let _ = tray.set_icon(Some(icon));
+            }
+        }
+        None => {
+            let _ = tray.set_title(Some("—"));
+            if let Some(icon) = app.default_window_icon() {
+                let _ = tray.set_icon(Some(icon.clone()));
+            }
+        }
     }
 }
 
@@ -338,7 +394,8 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
         .title("Devie Quota Quotas")
         .inner_size(380.0, 480.0)
-        .min_inner_size(320.0, 320.0)
+        // The popover resizes itself to its content, down to one short list.
+        .min_inner_size(320.0, 120.0)
         .max_inner_size(480.0, 760.0)
         .resizable(true)
         .decorations(false)
@@ -360,7 +417,8 @@ fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .show_menu_on_left_click(false)
         .tooltip("Devie Quota subscription quotas")
         .title("—")
-        .icon_as_template(true)
+        // Provider logos keep their colors; a template icon would be a flat square.
+        .icon_as_template(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open" => {
                 let _ = show_main_window(app);
@@ -460,7 +518,9 @@ pub fn run() {
             refresh_connection,
             set_connection_enabled,
             rename_connection,
-            set_connection_automation,
+            set_connection_alerts,
+            set_auto_ping,
+            set_tray_summary,
             set_menu_bar_item_visible,
             open_main_window,
             hide_popover,

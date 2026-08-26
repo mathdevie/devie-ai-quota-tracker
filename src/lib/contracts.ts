@@ -47,14 +47,21 @@ export interface ProviderConnection {
   windows: QuotaWindow[];
 }
 
+/** The quota window the menu bar item shows: one provider logo, one percent. */
+export interface TraySummary {
+  connectionId: string;
+  windowKey: string;
+}
+
 export interface AppSettings {
   showMenuBarItem: boolean;
+  /** Absent: the menu bar shows the window with the least quota left. */
+  traySummary?: TraySummary;
 }
 
 export interface DashboardState {
   mode: "native" | "preview";
   connections: ProviderConnection[];
-  databasePath?: string;
   refreshedAt?: string;
   settings: AppSettings;
 }

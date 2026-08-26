@@ -2,7 +2,6 @@
 
 import { RefreshCw } from "lucide-react";
 import type { DashboardState } from "@/lib/contracts";
-import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
 import SettingRow from "../SettingRow";
@@ -34,10 +33,14 @@ function UpdateRow() {
   })();
 
   return (
-    <SettingRow.Row title="Updates">
-      <Badge variant={status === "error" ? "danger" : "outline"}>
-        {statusText}
-      </Badge>
+    <SettingRow.Row
+      subtitle={
+        <span className={status === "error" ? styles.dangerText : undefined}>
+          {statusText}
+        </span>
+      }
+      title="Updates"
+    >
       {status === "ready" ? (
         <Button onClick={() => void installUpdate()} size="sm">
           Restart to update
@@ -73,14 +76,14 @@ export default function SettingsView({
 }) {
   return (
     <section className={styles.page}>
-      <SettingRow.Section title="Appearance">
-        <SettingRow.Row title="Theme">
+      <SettingRow.List>
+        <SettingRow.Row subtitle="Colors of the app windows" title="Theme">
           <ThemePicker />
         </SettingRow.Row>
-      </SettingRow.Section>
-
-      <SettingRow.Section title="Menu bar">
-        <SettingRow.Row title="Show the menu bar item">
+        <SettingRow.Row
+          subtitle="Show the quotas in the macOS menu bar"
+          title="Menu bar item"
+        >
           <Switch.Root
             aria-label="Show the menu bar item"
             checked={state.settings.showMenuBarItem}
@@ -90,17 +93,8 @@ export default function SettingsView({
             <Switch.Thumb />
           </Switch.Root>
         </SettingRow.Row>
-      </SettingRow.Section>
-
-      <SettingRow.Section title="About">
         <UpdateRow />
-        <SettingRow.Separator />
-        <SettingRow.Row title="Database">
-          <span className={styles.databasePath}>
-            {state.databasePath ?? "—"}
-          </span>
-        </SettingRow.Row>
-      </SettingRow.Section>
+      </SettingRow.List>
     </section>
   );
 }

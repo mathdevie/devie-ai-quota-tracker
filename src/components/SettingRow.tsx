@@ -1,14 +1,9 @@
 import type { ReactNode } from "react";
-import Separator from "@/ui/Separator";
 import styles from "./SettingRow.module.scss";
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>{title}</h2>
-      <div className={styles.sectionBody}>{children}</div>
-    </section>
-  );
+/** Rows separated by lines, no card around them. */
+function List({ children }: { children: ReactNode }) {
+  return <div className={styles.list}>{children}</div>;
 }
 
 function Row({
@@ -31,6 +26,6 @@ function Row({
   );
 }
 
-const SettingRow = { Section, Row, Separator };
+const SettingRow = { List, Row };
 
 export default SettingRow;

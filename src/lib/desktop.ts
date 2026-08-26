@@ -3,7 +3,10 @@ import type {
   DashboardState,
   LoginStart,
   Provider,
+  ProviderConnection,
+  TraySummary,
 } from "./contracts";
+import type { Filters } from "./filters";
 import { previewState } from "./fixtures";
 
 declare global {
@@ -142,30 +145,50 @@ export async function renameConnection(
   return call("rename_connection", { connectionId, label: trimmed || null });
 }
 
-export async function setConnectionAutomation(
+function withConnection(
+  connectionId: string,
+  patch: (connection: ProviderConnection) => Partial<ProviderConnection>,
+): DashboardState {
+  return {
+    ...previewState,
+    connections: previewState.connections.map((connection) =>
+      connection.id === connectionId
+        ? { ...connection, ...patch(connection) }
+        : connection,
+    ),
+  };
+}
+
+export async function setConnectionAlerts(
   connectionId: string,
   alerts: ConnectionAlerts,
-  autoPingEnabled: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) return withConnection(connectionId, () => ({ alerts }));
+  return call("set_connection_alerts", { connectionId, alerts });
+}
+
+export async function setAutoPing(
+  connectionId: string,
+  enabled: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return withConnection(connectionId, (connection) => ({
+      autoPing: { ...connection.autoPing, enabled },
+    }));
+  }
+  return call("set_auto_ping", { connectionId, enabled });
+}
+
+export async function setTraySummary(
+  summary: TraySummary | null,
 ): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
-      connections: previewState.connections.map((connection) =>
-        connection.id === connectionId
-          ? {
-              ...connection,
-              alerts,
-              autoPing: { ...connection.autoPing, enabled: autoPingEnabled },
-            }
-          : connection,
-      ),
+      settings: { ...previewState.settings, traySummary: summary ?? undefined },
     };
   }
-  return call("set_connection_automation", {
-    connectionId,
-    alerts,
-    autoPingEnabled,
-  });
+  return call("set_tray_summary", { summary });
 }
 
 export async function ensureNotificationPermission(): Promise<boolean> {
@@ -192,4 +215,30 @@ export async function setMenuBarItemVisible(
 export async function openMainWindow(): Promise<void> {
   if (!isDesktop()) return;
   await call("open_main_window");
+}
+
+/** Tells the other window (main or popover) that the filters changed. */
+export async function broadcastFilters(filters: Filters): Promise<void> {
+  if (!isDesktop()) return;
+  const { emit } = await import("@tauri-apps/api/event");
+  await emit("quota:filters", filters);
+}
+
+export async function listenFilters(
+  onChange: (filters: Filters) => void,
+): Promise<() => void> {
+  if (!isDesktop()) return () => {};
+  const { listen } = await import("@tauri-apps/api/event");
+  return listen<Filters>("quota:filters", (event) => onChange(event.payload));
+}
+
+/** Fits the popover window to its content. The width stays as it is. */
+export async function resizePopover(height: number): Promise<void> {
+  if (!isDesktop()) return;
+  const { getCurrentWindow, LogicalSize } = await import(
+    "@tauri-apps/api/window"
+  );
+  await getCurrentWindow().setSize(
+    new LogicalSize(window.innerWidth, Math.round(height)),
+  );
 }

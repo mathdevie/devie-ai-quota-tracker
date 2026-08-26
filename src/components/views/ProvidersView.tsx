@@ -2,22 +2,22 @@ import { ChevronRight } from "lucide-react";
 import type { DashboardState, Provider } from "@/lib/contracts";
 import { PROVIDER_NAMES, PROVIDERS } from "@/lib/labels";
 import Badge from "@/ui/Badge";
-import ProviderIcon, { LetterIcon } from "../ProviderIcon";
+import ProviderIcon, { BrandIcon, type BrandId } from "../ProviderIcon";
 import styles from "./views.module.scss";
 
 /** Subscription tools other quota trackers cover. Not read by Devie Quota yet. */
-const UNSUPPORTED = [
-  "Antigravity",
-  "Cursor",
-  "Gemini CLI",
-  "Kiro",
-  "Kimchi",
-  "OpenCode",
-  "Qwen Code",
-  "Kilo Code",
-  "Cline",
-  "Windsurf",
-  "OpenRouter",
+const UNSUPPORTED: { name: string; brand: BrandId }[] = [
+  { name: "Antigravity", brand: "antigravity" },
+  { name: "Cursor", brand: "cursor" },
+  { name: "Gemini CLI", brand: "gemini-cli" },
+  { name: "Kiro", brand: "kiro" },
+  { name: "Kimchi", brand: "kimchi" },
+  { name: "OpenCode", brand: "opencode" },
+  { name: "Qwen Code", brand: "qwen" },
+  { name: "Kilo Code", brand: "kilocode" },
+  { name: "Cline", brand: "cline" },
+  { name: "Windsurf", brand: "windsurf" },
+  { name: "OpenRouter", brand: "openrouter" },
 ];
 
 function ProviderRow({
@@ -47,14 +47,9 @@ function ProviderRow({
       type="button"
     >
       <span className={styles.providerCardHeader}>
-        <ProviderIcon provider={provider} size={26} />
+        <ProviderIcon provider={provider} size={28} />
         <span className={styles.providerCardTitle}>
           <strong>{PROVIDER_NAMES[provider]}</strong>
-          <small>
-            {connections.length === 0
-              ? "Ready to connect"
-              : `${connections.length} account${connections.length === 1 ? "" : "s"}`}
-          </small>
         </span>
         <ChevronRight className={styles.chevron} size={16} />
       </span>
@@ -118,14 +113,18 @@ export default function ProvidersView({
       <div className={styles.group}>
         <h2 className={styles.groupTitle}>Not supported yet</h2>
         <div className={styles.providerGrid}>
-          {UNSUPPORTED.map((name) => (
-            <article className={styles.providerCard} data-muted key={name}>
-              <LetterIcon name={name} />
-              <span className={styles.providerCardTitle}>
-                <strong>{name}</strong>
-                <small>Planned provider</small>
+          {UNSUPPORTED.map((tool) => (
+            <article
+              className={styles.providerCard}
+              data-muted
+              key={tool.brand}
+            >
+              <span className={styles.providerCardHeader}>
+                <BrandIcon brand={tool.brand} size={28} />
+                <span className={styles.providerCardTitle}>
+                  <strong>{tool.name}</strong>
+                </span>
               </span>
-              <Badge>Planned</Badge>
             </article>
           ))}
         </div>

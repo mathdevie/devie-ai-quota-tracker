@@ -9,11 +9,6 @@
   border: 1px solid $devie__color__line;
   border-radius: $devie__radius-strong;
   background: $devie__color__background-sub;
-
-  &[data-compact] {
-    gap: 2px;
-    padding: 2px;
-  }
 }
 
 .header {
@@ -22,10 +17,6 @@
   align-items: center;
   gap: $devie__spacing__x1;
   padding: $devie__spacing__x1 $devie__spacing__x1 $devie__spacing__x05;
-}
-
-.card[data-compact] .header {
-  padding: $devie__spacing__x05 $devie__spacing__x1 2px;
 }
 
 .identity {
@@ -56,86 +47,15 @@
   color: $devie__color__text-sub;
 }
 
-.windows {
-  display: grid;
-  gap: $devie__spacing__x1;
+.body {
   padding: $devie__spacing__x2;
   border: 1px solid $devie__color__line;
   border-radius: calc($devie__radius-strong - $devie__spacing__x05);
   background: $devie__color__background;
-}
-
-.card[data-compact] .windows {
-  gap: $devie__spacing__x05;
-  padding: $devie__spacing__x1;
-}
-
-// The label column has a fixed width so every bar starts on the same line.
-.window {
-  display: grid;
-  align-items: center;
-  gap: $devie__spacing__x1;
-  grid-template-columns: 8px 104px minmax(48px, 1fr) 36px 64px;
-  min-height: 22px;
-  font-size: $devie__font-size__small;
-}
-
-.card[data-compact] .window {
-  grid-template-columns: 8px 88px minmax(40px, 1fr) 36px 60px;
-  font-size: 11px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: $devie__color__primary;
-}
-
-.label {
-  overflow: hidden;
-  color: $devie__color__text;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.track {
-  position: relative;
-  display: block;
-  height: 5px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: color-mix(in srgb, $devie__color__text 12%, transparent);
-}
-
-.fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: 999px;
-  background: $devie__color__primary;
-}
-
-.percent {
-  color: $devie__color__primary;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-.reset {
-  overflow: hidden;
-  color: $devie__color__text-sub;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .empty {
   margin: 0;
-  padding: $devie__spacing__x2;
-  border: 1px solid $devie__color__line;
-  border-radius: calc($devie__radius-strong - $devie__spacing__x05);
-  background: $devie__color__background;
   color: $devie__color__text-sub;
   font-size: $devie__font-size__small;
 }

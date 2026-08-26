@@ -1,39 +1,17 @@
 @use "../ui/_devie.scss" as *;
 
-.section {
+.list {
   display: flex;
   flex-direction: column;
-  gap: $devie__spacing__x05;
-  padding: $devie__spacing__x05;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius-strong;
-  background: $devie__color__background-sub;
-
-  & + & {
-    margin-top: $devie__spacing__x3;
-  }
-}
-
-.sectionTitle {
-  margin: 0;
-  padding: $devie__spacing__x1 $devie__spacing__x1 $devie__spacing__x05;
-  font-size: $devie__font-size__normal;
-  font-weight: 600;
-}
-
-.sectionBody {
-  overflow: hidden;
-  border: 1px solid $devie__color__line;
-  border-radius: calc($devie__radius-strong - $devie__spacing__x05);
-  background: $devie__color__background;
 }
 
 .row {
   display: flex;
-  min-height: 40px;
+  min-height: 64px;
   align-items: center;
-  gap: $devie__spacing__x2;
-  padding: $devie__spacing__x1 $devie__spacing__x2;
+  gap: $devie__spacing__x3;
+  padding: $devie__spacing__x2 0;
+  border-bottom: 1px solid $devie__color__line;
 }
 
 .text {
@@ -42,12 +20,10 @@
   flex: 1;
   flex-direction: column;
   justify-content: center;
+  gap: 2px;
 
   p {
-    overflow: hidden;
     margin: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   p:not(.subText) {
