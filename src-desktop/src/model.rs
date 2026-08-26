@@ -60,7 +60,7 @@ impl ConnectionStatus {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct QuotaWindow {
     pub key: String,
@@ -68,6 +68,32 @@ pub struct QuotaWindow {
     pub used_percent: f64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resets_at: Option<String>,
+    /// True when the provider sets no cap on this window. `used_percent` is 0.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub unlimited: bool,
+    /// The absolute count behind the percent, when the provider gives one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub amount: Option<QuotaAmount>,
+    /// True for a paid allowance past the plan (extra usage, credits). It
+    /// never drives the menu bar, the sort, or the Quota Optimizer.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub paid: bool,
+}
+
+/// "677 of 1,500 credits, plus 12 over the cap".
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct QuotaAmount {
+    /// Absent for a balance the provider only reports as "left".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub used: Option<f64>,
+    pub total: f64,
+    /// A short unit name ("credits", "requests") or an ISO currency ("USD").
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    /// Usage past the cap, billed extra. Absent when the provider allows none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub overage: Option<f64>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]

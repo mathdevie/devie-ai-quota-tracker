@@ -95,6 +95,12 @@
   background: $devie__color__background;
 }
 
+// Reset credits sit under the quota panel, on the card frame.
+.footer {
+  display: flex;
+  padding: 0 $devie__spacing__x05;
+}
+
 .empty {
   margin: 0;
   color: $devie__color__text-sub;

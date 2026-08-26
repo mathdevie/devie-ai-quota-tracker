@@ -30,6 +30,7 @@
   gap: $devie__spacing__x1;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
+  grid-template-rows: auto;
   min-height: 22px;
   --quota-color: #{$devie__color__primary};
 
@@ -40,6 +41,34 @@
   &[data-level="danger"] {
     --quota-color: #{$devie__color__danger};
   }
+}
+
+// Spans the bar, percent, and reset columns of an uncapped window.
+.unlimited {
+  grid-column: 3 / 6;
+  justify-self: start;
+}
+
+// The absolute count, in small print under the bar, left aligned.
+.amount {
+  grid-column: 3 / 6;
+  grid-row: 2;
+  margin-top: -3px;
+  overflow: hidden;
+  color: $devie__color__text-sub;
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reached {
+  justify-self: end;
+}
+
+.overage {
+  color: $devie__color__warning;
 }
 
 .dot {

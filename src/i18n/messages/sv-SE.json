@@ -83,7 +83,12 @@
       "Shown": "{{label}} visas i menyraden",
       "Show": "Visa {{label}} i menyraden",
       "Title": "Visa i menyraden"
-    }
+    },
+    "Unlimited": "Obegränsat",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} över",
+    "Balance": "{{balance}} kvar",
+    "LimitReached": "Gräns nådd"
   },
   "Popover": {
     "OpenDashboard": "Öppna instrumentpanelen",
