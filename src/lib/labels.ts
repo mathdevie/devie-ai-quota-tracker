@@ -3,10 +3,16 @@ import type { Provider, ProviderConnection } from "./contracts";
 export const PROVIDER_NAMES: Record<Provider, string> = {
   claude: "Claude Code",
   codex: "Codex",
+  "gemini-cli": "Gemini CLI",
   copilot: "GitHub Copilot",
 };
 
-export const PROVIDERS: Provider[] = ["claude", "codex", "copilot"];
+export const PROVIDERS: Provider[] = [
+  "claude",
+  "codex",
+  "gemini-cli",
+  "copilot",
+];
 
 /**
  * The line under the provider name: the user's own label, else the account

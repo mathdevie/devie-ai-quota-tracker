@@ -99,6 +99,7 @@ fn ping_reset_key(
                 && current - observed >= Duration::seconds(RESET_DRIFT_SECONDS)
         }
         Provider::Codex => current - observed >= Duration::seconds(RESET_DRIFT_SECONDS),
+        Provider::Gemini => false,
         Provider::Copilot => false,
     };
     should_ping.then(|| {
@@ -167,6 +168,7 @@ async fn send(
     match connection.provider {
         Provider::Claude => send_claude(client, &credentials.access_token).await,
         Provider::Codex => send_codex(client, connection, &credentials).await,
+        Provider::Gemini => Err("Auto-ping does not support Gemini CLI.".to_string()),
         Provider::Copilot => Err("Auto-ping does not support Copilot.".to_string()),
     }
 }

@@ -8,9 +8,12 @@ import Dialog from "@/ui/Dialog";
 import OptionRow from "./OptionRow";
 import styles from "./OptionRow.module.scss";
 
-/** Auto-ping needs tokens the app holds; Copilot has no session to start. */
+/** Auto-ping only has small session-start requests for Claude and Codex. */
 export function autoPingSupported(connection: ProviderConnection): boolean {
-  return connection.kind === "oauth" && connection.provider !== "copilot";
+  return (
+    connection.kind === "oauth" &&
+    (connection.provider === "claude" || connection.provider === "codex")
+  );
 }
 
 export default function AutoPingDialog({
@@ -69,7 +72,7 @@ export default function AutoPingDialog({
                     description={
                       supported
                         ? "Send one small request after a session resets."
-                        : "Auto-ping needs a Claude or Codex sign-in made in this app. CLI accounts and Copilot cannot use it."
+                        : "Auto-ping needs a Claude or Codex sign-in made in this app. Other accounts cannot use it."
                     }
                     disabled={!supported}
                     label="Start the next session"

@@ -164,6 +164,7 @@ fn interpret(
             refresh_token,
             expires_at,
             account_id: account_id.clone(),
+            project_id: None,
         },
         RemoteIdentity {
             provider_user_id: account_id,
