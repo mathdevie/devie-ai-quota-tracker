@@ -417,6 +417,10 @@ fn show_main_window(app: &AppHandle) -> Result<(), String> {
     let window = app
         .get_webview_window("main")
         .ok_or_else(|| "The main window does not exist.".to_string())?;
+    // The app is a regular app while the main window is open, and a menu
+    // bar app once the window is closed. The Dock icon follows the window.
+    #[cfg(target_os = "macos")]
+    let _ = app.set_dock_visibility(true);
     window.show().map_err(|error| error.to_string())?;
     window.unminimize().map_err(|error| error.to_string())?;
     #[cfg(target_os = "macos")]
@@ -625,9 +629,6 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
-            #[cfg(target_os = "macos")]
-            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-
             let app_data_dir = app.path().app_data_dir()?;
             let database = Database::open(app_data_dir.join("devie-quota.sqlite3"))
                 .map_err(std::io::Error::other)?;
@@ -667,8 +668,11 @@ pub fn run() {
         })
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } if window.label() == "main" => {
+                // Closing the window leaves the menu bar item running.
                 api.prevent_close();
                 let _ = window.hide();
+                #[cfg(target_os = "macos")]
+                let _ = window.app_handle().set_dock_visibility(false);
             }
             tauri::WindowEvent::Focused(false) if window.label() == "popover" => {
                 let _ = window.hide();
@@ -694,6 +698,17 @@ pub fn run() {
             open_main_window,
             hide_popover,
         ])
-        .run(tauri::generate_context!())
-        .expect("Devie Quota failed to start");
+        .build(tauri::generate_context!())
+        .expect("Devie Quota failed to start")
+        .run(|app, event| {
+            // A click on the Dock icon with no visible window reopens the
+            // main window (Cmd+H or a click on the tray hides it).
+            if let tauri::RunEvent::Reopen {
+                has_visible_windows: false,
+                ..
+            } = event
+            {
+                let _ = show_main_window(app);
+            }
+        });
 }
