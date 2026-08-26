@@ -6,16 +6,18 @@ import styles from "./OptionRow.module.scss";
 function Row({
   checked,
   description,
+  disabled,
   label,
   onChange,
 }: {
   checked: boolean;
   description: string;
+  disabled?: boolean;
   label: string;
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className={styles.option}>
+    <div className={styles.option} data-disabled={disabled || undefined}>
       <span>
         <strong>{label}</strong>
         <small>{description}</small>
@@ -23,6 +25,7 @@ function Row({
       <Switch.Root
         aria-label={label}
         checked={checked}
+        disabled={disabled}
         onCheckedChange={onChange}
       >
         <Switch.Thumb />

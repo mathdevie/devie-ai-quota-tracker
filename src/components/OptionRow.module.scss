@@ -44,6 +44,10 @@
     color: $devie__color__text-sub;
     font-size: $devie__font-size__small;
   }
+
+  &[data-disabled] {
+    opacity: 0.58;
+  }
 }
 
 .status,

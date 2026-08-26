@@ -12,7 +12,6 @@ import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
-import { autoPingSupported } from "./AutoPingDialog";
 import styles from "./ConnectionCard.module.scss";
 import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
@@ -82,7 +81,7 @@ export function ConnectionMenu({
                 Alerts
               </Menu.Item>
             )}
-            {onAutoPing && autoPingSupported(connection) && (
+            {onAutoPing && (
               <Menu.Item onClick={() => onAutoPing(connection)}>
                 <Zap size={14} />
                 Auto-ping

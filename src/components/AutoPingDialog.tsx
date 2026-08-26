@@ -30,6 +30,8 @@ export default function AutoPingDialog({
     if (connection) setEnabled(connection.autoPing.enabled);
   }, [connection]);
 
+  const supported = connection ? autoPingSupported(connection) : false;
+
   return (
     <Dialog.Root
       disableInteractions={saving}
@@ -63,8 +65,13 @@ export default function AutoPingDialog({
               <div className={styles.group}>
                 <OptionRow.List>
                   <OptionRow.Row
-                    checked={enabled}
-                    description="Send one small request after a session resets."
+                    checked={supported && enabled}
+                    description={
+                      supported
+                        ? "Send one small request after a session resets."
+                        : "Auto-ping needs a Claude or Codex sign-in made in this app. CLI accounts and Copilot cannot use it."
+                    }
+                    disabled={!supported}
                     label="Start the next session"
                     onChange={setEnabled}
                   />
