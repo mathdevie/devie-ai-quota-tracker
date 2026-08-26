@@ -359,7 +359,7 @@ export default ContextMenu;
 
     .groupLabel {
         padding: $devie__spacing__x05 $devie__spacing__x1;
-        font-weight: 500;
+        font-weight: 600;
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
         user-select: none;

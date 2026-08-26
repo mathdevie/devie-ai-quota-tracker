@@ -12,7 +12,7 @@ $sidebar-inset: 8px;
   padding: 0 $devie__spacing__x1 $devie__spacing__x1;
   border: 1px solid $devie__color__line;
   border-radius: $devie__radius-strong;
-  background: color-mix(in srgb, $devie__color__background 55%, $devie__color__background-sub);
+  background: $devie__color__background-sub;
   user-select: none;
 }
 
