@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
 import type {
   DashboardState,
   Provider,
@@ -14,16 +15,19 @@ import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
 function ProviderStatus({ connection }: { connection: ProviderConnection }) {
+  const { t } = useTranslation();
   if (connection.status === "ready") {
-    return <Badge variant="success">Ready</Badge>;
+    return <Badge variant="success">{t("Connection.Status.Ready")}</Badge>;
   }
   if (connection.status === "stale") {
-    return <Badge variant="warning">Stale</Badge>;
+    return <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
   }
   if (connection.status === "needs_login") {
-    return <Badge variant="warning">Sign-in needed</Badge>;
+    return (
+      <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>
+    );
   }
-  return <Badge variant="danger">Error</Badge>;
+  return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
 
 /**
@@ -31,25 +35,28 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
  * explainer offers the manual sign-in, which replaces the auto-detected one.
  */
 function AutoDetectedTag({ onAuthenticate }: { onAuthenticate: () => void }) {
+  const { t } = useTranslation();
   return (
     <Popover.Root>
       <Popover.Trigger className={styles.kindTag} delay={150} openOnHover>
-        Auto-detected
+        {t("Providers.AutoDetected")}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner sideOffset={6}>
           <Popover.Popup className={styles.kindTip}>
             <Popover.Arrow />
-            This account was automatically added because you are logged in from
-            the CLI. For full feature support, it is recommended to{" "}
-            <button
-              className={styles.kindLink}
-              onClick={onAuthenticate}
-              type="button"
-            >
-              authenticate manually
-            </button>
-            .
+            <Trans
+              components={{
+                link: (
+                  <button
+                    className={styles.kindLink}
+                    onClick={onAuthenticate}
+                    type="button"
+                  />
+                ),
+              }}
+              i18nKey="Providers.AutoDetectedTip"
+            />
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
@@ -79,6 +86,7 @@ export default function ProviderDetailView({
   /** Opens the sign-in; `replaces` is the auto-detected account to disable after it. */
   onAdd: (replaces?: string) => void;
 } & ConnectionActions) {
+  const { t } = useTranslation();
   const connections = state.connections.filter(
     (connection) => connection.provider === provider,
   );
@@ -95,7 +103,7 @@ export default function ProviderDetailView({
             variant="secondary"
           >
             <Plus size={14} />
-            Add account
+            {t("Providers.AddAccount")}
           </Button>
         </div>
       )}
@@ -124,11 +132,16 @@ export default function ProviderDetailView({
               {connection.kind === "local" &&
                 connection.status === "needs_login" && (
                   <span className={styles.rowHint}>
-                    Sign in with the CLI in a terminal.
+                    {t("Providers.SignInWithCli")}
                   </span>
                 )}
               <Switch.Root
-                aria-label={`${connection.enabled ? "Disable" : "Enable"} ${accountLabel(connection)}`}
+                aria-label={t(
+                  connection.enabled
+                    ? "Providers.DisableAccount"
+                    : "Providers.EnableAccount",
+                  { name: accountLabel(connection) },
+                )}
                 checked={connection.enabled}
                 disabled={busyId === connection.id}
                 onCheckedChange={(checked) =>
@@ -152,10 +165,10 @@ export default function ProviderDetailView({
         {connections.length === 0 && (
           <div className={styles.emptyState}>
             <ProviderIcon provider={provider} size={40} />
-            <p>No {name} accounts yet.</p>
+            <p>{t("Providers.NoAccountsYet", { name })}</p>
             <Button onClick={() => onAdd()} size="sm">
               <Plus size={14} />
-              Add a {name} account
+              {t("Providers.AddProviderAccount", { name })}
             </Button>
           </div>
         )}

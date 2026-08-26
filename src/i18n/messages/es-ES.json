@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "es-ES",
+    "EndonymName": "Español (España)"
+  },
+  "Metadata": {
+    "Description": "Un rastreador local de cuotas de suscripciones de IA"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Cancelar",
+    "Save": "Guardar",
+    "Close": "Cerrar",
+    "Refresh": "Actualizar",
+    "TryAgain": "Reintentar",
+    "Theme": "Tema"
+  },
+  "Nav": {
+    "Sections": "Secciones",
+    "Quota": "Cuota",
+    "Providers": "Proveedores",
+    "Settings": "Ajustes",
+    "BackToProviders": "Volver a proveedores"
+  },
+  "Connection": {
+    "ActionsFor": "Acciones para {{name}}",
+    "NoQuotaData": "Sin datos de cuota",
+    "Status": {
+      "Ready": "Listo",
+      "Stale": "Desactualizado",
+      "Login": "Iniciar sesión",
+      "SignInNeeded": "Inicio de sesión necesario",
+      "Error": "Error"
+    },
+    "Menu": {
+      "Rename": "Renombrar",
+      "Alerts": "Alertas",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Actualizar",
+      "Enable": "Activar",
+      "Disable": "Desactivar",
+      "Remove": "Eliminar"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Proveedor",
+    "FilterSort": "Orden",
+    "AllProviders": "Todos los proveedores",
+    "Sort": {
+      "Expiring": "Próximos a caducar primero",
+      "LeastLeft": "Menos restante",
+      "MostLeft": "Más restante",
+      "Name": "Nombre"
+    },
+    "NoMatch": "Ninguna cuenta activa coincide con estos filtros.",
+    "NoAccounts": "Aún no hay cuentas. Conecta un proveedor para ver sus cuotas.",
+    "OpenProviders": "Abrir proveedores",
+    "RefreshQuotas": "Actualizar cuotas",
+    "Reset": {
+      "Now": "ahora",
+      "InDaysHours": "en {{days}}d {{hours}}h",
+      "InHoursMinutes": "en {{hours}}h {{minutes}}min",
+      "InMinutes": "en {{minutes}}min"
+    },
+    "Pin": {
+      "Shown": "{{label}} se muestra en la barra de menús",
+      "Show": "Mostrar {{label}} en la barra de menús",
+      "Title": "Mostrar en la barra de menús"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Abrir el panel",
+    "NoProviders": "Sin proveedores"
+  },
+  "Providers": {
+    "Active": "Activos",
+    "Available": "Disponibles",
+    "NotSupportedYet": "Aún no compatibles",
+    "Connected": "Conectados {{total}}",
+    "Attention": "Atención {{total}}",
+    "AddAccount": "Añadir cuenta",
+    "AddProviderAccount": "Añadir una cuenta de {{name}}",
+    "NoAccountsYet": "Aún no hay cuentas de {{name}}.",
+    "SignInWithCli": "Inicia sesión con la CLI en un terminal.",
+    "AutoDetected": "Detectada automáticamente",
+    "AutoDetectedTip": "Esta cuenta se añadió automáticamente porque has iniciado sesión desde la CLI. Para disponer de todas las funciones, se recomienda <link>autenticarse manualmente</link>.",
+    "EnableAccount": "Activar {{name}}",
+    "DisableAccount": "Desactivar {{name}}"
+  },
+  "Login": {
+    "Title": "Añadir una cuenta de {{name}}",
+    "OpeningBrowser": "Abriendo el navegador…",
+    "WaitingFor": "Esperando a {{name}}…",
+    "OpenPageAgain": "Abrir la página de nuevo",
+    "PasteCode": "O pega el código de la página",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Usar el código",
+    "Connected": "Conectado",
+    "Hint": {
+      "claude": "Inicia sesión en Claude en el navegador. La app recibe el resultado en este Mac.",
+      "codex": "Inicia sesión con tu cuenta de ChatGPT en el navegador. La app recibe el resultado en este Mac.",
+      "gemini-cli": "Inicia sesión con Google en el navegador. La app recibe el resultado en este Mac.",
+      "copilot": "Introduce este código en la página de GitHub en el navegador y aprueba la solicitud."
+    }
+  },
+  "Rename": {
+    "Title": "Renombrar cuenta",
+    "Label": "Etiqueta",
+    "Description": "Deja el campo vacío para mostrar de nuevo el id de la cuenta."
+  },
+  "Alerts": {
+    "Title": "Alertas",
+    "LowQuota": "Cuota baja",
+    "LowQuotaDescription": "Avisarme cuando a una cuota le quede un 20 %.",
+    "ResetSoon": "Reinicio próximo",
+    "ResetSoonDescription": "Avisarme 30 minutos antes de que se reinicie una cuota.",
+    "ResetComplete": "Reinicio completado",
+    "ResetCompleteDescription": "Avisarme después de que se reinicie una cuota.",
+    "PermissionRequired": "Permite las notificaciones en los Ajustes de macOS para usar las alertas de cuota."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "Iniciar la próxima sesión",
+    "SupportedDescription": "Enviar una pequeña solicitud tras el reinicio de una sesión.",
+    "UnsupportedDescription": "El Auto-ping necesita un inicio de sesión de Claude o Codex hecho en esta app. Las demás cuentas no pueden usarlo.",
+    "LastRequest": "Última solicitud: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Tema",
+    "ThemeDescription": "Colores de las ventanas de la app",
+    "Language": "Idioma",
+    "LanguageDescription": "Idioma de las ventanas de la app",
+    "MenuBarItem": "Elemento de la barra de menús",
+    "MenuBarItemDescription": "Mostrar las cuotas en la barra de menús de macOS",
+    "ShowMenuBarItem": "Mostrar el elemento de la barra de menús",
+    "Updates": {
+      "Title": "Actualizaciones",
+      "RestartToUpdate": "Reiniciar para actualizar",
+      "CheckForUpdates": "Buscar actualizaciones",
+      "UpdateAvailable": "Actualización disponible",
+      "Status": {
+        "PackagedOnly": "Las actualizaciones solo funcionan en la app empaquetada.",
+        "Checking": "Comprobando…",
+        "Downloading": "Descargando {{progress}} %",
+        "Ready": "La versión {{version}} está lista.",
+        "Installing": "Instalando…",
+        "Failed": "La actualización ha fallado.",
+        "UpToDate": "Devie Quota {{version}} está actualizado."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Abrir Devie Quota",
+    "RefreshAll": "Actualizar todo",
+    "Quit": "Salir de Devie Quota",
+    "Tooltip": "Cuotas de suscripciones de Devie Quota"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "La cuota de {{provider}} está baja",
+    "LowQuotaBody": "A {{account}} le queda un {{percent}} % en {{window}}.",
+    "ResetSoonTitle": "La cuota de {{provider}} se reinicia pronto",
+    "ResetSoonBody": "{{window}} de {{account}} se reinicia en {{minutes}} minutos.",
+    "ResetHappenedTitle": "Cuota de {{provider}} reiniciada",
+    "ResetHappenedBody": "{{window}} de {{account}} vuelve a estar disponible."
+  }
+}

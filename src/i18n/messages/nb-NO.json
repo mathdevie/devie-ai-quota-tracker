@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "nb-NO",
+    "EndonymName": "Norsk"
+  },
+  "Metadata": {
+    "Description": "En lokal kvotesporer for AI-abonnementer"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Avbryt",
+    "Save": "Lagre",
+    "Close": "Lukk",
+    "Refresh": "Oppdater",
+    "TryAgain": "Prøv igjen",
+    "Theme": "Tema"
+  },
+  "Nav": {
+    "Sections": "Seksjoner",
+    "Quota": "Kvote",
+    "Providers": "Leverandører",
+    "Settings": "Innstillinger",
+    "BackToProviders": "Tilbake til leverandører"
+  },
+  "Connection": {
+    "ActionsFor": "Handlinger for {{name}}",
+    "NoQuotaData": "Ingen kvotedata",
+    "Status": {
+      "Ready": "Klar",
+      "Stale": "Utdatert",
+      "Login": "Logg inn",
+      "SignInNeeded": "Innlogging kreves",
+      "Error": "Feil"
+    },
+    "Menu": {
+      "Rename": "Gi nytt navn",
+      "Alerts": "Varsler",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Oppdater",
+      "Enable": "Aktiver",
+      "Disable": "Deaktiver",
+      "Remove": "Fjern"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Leverandør",
+    "FilterSort": "Sortering",
+    "AllProviders": "Alle leverandører",
+    "Sort": {
+      "Expiring": "Utløper snart først",
+      "LeastLeft": "Minst igjen",
+      "MostLeft": "Mest igjen",
+      "Name": "Navn"
+    },
+    "NoMatch": "Ingen aktiv konto samsvarer med disse filtrene.",
+    "NoAccounts": "Ingen kontoer ennå. Koble til en leverandør for å se kvotene.",
+    "OpenProviders": "Åpne leverandører",
+    "RefreshQuotas": "Oppdater kvoter",
+    "Reset": {
+      "Now": "nå",
+      "InDaysHours": "om {{days}}d {{hours}}t",
+      "InHoursMinutes": "om {{hours}}t {{minutes}}m",
+      "InMinutes": "om {{minutes}}m"
+    },
+    "Pin": {
+      "Shown": "{{label}} vises i menylinjen",
+      "Show": "Vis {{label}} i menylinjen",
+      "Title": "Vis i menylinjen"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Åpne dashbord",
+    "NoProviders": "Ingen leverandører"
+  },
+  "Providers": {
+    "Active": "Aktive",
+    "Available": "Tilgjengelige",
+    "NotSupportedYet": "Støttes ikke ennå",
+    "Connected": "Tilkoblet {{total}}",
+    "Attention": "Merk {{total}}",
+    "AddAccount": "Legg til konto",
+    "AddProviderAccount": "Legg til en {{name}}-konto",
+    "NoAccountsYet": "Ingen {{name}}-kontoer ennå.",
+    "SignInWithCli": "Logg inn med CLI-en i en terminal.",
+    "AutoDetected": "Oppdaget automatisk",
+    "AutoDetectedTip": "Denne kontoen ble lagt til automatisk fordi du er logget inn fra CLI-en. For full funksjonalitet anbefales det å <link>logge inn manuelt</link>.",
+    "EnableAccount": "Aktiver {{name}}",
+    "DisableAccount": "Deaktiver {{name}}"
+  },
+  "Login": {
+    "Title": "Legg til en {{name}}-konto",
+    "OpeningBrowser": "Åpner nettleseren…",
+    "WaitingFor": "Venter på {{name}}…",
+    "OpenPageAgain": "Åpne siden igjen",
+    "PasteCode": "Eller lim inn koden fra siden",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Bruk kode",
+    "Connected": "Tilkoblet",
+    "Hint": {
+      "claude": "Logg inn på Claude i nettleseren. Appen mottar resultatet på denne Macen.",
+      "codex": "Logg inn med ChatGPT-kontoen din i nettleseren. Appen mottar resultatet på denne Macen.",
+      "gemini-cli": "Logg inn med Google i nettleseren. Appen mottar resultatet på denne Macen.",
+      "copilot": "Skriv inn denne koden på GitHub-siden i nettleseren, og godkjenn deretter forespørselen."
+    }
+  },
+  "Rename": {
+    "Title": "Gi kontoen nytt navn",
+    "Label": "Etikett",
+    "Description": "La feltet stå tomt for å vise konto-ID-en igjen."
+  },
+  "Alerts": {
+    "Title": "Varsler",
+    "LowQuota": "Lav kvote",
+    "LowQuotaDescription": "Varsle meg når en kvote har 20 % igjen.",
+    "ResetSoon": "Nullstilles snart",
+    "ResetSoonDescription": "Varsle meg 30 minutter før en kvote nullstilles.",
+    "ResetComplete": "Nullstilling fullført",
+    "ResetCompleteDescription": "Varsle meg etter at en kvote er nullstilt.",
+    "PermissionRequired": "Tillat varslinger i macOS-innstillingene for å bruke kvotevarsler."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "Start neste økt",
+    "SupportedDescription": "Send én liten forespørsel etter at en økt nullstilles.",
+    "UnsupportedDescription": "Auto-ping krever en Claude- eller Codex-innlogging gjort i denne appen. Andre kontoer kan ikke bruke det.",
+    "LastRequest": "Siste forespørsel: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Tema",
+    "ThemeDescription": "Farger i appvinduene",
+    "Language": "Språk",
+    "LanguageDescription": "Språk i appvinduene",
+    "MenuBarItem": "Menylinjeelement",
+    "MenuBarItemDescription": "Vis kvotene i macOS-menylinjen",
+    "ShowMenuBarItem": "Vis menylinjeelementet",
+    "Updates": {
+      "Title": "Oppdateringer",
+      "RestartToUpdate": "Start på nytt for å oppdatere",
+      "CheckForUpdates": "Se etter oppdateringer",
+      "UpdateAvailable": "Oppdatering tilgjengelig",
+      "Status": {
+        "PackagedOnly": "Oppdateringer fungerer bare i den pakkede appen.",
+        "Checking": "Sjekker…",
+        "Downloading": "Laster ned {{progress}} %",
+        "Ready": "Versjon {{version}} er klar.",
+        "Installing": "Installerer…",
+        "Failed": "Oppdateringen mislyktes.",
+        "UpToDate": "Devie Quota {{version}} er oppdatert."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Åpne Devie Quota",
+    "RefreshAll": "Oppdater alle",
+    "Quit": "Avslutt Devie Quota",
+    "Tooltip": "Devie Quota abonnementskvoter"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}}-kvoten er lav",
+    "LowQuotaBody": "{{account}} har {{percent}} % igjen i {{window}}.",
+    "ResetSoonTitle": "{{provider}}-kvoten nullstilles snart",
+    "ResetSoonBody": "{{window}} for {{account}} nullstilles om {{minutes}} minutter.",
+    "ResetHappenedTitle": "{{provider}}-kvoten er nullstilt",
+    "ResetHappenedBody": "{{window}} for {{account}} er tilgjengelig igjen."
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "pt-BR",
+    "EndonymName": "Português"
+  },
+  "Metadata": {
+    "Description": "Um rastreador local de cotas de assinaturas de IA"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Cancelar",
+    "Save": "Salvar",
+    "Close": "Fechar",
+    "Refresh": "Atualizar",
+    "TryAgain": "Tentar novamente",
+    "Theme": "Tema"
+  },
+  "Nav": {
+    "Sections": "Seções",
+    "Quota": "Cota",
+    "Providers": "Provedores",
+    "Settings": "Configurações",
+    "BackToProviders": "Voltar aos provedores"
+  },
+  "Connection": {
+    "ActionsFor": "Ações para {{name}}",
+    "NoQuotaData": "Sem dados de cota",
+    "Status": {
+      "Ready": "Pronto",
+      "Stale": "Desatualizado",
+      "Login": "Login",
+      "SignInNeeded": "Login necessário",
+      "Error": "Erro"
+    },
+    "Menu": {
+      "Rename": "Renomear",
+      "Alerts": "Alertas",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Atualizar",
+      "Enable": "Ativar",
+      "Disable": "Desativar",
+      "Remove": "Remover"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Provedor",
+    "FilterSort": "Ordenar",
+    "AllProviders": "Todos os provedores",
+    "Sort": {
+      "Expiring": "Expirando primeiro",
+      "LeastLeft": "Menos restante",
+      "MostLeft": "Mais restante",
+      "Name": "Nome"
+    },
+    "NoMatch": "Nenhuma conta ativa corresponde a esses filtros.",
+    "NoAccounts": "Nenhuma conta ainda. Conecte um provedor para ver suas cotas.",
+    "OpenProviders": "Abrir provedores",
+    "RefreshQuotas": "Atualizar cotas",
+    "Reset": {
+      "Now": "agora",
+      "InDaysHours": "em {{days}}d {{hours}}h",
+      "InHoursMinutes": "em {{hours}}h {{minutes}}min",
+      "InMinutes": "em {{minutes}}min"
+    },
+    "Pin": {
+      "Shown": "{{label}} está na barra de menus",
+      "Show": "Mostrar {{label}} na barra de menus",
+      "Title": "Mostrar na barra de menus"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Abrir o painel",
+    "NoProviders": "Nenhum provedor"
+  },
+  "Providers": {
+    "Active": "Ativos",
+    "Available": "Disponíveis",
+    "NotSupportedYet": "Ainda não suportados",
+    "Connected": "Conectados {{total}}",
+    "Attention": "Atenção {{total}}",
+    "AddAccount": "Adicionar conta",
+    "AddProviderAccount": "Adicionar uma conta {{name}}",
+    "NoAccountsYet": "Nenhuma conta {{name}} ainda.",
+    "SignInWithCli": "Faça login com a CLI em um terminal.",
+    "AutoDetected": "Detectada automaticamente",
+    "AutoDetectedTip": "Esta conta foi adicionada automaticamente porque você está conectado pela CLI. Para ter todos os recursos, recomenda-se <link>autenticar manualmente</link>.",
+    "EnableAccount": "Ativar {{name}}",
+    "DisableAccount": "Desativar {{name}}"
+  },
+  "Login": {
+    "Title": "Adicionar uma conta {{name}}",
+    "OpeningBrowser": "Abrindo o navegador…",
+    "WaitingFor": "Aguardando {{name}}…",
+    "OpenPageAgain": "Abrir a página novamente",
+    "PasteCode": "Ou cole o código da página",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Usar código",
+    "Connected": "Conectado",
+    "Hint": {
+      "claude": "Faça login no Claude pelo navegador. O app recebe o resultado neste Mac.",
+      "codex": "Faça login com sua conta do ChatGPT pelo navegador. O app recebe o resultado neste Mac.",
+      "gemini-cli": "Faça login com o Google pelo navegador. O app recebe o resultado neste Mac.",
+      "copilot": "Digite este código na página do GitHub no navegador e depois aprove a solicitação."
+    }
+  },
+  "Rename": {
+    "Title": "Renomear conta",
+    "Label": "Rótulo",
+    "Description": "Deixe o campo vazio para mostrar o id da conta novamente."
+  },
+  "Alerts": {
+    "Title": "Alertas",
+    "LowQuota": "Cota baixa",
+    "LowQuotaDescription": "Avisar quando restarem 20% de uma cota.",
+    "ResetSoon": "Redefinição em breve",
+    "ResetSoonDescription": "Avisar 30 minutos antes de uma cota ser redefinida.",
+    "ResetComplete": "Redefinição concluída",
+    "ResetCompleteDescription": "Avisar depois que uma cota for redefinida.",
+    "PermissionRequired": "Permita notificações nas Configurações do macOS para usar os alertas de cota."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "Iniciar a próxima sessão",
+    "SupportedDescription": "Enviar uma pequena solicitação após a redefinição de uma sessão.",
+    "UnsupportedDescription": "O Auto-ping precisa de um login do Claude ou do Codex feito neste app. Outras contas não podem usá-lo.",
+    "LastRequest": "Última solicitação: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Tema",
+    "ThemeDescription": "Cores das janelas do app",
+    "Language": "Idioma",
+    "LanguageDescription": "Idioma das janelas do app",
+    "MenuBarItem": "Item da barra de menus",
+    "MenuBarItemDescription": "Mostrar as cotas na barra de menus do macOS",
+    "ShowMenuBarItem": "Mostrar o item da barra de menus",
+    "Updates": {
+      "Title": "Atualizações",
+      "RestartToUpdate": "Reiniciar para atualizar",
+      "CheckForUpdates": "Verificar atualizações",
+      "UpdateAvailable": "Atualização disponível",
+      "Status": {
+        "PackagedOnly": "As atualizações funcionam apenas no app empacotado.",
+        "Checking": "Verificando…",
+        "Downloading": "Baixando {{progress}}%",
+        "Ready": "A versão {{version}} está pronta.",
+        "Installing": "Instalando…",
+        "Failed": "A atualização falhou.",
+        "UpToDate": "O Devie Quota {{version}} está atualizado."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Abrir o Devie Quota",
+    "RefreshAll": "Atualizar tudo",
+    "Quit": "Sair do Devie Quota",
+    "Tooltip": "Cotas de assinaturas do Devie Quota"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "A cota do {{provider}} está baixa",
+    "LowQuotaBody": "{{account}} tem {{percent}}% restantes em {{window}}.",
+    "ResetSoonTitle": "A cota do {{provider}} será redefinida em breve",
+    "ResetSoonBody": "{{window}} de {{account}} será redefinida em {{minutes}} minutos.",
+    "ResetHappenedTitle": "Cota do {{provider}} redefinida",
+    "ResetHappenedBody": "{{window}} de {{account}} está disponível novamente."
+  }
+}

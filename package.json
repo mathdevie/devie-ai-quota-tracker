@@ -10,7 +10,15 @@
     "format": "biome check --write .",
     "tauri": "tauri",
     "dev:desktop": "tauri dev",
-    "build:desktop": "tauri build"
+    "build:desktop": "tauri build",
+    "i18n:status": "i18next-cli status",
+    "i18n:lint": "i18next-cli lint",
+    "i18n:extract": "i18next-cli extract --dry-run",
+    "i18n:check": "i18n-check --locales src/i18n/messages --source en-US -f i18next -r summary",
+    "i18n:check:undefined": "i18n-check --locales src/i18n/messages --source en-US -f i18next --unused src --only undefined -r standard",
+    "i18n:check:unused": "i18n-check --locales src/i18n/messages --source en-US -f i18next --unused src --only unused -r summary --ignore '_Meta.*' 'Metadata.*' 'Tray.*' 'Notifications.*' 'Connection.Status.*' 'Login.Hint.*' 'Quota.Sort.*' 'Nav.Quota' 'Nav.Providers' 'Nav.Settings' 'Providers.EnableAccount' 'Providers.DisableAccount'",
+    "i18n:untranslated": "bun scripts/i18n-untranslated.js",
+    "i18n:verify": "run-s i18n:lint i18n:check i18n:check:undefined i18n:check:unused"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -20,18 +28,23 @@
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.10.1",
     "clsx": "^2.1.1",
+    "i18next": "26.3.6",
     "lucide-react": "^1.34.0",
     "next": "16.3.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-i18next": "17.0.11"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
+    "@lingual/i18n-check": "^0.9.5",
     "@svgr/webpack": "^8.1.0",
     "@tauri-apps/cli": "2.11.4",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
+    "i18next-cli": "1.65.0",
+    "npm-run-all": "^4.1.5",
     "sass": "1.103.1",
     "typescript": "^7"
   }
