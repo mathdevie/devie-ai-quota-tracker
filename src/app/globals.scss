@@ -19,6 +19,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  // The menu bar popover window is transparent; the surface draws the frame.
+  html[data-surface="popover"],
+  html[data-surface="popover"] body {
+    background: transparent;
+  }
+
   button,
   input {
     font: inherit;

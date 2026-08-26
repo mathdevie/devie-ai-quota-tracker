@@ -33,13 +33,54 @@
   }
 
   h2 {
-    font-size: $devie__font-size__normal;
+    font-size: $devie__font-size__small;
     font-weight: 600;
   }
 
   p {
     color: $devie__color__text-sub;
-    font-size: $devie__font-size__small;
+    font-size: 11px;
+  }
+}
+
+.flags {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+// Feature shortcuts: always visible when on, on hover otherwise.
+.flag {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: $devie__radius;
+  background: transparent;
+  color: $devie__color__text-sub;
+  opacity: 0;
+  transition: opacity 120ms;
+  cursor: default;
+
+  &[data-active] {
+    color: $devie__color__primary;
+    opacity: 1;
+  }
+
+  .card:hover &,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, $devie__color__text 7%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
   }
 }
 
@@ -61,7 +102,18 @@
 }
 
 .menu {
-  min-width: 160px;
+  min-width: 190px;
+}
+
+.menuState {
+  margin-left: auto;
+  padding-left: $devie__spacing__x2;
+  color: $devie__color__text-sub;
+  font-size: 11px;
+
+  &[data-on] {
+    color: $devie__color__primary;
+  }
 }
 
 .dangerItem {

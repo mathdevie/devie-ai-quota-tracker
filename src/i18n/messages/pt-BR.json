@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Renomear",
       "Alerts": "Alertas",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Otimizador de cota",
       "Refresh": "Atualizar",
       "Enable": "Ativar",
       "Disable": "Desativar",
-      "Remove": "Remover"
+      "Remove": "Remover",
+      "On": "Ativado",
+      "Off": "Desativado"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Adicionar conta",
     "AddProviderAccount": "Adicionar uma conta {{name}}",
     "NoAccountsYet": "Nenhuma conta {{name}} ainda.",
-    "SignInWithCli": "Faça login com a CLI em um terminal.",
-    "AutoDetected": "Detectada automaticamente",
-    "AutoDetectedTip": "Esta conta foi adicionada automaticamente porque você está conectado pela CLI. Para ter todos os recursos, recomenda-se <link>autenticar manualmente</link>.",
     "EnableAccount": "Ativar {{name}}",
     "DisableAccount": "Desativar {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Permita notificações nas Configurações do macOS para usar os alertas de cota."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Iniciar a próxima sessão",
-    "SupportedDescription": "Enviar uma pequena solicitação após a redefinição de uma sessão.",
-    "UnsupportedDescription": "O Auto-ping precisa de um login do Claude ou do Codex feito neste app. Outras contas não podem usá-lo.",
+    "Title": "Otimizador de cota",
+    "StartNextSession": "Iniciar cada sessão mais cedo",
+    "SupportedDescription": "Os limites de sessão são redefinidos em horários fixos. Logo após cada redefinição, o Devie Quota envia uma solicitação mínima para que a próxima sessão comece na hora. Você ganha mais sessões por semana e nunca perde cota enquanto está fora.",
+    "UnsupportedDescription": "O otimizador de cota funciona apenas com contas Claude e Codex.",
     "LastRequest": "Última solicitação: {{date}}"
   },
   "Settings": {

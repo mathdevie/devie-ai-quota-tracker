@@ -2,7 +2,6 @@
 
 import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import BrandMark from "./BrandMark";
 import styles from "./Sidebar.module.scss";
 
 export interface SidebarItem<T extends string> {
@@ -49,7 +48,6 @@ export default function Sidebar<T extends string>({
       <div className={styles.grow} data-tauri-drag-region />
       {footer && <div className={styles.footer}>{footer}</div>}
       <div className={styles.brand} data-tauri-drag-region>
-        <BrandMark size={20} />
         <strong>{t("Common.AppName")}</strong>
       </div>
     </aside>

@@ -1,6 +1,6 @@
 "use client";
 
-import { AppWindowMac, RefreshCw } from "lucide-react";
+import { RefreshCw, Settings } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState, TraySummary } from "@/lib/contracts";
@@ -17,12 +17,15 @@ import {
   readFilters,
 } from "@/lib/filters";
 import Button from "@/ui/Button";
+import ScrollArea from "@/ui/ScrollArea";
 import PopoverRow from "./PopoverRow";
 import styles from "./PopoverSurface.module.scss";
 
 /** The Tauri window caps the height at this value; the list scrolls past it. */
 const MAX_HEIGHT = 760;
 const MIN_HEIGHT = 120;
+/** The top and bottom border of the rounded frame. */
+const FRAME = 2;
 
 export default function PopoverSurface({
   state,
@@ -47,6 +50,14 @@ export default function PopoverSurface({
     return () => stop?.();
   }, []);
 
+  // The window is transparent; the surface draws its own rounded frame.
+  useEffect(() => {
+    document.documentElement.dataset.surface = "popover";
+    return () => {
+      delete document.documentElement.dataset.surface;
+    };
+  }, []);
+
   // The window follows the content height.
   const headerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -55,7 +66,7 @@ export default function PopoverSurface({
     const content = contentRef.current;
     if (!header || !content) return;
     const fit = () => {
-      const height = header.offsetHeight + content.offsetHeight;
+      const height = header.offsetHeight + content.offsetHeight + FRAME;
       void resizePopover(Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, height)));
     };
     const observer = new ResizeObserver(fit);
@@ -83,10 +94,14 @@ export default function PopoverSurface({
 
   return (
     <main className={styles.popover}>
-      <header className={styles.header} data-tauri-drag-region ref={headerRef}>
-        <Button onClick={() => void openMainWindow()} size="sm" variant="naked">
-          <AppWindowMac size={14} />
-          {t("Popover.OpenDashboard")}
+      <header className={styles.header} ref={headerRef}>
+        <Button
+          aria-label={t("Popover.OpenDashboard")}
+          onClick={() => void openMainWindow()}
+          size="sm"
+          variant="icon-naked"
+        >
+          <Settings size={14} />
         </Button>
         <Button
           aria-label={t("Quota.RefreshQuotas")}
@@ -102,27 +117,32 @@ export default function PopoverSurface({
         </Button>
       </header>
 
-      <section className={styles.list}>
-        <div ref={contentRef}>
-          {connections.map((connection) => (
-            <PopoverRow
-              connection={connection}
-              key={connection.id}
-              onPin={(windowKey) =>
-                void pin({ connectionId: connection.id, windowKey })
-              }
-              pinnedKey={
-                pinned?.connectionId === connection.id
-                  ? pinned.windowKey
-                  : undefined
-              }
-            />
-          ))}
-          {connections.length === 0 && (
-            <p className={styles.empty}>{t("Popover.NoProviders")}</p>
-          )}
-        </div>
-      </section>
+      <ScrollArea.Root className={styles.list}>
+        <ScrollArea.Viewport className={styles.viewport}>
+          <div ref={contentRef}>
+            {connections.map((connection) => (
+              <PopoverRow
+                connection={connection}
+                key={connection.id}
+                onPin={(windowKey) =>
+                  void pin({ connectionId: connection.id, windowKey })
+                }
+                pinnedKey={
+                  pinned?.connectionId === connection.id
+                    ? pinned.windowKey
+                    : undefined
+                }
+              />
+            ))}
+            {connections.length === 0 && (
+              <p className={styles.empty}>{t("Popover.NoProviders")}</p>
+            )}
+          </div>
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar>
+          <ScrollArea.Thumb />
+        </ScrollArea.Scrollbar>
+      </ScrollArea.Root>
     </main>
   );
 }

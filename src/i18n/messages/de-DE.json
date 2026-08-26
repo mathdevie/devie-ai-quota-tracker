@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Umbenennen",
       "Alerts": "Hinweise",
-      "AutoPing": "Auto-Ping",
+      "AutoPing": "Quota-Optimierer",
       "Refresh": "Aktualisieren",
       "Enable": "Aktivieren",
       "Disable": "Deaktivieren",
-      "Remove": "Entfernen"
+      "Remove": "Entfernen",
+      "On": "An",
+      "Off": "Aus"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Konto hinzufügen",
     "AddProviderAccount": "{{name}}-Konto hinzufügen",
     "NoAccountsYet": "Noch keine {{name}}-Konten.",
-    "SignInWithCli": "Melde dich mit der CLI in einem Terminal an.",
-    "AutoDetected": "Automatisch erkannt",
-    "AutoDetectedTip": "Dieses Konto wurde automatisch hinzugefügt, weil du über die CLI angemeldet bist. Für den vollen Funktionsumfang empfiehlt es sich, dich <link>manuell zu authentifizieren</link>.",
     "EnableAccount": "{{name}} aktivieren",
     "DisableAccount": "{{name}} deaktivieren"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Erlaube Mitteilungen in den macOS-Einstellungen, um Kontingenthinweise zu nutzen."
   },
   "AutoPing": {
-    "Title": "Auto-Ping",
-    "StartNextSession": "Nächste Sitzung starten",
-    "SupportedDescription": "Nach dem Zurücksetzen einer Sitzung eine kleine Anfrage senden.",
-    "UnsupportedDescription": "Auto-Ping braucht eine in dieser App vorgenommene Claude- oder Codex-Anmeldung. Andere Konten können es nicht nutzen.",
+    "Title": "Quota-Optimierer",
+    "StartNextSession": "Jede Sitzung früh starten",
+    "SupportedDescription": "Sitzungslimits werden zu festen Zeiten zurückgesetzt. Direkt nach jedem Reset sendet Devie Quota eine winzige Anfrage, damit die nächste Sitzung sofort beginnt. Du bekommst mehr Sitzungen pro Woche und verlierst kein Kontingent, während du weg bist.",
+    "UnsupportedDescription": "Der Quota-Optimierer funktioniert nur mit Claude- und Codex-Konten.",
     "LastRequest": "Letzte Anfrage: {{date}}"
   },
   "Settings": {

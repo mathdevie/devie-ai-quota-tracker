@@ -2,13 +2,10 @@ mod alerts;
 mod auto_ping;
 mod credentials;
 mod db;
-mod discovery;
-mod executable;
 mod messages;
 mod model;
 mod oauth;
-mod providers;
-mod pty;
+mod parse;
 mod tray_icons;
 
 use std::{path::PathBuf, sync::Arc, time::Duration};
@@ -38,13 +35,6 @@ fn get_dashboard_state(core: State<'_, Core>) -> Result<DashboardState, String> 
 }
 
 #[tauri::command]
-async fn discover_connections(app: AppHandle) -> Result<DashboardState, String> {
-    let core = app.state::<Core>().inner().clone();
-    sync_discovery(&core).await?;
-    publish_state(&app, &core)
-}
-
-#[tauri::command]
 async fn start_login(app: AppHandle, provider: String) -> Result<LoginStart, String> {
     let core = app.state::<Core>().inner().clone();
     let provider = model::Provider::from_db(&provider)
@@ -66,9 +56,11 @@ async fn finish_login(
         .take(&session_id)
         .ok_or_else(|| "The sign-in session ended. Start again.".to_string())?;
     let provider = pending.provider.clone();
-    let outcome = oauth::finish(&core.client, pending, code).await?;
+    let outcome = oauth::finish(&core.client, pending, code).await;
+    core.logins.finish(&session_id);
+    let outcome = outcome?;
     let connection = oauth::connection_for(&provider, &outcome);
-    core.database.upsert_discovered(&[connection.clone()])?;
+    core.database.upsert_connections(&[connection.clone()])?;
     core.database.set_enabled(&connection.id, true)?;
     credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
     if let Some(connection) = core.database.connection_by_id(&connection.id)? {
@@ -79,7 +71,7 @@ async fn finish_login(
 
 #[tauri::command]
 fn cancel_login(core: State<'_, Core>, session_id: String) {
-    drop(core.logins.take(&session_id));
+    core.logins.cancel(&session_id);
 }
 
 #[tauri::command]
@@ -88,15 +80,6 @@ fn remove_connection(
     core: State<'_, Core>,
     connection_id: String,
 ) -> Result<DashboardState, String> {
-    let connection = core
-        .database
-        .connection_by_id(&connection_id)?
-        .ok_or_else(|| "The connection does not exist.".to_string())?;
-    if connection.kind != model::ConnectionKind::Oauth {
-        return Err(
-            "This connection comes from a CLI on this Mac. Disable it instead.".to_string(),
-        );
-    }
     core.database.delete_connection(&connection_id)?;
     credentials::remove(&core.app_data_dir, &connection_id);
     publish_state(&app, &core)
@@ -168,7 +151,7 @@ fn set_auto_ping(
         .connection_by_id(&connection_id)?
         .ok_or_else(|| "The connection does not exist.".to_string())?;
     if enabled && !auto_ping::supported(&connection) {
-        return Err("Auto-ping supports Claude and Codex app sign-ins only.".to_string());
+        return Err("The Quota Optimizer supports Claude and Codex accounts only.".to_string());
     }
     core.database
         .set_auto_ping_enabled(&connection_id, enabled)?;
@@ -271,21 +254,10 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
-/// Runs CLI discovery off the main thread and syncs the database with it.
-async fn sync_discovery(core: &Core) -> Result<(), String> {
-    let discovered = tauri::async_runtime::spawn_blocking(discovery::discover)
-        .await
-        .map_err(|_| "Discovery stopped early.".to_string())?;
-    core.database.upsert_discovered(&discovered)?;
-    core.database.prune_missing_local(&discovered)?;
-    Ok(())
-}
-
 /// Refreshes every enabled connection. `force` skips the short quota cache,
 /// which the user expects from a refresh button but not from the timer.
 async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
-    sync_discovery(&core).await?;
     let connections = core.database.dashboard_state()?.connections;
     for connection in connections.into_iter().filter(|item| item.enabled) {
         refresh_one(app, &core, &connection, force).await;
@@ -306,7 +278,7 @@ async fn refresh_one(
         .ok()
         .flatten()
         .unwrap_or_else(|| connection.clone());
-    match providers::refresh(&current, &core.app_data_dir, &core.client, force).await {
+    match oauth::refresh_quota(&current, &core.app_data_dir, &core.client, force).await {
         Ok(reading) => {
             let _ = core.database.save_reading(&current.id, &reading);
             alerts::after_reading(app, &core.database, &current, &reading);
@@ -429,8 +401,9 @@ fn toggle_popover(app: &AppHandle) {
         return;
     }
     let _ = window.move_window(Position::TrayCenter);
+    // `show` makes the panel key without activating the app, so the main
+    // window stays where it is.
     let _ = window.show();
-    let _ = window.set_focus();
 }
 
 fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
@@ -448,20 +421,50 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .traffic_light_position(tauri::LogicalPosition::new(18.0, 20.0));
     main.build()?;
 
-    WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
-        .title("Devie Quota Quotas")
-        .inner_size(380.0, 480.0)
-        // The popover resizes itself to its content, down to one short list.
-        .min_inner_size(320.0, 120.0)
-        .max_inner_size(480.0, 760.0)
-        .resizable(true)
-        .decorations(false)
-        .always_on_top(true)
-        .skip_taskbar(true)
-        .shadow(true)
-        .visible(false)
-        .build()?;
+    let popover =
+        WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
+            .title("Devie Quota Quotas")
+            .inner_size(POPOVER_WIDTH, 480.0)
+            // The popover resizes itself to its content, down to one short
+            // list. The user cannot resize or move it.
+            .min_inner_size(POPOVER_WIDTH, 120.0)
+            .max_inner_size(POPOVER_WIDTH, 760.0)
+            .resizable(false)
+            .decorations(false)
+            // The interface draws a rounded frame on a transparent window.
+            .transparent(true)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .shadow(true)
+            .visible(false)
+            .build()?;
+    #[cfg(target_os = "macos")]
+    make_non_activating_panel(&popover);
     Ok(())
+}
+
+const POPOVER_WIDTH: f64 = 440.0;
+
+/// Turns the popover into a non-activating panel: it opens over other apps
+/// without bringing the main window forward, like a native menu bar popover.
+#[cfg(target_os = "macos")]
+fn make_non_activating_panel(window: &tauri::WebviewWindow) {
+    use objc2::{runtime::AnyObject, ClassType};
+    use objc2_app_kit::{NSPanel, NSWindowStyleMask};
+
+    let Ok(pointer) = window.ns_window() else {
+        return;
+    };
+    // SAFETY: the pointer is the live NSWindow of this webview window, and
+    // NSPanel only adds behavior on top of NSWindow.
+    unsafe {
+        let object = &*(pointer as *const AnyObject);
+        AnyObject::set_class(object, NSPanel::class());
+        let panel = &*(pointer as *const NSPanel);
+        panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
+        panel.setFloatingPanel(true);
+        panel.setHidesOnDeactivate(false);
+    }
 }
 
 fn build_tray(app: &tauri::App, locale: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -564,7 +567,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_dashboard_state,
-            discover_connections,
             start_login,
             finish_login,
             cancel_login,

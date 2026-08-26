@@ -211,15 +211,12 @@ fn provider_name(provider: &Provider) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::{
-        AutoPingState, ConnectionAlerts, ConnectionKind, ConnectionStatus, RemoteIdentity,
-    };
+    use crate::model::{AutoPingState, ConnectionAlerts, ConnectionStatus, RemoteIdentity};
 
     fn connection(alerts: ConnectionAlerts, previous: QuotaWindow) -> ProviderConnection {
         ProviderConnection {
             id: "one".into(),
             provider: Provider::Claude,
-            kind: ConnectionKind::Oauth,
             label: "Claude account".into(),
             source_locator: "oauth/claude/one".into(),
             enabled: true,

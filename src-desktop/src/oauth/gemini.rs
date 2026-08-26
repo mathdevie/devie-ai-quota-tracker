@@ -11,7 +11,7 @@ use crate::{
     credentials::Credentials,
     model::{QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{claude::encode_query, describe_http_failure, LoginOutcome, Pkce, USER_AGENT},
-    providers::number,
+    parse::number,
 };
 
 pub const CLIENT_ID: &str =

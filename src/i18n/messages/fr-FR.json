@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Renommer",
       "Alerts": "Alertes",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Optimiseur de quota",
       "Refresh": "Actualiser",
       "Enable": "Activer",
       "Disable": "Désactiver",
-      "Remove": "Supprimer"
+      "Remove": "Supprimer",
+      "On": "Activé",
+      "Off": "Désactivé"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Ajouter un compte",
     "AddProviderAccount": "Ajouter un compte {{name}}",
     "NoAccountsYet": "Aucun compte {{name}} pour l'instant.",
-    "SignInWithCli": "Connectez-vous avec la CLI dans un terminal.",
-    "AutoDetected": "Détecté automatiquement",
-    "AutoDetectedTip": "Ce compte a été ajouté automatiquement parce que vous êtes connecté depuis la CLI. Pour toutes les fonctionnalités, il est recommandé de <link>vous authentifier manuellement</link>.",
     "EnableAccount": "Activer {{name}}",
     "DisableAccount": "Désactiver {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Autorisez les notifications dans les Réglages macOS pour utiliser les alertes de quota."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Démarrer la prochaine session",
-    "SupportedDescription": "Envoyer une petite requête après la réinitialisation d'une session.",
-    "UnsupportedDescription": "L'Auto-ping nécessite une connexion Claude ou Codex effectuée dans cette app. Les autres comptes ne peuvent pas l'utiliser.",
+    "Title": "Optimiseur de quota",
+    "StartNextSession": "Démarrer chaque session au plus tôt",
+    "SupportedDescription": "Les limites de session se réinitialisent à heure fixe. Juste après chaque réinitialisation, Devie Quota envoie une requête minuscule pour démarrer la session suivante aussitôt. Vous obtenez plus de sessions par semaine et ne perdez jamais de quota en votre absence.",
+    "UnsupportedDescription": "L’optimiseur de quota fonctionne uniquement avec les comptes Claude et Codex.",
     "LastRequest": "Dernière requête : {{date}}"
   },
   "Settings": {
