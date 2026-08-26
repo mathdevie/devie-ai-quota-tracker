@@ -10,6 +10,7 @@ use crate::model::Provider;
 
 const CLAUDE: &[u8] = include_bytes!("../../public/providers/claude.png");
 const CODEX: &[u8] = include_bytes!("../../public/providers/codex.png");
+const GEMINI: &[u8] = include_bytes!("../../public/providers/gemini-cli.png");
 const COPILOT: &[u8] = include_bytes!("../../public/providers/copilot.png");
 
 /// Corner radius as a share of the icon size, the macOS app icon ratio.
@@ -18,10 +19,15 @@ const CORNER_RATIO: f64 = 0.225;
 fn cache() -> &'static HashMap<&'static str, Image<'static>> {
     static ICONS: OnceLock<HashMap<&'static str, Image<'static>>> = OnceLock::new();
     ICONS.get_or_init(|| {
-        [("claude", CLAUDE), ("codex", CODEX), ("copilot", COPILOT)]
-            .into_iter()
-            .filter_map(|(id, bytes)| Some((id, rounded(Image::from_bytes(bytes).ok()?))))
-            .collect()
+        [
+            ("claude", CLAUDE),
+            ("codex", CODEX),
+            ("gemini-cli", GEMINI),
+            ("copilot", COPILOT),
+        ]
+        .into_iter()
+        .filter_map(|(id, bytes)| Some((id, rounded(Image::from_bytes(bytes).ok()?))))
+        .collect()
     })
 }
 
@@ -68,7 +74,12 @@ mod tests {
 
     #[test]
     fn decodes_every_provider_logo() {
-        for provider in [Provider::Claude, Provider::Codex, Provider::Copilot] {
+        for provider in [
+            Provider::Claude,
+            Provider::Codex,
+            Provider::Gemini,
+            Provider::Copilot,
+        ] {
             let icon = provider_icon(&provider).expect("logo decodes");
             assert_eq!(icon.width(), 128);
             // The corner pixel is transparent, the center keeps its alpha.

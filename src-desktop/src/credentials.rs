@@ -24,6 +24,9 @@ pub struct Credentials {
     /// Provider-specific data, such as the ChatGPT account id.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub account_id: Option<String>,
+    /// Provider-specific project data, such as a Gemini Code Assist project.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub project_id: Option<String>,
 }
 
 impl Credentials {
@@ -99,10 +102,12 @@ mod tests {
             refresh_token: Some("refresh".into()),
             expires_at: Some(Utc::now() + Duration::hours(1)),
             account_id: None,
+            project_id: Some("project-123".into()),
         };
         save(root.path(), "abc", &credentials).expect("save");
         let loaded = load(root.path(), "abc").expect("load");
         assert_eq!(loaded.access_token, "access");
+        assert_eq!(loaded.project_id.as_deref(), Some("project-123"));
         assert!(!loaded.expires_within(Duration::minutes(5)));
         assert!(loaded.expires_within(Duration::hours(2)));
         #[cfg(unix)]

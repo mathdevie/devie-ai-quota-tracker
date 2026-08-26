@@ -2,7 +2,7 @@
 
 Devie Quota is a local macOS menu bar app for AI subscription quotas.
 
-It keeps separate Claude, Codex, and GitHub Copilot accounts in one place.
+It keeps separate Claude, Codex, Gemini CLI, and GitHub Copilot accounts in one place.
 The product has no Devie account, cloud database, proxy, or hosted backend.
 
 > [!NOTE]
@@ -23,7 +23,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - A Tauri 2 app with a Next.js static frontend.
 - A macOS menu bar item with one provider logo and percent left (pin a quota window in the popover), plus a popover.
 - A native-style window with a sidebar: Quota, Providers, Settings.
-- In-app OAuth sign-in for Claude, Codex, and GitHub Copilot accounts.
+- In-app OAuth sign-in for Claude, Codex, Gemini CLI, and GitHub Copilot accounts.
 - Any number of accounts per provider.
 - Local discovery of existing Claude, Codex, and GitHub CLI profiles.
 - Manual refresh and an automatic five-minute refresh loop.
@@ -37,6 +37,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 | --- | --- | --- |
 | Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
+| Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 
 Existing CLI profiles are also listed as "CLI" connections. Claude CLI
@@ -64,8 +65,8 @@ per connection with `0600` permissions:
 ~/Library/Application Support/com.devie.quota/credentials/<connection-id>.json
 ```
 
-The app renews Claude and Codex tokens before they expire. Removing an account
-deletes its token file.
+The app renews Claude, Codex, and Gemini tokens before they expire. Removing an
+account deletes its token file.
 
 ## Architecture
 
@@ -93,7 +94,7 @@ src/                    Next.js interface and application components
 src/ui/                 Complete Devie UI component and theme folder
 src-desktop/            Tauri application and Rust core
 src-desktop/src/providers/
-                        Claude, Codex, and Copilot adapters
+                        Claude, Codex, Gemini, and Copilot adapters
 docs/                   Build and signing documentation
 plans/                  Product research and feasibility analysis
 ```
@@ -105,10 +106,10 @@ theme context uses the versioned `devie-quota-theme:v1` storage key.
 ## Privacy and security
 
 - Devie Quota has no product login or remote application database.
-- Provider quota checks can contact Anthropic, OpenAI, or GitHub.
+- Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
 - Provider tokens never enter the React webview.
 - SQLite does not store provider tokens or complete provider responses.
-- Claude and Codex own their login credentials and refresh behavior.
+- The app owns refresh tokens for in-app Claude, Codex, and Gemini sign-ins.
 - The Copilot adapter reads one GitHub CLI token into memory for one request.
 - The Copilot adapter clears its token buffer after the request starts.
 - Devie Quota never changes the active GitHub CLI account.
@@ -198,7 +199,7 @@ setup steps.
 - The signed workflow builds Apple silicon only.
 - Claude and Codex terminal output can change between CLI versions.
 - GitHub Copilot uses an internal endpoint instead of a public quota API.
-- Claude and Codex login uses the provider CLI instead of a direct app callback.
+- Gemini CLI uses internal Code Assist endpoints exposed by the official CLI.
 - The app does not yet remove managed profiles.
 - The app does not yet show full history charts, costs, or local token totals.
 - Auto-ping supports Claude and Codex accounts signed in through the app.
@@ -209,7 +210,7 @@ setup steps.
 - Refine the minimal usage and provider interface.
 - Complete provider lifecycle controls.
 - Improve login progress and error handling.
-- Test multiple Claude and Codex subscription combinations.
+- Test multiple Claude, Codex, and Gemini subscription combinations.
 - Expand the quota history and usage charts.
 - Add more providers through the shared adapter model.
 

@@ -289,6 +289,7 @@ fn credentials_from(
         refresh_token,
         expires_at,
         account_id: None,
+        project_id: None,
     })
 }
 

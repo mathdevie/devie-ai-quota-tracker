@@ -1,4 +1,4 @@
-export type Provider = "claude" | "codex" | "copilot";
+export type Provider = "claude" | "codex" | "gemini-cli" | "copilot";
 export type ConnectionStatus = "ready" | "stale" | "needs_login" | "error";
 /** `oauth`: the app holds tokens it obtained. `local`: a CLI on this Mac owns them. */
 export type ConnectionKind = "oauth" | "local";

@@ -9,7 +9,6 @@ import styles from "./views.module.scss";
 const UNSUPPORTED: { name: string; brand: BrandId }[] = [
   { name: "Antigravity", brand: "antigravity" },
   { name: "Cursor", brand: "cursor" },
-  { name: "Gemini CLI", brand: "gemini-cli" },
   { name: "Kiro", brand: "kiro" },
   { name: "Kimchi", brand: "kimchi" },
   { name: "OpenCode", brand: "opencode" },

@@ -21,6 +21,9 @@ pub async fn refresh(
     match connection.provider {
         Provider::Claude => claude::refresh(connection, client, force).await,
         Provider::Codex => codex::refresh(connection).await,
+        Provider::Gemini => {
+            Err("Gemini CLI local profiles are not supported yet. Sign in through the app.".into())
+        }
         Provider::Copilot => copilot::refresh(connection, client).await,
     }
 }

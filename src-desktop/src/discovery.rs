@@ -39,6 +39,7 @@ fn discover_profile_dirs(provider: Provider) -> Vec<DiscoveredConnection> {
     let (environment_key, base_name) = match provider {
         Provider::Claude => ("CLAUDE_CONFIG_DIR", ".claude"),
         Provider::Codex => ("CODEX_HOME", ".codex"),
+        Provider::Gemini => return Vec::new(),
         Provider::Copilot => return Vec::new(),
     };
 
@@ -89,6 +90,7 @@ pub fn looks_like_profile(provider: &Provider, path: &Path) -> bool {
             ".claude.json",
         ],
         Provider::Codex => &["auth.json", "config.toml", "sessions", "history.jsonl"],
+        Provider::Gemini => return false,
         Provider::Copilot => return false,
     };
     markers.iter().any(|marker| path.join(marker).exists())
@@ -110,6 +112,7 @@ pub fn profile_connection(
     let provider_name = match provider {
         Provider::Claude => "Claude",
         Provider::Codex => "Codex",
+        Provider::Gemini => "Gemini",
         Provider::Copilot => "Copilot",
     };
     let source_locator = path.to_string_lossy().into_owned();
