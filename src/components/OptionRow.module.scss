@@ -38,7 +38,14 @@
 
   > span {
     display: grid;
+    min-width: 0;
+    flex: 1;
     gap: 1px;
+  }
+
+  // The switch keeps its size next to a long description.
+  > :last-child {
+    flex-shrink: 0;
   }
 
   strong {
