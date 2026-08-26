@@ -330,7 +330,12 @@ impl Database {
                         last_auto_ping_error, auto_ping_observed_reset_at,
                         last_auto_ping_attempt_at
                  FROM provider_connections
-                 ORDER BY CASE provider WHEN 'claude' THEN 0 WHEN 'codex' THEN 1 ELSE 2 END,
+                 ORDER BY CASE provider
+                   WHEN 'claude' THEN 0
+                   WHEN 'codex' THEN 1
+                   WHEN 'gemini-cli' THEN 2
+                   ELSE 3
+                 END,
                           label",
             )
             .map_err(|error| error.to_string())?;

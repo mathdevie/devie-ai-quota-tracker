@@ -17,6 +17,8 @@ const HINTS: Record<Provider, string> = {
     "Sign in to Claude in the browser. The app receives the result on this Mac.",
   codex:
     "Sign in with your ChatGPT account in the browser. The app receives the result on this Mac.",
+  "gemini-cli":
+    "Sign in with Google in the browser. The app receives the result on this Mac.",
   copilot:
     "Enter this code on the GitHub page in the browser, then approve the request.",
 };

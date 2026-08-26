@@ -22,6 +22,7 @@ pub struct CallbackParams {
 pub struct CallbackServer {
     receiver: mpsc::Receiver<CallbackParams>,
     stop: Arc<AtomicBool>,
+    port: u16,
 }
 
 impl CallbackServer {
@@ -29,10 +30,18 @@ impl CallbackServer {
     pub fn start(port: u16, path: &'static str) -> Result<Self, String> {
         let listener =
             TcpListener::bind(SocketAddrV4::new(Ipv4Addr::LOCALHOST, port)).map_err(|_| {
-                format!(
-                    "Port {port} is busy. Close the other program that uses it, then try again."
-                )
+                if port == 0 {
+                    "The app could not start a local sign-in callback. Try again.".to_string()
+                } else {
+                    format!(
+                        "Port {port} is busy. Close the other program that uses it, then try again."
+                    )
+                }
             })?;
+        let port = listener
+            .local_addr()
+            .map_err(|error| error.to_string())?
+            .port();
         listener
             .set_nonblocking(true)
             .map_err(|error| error.to_string())?;
@@ -40,7 +49,16 @@ impl CallbackServer {
         let stop = Arc::new(AtomicBool::new(false));
         let stop_flag = stop.clone();
         thread::spawn(move || serve(listener, path, sender, stop_flag));
-        Ok(Self { receiver, stop })
+        Ok(Self {
+            receiver,
+            stop,
+            port,
+        })
+    }
+
+    /// Returns the selected loopback port.
+    pub fn port(&self) -> u16 {
+        self.port
     }
 
     /// Waits for the redirect. Returns `None` on timeout.
@@ -212,10 +230,8 @@ mod tests {
 
     #[test]
     fn receives_one_redirect() {
-        let listener = TcpListener::bind("127.0.0.1:0").expect("free port");
-        let port = listener.local_addr().expect("addr").port();
-        drop(listener);
-        let server = CallbackServer::start(port, "/callback").expect("server");
+        let server = CallbackServer::start(0, "/callback").expect("server");
+        let port = server.port();
         let mut client = std::net::TcpStream::connect(("127.0.0.1", port)).expect("client");
         client
             .write_all(b"GET /callback?code=one&state=two HTTP/1.1\r\nHost: x\r\n\r\n")
