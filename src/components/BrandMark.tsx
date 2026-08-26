@@ -1,7 +1,12 @@
+"use client";
+
+import { useTranslation } from "react-i18next";
+
 export default function BrandMark({ size = 34 }: { size?: number }) {
+  const { t } = useTranslation();
   return (
     <svg
-      aria-label="Devie Quota"
+      aria-label={t("Common.AppName")}
       height={size}
       role="img"
       viewBox="0 0 40 40"

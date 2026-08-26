@@ -3,6 +3,7 @@
 import { Toast } from "@base-ui/react/toast";
 import { ChevronLeft, Gauge, LoaderCircle, Plug, Settings } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type {
   ConnectionAlerts,
   DashboardState,
@@ -43,16 +44,10 @@ import SettingsView from "./views/SettingsView";
 type View = "quota" | "providers" | "settings";
 
 const NAV: SidebarItem<View>[] = [
-  { value: "quota", label: "Quota", icon: Gauge },
-  { value: "providers", label: "Providers", icon: Plug },
-  { value: "settings", label: "Settings", icon: Settings },
+  { value: "quota", label: "Nav.Quota", icon: Gauge },
+  { value: "providers", label: "Nav.Providers", icon: Plug },
+  { value: "settings", label: "Nav.Settings", icon: Settings },
 ];
-
-const TITLES: Record<View, string> = {
-  quota: "Quota",
-  providers: "Providers",
-  settings: "Settings",
-};
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
@@ -68,6 +63,7 @@ export default function AppShell() {
 }
 
 function Shell() {
+  const { t } = useTranslation();
   const toasts = Toast.useToastManager();
   const [state, setState] = useState<DashboardState | null>(null);
   const [view, setView] = useState<View>("quota");
@@ -157,7 +153,7 @@ function Shell() {
   ): Promise<boolean> {
     const anyEnabled = Object.values(alerts).some(Boolean);
     if (anyEnabled && !(await ensureNotificationPermission())) {
-      showError("Allow notifications in macOS Settings to use quota alerts.");
+      showError(t("Alerts.PermissionRequired"));
       return false;
     }
     return run(() => setConnectionAlerts(id, alerts), withBusyId(id));
@@ -188,7 +184,9 @@ function Shell() {
   }
 
   const onProviderPage = view === "providers" && providerPage !== undefined;
-  const title = onProviderPage ? PROVIDER_NAMES[providerPage] : TITLES[view];
+  const title = onProviderPage
+    ? PROVIDER_NAMES[providerPage]
+    : t(NAV.find((item) => item.value === view)?.label ?? "Nav.Quota");
 
   return (
     <AppUpdaterProvider>
@@ -205,7 +203,7 @@ function Shell() {
             leading={
               onProviderPage && (
                 <Button
-                  aria-label="Back to providers"
+                  aria-label={t("Nav.BackToProviders")}
                   onClick={() => setProviderPage(undefined)}
                   size="sm"
                   variant="icon-naked"

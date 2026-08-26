@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { DashboardState, Provider } from "@/lib/contracts";
 import { PROVIDER_NAMES, PROVIDERS } from "@/lib/labels";
 import Badge from "@/ui/Badge";
@@ -28,6 +29,7 @@ function ProviderRow({
   state: DashboardState;
   onOpen: (provider: Provider) => void;
 }) {
+  const { t } = useTranslation();
   const connections = state.connections.filter(
     (connection) => connection.provider === provider,
   );
@@ -54,12 +56,16 @@ function ProviderRow({
       </span>
       <span className={styles.providerBadges}>
         {connected > 0 && (
-          <Badge variant="success">Connected {connected}</Badge>
+          <Badge variant="success">
+            {t("Providers.Connected", { total: connected })}
+          </Badge>
         )}
         {attention > 0 && (
-          <Badge variant="warning">Attention {attention}</Badge>
+          <Badge variant="warning">
+            {t("Providers.Attention", { total: attention })}
+          </Badge>
         )}
-        {connections.length === 0 && <Badge>Available</Badge>}
+        {connections.length === 0 && <Badge>{t("Providers.Available")}</Badge>}
       </span>
     </button>
   );
@@ -72,6 +78,7 @@ export default function ProvidersView({
   state: DashboardState;
   onOpen: (provider: Provider) => void;
 }) {
+  const { t } = useTranslation();
   const active = PROVIDERS.filter((provider) =>
     state.connections.some((connection) => connection.provider === provider),
   );
@@ -81,7 +88,7 @@ export default function ProvidersView({
     <section className={styles.page}>
       {active.length > 0 && (
         <div className={styles.group}>
-          <h2 className={styles.groupTitle}>Active</h2>
+          <h2 className={styles.groupTitle}>{t("Providers.Active")}</h2>
           <div className={styles.providerGrid}>
             {active.map((provider) => (
               <ProviderRow
@@ -96,7 +103,7 @@ export default function ProvidersView({
       )}
       {available.length > 0 && (
         <div className={styles.group}>
-          <h2 className={styles.groupTitle}>Available</h2>
+          <h2 className={styles.groupTitle}>{t("Providers.Available")}</h2>
           <div className={styles.providerGrid}>
             {available.map((provider) => (
               <ProviderRow
@@ -110,7 +117,7 @@ export default function ProvidersView({
         </div>
       )}
       <div className={styles.group}>
-        <h2 className={styles.groupTitle}>Not supported yet</h2>
+        <h2 className={styles.groupTitle}>{t("Providers.NotSupportedYet")}</h2>
         <div className={styles.providerGrid}>
           {UNSUPPORTED.map((tool) => (
             <article

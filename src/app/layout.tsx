@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import I18nProvider from "@/i18n/I18nProvider";
 import { ThemeProvider } from "@/ui/themes/ThemeContext";
 import "@/ui/_themes.scss";
 import "./globals.scss";
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <I18nProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

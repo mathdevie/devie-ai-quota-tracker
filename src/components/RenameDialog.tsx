@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
@@ -18,6 +19,7 @@ export default function RenameDialog({
   onOpenChange: (open: boolean) => void;
   onSubmit: (id: string, label: string) => void;
 }) {
+  const { t } = useTranslation();
   const [label, setLabel] = useState("");
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function RenameDialog({
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>Rename account</Dialog.Title>
+              <Dialog.Title>{t("Rename.Title")}</Dialog.Title>
               {connection && (
                 <Dialog.Description>
                   {PROVIDER_NAMES[connection.provider]} ·{" "}
@@ -57,7 +59,7 @@ export default function RenameDialog({
             </Dialog.Header>
             <Dialog.Body>
               <Field.Root>
-                <Field.Label>Label</Field.Label>
+                <Field.Label>{t("Rename.Label")}</Field.Label>
                 <Field.Control
                   autoComplete="off"
                   autoFocus
@@ -65,9 +67,7 @@ export default function RenameDialog({
                   placeholder={fallback}
                   value={label}
                 />
-                <Field.Description>
-                  Leave the field empty to show the account id again.
-                </Field.Description>
+                <Field.Description>{t("Rename.Description")}</Field.Description>
               </Field.Root>
             </Dialog.Body>
             <Dialog.Footer>
@@ -76,9 +76,9 @@ export default function RenameDialog({
                 type="button"
                 variant="secondary"
               >
-                Cancel
+                {t("Common.Cancel")}
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit">{t("Common.Save")}</Button>
             </Dialog.Footer>
           </form>
         </Dialog.Popup>

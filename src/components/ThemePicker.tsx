@@ -1,16 +1,23 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
+import { DEFAULT_LOCALE } from "@/i18n/locales";
 import Select from "@/ui/Select";
 import { THEMES } from "@/ui/themes/registry";
 import { useTheme } from "@/ui/themes/ThemeContext";
 import styles from "./ThemePicker.module.scss";
 
-function displayName(theme: (typeof THEMES)[number]): string {
-  return theme.displayName["en-US"] ?? theme.nameKey;
+function displayName(theme: (typeof THEMES)[number], language: string): string {
+  return (
+    theme.displayName[language] ??
+    theme.displayName[DEFAULT_LOCALE] ??
+    theme.nameKey
+  );
 }
 
 /** A dropdown that previews a theme on hover and applies it on select. */
 export default function ThemePicker() {
+  const { t, i18n } = useTranslation();
   const { selectedTheme, setTheme, previewTheme, clearPreviewTheme } =
     useTheme();
   const current = THEMES.find((theme) => theme.className === selectedTheme);
@@ -18,7 +25,7 @@ export default function ThemePicker() {
 
   return (
     <Select.Root
-      aria-label="Theme"
+      aria-label={t("Common.Theme")}
       onValueChange={(value) => value && setTheme(value)}
       value={selectedTheme}
     >
@@ -33,7 +40,11 @@ export default function ThemePicker() {
                 width={16}
               />
             )}
-            <span>{current ? displayName(current) : "Theme"}</span>
+            <span>
+              {current
+                ? displayName(current, i18n.language)
+                : t("Common.Theme")}
+            </span>
           </span>
         </Select.Value>
         <Select.Icon />
@@ -61,7 +72,7 @@ export default function ThemePicker() {
                           height={20}
                           width={20}
                         />
-                        <span>{displayName(theme)}</span>
+                        <span>{displayName(theme, i18n.language)}</span>
                       </span>
                     </Select.ItemText>
                     <Select.ItemIndicator />

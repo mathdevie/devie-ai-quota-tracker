@@ -7,6 +7,7 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
@@ -21,14 +22,15 @@ export function StatusBadge({
 }: {
   connection: ProviderConnection;
 }) {
+  const { t } = useTranslation();
   if (connection.status === "ready") return null;
   if (connection.status === "stale") {
-    return <Badge variant="warning">Stale</Badge>;
+    return <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
   }
   if (connection.status === "needs_login") {
-    return <Badge variant="warning">Login</Badge>;
+    return <Badge variant="warning">{t("Connection.Status.Login")}</Badge>;
   }
-  return <Badge variant="danger">Error</Badge>;
+  return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
 
 export interface ConnectionActions {
@@ -51,13 +53,14 @@ export function ConnectionMenu({
   onEnabledChange,
   onRemove,
 }: { connection: ProviderConnection; busy?: boolean } & ConnectionActions) {
+  const { t } = useTranslation();
   const name = fullName(connection);
   return (
     <Menu.Root>
       <Menu.Trigger
         render={
           <Button
-            aria-label={`Actions for ${name}`}
+            aria-label={t("Connection.ActionsFor", { name })}
             disabled={busy}
             size="sm"
             variant="icon-naked"
@@ -72,25 +75,25 @@ export function ConnectionMenu({
             {onRename && (
               <Menu.Item onClick={() => onRename(connection)}>
                 <Pencil size={14} />
-                Rename
+                {t("Connection.Menu.Rename")}
               </Menu.Item>
             )}
             {onAlerts && (
               <Menu.Item onClick={() => onAlerts(connection)}>
                 <BellRing size={14} />
-                Alerts
+                {t("Connection.Menu.Alerts")}
               </Menu.Item>
             )}
             {onAutoPing && (
               <Menu.Item onClick={() => onAutoPing(connection)}>
                 <Zap size={14} />
-                Auto-ping
+                {t("Connection.Menu.AutoPing")}
               </Menu.Item>
             )}
             {onRefresh && (
               <Menu.Item onClick={() => onRefresh(connection.id)}>
                 <RefreshCw size={14} />
-                Refresh
+                {t("Connection.Menu.Refresh")}
               </Menu.Item>
             )}
             {onEnabledChange && (
@@ -100,7 +103,9 @@ export function ConnectionMenu({
                 }
               >
                 <Power size={14} />
-                {connection.enabled ? "Disable" : "Enable"}
+                {connection.enabled
+                  ? t("Connection.Menu.Disable")
+                  : t("Connection.Menu.Enable")}
               </Menu.Item>
             )}
             {onRemove && connection.kind === "oauth" && (
@@ -111,7 +116,7 @@ export function ConnectionMenu({
                   onClick={() => onRemove(connection.id)}
                 >
                   <Trash2 size={14} />
-                  Remove
+                  {t("Connection.Menu.Remove")}
                 </Menu.Item>
               </>
             )}
@@ -131,6 +136,7 @@ export default function ConnectionCard({
   connection: ProviderConnection;
   busy?: boolean;
 } & ConnectionActions) {
+  const { t } = useTranslation();
   const hasActions = Object.values(actions).some(Boolean);
   const plan = connection.identity?.plan;
 
@@ -157,7 +163,7 @@ export default function ConnectionCard({
           <QuotaBars windows={connection.windows} />
         ) : (
           <p className={styles.empty}>
-            {connection.lastError ?? "No quota data"}
+            {connection.lastError ?? t("Connection.NoQuotaData")}
           </p>
         )}
       </div>

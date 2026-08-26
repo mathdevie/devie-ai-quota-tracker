@@ -4,6 +4,7 @@ mod credentials;
 mod db;
 mod discovery;
 mod executable;
+mod messages;
 mod model;
 mod oauth;
 mod providers;
@@ -193,6 +194,62 @@ fn set_menu_bar_item_visible(
     core.database.set_show_menu_bar_item(visible)?;
     apply_tray_visibility(&app, visible);
     publish_state(&app, &core)
+}
+
+/// Stores the interface language and relabels the tray menu.
+#[tauri::command]
+fn set_language(app: AppHandle, core: State<'_, Core>, locale: String) -> Result<(), String> {
+    if !messages::is_supported(&locale) {
+        return Err("This language is not supported.".to_string());
+    }
+    core.database.set_language(&locale)?;
+    apply_tray_language(&app, &locale).map_err(|error| error.to_string())
+}
+
+/// The saved language, else the closest supported system language.
+fn current_language(core: &Core) -> String {
+    core.database
+        .language()
+        .ok()
+        .flatten()
+        .filter(|locale| messages::is_supported(locale))
+        .or_else(|| {
+            sys_locale::get_locale().and_then(|tag| messages::closest(&tag).map(str::to_string))
+        })
+        .unwrap_or_else(|| messages::DEFAULT_LOCALE.to_string())
+}
+
+fn tray_menu<M: Manager<tauri::Wry>>(manager: &M, locale: &str) -> tauri::Result<Menu<tauri::Wry>> {
+    let open = MenuItem::with_id(
+        manager,
+        "open",
+        messages::t(locale, "Tray.Open", &[]),
+        true,
+        None::<&str>,
+    )?;
+    let refresh = MenuItem::with_id(
+        manager,
+        "refresh",
+        messages::t(locale, "Tray.RefreshAll", &[]),
+        true,
+        None::<&str>,
+    )?;
+    let quit = MenuItem::with_id(
+        manager,
+        "quit",
+        messages::t(locale, "Tray.Quit", &[]),
+        true,
+        None::<&str>,
+    )?;
+    Menu::with_items(manager, &[&open, &refresh, &quit])
+}
+
+fn apply_tray_language(app: &AppHandle, locale: &str) -> tauri::Result<()> {
+    let Some(tray) = app.tray_by_id("main-tray") else {
+        return Ok(());
+    };
+    tray.set_menu(Some(tray_menu(app, locale)?))?;
+    tray.set_tooltip(Some(messages::t(locale, "Tray.Tooltip", &[])))
 }
 
 fn apply_tray_visibility(app: &AppHandle, visible: bool) {
@@ -407,15 +464,12 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn build_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    let open = MenuItem::with_id(app, "open", "Open Devie Quota", true, None::<&str>)?;
-    let refresh = MenuItem::with_id(app, "refresh", "Refresh All", true, None::<&str>)?;
-    let quit = MenuItem::with_id(app, "quit", "Quit Devie Quota", true, None::<&str>)?;
-    let menu = Menu::with_items(app, &[&open, &refresh, &quit])?;
+fn build_tray(app: &tauri::App, locale: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let menu = tray_menu(app, locale)?;
     let mut builder = TrayIconBuilder::with_id("main-tray")
         .menu(&menu)
         .show_menu_on_left_click(false)
-        .tooltip("Devie Quota subscription quotas")
+        .tooltip(messages::t(locale, "Tray.Tooltip", &[]))
         .title("—")
         // Provider logos keep their colors; a template icon would be a flat square.
         .icon_as_template(false)
@@ -477,7 +531,8 @@ pub fn run() {
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
             });
             build_windows(app)?;
-            build_tray(app)?;
+            let locale = current_language(&app.state::<Core>());
+            build_tray(app, &locale)?;
             let settings = app.state::<Core>().database.settings().unwrap_or_default();
             apply_tray_visibility(app.handle(), settings.show_menu_bar_item);
 
@@ -522,6 +577,7 @@ pub fn run() {
             set_auto_ping,
             set_tray_summary,
             set_menu_bar_item_visible,
+            set_language,
             open_main_window,
             hide_popover,
         ])

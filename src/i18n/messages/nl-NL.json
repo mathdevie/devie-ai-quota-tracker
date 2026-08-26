@@ -1,0 +1,166 @@
+{
+  "_Meta": {
+    "IsoCode": "nl-NL",
+    "EndonymName": "Nederlands"
+  },
+  "Metadata": {
+    "Description": "Een lokale quotatracker voor AI-abonnementen"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "Annuleren",
+    "Save": "Opslaan",
+    "Close": "Sluiten",
+    "Refresh": "Vernieuwen",
+    "TryAgain": "Opnieuw proberen",
+    "Theme": "Thema"
+  },
+  "Nav": {
+    "Sections": "Secties",
+    "Quota": "Quota",
+    "Providers": "Providers",
+    "Settings": "Instellingen",
+    "BackToProviders": "Terug naar providers"
+  },
+  "Connection": {
+    "ActionsFor": "Acties voor {{name}}",
+    "NoQuotaData": "Geen quotagegevens",
+    "Status": {
+      "Ready": "Gereed",
+      "Stale": "Verouderd",
+      "Login": "Inloggen",
+      "SignInNeeded": "Inloggen vereist",
+      "Error": "Fout"
+    },
+    "Menu": {
+      "Rename": "Hernoemen",
+      "Alerts": "Meldingen",
+      "AutoPing": "Auto-ping",
+      "Refresh": "Vernieuwen",
+      "Enable": "Inschakelen",
+      "Disable": "Uitschakelen",
+      "Remove": "Verwijderen"
+    }
+  },
+  "Quota": {
+    "FilterProvider": "Provider",
+    "FilterSort": "Sorteren",
+    "AllProviders": "Alle providers",
+    "Sort": {
+      "Expiring": "Verloopt eerst",
+      "LeastLeft": "Minste over",
+      "MostLeft": "Meeste over",
+      "Name": "Naam"
+    },
+    "NoMatch": "Geen ingeschakeld account komt overeen met deze filters.",
+    "NoAccounts": "Nog geen accounts. Verbind een provider om de quota te zien.",
+    "OpenProviders": "Providers openen",
+    "RefreshQuotas": "Quota vernieuwen",
+    "Reset": {
+      "Now": "nu",
+      "InDaysHours": "over {{days}}d {{hours}}u",
+      "InHoursMinutes": "over {{hours}}u {{minutes}}m",
+      "InMinutes": "over {{minutes}}m"
+    },
+    "Pin": {
+      "Shown": "{{label}} staat in de menubalk",
+      "Show": "{{label}} in de menubalk tonen",
+      "Title": "In de menubalk tonen"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "Dashboard openen",
+    "NoProviders": "Geen providers"
+  },
+  "Providers": {
+    "Active": "Actief",
+    "Available": "Beschikbaar",
+    "NotSupportedYet": "Nog niet ondersteund",
+    "Connected": "Verbonden {{total}}",
+    "Attention": "Aandacht {{total}}",
+    "AddAccount": "Account toevoegen",
+    "AddProviderAccount": "Een {{name}}-account toevoegen",
+    "NoAccountsYet": "Nog geen {{name}}-accounts.",
+    "SignInWithCli": "Log in met de CLI in een terminal.",
+    "AutoDetected": "Automatisch gevonden",
+    "AutoDetectedTip": "Dit account is automatisch toegevoegd omdat je bent ingelogd via de CLI. Voor volledige functionaliteit is het aan te raden om <link>handmatig in te loggen</link>.",
+    "EnableAccount": "{{name}} inschakelen",
+    "DisableAccount": "{{name}} uitschakelen"
+  },
+  "Login": {
+    "Title": "Een {{name}}-account toevoegen",
+    "OpeningBrowser": "Browser wordt geopend…",
+    "WaitingFor": "Wachten op {{name}}…",
+    "OpenPageAgain": "Pagina opnieuw openen",
+    "PasteCode": "Of plak de code van de pagina",
+    "CodePlaceholder": "code#state",
+    "UseCode": "Code gebruiken",
+    "Connected": "Verbonden",
+    "Hint": {
+      "claude": "Log in bij Claude in de browser. De app ontvangt het resultaat op deze Mac.",
+      "codex": "Log in met je ChatGPT-account in de browser. De app ontvangt het resultaat op deze Mac.",
+      "gemini-cli": "Log in met Google in de browser. De app ontvangt het resultaat op deze Mac.",
+      "copilot": "Voer deze code in op de GitHub-pagina in de browser en keur daarna het verzoek goed."
+    }
+  },
+  "Rename": {
+    "Title": "Account hernoemen",
+    "Label": "Label",
+    "Description": "Laat het veld leeg om weer de account-id te tonen."
+  },
+  "Alerts": {
+    "Title": "Meldingen",
+    "LowQuota": "Lage quota",
+    "LowQuotaDescription": "Waarschuw me als een quota nog 20% over heeft.",
+    "ResetSoon": "Reset binnenkort",
+    "ResetSoonDescription": "Waarschuw me 30 minuten voordat een quota wordt gereset.",
+    "ResetComplete": "Reset voltooid",
+    "ResetCompleteDescription": "Waarschuw me nadat een quota is gereset.",
+    "PermissionRequired": "Sta meldingen toe in macOS-instellingen om quotameldingen te gebruiken."
+  },
+  "AutoPing": {
+    "Title": "Auto-ping",
+    "StartNextSession": "De volgende sessie starten",
+    "SupportedDescription": "Stuur één klein verzoek nadat een sessie is gereset.",
+    "UnsupportedDescription": "Auto-ping vereist een Claude- of Codex-login die in deze app is gemaakt. Andere accounts kunnen het niet gebruiken.",
+    "LastRequest": "Laatste verzoek: {{date}}"
+  },
+  "Settings": {
+    "Theme": "Thema",
+    "ThemeDescription": "Kleuren van de app-vensters",
+    "Language": "Taal",
+    "LanguageDescription": "Taal van de app-vensters",
+    "MenuBarItem": "Menubalkitem",
+    "MenuBarItemDescription": "De quota in de macOS-menubalk tonen",
+    "ShowMenuBarItem": "Het menubalkitem tonen",
+    "Updates": {
+      "Title": "Updates",
+      "RestartToUpdate": "Herstarten om bij te werken",
+      "CheckForUpdates": "Op updates controleren",
+      "UpdateAvailable": "Update beschikbaar",
+      "Status": {
+        "PackagedOnly": "Updates werken alleen in de verpakte app.",
+        "Checking": "Controleren…",
+        "Downloading": "Downloaden {{progress}}%",
+        "Ready": "Versie {{version}} is gereed.",
+        "Installing": "Installeren…",
+        "Failed": "De update is mislukt.",
+        "UpToDate": "Devie Quota {{version}} is up-to-date."
+      }
+    }
+  },
+  "Tray": {
+    "Open": "Devie Quota openen",
+    "RefreshAll": "Alles vernieuwen",
+    "Quit": "Devie Quota afsluiten",
+    "Tooltip": "Devie Quota abonnementsquota"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}}-quota is laag",
+    "LowQuotaBody": "{{account}} heeft nog {{percent}}% over in {{window}}.",
+    "ResetSoonTitle": "{{provider}}-quota wordt binnenkort gereset",
+    "ResetSoonBody": "{{window}} voor {{account}} wordt over {{minutes}} minuten gereset.",
+    "ResetHappenedTitle": "{{provider}}-quota gereset",
+    "ResetHappenedBody": "{{window}} voor {{account}} is weer beschikbaar."
+  }
+}

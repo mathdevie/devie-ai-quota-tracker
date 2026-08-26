@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import { StatusBadge } from "./ConnectionCard";
@@ -16,6 +17,7 @@ export default function PopoverRow({
   pinnedKey?: string;
   onPin: (windowKey: string) => void;
 }) {
+  const { t } = useTranslation();
   const plan = connection.identity?.plan;
   return (
     <article className={styles.row}>
@@ -40,7 +42,7 @@ export default function PopoverRow({
         />
       ) : (
         <p className={styles.empty}>
-          {connection.lastError ?? "No quota data"}
+          {connection.lastError ?? t("Connection.NoQuotaData")}
         </p>
       )}
     </article>

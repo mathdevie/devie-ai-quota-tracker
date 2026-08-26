@@ -2,6 +2,7 @@
 
 import { Check, Copy, ExternalLink, LoaderCircle } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { DashboardState, LoginStart, Provider } from "@/lib/contracts";
 import { cancelLogin, finishLogin, startLogin } from "@/lib/desktop";
 import Button from "@/ui/Button";
@@ -11,17 +12,6 @@ import styles from "./LoginDialog.module.scss";
 import ProviderIcon, { PROVIDER_NAMES } from "./ProviderIcon";
 
 type Phase = "starting" | "waiting" | "done" | "error";
-
-const HINTS: Record<Provider, string> = {
-  claude:
-    "Sign in to Claude in the browser. The app receives the result on this Mac.",
-  codex:
-    "Sign in with your ChatGPT account in the browser. The app receives the result on this Mac.",
-  "gemini-cli":
-    "Sign in with Google in the browser. The app receives the result on this Mac.",
-  copilot:
-    "Enter this code on the GitHub page in the browser, then approve the request.",
-};
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
@@ -38,6 +28,7 @@ export default function LoginDialog({
   onOpenChange: (open: boolean) => void;
   onConnected: (state: DashboardState) => void;
 }) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("starting");
   const [start, setStart] = useState<LoginStart>();
   const [error, setError] = useState<string>();
@@ -126,7 +117,7 @@ export default function LoginDialog({
             <Dialog.Title>
               <span className={styles.title}>
                 <ProviderIcon provider={provider} size={18} />
-                Add a {name} account
+                {t("Login.Title", { name })}
               </span>
             </Dialog.Title>
           </Dialog.Header>
@@ -135,13 +126,13 @@ export default function LoginDialog({
               {phase === "starting" && (
                 <p className={styles.status}>
                   <LoaderCircle className={styles.spinning} size={16} />
-                  Opening the browser…
+                  {t("Login.OpeningBrowser")}
                 </p>
               )}
 
               {phase === "waiting" && start && (
                 <>
-                  <p className={styles.hint}>{HINTS[provider]}</p>
+                  <p className={styles.hint}>{t(`Login.Hint.${provider}`)}</p>
                   {start.userCode && (
                     <button
                       className={styles.userCode}
@@ -154,7 +145,7 @@ export default function LoginDialog({
                   )}
                   <p className={styles.status}>
                     <LoaderCircle className={styles.spinning} size={16} />
-                    Waiting for {name}…
+                    {t("Login.WaitingFor", { name })}
                   </p>
                   <a
                     className={styles.link}
@@ -163,18 +154,16 @@ export default function LoginDialog({
                     target="_blank"
                   >
                     <ExternalLink size={13} />
-                    Open the page again
+                    {t("Login.OpenPageAgain")}
                   </a>
                   {start.acceptsManualCode && (
                     <form className={styles.manual} onSubmit={handleManualCode}>
                       <Field.Root>
-                        <Field.Label>
-                          Or paste the code from the page
-                        </Field.Label>
+                        <Field.Label>{t("Login.PasteCode")}</Field.Label>
                         <Field.Control
                           autoComplete="off"
                           onChange={(event) => setCode(event.target.value)}
-                          placeholder="code#state"
+                          placeholder={t("Login.CodePlaceholder")}
                           spellCheck={false}
                           value={code}
                         />
@@ -185,7 +174,7 @@ export default function LoginDialog({
                         type="submit"
                         variant="secondary"
                       >
-                        Use code
+                        {t("Login.UseCode")}
                       </Button>
                     </form>
                   )}
@@ -195,7 +184,7 @@ export default function LoginDialog({
               {phase === "done" && (
                 <p className={styles.success}>
                   <Check size={16} />
-                  Connected
+                  {t("Login.Connected")}
                 </p>
               )}
 
@@ -210,7 +199,7 @@ export default function LoginDialog({
                   size="sm"
                   variant="naked"
                 >
-                  Close
+                  {t("Common.Close")}
                 </Button>
                 <Button
                   onClick={() => {
@@ -219,7 +208,7 @@ export default function LoginDialog({
                   }}
                   size="sm"
                 >
-                  Try again
+                  {t("Common.TryAgain")}
                 </Button>
               </>
             ) : (
@@ -229,7 +218,7 @@ export default function LoginDialog({
                 size="sm"
                 variant="naked"
               >
-                Cancel
+                {t("Common.Cancel")}
               </Button>
             )}
           </Dialog.Footer>
