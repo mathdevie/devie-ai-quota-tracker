@@ -238,9 +238,25 @@
 }
 
 .kindTip {
-  max-width: 280px;
+  max-width: 300px;
+  padding: $devie__spacing__x1 $devie__spacing__x2;
   font-size: $devie__font-size__small;
-  line-height: 1.4;
+  line-height: 1.45;
+}
+
+.kindLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $devie__color__primary;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: 1px;
+  }
 }
 
 .rowHint {
