@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-08-18
+
+- Update to [ Base UI 1.7.0 ](https://base-ui.com/react/overview/releases/v1-7-0)
+- Change the default font for the documentation site
+
 ## 2026-06-01
 
 - Update to [ Base UI 1.5.0 ](https://base-ui.com/react/overview/releases/v1-5-0)

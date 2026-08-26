@@ -232,7 +232,7 @@ export default Popover;
     .title {
         margin: 0;
         font-size: $devie__font-size__normal;
-        font-weight: 500;
+        font-weight: 600;
         color: $devie__color__text;
     }
 
@@ -320,7 +320,7 @@ A more complex example showing a notifications panel with custom header, list it
   border-radius: 9999px;
   padding: 0 6px;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 18px;
   min-width: 18px;
   text-align: center;
@@ -350,7 +350,7 @@ A more complex example showing a notifications panel with custom header, list it
 
 .richTitle {
   font-size: $devie__font-size__normal;
-  font-weight: 500;
+  font-weight: 600;
   color: $devie__color__text;
   margin: 0;
 }
@@ -390,7 +390,7 @@ A more complex example showing a notifications panel with custom header, list it
   }
 
   &[data-unread="true"] {
-    font-weight: 500;
+    font-weight: 600;
     border-left-color: $devie__color__primary;
   }
 }

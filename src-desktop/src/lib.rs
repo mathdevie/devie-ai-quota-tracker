@@ -442,6 +442,8 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             .build()?;
     #[cfg(target_os = "macos")]
     make_non_activating_panel(&popover);
+    #[cfg(target_os = "macos")]
+    hide_popover_on_outside_click(app.handle().clone(), &popover);
     Ok(())
 }
 
@@ -466,6 +468,59 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
         panel.setHidesOnDeactivate(false);
+    }
+}
+
+/// A non-activating panel does not always resign key focus when the user
+/// clicks elsewhere, so the focus-lost event is not enough. Native mouse
+/// monitors hide the popover on any click outside it: in another app
+/// (global monitor) or in another window of this app (local monitor).
+#[cfg(target_os = "macos")]
+fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow) {
+    use objc2_app_kit::{NSEvent, NSEventMask};
+
+    let Ok(panel_pointer) = popover.ns_window() else {
+        return;
+    };
+    let panel_pointer = panel_pointer as usize;
+    let mask = NSEventMask::LeftMouseDown | NSEventMask::RightMouseDown | NSEventMask::OtherMouseDown;
+
+    let hide = {
+        let app = app.clone();
+        move || {
+            if let Some(window) = app.get_webview_window("popover") {
+                if window.is_visible().unwrap_or(false) {
+                    let _ = window.hide();
+                }
+            }
+        }
+    };
+
+    let global_hide = hide.clone();
+    let global = block2::RcBlock::new(move |_event: std::ptr::NonNull<NSEvent>| {
+        global_hide();
+    });
+    let local = block2::RcBlock::new(move |event: std::ptr::NonNull<NSEvent>| {
+        // SAFETY: AppKit hands the monitor a live event for the duration of the call.
+        let event_window =
+            unsafe { event.as_ref().window(objc2::MainThreadMarker::new_unchecked()) };
+        let inside = event_window
+            .map(|window| objc2::rc::Retained::as_ptr(&window) as usize == panel_pointer)
+            .unwrap_or(false);
+        if !inside {
+            hide();
+        }
+        event.as_ptr()
+    });
+    // The monitors live as long as the app.
+    if let Some(monitor) = NSEvent::addGlobalMonitorForEventsMatchingMask_handler(mask, &global) {
+        std::mem::forget(monitor);
+    }
+    // SAFETY: the block returns the event it received, unchanged.
+    if let Some(monitor) =
+        unsafe { NSEvent::addLocalMonitorForEventsMatchingMask_handler(mask, &local) }
+    {
+        std::mem::forget(monitor);
     }
 }
 

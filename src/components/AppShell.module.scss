@@ -1,12 +1,11 @@
 @use "../ui/_devie.scss" as *;
 
-// The sidebar floats over the window background, so the shell draws the
-// muted background and the content keeps the plain one.
+// The sidebar floats over the same background as the content.
 .shell {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: $devie__color__background-sub;
+  background: $devie__color__background;
 }
 
 .content {
