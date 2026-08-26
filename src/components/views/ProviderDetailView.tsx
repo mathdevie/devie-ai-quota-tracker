@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import type {
   DashboardState,
   Provider,
@@ -8,7 +8,6 @@ import type {
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
-import Popover from "@/ui/Popover";
 import Switch from "@/ui/Switch";
 import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";
 import ProviderIcon from "../ProviderIcon";
@@ -30,45 +29,10 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
   return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
 
-/**
- * Marks an account Devie Quota found in a CLI sign-in on this Mac. The
- * explainer offers the manual sign-in, which replaces the auto-detected one.
- */
-function AutoDetectedTag({ onAuthenticate }: { onAuthenticate: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <Popover.Root>
-      <Popover.Trigger className={styles.kindTag} delay={150} openOnHover>
-        {t("Providers.AutoDetected")}
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Positioner sideOffset={6}>
-          <Popover.Popup className={styles.kindTip}>
-            <Popover.Arrow />
-            <Trans
-              components={{
-                link: (
-                  <button
-                    className={styles.kindLink}
-                    onClick={onAuthenticate}
-                    type="button"
-                  />
-                ),
-              }}
-              i18nKey="Providers.AutoDetectedTip"
-            />
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
-  );
-}
-
 function detailText(connection: ProviderConnection): string | undefined {
   const parts = [
     connection.customLabel ? connection.identity?.displayName : undefined,
     connection.identity?.plan,
-    connection.kind === "local" ? connection.sourceLocator : undefined,
   ].filter((part): part is string => Boolean(part));
   return parts.length > 0 ? parts.join(" · ") : undefined;
 }
@@ -83,8 +47,7 @@ export default function ProviderDetailView({
   provider: Provider;
   state: DashboardState;
   busyId?: string;
-  /** Opens the sign-in; `replaces` is the auto-detected account to disable after it. */
-  onAdd: (replaces?: string) => void;
+  onAdd: () => void;
 } & ConnectionActions) {
   const { t } = useTranslation();
   const connections = state.connections.filter(
@@ -113,14 +76,7 @@ export default function ProviderDetailView({
             <div className={styles.rowMain}>
               <ProviderIcon provider={connection.provider} size={28} />
               <div>
-                <h2>
-                  {accountLabel(connection)}
-                  {connection.kind === "local" && (
-                    <AutoDetectedTag
-                      onAuthenticate={() => onAdd(connection.id)}
-                    />
-                  )}
-                </h2>
+                <h2>{accountLabel(connection)}</h2>
                 {detailText(connection) && <p>{detailText(connection)}</p>}
                 {connection.lastError && connection.status !== "ready" && (
                   <p className={styles.rowError}>{connection.lastError}</p>
@@ -129,12 +85,6 @@ export default function ProviderDetailView({
             </div>
             <div className={styles.rowActions}>
               <ProviderStatus connection={connection} />
-              {connection.kind === "local" &&
-                connection.status === "needs_login" && (
-                  <span className={styles.rowHint}>
-                    {t("Providers.SignInWithCli")}
-                  </span>
-                )}
               <Switch.Root
                 aria-label={t(
                   connection.enabled

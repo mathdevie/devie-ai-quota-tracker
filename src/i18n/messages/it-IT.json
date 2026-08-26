@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Rinomina",
       "Alerts": "Avvisi",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Ottimizzatore quota",
       "Refresh": "Aggiorna",
       "Enable": "Attiva",
       "Disable": "Disattiva",
-      "Remove": "Rimuovi"
+      "Remove": "Rimuovi",
+      "On": "Attivo",
+      "Off": "Disattivo"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Aggiungi account",
     "AddProviderAccount": "Aggiungi un account {{name}}",
     "NoAccountsYet": "Ancora nessun account {{name}}.",
-    "SignInWithCli": "Accedi con la CLI in un terminale.",
-    "AutoDetected": "Rilevato automaticamente",
-    "AutoDetectedTip": "Questo account è stato aggiunto automaticamente perché hai effettuato l'accesso dalla CLI. Per il supporto completo delle funzionalità, è consigliabile <link>autenticarsi manualmente</link>.",
     "EnableAccount": "Attiva {{name}}",
     "DisableAccount": "Disattiva {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Consenti le notifiche nelle Impostazioni di macOS per usare gli avvisi sulle quote."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Avvia la prossima sessione",
-    "SupportedDescription": "Invia una piccola richiesta dopo il reset di una sessione.",
-    "UnsupportedDescription": "L'Auto-ping richiede un accesso Claude o Codex effettuato in questa app. Gli altri account non possono usarlo.",
+    "Title": "Ottimizzatore quota",
+    "StartNextSession": "Avvia ogni sessione in anticipo",
+    "SupportedDescription": "I limiti di sessione si azzerano a orari fissi. Subito dopo ogni azzeramento, Devie Quota invia una richiesta minima così la sessione successiva parte subito. Ottieni più sessioni ogni settimana e non perdi mai quota mentre sei via.",
+    "UnsupportedDescription": "L’ottimizzatore quota funziona solo con gli account Claude e Codex.",
     "LastRequest": "Ultima richiesta: {{date}}"
   },
   "Settings": {

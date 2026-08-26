@@ -1,7 +1,5 @@
 export type Provider = "claude" | "codex" | "gemini-cli" | "copilot";
 export type ConnectionStatus = "ready" | "stale" | "needs_login" | "error";
-/** `oauth`: the app holds tokens it obtained. `local`: a CLI on this Mac owns them. */
-export type ConnectionKind = "oauth" | "local";
 
 export interface QuotaWindow {
   key: string;
@@ -31,7 +29,6 @@ export interface AutoPingState {
 export interface ProviderConnection {
   id: string;
   provider: Provider;
-  kind: ConnectionKind;
   label: string;
   sourceLocator: string;
   enabled: boolean;

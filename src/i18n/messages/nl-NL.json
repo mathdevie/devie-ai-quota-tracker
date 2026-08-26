@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Hernoemen",
       "Alerts": "Meldingen",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Quota-optimalisatie",
       "Refresh": "Vernieuwen",
       "Enable": "Inschakelen",
       "Disable": "Uitschakelen",
-      "Remove": "Verwijderen"
+      "Remove": "Verwijderen",
+      "On": "Aan",
+      "Off": "Uit"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Account toevoegen",
     "AddProviderAccount": "Een {{name}}-account toevoegen",
     "NoAccountsYet": "Nog geen {{name}}-accounts.",
-    "SignInWithCli": "Log in met de CLI in een terminal.",
-    "AutoDetected": "Automatisch gevonden",
-    "AutoDetectedTip": "Dit account is automatisch toegevoegd omdat je bent ingelogd via de CLI. Voor volledige functionaliteit is het aan te raden om <link>handmatig in te loggen</link>.",
     "EnableAccount": "{{name}} inschakelen",
     "DisableAccount": "{{name}} uitschakelen"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Sta meldingen toe in macOS-instellingen om quotameldingen te gebruiken."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "De volgende sessie starten",
-    "SupportedDescription": "Stuur één klein verzoek nadat een sessie is gereset.",
-    "UnsupportedDescription": "Auto-ping vereist een Claude- of Codex-login die in deze app is gemaakt. Andere accounts kunnen het niet gebruiken.",
+    "Title": "Quota-optimalisatie",
+    "StartNextSession": "Elke sessie vroeg starten",
+    "SupportedDescription": "Sessielimieten worden op vaste tijden gereset. Direct na elke reset stuurt Devie Quota één klein verzoek, zodat de volgende sessie meteen begint. Je krijgt meer sessies per week en verliest nooit quota terwijl je weg bent.",
+    "UnsupportedDescription": "Quota-optimalisatie werkt alleen met Claude- en Codex-accounts.",
     "LastRequest": "Laatste verzoek: {{date}}"
   },
   "Settings": {

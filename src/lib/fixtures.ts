@@ -11,7 +11,6 @@ export const previewState: DashboardState = {
     {
       id: "claude-work",
       provider: "claude",
-      kind: "oauth",
       label: "Claude · work@example.com",
       sourceLocator: "oauth/claude/u-1",
       enabled: true,
@@ -49,7 +48,6 @@ export const previewState: DashboardState = {
     {
       id: "claude-personal",
       provider: "claude",
-      kind: "local",
       label: "Claude CLI · Default",
       sourceLocator: "~/.claude",
       enabled: true,
@@ -77,7 +75,6 @@ export const previewState: DashboardState = {
     {
       id: "codex-default",
       provider: "codex",
-      kind: "local",
       label: "Codex CLI · Default",
       sourceLocator: "~/.codex",
       enabled: true,
@@ -105,7 +102,6 @@ export const previewState: DashboardState = {
     {
       id: "gemini-personal",
       provider: "gemini-cli",
-      kind: "oauth",
       label: "Gemini CLI · me@example.com",
       sourceLocator: "oauth/gemini-cli/google-1",
       enabled: true,
@@ -133,7 +129,6 @@ export const previewState: DashboardState = {
     {
       id: "copilot-mathdevie",
       provider: "copilot",
-      kind: "local",
       label: "GitHub CLI · mathdevie",
       sourceLocator: "github.com/mathdevie",
       enabled: true,

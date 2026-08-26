@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Renombrar",
       "Alerts": "Alertas",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Optimizador de cuota",
       "Refresh": "Actualizar",
       "Enable": "Activar",
       "Disable": "Desactivar",
-      "Remove": "Eliminar"
+      "Remove": "Eliminar",
+      "On": "Activado",
+      "Off": "Desactivado"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Agregar cuenta",
     "AddProviderAccount": "Agregar una cuenta de {{name}}",
     "NoAccountsYet": "Aún no hay cuentas de {{name}}.",
-    "SignInWithCli": "Inicia sesión con la CLI en un terminal.",
-    "AutoDetected": "Detectada automáticamente",
-    "AutoDetectedTip": "Esta cuenta se agregó automáticamente porque iniciaste sesión desde la CLI. Para tener todas las funciones, se recomienda <link>autenticarse manualmente</link>.",
     "EnableAccount": "Activar {{name}}",
     "DisableAccount": "Desactivar {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Permite las notificaciones en la Configuración de macOS para usar las alertas de cuota."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Iniciar la próxima sesión",
-    "SupportedDescription": "Enviar una pequeña solicitud tras el reinicio de una sesión.",
-    "UnsupportedDescription": "El Auto-ping necesita un inicio de sesión de Claude o Codex hecho en esta app. Las demás cuentas no pueden usarlo.",
+    "Title": "Optimizador de cuota",
+    "StartNextSession": "Iniciar cada sesión lo antes posible",
+    "SupportedDescription": "Los límites de sesión se reinician a una hora fija. Justo después de cada reinicio, Devie Quota envía una solicitud mínima para que la siguiente sesión empiece de inmediato. Obtienes más sesiones por semana y nunca pierdes cuota mientras no estás.",
+    "UnsupportedDescription": "El optimizador de cuota solo funciona con cuentas de Claude y Codex.",
     "LastRequest": "Última solicitud: {{date}}"
   },
   "Settings": {

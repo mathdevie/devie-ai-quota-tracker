@@ -42,6 +42,69 @@ export interface ConnectionActions {
   onRemove?: (id: string) => void;
 }
 
+/** "On" or "Off" at the end of a menu item. */
+function MenuState({ on }: { on: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <span className={styles.menuState} data-on={on || undefined}>
+      {on ? t("Connection.Menu.On") : t("Connection.Menu.Off")}
+    </span>
+  );
+}
+
+/** True when at least one alert is on. */
+function alertsOn(connection: ProviderConnection): boolean {
+  return Object.values(connection.alerts).some(Boolean);
+}
+
+/**
+ * Alert and Quota Optimizer shortcuts in the card header. An active feature
+ * always shows; an inactive one shows on hover.
+ */
+function FeatureFlags({
+  connection,
+  onAlerts,
+  onAutoPing,
+}: {
+  connection: ProviderConnection;
+  onAlerts?: (connection: ProviderConnection) => void;
+  onAutoPing?: (connection: ProviderConnection) => void;
+}) {
+  const { t } = useTranslation();
+  const alerts = alertsOn(connection);
+  const optimizer = connection.autoPing.enabled;
+  return (
+    <div className={styles.flags}>
+      {onAlerts && (
+        <button
+          aria-label={t("Connection.Menu.Alerts")}
+          aria-pressed={alerts}
+          className={styles.flag}
+          data-active={alerts || undefined}
+          onClick={() => onAlerts(connection)}
+          title={t("Connection.Menu.Alerts")}
+          type="button"
+        >
+          <BellRing size={13} />
+        </button>
+      )}
+      {onAutoPing && (
+        <button
+          aria-label={t("Connection.Menu.AutoPing")}
+          aria-pressed={optimizer}
+          className={styles.flag}
+          data-active={optimizer || undefined}
+          onClick={() => onAutoPing(connection)}
+          title={t("Connection.Menu.AutoPing")}
+          type="button"
+        >
+          <Zap size={13} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** The "three dots" menu with every action for one account. */
 export function ConnectionMenu({
   connection,
@@ -82,12 +145,14 @@ export function ConnectionMenu({
               <Menu.Item onClick={() => onAlerts(connection)}>
                 <BellRing size={14} />
                 {t("Connection.Menu.Alerts")}
+                <MenuState on={alertsOn(connection)} />
               </Menu.Item>
             )}
             {onAutoPing && (
               <Menu.Item onClick={() => onAutoPing(connection)}>
                 <Zap size={14} />
                 {t("Connection.Menu.AutoPing")}
+                <MenuState on={connection.autoPing.enabled} />
               </Menu.Item>
             )}
             {onRefresh && (
@@ -108,7 +173,7 @@ export function ConnectionMenu({
                   : t("Connection.Menu.Enable")}
               </Menu.Item>
             )}
-            {onRemove && connection.kind === "oauth" && (
+            {onRemove && (
               <>
                 <Menu.Separator />
                 <Menu.Item
@@ -153,6 +218,11 @@ export default function ConnectionCard({
         </div>
         <StatusBadge connection={connection} />
         {busy && <RefreshCw className={styles.spinning} size={13} />}
+        <FeatureFlags
+          connection={connection}
+          onAlerts={actions.onAlerts}
+          onAutoPing={actions.onAutoPing}
+        />
         {hasActions && (
           <ConnectionMenu busy={busy} connection={connection} {...actions} />
         )}

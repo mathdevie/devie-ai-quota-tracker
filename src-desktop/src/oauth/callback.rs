@@ -61,9 +61,30 @@ impl CallbackServer {
         self.port
     }
 
-    /// Waits for the redirect. Returns `None` on timeout.
+    /// A flag that stops the server early. Set it from another task to
+    /// abandon a sign-in: `wait` returns `None` and the port becomes free.
+    pub fn stop_handle(&self) -> Arc<AtomicBool> {
+        self.stop.clone()
+    }
+
+    /// Waits for the redirect. Returns `None` on timeout or when stopped.
     pub fn wait(&self, timeout: Duration) -> Option<CallbackParams> {
-        self.receiver.recv_timeout(timeout).ok()
+        let deadline = Instant::now() + timeout;
+        while !self.stop.load(Ordering::Relaxed) {
+            let remaining = deadline.saturating_duration_since(Instant::now());
+            if remaining.is_zero() {
+                return None;
+            }
+            match self
+                .receiver
+                .recv_timeout(remaining.min(Duration::from_millis(100)))
+            {
+                Ok(params) => return Some(params),
+                Err(mpsc::RecvTimeoutError::Timeout) => continue,
+                Err(mpsc::RecvTimeoutError::Disconnected) => return None,
+            }
+        }
+        None
     }
 }
 
@@ -226,6 +247,26 @@ mod tests {
     fn reports_provider_errors() {
         let params = parse_params("error=access_denied&error_description=User+said+no");
         assert_eq!(params.error.as_deref(), Some("User said no"));
+    }
+
+    #[test]
+    fn stopping_frees_the_port_and_ends_the_wait() {
+        let server = CallbackServer::start(0, "/callback").expect("server");
+        let port = server.port();
+        let stop = server.stop_handle();
+        let waiter = thread::spawn(move || server.wait(Duration::from_secs(10)));
+        stop.store(true, Ordering::Relaxed);
+        assert_eq!(waiter.join().expect("join"), None);
+        // The listener thread notices the flag and closes the socket.
+        let mut rebound = None;
+        for _ in 0..50 {
+            rebound = TcpListener::bind(SocketAddrV4::new(Ipv4Addr::LOCALHOST, port)).ok();
+            if rebound.is_some() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(50));
+        }
+        assert!(rebound.is_some(), "port {port} stayed busy");
     }
 
     #[test]

@@ -5,7 +5,7 @@ use serde_json::json;
 
 use crate::{
     db::Database,
-    model::{ConnectionKind, Provider, ProviderConnection, QuotaReading, QuotaWindow},
+    model::{Provider, ProviderConnection, QuotaReading, QuotaWindow},
     oauth,
 };
 
@@ -17,8 +17,7 @@ const RESET_DRIFT_SECONDS: i64 = 30;
 const CLAUDE_CATCH_UP_MINUTES: i64 = 15;
 
 pub fn supported(connection: &ProviderConnection) -> bool {
-    connection.kind == ConnectionKind::Oauth
-        && matches!(connection.provider, Provider::Claude | Provider::Codex)
+    matches!(connection.provider, Provider::Claude | Provider::Codex)
 }
 
 /// Claude only needs a forced quota read near its fixed reset. Codex needs one
@@ -168,8 +167,8 @@ async fn send(
     match connection.provider {
         Provider::Claude => send_claude(client, &credentials.access_token).await,
         Provider::Codex => send_codex(client, connection, &credentials).await,
-        Provider::Gemini => Err("Auto-ping does not support Gemini CLI.".to_string()),
-        Provider::Copilot => Err("Auto-ping does not support Copilot.".to_string()),
+        Provider::Gemini => Err("The Quota Optimizer does not support Gemini CLI.".to_string()),
+        Provider::Copilot => Err("The Quota Optimizer does not support Copilot.".to_string()),
     }
 }
 
@@ -195,7 +194,7 @@ async fn send_claude(client: &reqwest::Client, access_token: &str) -> Result<(),
         }))
         .send()
         .await
-        .map_err(|_| "Claude could not receive the auto-ping request.".to_string())?;
+        .map_err(|_| "Claude could not receive the Quota Optimizer request.".to_string())?;
     finish_response("Claude", response).await
 }
 
@@ -229,7 +228,7 @@ async fn send_codex(
     let response = request
         .send()
         .await
-        .map_err(|_| "Codex could not receive the auto-ping request.".to_string())?;
+        .map_err(|_| "Codex could not receive the Quota Optimizer request.".to_string())?;
     finish_response("Codex", response).await
 }
 
@@ -251,7 +250,6 @@ mod tests {
         ProviderConnection {
             id: "one".into(),
             provider,
-            kind: ConnectionKind::Oauth,
             label: "Account".into(),
             source_locator: "oauth/test".into(),
             enabled: true,

@@ -9,12 +9,9 @@ import Dialog from "@/ui/Dialog";
 import OptionRow from "./OptionRow";
 import styles from "./OptionRow.module.scss";
 
-/** Auto-ping only has small session-start requests for Claude and Codex. */
+/** The Quota Optimizer sends small session-start requests to Claude and Codex only. */
 export function autoPingSupported(connection: ProviderConnection): boolean {
-  return (
-    connection.kind === "oauth" &&
-    (connection.provider === "claude" || connection.provider === "codex")
-  );
+  return connection.provider === "claude" || connection.provider === "codex";
 }
 
 export default function AutoPingDialog({
