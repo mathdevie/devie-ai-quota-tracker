@@ -71,7 +71,7 @@ Built on [Base UI](https://base-ui.com/react/components/field).
 
     .item {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         gap: $devie__spacing__x1;
 
         &[data-disabled] {

@@ -93,7 +93,7 @@ export default Avatar;
         background-color: $devie__color__primary;
         color: $devie__color__primary-label;
         font-size: 40cqi;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
     }
 }

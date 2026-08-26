@@ -61,9 +61,8 @@ export function Toaster() {
 @layer devie {
     .root {
         position: relative;
-        background: $devie__color__background;
+        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background 95%);
         border: 1px solid $devie__color__primary;
-        border-left-width: 4px;
         border-radius: $devie__radius;
         padding: $devie__spacing__x2 $devie__spacing__x4 $devie__spacing__x2 $devie__spacing__x2;
         display: flex;
@@ -74,10 +73,12 @@ export function Toaster() {
         transition: transform 0.3s ease, opacity 0.3s ease;
 
         &[data-type="success"] {
+            background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background 95%);
             border-color: $devie__color__success;
         }
 
         &[data-type="error"] {
+            background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background 95%);
             border-color: $devie__color__danger;
         }
 
@@ -140,11 +141,13 @@ export function Toaster() {
 
     .title {
         font-size: $devie__font-size__normal;
-        font-weight: 500;
+        font-weight: 600;
+        line-height: 1.5;
     }
 
     .description {
         font-size: $devie__font-size__normal;
+        line-height: 1.5;
     }
 
     .action {
@@ -207,7 +210,7 @@ export function Toaster() {
   .contentContainer {
     display: flex;
     flex-direction: column;
-    gap: $devie__spacing__x1;
+    gap: $devie__spacing__x05;
     flex: 1;
     min-width: 0;
   }

@@ -359,7 +359,7 @@ export default Drawer;
 
     .title {
         font-size: $devie__font-size__title3;
-        font-weight: 500;
+        font-weight: 600;
         color: $devie__color__text;
         margin: 0;
     }

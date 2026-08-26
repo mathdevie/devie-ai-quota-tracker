@@ -46,15 +46,17 @@ The component uses a compound pattern with `Callout.Icon` and `Callout.Content` 
 
     .title {
         font-size: $devie__font-size__normal;
-        font-weight: 500;
+        font-weight: 600;
+        line-height: $devie__spacing__x3;
     }
 
     .text {
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
     }
 
     .variantSuccess {
-        background-color: color-mix(in srgb, $devie__color__success 10%, $devie__color__background 90%);
+        background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background 95%);
         border-color: $devie__color__success;
 
         .icon {
@@ -68,7 +70,7 @@ The component uses a compound pattern with `Callout.Icon` and `Callout.Content` 
     }
 
     .variantDanger {
-        background-color: color-mix(in srgb, $devie__color__danger 10%, $devie__color__background 90%);
+        background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background 95%);
         border-color: $devie__color__danger;
 
         .icon {
@@ -82,7 +84,7 @@ The component uses a compound pattern with `Callout.Icon` and `Callout.Content` 
     }
 
     .variantWarning {
-        background-color: color-mix(in srgb, $devie__color__warning 10%, $devie__color__background 90%);
+        background-color: color-mix(in srgb, $devie__color__warning 5%, $devie__color__background 95%);
         border-color: $devie__color__warning;
 
         .icon {
@@ -96,7 +98,7 @@ The component uses a compound pattern with `Callout.Icon` and `Callout.Content` 
     }
 
     .variantPrimary {
-        background-color: color-mix(in srgb, $devie__color__primary 10%, $devie__color__background 90%);
+        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background 95%);
         border-color: $devie__color__primary;
 
         .icon {

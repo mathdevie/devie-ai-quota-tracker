@@ -181,7 +181,7 @@ Built on [Base UI](https://base-ui.com/react/components/autocomplete).
         padding: $devie__spacing__x1;
         font-size: $devie__font-size__small;
         color: $devie__color__text-sub;
-        font-weight: 500;
+        font-weight: 600;
     }
 
     .separator {
