@@ -7,3 +7,10 @@
   user-select: none;
   -webkit-user-drag: none;
 }
+
+// Logos without their own background sit on a white tile in every theme.
+.mark[data-brand="windsurf"],
+.mark[data-brand="openrouter"],
+.mark[data-brand="antigravity"] {
+  background: #ffffff;
+}

@@ -37,6 +37,7 @@ export function BrandIcon({
       alt={alt}
       aria-hidden={alt === "" || undefined}
       className={styles.mark}
+      data-brand={brand}
       decoding="async"
       height={size}
       src={`/providers/${brand}.png`}
