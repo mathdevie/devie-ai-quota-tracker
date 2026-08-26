@@ -215,6 +215,11 @@ export async function openMainWindow(): Promise<void> {
   await call("open_main_window");
 }
 
+export async function hidePopover(): Promise<void> {
+  if (!isDesktop()) return;
+  await call("hide_popover");
+}
+
 /** Tells the other window (main or popover) that the filters changed. */
 export async function broadcastFilters(filters: Filters): Promise<void> {
   if (!isDesktop()) return;

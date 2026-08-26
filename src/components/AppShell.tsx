@@ -27,9 +27,11 @@ import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import ScrollArea from "@/ui/ScrollArea";
 import { Toaster } from "@/ui/Toaster";
+import Tooltip from "@/ui/Tooltip";
 import AlertsDialog from "./AlertsDialog";
 import styles from "./AppShell.module.scss";
 import AutoPingDialog from "./AutoPingDialog";
+import IconTip from "./IconTip";
 import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
 import RenameDialog from "./RenameDialog";
@@ -45,9 +47,9 @@ import SettingsView from "./views/SettingsView";
 type View = "quota" | "providers" | "settings";
 
 const NAV: SidebarItem<View>[] = [
-  { value: "quota", label: "Nav.Quota", icon: Gauge },
-  { value: "providers", label: "Nav.Providers", icon: Plug },
-  { value: "settings", label: "Nav.Settings", icon: Settings },
+  { value: "quota", label: "Nav.Quota", icon: Gauge, tint: "#2f7cf6" },
+  { value: "providers", label: "Nav.Providers", icon: Plug, tint: "#34a853" },
+  { value: "settings", label: "Nav.Settings", icon: Settings, tint: "#8e8e93" },
 ];
 
 function errorMessage(reason: unknown): string {
@@ -57,7 +59,9 @@ function errorMessage(reason: unknown): string {
 export default function AppShell() {
   return (
     <Toast.Provider timeout={6000}>
-      <Shell />
+      <Tooltip.Provider>
+        <Shell />
+      </Tooltip.Provider>
       <Toaster />
     </Toast.Provider>
   );
@@ -200,14 +204,16 @@ function Shell() {
           <TitleBar
             leading={
               onProviderPage && (
-                <Button
-                  aria-label={t("Nav.BackToProviders")}
-                  onClick={() => setProviderPage(undefined)}
-                  size="sm"
-                  variant="icon-naked"
-                >
-                  <ChevronLeft size={16} />
-                </Button>
+                <IconTip label={t("Nav.BackToProviders")}>
+                  <Button
+                    aria-label={t("Nav.BackToProviders")}
+                    onClick={() => setProviderPage(undefined)}
+                    size="sm"
+                    variant="icon-naked"
+                  >
+                    <ChevronLeft size={16} />
+                  </Button>
+                </IconTip>
               )
             }
             title={title}

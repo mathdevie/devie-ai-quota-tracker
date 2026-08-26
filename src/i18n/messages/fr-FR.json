@@ -42,7 +42,8 @@
       "Remove": "Supprimer",
       "On": "Activé",
       "Off": "Désactivé"
-    }
+    },
+    "MoreActions": "Plus d’actions"
   },
   "Quota": {
     "FilterProvider": "Fournisseur",
@@ -78,7 +79,7 @@
     "Active": "Actifs",
     "Available": "Disponibles",
     "NotSupportedYet": "Pas encore pris en charge",
-    "Connected": "Connectés {{total}}",
+    "Connected": "{{total}} connecté(s)",
     "Attention": "Attention {{total}}",
     "AddAccount": "Ajouter un compte",
     "AddProviderAccount": "Ajouter un compte {{name}}",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Optimiseur de quota",
-    "StartNextSession": "Démarrer chaque session au plus tôt",
-    "SupportedDescription": "Les limites de session se réinitialisent à heure fixe. Juste après chaque réinitialisation, Devie Quota envoie une requête minuscule pour démarrer la session suivante aussitôt. Vous obtenez plus de sessions par semaine et ne perdez jamais de quota en votre absence.",
+    "StartNextSession": "Démarrer les sessions automatiquement",
+    "SupportedDescription": "Par défaut, le compte à rebours de réinitialisation ne démarre qu’à la première utilisation. Cette option envoie automatiquement une petite requête pour démarrer le compte à rebours juste après chaque réinitialisation. En pratique, votre prochaine réinitialisation arrive plus tôt.",
     "UnsupportedDescription": "L’optimiseur de quota fonctionne uniquement avec les comptes Claude et Codex.",
     "LastRequest": "Dernière requête : {{date}}"
   },
   "Settings": {
     "Theme": "Thème",
-    "ThemeDescription": "Couleurs des fenêtres de l'app",
     "Language": "Langue",
-    "LanguageDescription": "Langue des fenêtres de l'app",
     "MenuBarItem": "Élément de la barre de menus",
     "MenuBarItemDescription": "Afficher les quotas dans la barre de menus macOS",
     "ShowMenuBarItem": "Afficher l'élément de la barre de menus",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Mise à jour disponible",
       "Status": {
         "PackagedOnly": "Les mises à jour fonctionnent uniquement dans l'app empaquetée.",
-        "Checking": "Recherche…",
         "Downloading": "Téléchargement {{progress}} %",
         "Ready": "La version {{version}} est prête.",
         "Installing": "Installation…",
-        "Failed": "La mise à jour a échoué.",
-        "UpToDate": "Devie Quota {{version}} est à jour."
-      }
+        "Failed": "La mise à jour a échoué."
+      },
+      "Version": "Version : {{version}}",
+      "UpToDateToast": "Vous utilisez la dernière version."
     }
   },
   "Tray": {
