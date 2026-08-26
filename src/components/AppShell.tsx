@@ -75,7 +75,10 @@ function Shell() {
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [settingsBusy, setSettingsBusy] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
+  /** `replaces`: an auto-detected account to disable once the sign-in succeeds. */
+  const [login, setLogin] = useState<{ open: boolean; replaces?: string }>({
+    open: false,
+  });
   const [renaming, setRenaming] = useState<ProviderConnection>();
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
@@ -231,7 +234,7 @@ function Shell() {
             {onProviderPage && (
               <ProviderDetailView
                 busyId={busyId}
-                onAdd={() => setLoginOpen(true)}
+                onAdd={(replaces) => setLogin({ open: true, replaces })}
                 provider={providerPage}
                 state={state}
                 {...actions}
@@ -254,9 +257,17 @@ function Shell() {
 
         {providerPage && (
           <LoginDialog
-            onConnected={setState}
-            onOpenChange={setLoginOpen}
-            open={loginOpen}
+            onConnected={(next) => {
+              setState(next);
+              if (login.replaces) {
+                const id = login.replaces;
+                void run(() => setConnectionEnabled(id, false), withBusyId(id));
+              }
+            }}
+            onOpenChange={(open) =>
+              setLogin((current) => ({ ...current, open }))
+            }
+            open={login.open}
             provider={providerPage}
           />
         )}
