@@ -63,7 +63,21 @@
       "Now": "maintenant",
       "InDaysHours": "dans {{days}}j {{hours}}h",
       "InHoursMinutes": "dans {{hours}}h {{minutes}}min",
-      "InMinutes": "dans {{minutes}}min"
+      "InMinutes": "dans {{minutes}}min",
+      "On": "Réinitialisation le {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Crédits de réinitialisation",
+      "Description": "Un crédit réinitialise d’un coup toutes les fenêtres de quota de ce compte.",
+      "DefaultTitle": "Réinitialisation de limite",
+      "Expires": "Expire le {{date}}",
+      "NoExpiry": "Sans expiration",
+      "Use": "Utiliser",
+      "Available_one": "{{count}} réinitialisation disponible",
+      "Available_other": "{{count}} réinitialisations disponibles",
+      "ConfirmTitle": "Réinitialiser les limites Codex ?",
+      "ConfirmDescription": "Utiliser 1 crédit de réinitialisation pour {{account}}. Toutes les fenêtres de quota sont réinitialisées maintenant. Cette action est irréversible. Crédits restants ensuite : {{remaining}}.",
+      "Confirm": "Réinitialiser"
     },
     "Pin": {
       "Shown": "{{label}} est affiché dans la barre de menus",

@@ -63,7 +63,21 @@
       "Now": "nu",
       "InDaysHours": "om {{days}}d {{hours}}h",
       "InHoursMinutes": "om {{hours}}h {{minutes}}m",
-      "InMinutes": "om {{minutes}}m"
+      "InMinutes": "om {{minutes}}m",
+      "On": "Återställs {{date}}"
+    },
+    "ResetCredits": {
+      "Title": "Återställningskrediter",
+      "Description": "En kredit återställer alla kvotfönster för det här kontot på en gång.",
+      "DefaultTitle": "Återställning av gräns",
+      "Expires": "Går ut {{date}}",
+      "NoExpiry": "Ingen utgång",
+      "Use": "Använd",
+      "Available_one": "{{count}} återställning tillgänglig",
+      "Available_other": "{{count}} återställningar tillgängliga",
+      "ConfirmTitle": "Återställa Codex-gränser?",
+      "ConfirmDescription": "Använd 1 återställningskredit för {{account}}. Alla kvotfönster återställs nu. Detta kan inte ångras. Krediter kvar efteråt: {{remaining}}.",
+      "Confirm": "Återställ gränser"
     },
     "Pin": {
       "Shown": "{{label}} visas i menyraden",

@@ -22,6 +22,7 @@ import {
   setConnectionAlerts,
   setConnectionEnabled,
   setMenuBarItemVisible,
+  spendResetCredit,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
@@ -147,6 +148,8 @@ function Shell() {
       void run(() => setConnectionEnabled(id, enabled), withBusyId(id)),
     onRemove: (id: string) =>
       void run(() => removeConnection(id), withBusyId(id)),
+    onUseReset: (id: string, creditId: string) =>
+      run(() => spendResetCredit(id, creditId), withBusyId(id)),
   };
 
   async function handleAlertsSubmit(

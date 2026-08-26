@@ -103,6 +103,23 @@ pub struct ProviderConnection {
     pub alerts: ConnectionAlerts,
     pub auto_ping: AutoPingState,
     pub windows: Vec<QuotaWindow>,
+    /// Codex only: banked rate-limit reset credits the user can spend.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub reset_credits: Vec<ResetCredit>,
+}
+
+/// One Codex rate-limit reset credit. Spending one resets every quota window
+/// of the account at once.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ResetCredit {
+    pub id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub granted_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub expires_at: Option<String>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
@@ -181,6 +198,8 @@ pub struct QuotaReading {
     pub source: String,
     pub identity: Option<RemoteIdentity>,
     pub windows: Vec<QuotaWindow>,
+    /// Codex only. `None` keeps the stored credits; `Some` replaces them.
+    pub reset_credits: Option<Vec<ResetCredit>>,
 }
 
 #[cfg(test)]
