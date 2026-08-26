@@ -25,6 +25,7 @@ import {
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
+import ScrollArea from "@/ui/ScrollArea";
 import { Toaster } from "@/ui/Toaster";
 import AlertsDialog from "./AlertsDialog";
 import styles from "./AppShell.module.scss";
@@ -71,10 +72,7 @@ function Shell() {
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [settingsBusy, setSettingsBusy] = useState(false);
-  /** `replaces`: an auto-detected account to disable once the sign-in succeeds. */
-  const [login, setLogin] = useState<{ open: boolean; replaces?: string }>({
-    open: false,
-  });
+  const [login, setLogin] = useState({ open: false });
   const [renaming, setRenaming] = useState<ProviderConnection>();
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
@@ -215,53 +213,52 @@ function Shell() {
             title={title}
           />
 
-          <main className={styles.main}>
-            {view === "quota" && (
-              <QuotaView
-                busyId={busyId}
-                onOpenProviders={() => changeView("providers")}
-                onRefreshAll={() => void handleRefresh()}
-                refreshing={refreshing}
-                state={state}
-                {...actions}
-              />
-            )}
-            {view === "providers" && !onProviderPage && (
-              <ProvidersView onOpen={setProviderPage} state={state} />
-            )}
-            {onProviderPage && (
-              <ProviderDetailView
-                busyId={busyId}
-                onAdd={(replaces) => setLogin({ open: true, replaces })}
-                provider={providerPage}
-                state={state}
-                {...actions}
-              />
-            )}
-            {view === "settings" && (
-              <SettingsView
-                busy={settingsBusy}
-                onMenuBarItemChange={(visible) =>
-                  void run(
-                    () => setMenuBarItemVisible(visible),
-                    setSettingsBusy,
-                  )
-                }
-                state={state}
-              />
-            )}
-          </main>
+          <ScrollArea.Root className={styles.main} render={<main />}>
+            <ScrollArea.Viewport className={styles.viewport}>
+              {view === "quota" && (
+                <QuotaView
+                  busyId={busyId}
+                  onOpenProviders={() => changeView("providers")}
+                  onRefreshAll={() => void handleRefresh()}
+                  refreshing={refreshing}
+                  state={state}
+                  {...actions}
+                />
+              )}
+              {view === "providers" && !onProviderPage && (
+                <ProvidersView onOpen={setProviderPage} state={state} />
+              )}
+              {onProviderPage && (
+                <ProviderDetailView
+                  busyId={busyId}
+                  onAdd={() => setLogin({ open: true })}
+                  provider={providerPage}
+                  state={state}
+                  {...actions}
+                />
+              )}
+              {view === "settings" && (
+                <SettingsView
+                  busy={settingsBusy}
+                  onMenuBarItemChange={(visible) =>
+                    void run(
+                      () => setMenuBarItemVisible(visible),
+                      setSettingsBusy,
+                    )
+                  }
+                  state={state}
+                />
+              )}
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar>
+              <ScrollArea.Thumb />
+            </ScrollArea.Scrollbar>
+          </ScrollArea.Root>
         </div>
 
         {providerPage && (
           <LoginDialog
-            onConnected={(next) => {
-              setState(next);
-              if (login.replaces) {
-                const id = login.replaces;
-                void run(() => setConnectionEnabled(id, false), withBusyId(id));
-              }
-            }}
+            onConnected={setState}
             onOpenChange={(open) =>
               setLogin((current) => ({ ...current, open }))
             }

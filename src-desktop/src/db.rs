@@ -4,9 +4,8 @@ use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
-    AppSettings, AutoPingState, ConnectionAlerts, ConnectionKind, ConnectionStatus, DashboardState,
-    DiscoveredConnection, Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity,
-    TraySummary,
+    AppSettings, AutoPingState, ConnectionAlerts, ConnectionStatus, DashboardState, NewConnection,
+    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity, TraySummary,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
@@ -89,8 +88,12 @@ impl Database {
             &connection,
             "provider_connections",
             "kind",
-            "TEXT NOT NULL DEFAULT 'local'",
+            "TEXT NOT NULL DEFAULT 'oauth'",
         )?;
+        // Auto-detected CLI profiles are gone; only app sign-ins remain.
+        connection
+            .execute("DELETE FROM provider_connections WHERE kind = 'local'", [])
+            .map_err(|error| error.to_string())?;
         Self::add_column_if_missing(&connection, "provider_connections", "custom_label", "TEXT")?;
         Self::add_column_if_missing(
             &connection,
@@ -248,34 +251,6 @@ impl Database {
         Ok(())
     }
 
-    /// Removes local connections that discovery no longer reports, such as a
-    /// deleted CLI folder or a GitHub account that signed out.
-    pub fn prune_missing_local(
-        &self,
-        discovered: &[DiscoveredConnection],
-    ) -> Result<Vec<String>, String> {
-        let connection = self.connection()?;
-        let mut statement = connection
-            .prepare("SELECT id FROM provider_connections WHERE kind = 'local'")
-            .map_err(|error| error.to_string())?;
-        let existing = statement
-            .query_map([], |row| row.get::<_, String>(0))
-            .map_err(|error| error.to_string())?
-            .flatten()
-            .collect::<Vec<_>>();
-        let mut removed = Vec::new();
-        for id in existing {
-            if discovered.iter().any(|item| item.id == id) {
-                continue;
-            }
-            connection
-                .execute("DELETE FROM provider_connections WHERE id = ?1", [&id])
-                .map_err(|error| error.to_string())?;
-            removed.push(id);
-        }
-        Ok(removed)
-    }
-
     pub fn delete_connection(&self, id: &str) -> Result<(), String> {
         let changed = self
             .connection()?
@@ -287,24 +262,23 @@ impl Database {
         Ok(())
     }
 
-    pub fn upsert_discovered(&self, discovered: &[DiscoveredConnection]) -> Result<(), String> {
+    pub fn upsert_connections(&self, connections: &[NewConnection]) -> Result<(), String> {
         let mut connection = self.connection()?;
         let transaction = connection
             .transaction()
             .map_err(|error| error.to_string())?;
         let now = Utc::now().to_rfc3339();
 
-        for item in discovered {
+        for item in connections {
             transaction
                 .execute(
                     "INSERT INTO provider_connections (
                        id, provider, label, source_locator,
                        identity_user_id, identity_display_name, identity_plan, updated_at, kind
-                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+                     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'oauth')
                      ON CONFLICT(id) DO UPDATE SET
                        source_locator = excluded.source_locator,
                        label = excluded.label,
-                       kind = excluded.kind,
                        identity_user_id = COALESCE(excluded.identity_user_id, provider_connections.identity_user_id),
                        identity_display_name = COALESCE(excluded.identity_display_name, provider_connections.identity_display_name),
                        identity_plan = COALESCE(excluded.identity_plan, provider_connections.identity_plan),
@@ -318,7 +292,6 @@ impl Database {
                         item.identity.as_ref().and_then(|value| value.display_name.as_deref()),
                         item.identity.as_ref().and_then(|value| value.plan.as_deref()),
                         now,
-                        item.kind.as_str(),
                     ],
                 )
                 .map_err(|error| error.to_string())?;
@@ -333,7 +306,7 @@ impl Database {
             .prepare(
                 "SELECT id, provider, label, source_locator, enabled, status, source,
                         last_updated_at, last_error,
-                        identity_user_id, identity_display_name, identity_plan, kind,
+                        identity_user_id, identity_display_name, identity_plan,
                         custom_label, alert_low_quota, alert_reset_soon,
                         alert_reset_happened, auto_ping_enabled,
                         last_auto_ping_reset_key, last_auto_ping_at,
@@ -370,7 +343,6 @@ impl Database {
                 Ok(ProviderConnection {
                     id: row.get(0)?,
                     provider,
-                    kind: ConnectionKind::from_db(&row.get::<_, String>(12)?),
                     label: row.get(2)?,
                     source_locator: row.get(3)?,
                     enabled: row.get::<_, i64>(4)? != 0,
@@ -378,20 +350,20 @@ impl Database {
                     source: row.get(6)?,
                     last_updated_at: row.get(7)?,
                     last_error: row.get(8)?,
-                    custom_label: row.get(13)?,
+                    custom_label: row.get(12)?,
                     identity,
                     alerts: ConnectionAlerts {
-                        low_quota: row.get::<_, i64>(14)? != 0,
-                        reset_soon: row.get::<_, i64>(15)? != 0,
-                        reset_happened: row.get::<_, i64>(16)? != 0,
+                        low_quota: row.get::<_, i64>(13)? != 0,
+                        reset_soon: row.get::<_, i64>(14)? != 0,
+                        reset_happened: row.get::<_, i64>(15)? != 0,
                     },
                     auto_ping: AutoPingState {
-                        enabled: row.get::<_, i64>(17)? != 0,
-                        last_reset_key: row.get(18)?,
-                        last_ping_at: row.get(19)?,
-                        last_error: row.get(20)?,
-                        observed_reset_at: row.get(21)?,
-                        last_attempt_at: row.get(22)?,
+                        enabled: row.get::<_, i64>(16)? != 0,
+                        last_reset_key: row.get(17)?,
+                        last_ping_at: row.get(18)?,
+                        last_error: row.get(19)?,
+                        observed_reset_at: row.get(20)?,
+                        last_attempt_at: row.get(21)?,
                     },
                     windows: Vec::new(),
                 })
@@ -669,25 +641,23 @@ mod tests {
     fn persists_separate_connections_and_history() {
         let directory = tempfile::tempdir().expect("temporary directory");
         let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
-        let discovered = vec![
-            DiscoveredConnection {
+        let connections = vec![
+            NewConnection {
                 id: "claude-one".into(),
                 provider: Provider::Claude,
-                kind: ConnectionKind::Local,
                 label: "Claude · One".into(),
                 source_locator: "/tmp/.claude-one".into(),
                 identity: None,
             },
-            DiscoveredConnection {
+            NewConnection {
                 id: "claude-two".into(),
                 provider: Provider::Claude,
-                kind: ConnectionKind::Oauth,
                 label: "Claude · Two".into(),
                 source_locator: "/tmp/.claude-two".into(),
                 identity: None,
             },
         ];
-        database.upsert_discovered(&discovered).expect("discover");
+        database.upsert_connections(&connections).expect("upsert");
 
         for used in [12.0, 28.0] {
             database
@@ -717,13 +687,10 @@ mod tests {
             .expect("history count");
         assert_eq!(count, 2);
 
-        // Pruning removes local connections that discovery no longer reports
-        // and keeps OAuth connections.
-        let removed = database.prune_missing_local(&[]).expect("prune");
-        assert_eq!(removed, vec!["claude-one".to_string()]);
+        database.delete_connection("claude-one").expect("delete");
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections.len(), 1);
-        assert_eq!(state.connections[0].kind, ConnectionKind::Oauth);
+        assert_eq!(state.connections[0].id, "claude-two");
     }
 
     #[test]
@@ -731,15 +698,14 @@ mod tests {
         let directory = tempfile::tempdir().expect("temporary directory");
         let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
         database
-            .upsert_discovered(&[DiscoveredConnection {
+            .upsert_connections(&[NewConnection {
                 id: "claude-one".into(),
                 provider: Provider::Claude,
-                kind: ConnectionKind::Local,
                 label: "Claude · One".into(),
                 source_locator: "/tmp/.claude-one".into(),
                 identity: None,
             }])
-            .expect("discover");
+            .expect("upsert");
 
         database
             .set_custom_label("claude-one", Some("  Work  "))

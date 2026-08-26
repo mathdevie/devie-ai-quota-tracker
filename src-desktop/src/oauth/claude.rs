@@ -19,7 +19,7 @@ use crate::{
     credentials::Credentials,
     model::{QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{describe_http_failure, LoginOutcome, Pkce, USER_AGENT},
-    providers::{number, reset_time},
+    parse::{number, reset_time},
 };
 
 pub const CLIENT_ID: &str = "9d1c250a-e61b-44d9-88ed-5944d1962f5e";

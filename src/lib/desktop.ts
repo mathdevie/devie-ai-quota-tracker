@@ -58,14 +58,6 @@ export async function refreshConnection(
   return call("refresh_connection", { connectionId });
 }
 
-export async function discoverConnections(): Promise<DashboardState> {
-  if (!isDesktop()) {
-    await delay(350);
-    return previewState;
-  }
-  return call("discover_connections");
-}
-
 export async function startLogin(provider: Provider): Promise<LoginStart> {
   if (!isDesktop()) {
     await delay(300);

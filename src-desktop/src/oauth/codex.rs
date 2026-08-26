@@ -13,7 +13,7 @@ use crate::{
         claude::{encode_query, title_case},
         decode_jwt_claims, describe_http_failure, LoginOutcome, Pkce, USER_AGENT,
     },
-    providers::{number, reset_time},
+    parse::{number, reset_time},
 };
 
 pub const CLIENT_ID: &str = "app_EMoamEEZ73f0CkXaXp7hrann";

@@ -6,13 +6,13 @@
 use std::time::Duration as StdDuration;
 
 use chrono::{Duration, Utc};
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, RemoteIdentity},
+    model::{QuotaReading, QuotaWindow, RemoteIdentity},
     oauth::{describe_http_failure, LoginOutcome, USER_AGENT},
-    providers::copilot::parse_payload,
+    parse::{number, reset_time},
 };
 
 pub const CLIENT_ID: &str = "Iv1.b507a08c87ecfe98";
@@ -205,4 +205,125 @@ pub async fn usage(
     let mut reading = parse_payload(&json, login)?;
     reading.source = "GitHub Copilot API".to_string();
     Ok(reading)
+}
+
+pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, String> {
+    let object = payload
+        .as_object()
+        .ok_or_else(|| "GitHub Copilot returned an invalid quota object.".to_string())?;
+    let snapshots = object
+        .get("quota_snapshots")
+        .and_then(Value::as_object)
+        .ok_or_else(|| "GitHub Copilot returned no quota snapshots.".to_string())?;
+    let reset = reset_time(object.get("quota_reset_date"));
+    let mut windows = Vec::new();
+    add_snapshot(
+        snapshots,
+        "premium_interactions",
+        "Premium",
+        reset.clone(),
+        &mut windows,
+    );
+    add_snapshot(snapshots, "chat", "Chat", reset, &mut windows);
+    if windows.is_empty() {
+        return Err("GitHub Copilot returned no usable subscription quota.".to_string());
+    }
+    let plan = object
+        .get("copilot_plan")
+        .and_then(Value::as_str)
+        .map(title_case);
+    Ok(QuotaReading {
+        source: "GitHub CLI + Copilot quota".to_string(),
+        identity: Some(RemoteIdentity {
+            provider_user_id: Some(login.to_string()),
+            display_name: Some(login.to_string()),
+            plan,
+        }),
+        windows,
+    })
+}
+
+fn add_snapshot(
+    snapshots: &Map<String, Value>,
+    key: &str,
+    label: &str,
+    resets_at: Option<String>,
+    windows: &mut Vec<QuotaWindow>,
+) {
+    let Some(snapshot) = snapshots.get(key).and_then(Value::as_object) else {
+        return;
+    };
+    let unlimited = snapshot
+        .get("unlimited")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let entitlement = number(snapshot.get("entitlement"));
+    if !unlimited && entitlement.is_some_and(|value| value <= 0.0) {
+        return;
+    }
+    let percent_remaining = number(snapshot.get("percent_remaining")).or_else(|| {
+        let total = entitlement?;
+        let remaining = number(
+            snapshot
+                .get("remaining")
+                .or_else(|| snapshot.get("quota_remaining")),
+        )?;
+        (total > 0.0).then_some(remaining / total * 100.0)
+    });
+    let used = if unlimited {
+        0.0
+    } else {
+        let Some(remaining) = percent_remaining else {
+            return;
+        };
+        (100.0 - remaining).clamp(0.0, 100.0)
+    };
+    windows.push(QuotaWindow {
+        key: key.to_string(),
+        label: label.to_string(),
+        used_percent: used,
+        resets_at,
+    });
+}
+
+fn title_case(value: &str) -> String {
+    value
+        .split(['-', '_'])
+        .map(|part| {
+            let mut chars = part.chars();
+            chars
+                .next()
+                .map(|first| first.to_uppercase().collect::<String>() + chars.as_str())
+                .unwrap_or_default()
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_premium_interaction_quota() {
+        let payload: Value = serde_json::from_str(
+            r#"{"copilot_plan":"individual","quota_reset_date":"2026-09-01T00:00:00Z","quota_snapshots":{"premium_interactions":{"entitlement":300,"remaining":225,"percent_remaining":75,"quota_id":"premium_interactions"}}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_payload(&payload, "octocat").expect("reading");
+        assert_eq!(reading.windows[0].used_percent, 25.0);
+        assert_eq!(
+            reading.identity.and_then(|value| value.plan),
+            Some("Individual".into())
+        );
+    }
+
+    #[test]
+    fn ignores_zero_entitlement_placeholders() {
+        let payload: Value = serde_json::from_str(
+            r#"{"quota_snapshots":{"premium_interactions":{"entitlement":0,"remaining":0,"percent_remaining":100}}}"#,
+        )
+        .expect("fixture");
+        assert!(parse_payload(&payload, "octocat").is_err());
+    }
 }

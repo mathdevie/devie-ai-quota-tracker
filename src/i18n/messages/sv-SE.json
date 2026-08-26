@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Byt namn",
       "Alerts": "Aviseringar",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Kvotoptimering",
       "Refresh": "Uppdatera",
       "Enable": "Aktivera",
       "Disable": "Inaktivera",
-      "Remove": "Ta bort"
+      "Remove": "Ta bort",
+      "On": "På",
+      "Off": "Av"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Lägg till konto",
     "AddProviderAccount": "Lägg till ett {{name}}-konto",
     "NoAccountsYet": "Inga {{name}}-konton ännu.",
-    "SignInWithCli": "Logga in med CLI:n i en terminal.",
-    "AutoDetected": "Upptäckt automatiskt",
-    "AutoDetectedTip": "Det här kontot lades till automatiskt eftersom du är inloggad via CLI:n. För fullt stöd rekommenderas att du <link>loggar in manuellt</link>.",
     "EnableAccount": "Aktivera {{name}}",
     "DisableAccount": "Inaktivera {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Tillåt notiser i macOS-inställningarna för att använda kvotaviseringar."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Starta nästa session",
-    "SupportedDescription": "Skicka en liten förfrågan efter att en session har återställts.",
-    "UnsupportedDescription": "Auto-ping kräver en Claude- eller Codex-inloggning gjord i den här appen. Andra konton kan inte använda det.",
+    "Title": "Kvotoptimering",
+    "StartNextSession": "Starta varje session tidigt",
+    "SupportedDescription": "Sessionsgränser återställs vid fasta tider. Direkt efter varje återställning skickar Devie Quota en liten förfrågan så att nästa session börjar direkt. Du får fler sessioner per vecka och förlorar aldrig kvot medan du är borta.",
+    "UnsupportedDescription": "Kvotoptimering fungerar bara med Claude- och Codex-konton.",
     "LastRequest": "Senaste förfrågan: {{date}}"
   },
   "Settings": {

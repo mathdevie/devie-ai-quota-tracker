@@ -35,11 +35,13 @@
     "Menu": {
       "Rename": "Nimeä uudelleen",
       "Alerts": "Hälytykset",
-      "AutoPing": "Auto-ping",
+      "AutoPing": "Kiintiön optimointi",
       "Refresh": "Päivitä",
       "Enable": "Ota käyttöön",
       "Disable": "Poista käytöstä",
-      "Remove": "Poista"
+      "Remove": "Poista",
+      "On": "Päällä",
+      "Off": "Pois"
     }
   },
   "Quota": {
@@ -81,9 +83,6 @@
     "AddAccount": "Lisää tili",
     "AddProviderAccount": "Lisää {{name}}-tili",
     "NoAccountsYet": "Ei vielä {{name}}-tilejä.",
-    "SignInWithCli": "Kirjaudu CLI:llä päätteessä.",
-    "AutoDetected": "Tunnistettu automaattisesti",
-    "AutoDetectedTip": "Tämä tili lisättiin automaattisesti, koska olet kirjautunut CLI:n kautta. Kaikkien ominaisuuksien käyttöä varten suosittelemme <link>manuaalista kirjautumista</link>.",
     "EnableAccount": "Ota käyttöön {{name}}",
     "DisableAccount": "Poista käytöstä {{name}}"
   },
@@ -119,10 +118,10 @@
     "PermissionRequired": "Salli ilmoitukset macOS:n asetuksissa käyttääksesi kiintiöhälytyksiä."
   },
   "AutoPing": {
-    "Title": "Auto-ping",
-    "StartNextSession": "Aloita seuraava istunto",
-    "SupportedDescription": "Lähetä yksi pieni pyyntö istunnon nollauksen jälkeen.",
-    "UnsupportedDescription": "Auto-ping vaatii tässä sovelluksessa tehdyn Claude- tai Codex-kirjautumisen. Muut tilit eivät voi käyttää sitä.",
+    "Title": "Kiintiön optimointi",
+    "StartNextSession": "Aloita jokainen istunto ajoissa",
+    "SupportedDescription": "Istuntorajat nollautuvat kiinteinä aikoina. Heti jokaisen nollauksen jälkeen Devie Quota lähettää yhden pienen pyynnön, jotta seuraava istunto alkaa heti. Saat enemmän istuntoja viikossa etkä koskaan menetä kiintiötä poissa ollessasi.",
+    "UnsupportedDescription": "Kiintiön optimointi toimii vain Claude- ja Codex-tileillä.",
     "LastRequest": "Viimeisin pyyntö: {{date}}"
   },
   "Settings": {
