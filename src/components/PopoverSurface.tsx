@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState, TraySummary } from "@/lib/contracts";
 import {
+  hidePopover,
   listenFilters,
   openMainWindow,
   resizePopover,
@@ -18,6 +19,8 @@ import {
 } from "@/lib/filters";
 import Button from "@/ui/Button";
 import ScrollArea from "@/ui/ScrollArea";
+import Tooltip from "@/ui/Tooltip";
+import IconTip from "./IconTip";
 import PopoverRow from "./PopoverRow";
 import styles from "./PopoverSurface.module.scss";
 
@@ -58,6 +61,13 @@ export default function PopoverSurface({
     };
   }, []);
 
+  // A click outside the popover closes it, like a native menu bar popover.
+  useEffect(() => {
+    const onBlur = () => void hidePopover();
+    window.addEventListener("blur", onBlur);
+    return () => window.removeEventListener("blur", onBlur);
+  }, []);
+
   // The window follows the content height.
   const headerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -92,57 +102,68 @@ export default function PopoverSurface({
     }
   }
 
-  return (
-    <main className={styles.popover}>
-      <header className={styles.header} ref={headerRef}>
-        <Button
-          aria-label={t("Popover.OpenDashboard")}
-          onClick={() => void openMainWindow()}
-          size="sm"
-          variant="icon-naked"
-        >
-          <Settings size={14} />
-        </Button>
-        <Button
-          aria-label={t("Quota.RefreshQuotas")}
-          disabled={refreshing}
-          onClick={onRefresh}
-          size="sm"
-          variant="icon-naked"
-        >
-          <RefreshCw
-            className={refreshing ? styles.spinning : undefined}
-            size={14}
-          />
-        </Button>
-      </header>
+  async function openDashboard() {
+    await hidePopover();
+    await openMainWindow();
+  }
 
-      <ScrollArea.Root className={styles.list}>
-        <ScrollArea.Viewport className={styles.viewport}>
-          <div ref={contentRef}>
-            {connections.map((connection) => (
-              <PopoverRow
-                connection={connection}
-                key={connection.id}
-                onPin={(windowKey) =>
-                  void pin({ connectionId: connection.id, windowKey })
-                }
-                pinnedKey={
-                  pinned?.connectionId === connection.id
-                    ? pinned.windowKey
-                    : undefined
-                }
+  return (
+    <Tooltip.Provider>
+      <main className={styles.popover}>
+        <header className={styles.header} ref={headerRef}>
+          <IconTip label={t("Popover.OpenDashboard")}>
+            <Button
+              aria-label={t("Popover.OpenDashboard")}
+              onClick={() => void openDashboard()}
+              size="sm"
+              variant="icon-naked"
+            >
+              <Settings size={14} />
+            </Button>
+          </IconTip>
+          <IconTip label={t("Quota.RefreshQuotas")}>
+            <Button
+              aria-label={t("Quota.RefreshQuotas")}
+              disabled={refreshing}
+              onClick={onRefresh}
+              size="sm"
+              variant="icon-naked"
+            >
+              <RefreshCw
+                className={refreshing ? styles.spinning : undefined}
+                size={14}
               />
-            ))}
-            {connections.length === 0 && (
-              <p className={styles.empty}>{t("Popover.NoProviders")}</p>
-            )}
-          </div>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar>
-          <ScrollArea.Thumb />
-        </ScrollArea.Scrollbar>
-      </ScrollArea.Root>
-    </main>
+            </Button>
+          </IconTip>
+        </header>
+
+        <ScrollArea.Root className={styles.list}>
+          <ScrollArea.Viewport className={styles.viewport}>
+            <div ref={contentRef}>
+              {connections.map((connection) => (
+                <PopoverRow
+                  connection={connection}
+                  key={connection.id}
+                  onPin={(windowKey) =>
+                    void pin({ connectionId: connection.id, windowKey })
+                  }
+                  pinnedKey={
+                    pinned?.connectionId === connection.id
+                      ? pinned.windowKey
+                      : undefined
+                  }
+                />
+              ))}
+              {connections.length === 0 && (
+                <p className={styles.empty}>{t("Popover.NoProviders")}</p>
+              )}
+            </div>
+          </ScrollArea.Viewport>
+          <ScrollArea.Scrollbar>
+            <ScrollArea.Thumb />
+          </ScrollArea.Scrollbar>
+        </ScrollArea.Root>
+      </main>
+    </Tooltip.Provider>
   );
 }

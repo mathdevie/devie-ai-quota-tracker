@@ -42,7 +42,8 @@
       "Remove": "Fjern",
       "On": "Til",
       "Off": "Fra"
-    }
+    },
+    "MoreActions": "Flere handlinger"
   },
   "Quota": {
     "FilterProvider": "Udbyder",
@@ -78,7 +79,7 @@
     "Active": "Aktive",
     "Available": "Tilgængelige",
     "NotSupportedYet": "Understøttes ikke endnu",
-    "Connected": "Forbundet {{total}}",
+    "Connected": "{{total}} forbundet",
     "Attention": "Bemærk {{total}}",
     "AddAccount": "Tilføj konto",
     "AddProviderAccount": "Tilføj en {{name}}-konto",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Kvoteoptimering",
-    "StartNextSession": "Start hver session tidligt",
-    "SupportedDescription": "Sessionsgrænser nulstilles på faste tidspunkter. Lige efter hver nulstilling sender Devie Quota én lille forespørgsel, så den næste session starter med det samme. Du får flere sessioner om ugen og mister aldrig kvote, mens du er væk.",
+    "StartNextSession": "Start sessioner automatisk",
+    "SupportedDescription": "Som standard begynder nulstillingstimeren først at tælle ned ved første brug. Denne indstilling sender automatisk en lille anmodning for at starte timeren lige efter hver nulstilling. I praksis kommer din næste nulstilling tidligere.",
     "UnsupportedDescription": "Kvoteoptimering virker kun med Claude- og Codex-konti.",
     "LastRequest": "Seneste forespørgsel: {{date}}"
   },
   "Settings": {
     "Theme": "Tema",
-    "ThemeDescription": "Farver i appens vinduer",
     "Language": "Sprog",
-    "LanguageDescription": "Sprog i appens vinduer",
     "MenuBarItem": "Menulinjeelement",
     "MenuBarItemDescription": "Vis kvoterne i macOS-menulinjen",
     "ShowMenuBarItem": "Vis menulinjeelementet",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Opdatering tilgængelig",
       "Status": {
         "PackagedOnly": "Opdateringer virker kun i den pakkede app.",
-        "Checking": "Søger…",
         "Downloading": "Downloader {{progress}} %",
         "Ready": "Version {{version}} er klar.",
         "Installing": "Installerer…",
-        "Failed": "Opdateringen mislykkedes.",
-        "UpToDate": "Devie Quota {{version}} er opdateret."
-      }
+        "Failed": "Opdateringen mislykkedes."
+      },
+      "Version": "Version: {{version}}",
+      "UpToDateToast": "Du har den nyeste version."
     }
   },
   "Tray": {

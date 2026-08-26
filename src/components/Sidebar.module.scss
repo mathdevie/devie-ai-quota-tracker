@@ -1,19 +1,24 @@
 @use "../ui/_devie.scss" as *;
 
+// A floating, rounded panel, like the sidebar of macOS System Settings.
+$sidebar-inset: 8px;
+
 .sidebar {
   display: flex;
-  width: 220px;
-  flex: 0 0 220px;
+  width: 200px;
+  flex: 0 0 200px;
   flex-direction: column;
-  padding: 0 $devie__spacing__x2 $devie__spacing__x2;
-  border-right: 1px solid $devie__color__line;
-  background: $devie__color__background-sub;
+  margin: $sidebar-inset 0 $sidebar-inset $sidebar-inset;
+  padding: 0 $devie__spacing__x1 $devie__spacing__x1;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius-strong;
+  background: color-mix(in srgb, $devie__color__background 55%, $devie__color__background-sub);
   user-select: none;
 }
 
 // Space for the native macOS traffic lights, plus some air above the menu.
 .handle {
-  height: 76px;
+  height: 64px;
   flex-shrink: 0;
 }
 
@@ -25,7 +30,7 @@
 .item {
   display: flex;
   width: 100%;
-  min-height: 32px;
+  min-height: 30px;
   align-items: center;
   gap: $devie__spacing__x1;
   padding: 0 $devie__spacing__x1;
@@ -37,27 +42,39 @@
   text-align: left;
   cursor: default;
 
-  svg {
-    flex-shrink: 0;
-    color: $devie__color__text-sub;
-  }
-
   &:hover {
-    background: color-mix(in srgb, $devie__color__text 7%, transparent);
+    background: color-mix(in srgb, $devie__color__text 6%, transparent);
   }
 
   &[aria-current="page"] {
-    background: $devie__color__primary;
-    color: $devie__color__primary-label;
-
-    svg {
-      color: inherit;
-    }
+    background: color-mix(in srgb, $devie__color__text 11%, transparent);
+    font-weight: 500;
   }
 
   &:focus-visible {
     outline: 2px solid $devie__color__primary;
     outline-offset: -2px;
+  }
+}
+
+// The icon sits on a colored rounded square, like a System Settings icon.
+.tile {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 6px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tile) 82%, white),
+    var(--tile)
+  );
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  color: white;
+
+  svg {
+    filter: drop-shadow(0 0.5px 0.5px rgba(0, 0, 0, 0.2));
   }
 }
 
@@ -67,7 +84,7 @@
 
 .footer {
   display: grid;
-  padding-bottom: $devie__spacing__x2;
+  padding-bottom: $devie__spacing__x1;
 }
 
 .brand {

@@ -42,7 +42,8 @@
       "Remove": "Entfernen",
       "On": "An",
       "Off": "Aus"
-    }
+    },
+    "MoreActions": "Weitere Aktionen"
   },
   "Quota": {
     "FilterProvider": "Anbieter",
@@ -78,7 +79,7 @@
     "Active": "Aktiv",
     "Available": "Verfügbar",
     "NotSupportedYet": "Noch nicht unterstützt",
-    "Connected": "Verbunden {{total}}",
+    "Connected": "{{total}} verbunden",
     "Attention": "Achtung {{total}}",
     "AddAccount": "Konto hinzufügen",
     "AddProviderAccount": "{{name}}-Konto hinzufügen",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Quota-Optimierer",
-    "StartNextSession": "Jede Sitzung früh starten",
-    "SupportedDescription": "Sitzungslimits werden zu festen Zeiten zurückgesetzt. Direkt nach jedem Reset sendet Devie Quota eine winzige Anfrage, damit die nächste Sitzung sofort beginnt. Du bekommst mehr Sitzungen pro Woche und verlierst kein Kontingent, während du weg bist.",
+    "StartNextSession": "Sitzungstimer automatisch starten",
+    "SupportedDescription": "Standardmäßig beginnt der Reset-Timer erst bei der ersten Nutzung zu laufen. Diese Option sendet nach jedem Reset automatisch eine kleine Anfrage, damit der Timer sofort startet. In der Praxis kommt Ihr nächster Reset dadurch früher.",
     "UnsupportedDescription": "Der Quota-Optimierer funktioniert nur mit Claude- und Codex-Konten.",
     "LastRequest": "Letzte Anfrage: {{date}}"
   },
   "Settings": {
     "Theme": "Design",
-    "ThemeDescription": "Farben der App-Fenster",
     "Language": "Sprache",
-    "LanguageDescription": "Sprache der App-Fenster",
     "MenuBarItem": "Menüleistensymbol",
     "MenuBarItemDescription": "Kontingente in der macOS-Menüleiste anzeigen",
     "ShowMenuBarItem": "Menüleistensymbol anzeigen",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Update verfügbar",
       "Status": {
         "PackagedOnly": "Updates funktionieren nur in der paketierten App.",
-        "Checking": "Suche…",
         "Downloading": "Wird geladen {{progress}} %",
         "Ready": "Version {{version}} ist bereit.",
         "Installing": "Wird installiert…",
-        "Failed": "Das Update ist fehlgeschlagen.",
-        "UpToDate": "Devie Quota {{version}} ist aktuell."
-      }
+        "Failed": "Das Update ist fehlgeschlagen."
+      },
+      "Version": "Version: {{version}}",
+      "UpToDateToast": "Sie verwenden die neueste Version."
     }
   },
   "Tray": {

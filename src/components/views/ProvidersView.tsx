@@ -65,7 +65,6 @@ function ProviderRow({
             {t("Providers.Attention", { total: attention })}
           </Badge>
         )}
-        {connections.length === 0 && <Badge>{t("Providers.Available")}</Badge>}
       </span>
     </button>
   );

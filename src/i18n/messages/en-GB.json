@@ -42,7 +42,8 @@
       "Remove": "Remove",
       "On": "On",
       "Off": "Off"
-    }
+    },
+    "MoreActions": "More actions"
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -78,7 +79,7 @@
     "Active": "Active",
     "Available": "Available",
     "NotSupportedYet": "Not supported yet",
-    "Connected": "Connected {{total}}",
+    "Connected": "{{total}} connected",
     "Attention": "Attention {{total}}",
     "AddAccount": "Add account",
     "AddProviderAccount": "Add a {{name}} account",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Quota Optimiser",
-    "StartNextSession": "Start each session early",
-    "SupportedDescription": "Session limits reset on a fixed clock. Right after each reset, Devie Quota sends one tiny request so the next session starts at once. You get more sessions each week and never lose quota while you are away.",
+    "StartNextSession": "Auto-start session timers",
+    "SupportedDescription": "By default, your reset timer only starts counting down on first use. Enabling this option automatically sends a small request to start the timer immediately after each reset. In practice, this means your next reset will come sooner.",
     "UnsupportedDescription": "The Quota Optimiser works with Claude and Codex accounts only.",
     "LastRequest": "Last request: {{date}}"
   },
   "Settings": {
     "Theme": "Theme",
-    "ThemeDescription": "Colours of the app windows",
     "Language": "Language",
-    "LanguageDescription": "Language of the app windows",
     "MenuBarItem": "Menu bar item",
     "MenuBarItemDescription": "Show the quotas in the macOS menu bar",
     "ShowMenuBarItem": "Show the menu bar item",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Update available",
       "Status": {
         "PackagedOnly": "Updates work in the packaged app only.",
-        "Checking": "Checking…",
         "Downloading": "Downloading {{progress}}%",
         "Ready": "Version {{version}} is ready.",
         "Installing": "Installing…",
-        "Failed": "The update failed.",
-        "UpToDate": "Devie Quota {{version}} is up to date."
-      }
+        "Failed": "The update failed."
+      },
+      "Version": "Version: {{version}}",
+      "UpToDateToast": "You are on the latest version."
     }
   },
   "Tray": {

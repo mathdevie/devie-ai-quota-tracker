@@ -42,7 +42,8 @@
       "Remove": "Verwijderen",
       "On": "Aan",
       "Off": "Uit"
-    }
+    },
+    "MoreActions": "Meer acties"
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -78,7 +79,7 @@
     "Active": "Actief",
     "Available": "Beschikbaar",
     "NotSupportedYet": "Nog niet ondersteund",
-    "Connected": "Verbonden {{total}}",
+    "Connected": "{{total}} verbonden",
     "Attention": "Aandacht {{total}}",
     "AddAccount": "Account toevoegen",
     "AddProviderAccount": "Een {{name}}-account toevoegen",
@@ -119,16 +120,14 @@
   },
   "AutoPing": {
     "Title": "Quota-optimalisatie",
-    "StartNextSession": "Elke sessie vroeg starten",
-    "SupportedDescription": "Sessielimieten worden op vaste tijden gereset. Direct na elke reset stuurt Devie Quota één klein verzoek, zodat de volgende sessie meteen begint. Je krijgt meer sessies per week en verliest nooit quota terwijl je weg bent.",
+    "StartNextSession": "Sessies automatisch starten",
+    "SupportedDescription": "Standaard begint de resettimer pas te lopen bij het eerste gebruik. Met deze optie wordt direct na elke reset automatisch een klein verzoek verzonden om de timer te starten. In de praktijk komt je volgende reset daardoor eerder.",
     "UnsupportedDescription": "Quota-optimalisatie werkt alleen met Claude- en Codex-accounts.",
     "LastRequest": "Laatste verzoek: {{date}}"
   },
   "Settings": {
     "Theme": "Thema",
-    "ThemeDescription": "Kleuren van de app-vensters",
     "Language": "Taal",
-    "LanguageDescription": "Taal van de app-vensters",
     "MenuBarItem": "Menubalkitem",
     "MenuBarItemDescription": "De quota in de macOS-menubalk tonen",
     "ShowMenuBarItem": "Het menubalkitem tonen",
@@ -139,13 +138,13 @@
       "UpdateAvailable": "Update beschikbaar",
       "Status": {
         "PackagedOnly": "Updates werken alleen in de verpakte app.",
-        "Checking": "Controleren…",
         "Downloading": "Downloaden {{progress}}%",
         "Ready": "Versie {{version}} is gereed.",
         "Installing": "Installeren…",
-        "Failed": "De update is mislukt.",
-        "UpToDate": "Devie Quota {{version}} is up-to-date."
-      }
+        "Failed": "De update is mislukt."
+      },
+      "Version": "Versie: {{version}}",
+      "UpToDateToast": "Je gebruikt de nieuwste versie."
     }
   },
   "Tray": {

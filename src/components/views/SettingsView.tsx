@@ -1,5 +1,6 @@
 "use client";
 
+import { Toast } from "@base-ui/react/toast";
 import { RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState } from "@/lib/contracts";
@@ -15,6 +16,7 @@ const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 
 function UpdateRow() {
   const { t } = useTranslation();
+  const toasts = Toast.useToastManager();
   const {
     enabled,
     status,
@@ -25,9 +27,20 @@ function UpdateRow() {
     installUpdate,
   } = useAppUpdater();
 
+  // A check is quick: the row does not change while it runs. A toast tells
+  // the result when there is nothing to install.
+  async function check() {
+    const result = await checkForUpdates();
+    if (result === "up-to-date") {
+      toasts.add({
+        type: "success",
+        description: t("Settings.Updates.UpToDateToast"),
+      });
+    }
+  }
+
   const statusText = (() => {
     if (!enabled) return t("Settings.Updates.Status.PackagedOnly");
-    if (status === "checking") return t("Settings.Updates.Status.Checking");
     if (status === "downloading") {
       return t("Settings.Updates.Status.Downloading", { progress });
     }
@@ -40,7 +53,7 @@ function UpdateRow() {
     if (status === "error") {
       return error ?? t("Settings.Updates.Status.Failed");
     }
-    return t("Settings.Updates.Status.UpToDate", { version: APP_VERSION });
+    return t("Settings.Updates.Version", { version: APP_VERSION });
   })();
 
   return (
@@ -64,7 +77,7 @@ function UpdateRow() {
             status === "downloading" ||
             status === "installing"
           }
-          onClick={() => void checkForUpdates()}
+          onClick={() => void check()}
           size="sm"
           variant="secondary"
         >
@@ -89,16 +102,10 @@ export default function SettingsView({
   return (
     <section className={styles.page}>
       <SettingRow.List>
-        <SettingRow.Row
-          subtitle={t("Settings.ThemeDescription")}
-          title={t("Settings.Theme")}
-        >
+        <SettingRow.Row title={t("Settings.Theme")}>
           <ThemePicker />
         </SettingRow.Row>
-        <SettingRow.Row
-          subtitle={t("Settings.LanguageDescription")}
-          title={t("Settings.Language")}
-        >
+        <SettingRow.Row title={t("Settings.Language")}>
           <LanguagePicker />
         </SettingRow.Row>
         <SettingRow.Row

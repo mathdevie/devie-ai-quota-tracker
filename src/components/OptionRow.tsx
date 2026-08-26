@@ -9,15 +9,22 @@ function Row({
   disabled,
   label,
   onChange,
+  plain,
 }: {
   checked: boolean;
   description: string;
   disabled?: boolean;
   label: string;
   onChange: (checked: boolean) => void;
+  /** No frame and no side padding: the row sits alone in a dialog body. */
+  plain?: boolean;
 }) {
   return (
-    <div className={styles.option} data-disabled={disabled || undefined}>
+    <div
+      className={styles.option}
+      data-disabled={disabled || undefined}
+      data-plain={plain || undefined}
+    >
       <span>
         <strong>{label}</strong>
         <small>{description}</small>

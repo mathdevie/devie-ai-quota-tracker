@@ -45,7 +45,7 @@ export default function AlertsDialog({
     >
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup>
+        <Dialog.Popup className={styles.dialog}>
           <form
             className={styles.form}
             onSubmit={async (event) => {
