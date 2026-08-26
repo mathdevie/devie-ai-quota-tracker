@@ -14,55 +14,65 @@ $badge-literal-colors: (
 
 @layer devie {
     .badge {
-        border-radius: calc($devie__radius / 2);
-        padding: 2px 6px;
+        border-radius: 999px;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         display: flex;
         align-items: center;
-        gap: $devie__spacing__x05;
+        gap: $devie__spacing__x1;
         width: fit-content;
-        font-size: 11px;
-        font-weight: 600;
-        line-height: 16px;
-        letter-spacing: 0.01em;
+        font-size: $devie__font-size__normal;
+        line-height: 1.5;
         cursor: default;
         font-family: $devie__font-family;
         transition: none;
-        background: color-mix(in srgb, var(--badge-tone) 13%, $devie__color__background);
-        color: var(--badge-tone);
-        border: 1px solid color-mix(in srgb, var(--badge-tone) 22%, $devie__color__background);
+        background: var(--badge-background);
+        color: var(--badge-color);
+        border: 1px solid var(--badge-border);
 
         a &,
         &[type="button"] {
             &:hover {
-                background: color-mix(in srgb, var(--badge-tone) 18%, $devie__color__background);
+                background: #{devie-hover-color(var(--badge-background))};
                 cursor: pointer;
             }
         }
     }
 
     .primary {
-        --badge-tone: #{$devie__color__primary};
+        --badge-background: #{$devie__color__primary};
+        --badge-color: #{$devie__color__primary-label};
+        --badge-border: #{$devie__color__primary};
     }
 
     .outline {
-        --badge-tone: #{$devie__color__text-sub};
+        --badge-background: #{$devie__color__background};
+        --badge-color: #{$devie__color__text};
+        --badge-border: #{$devie__color__line};
     }
 
     .danger {
-        --badge-tone: #{$devie__color__danger};
+        --badge-background: #{$devie__color__danger};
+        --badge-color: #{$devie__color__danger-label};
+        --badge-border: #{$devie__color__danger};
     }
 
     .success {
-        --badge-tone: #{$devie__color__success};
+        --badge-background: #{$devie__color__success};
+        --badge-color: #{$devie__color__success-label};
+        --badge-border: #{$devie__color__success};
     }
 
     .warning {
-        --badge-tone: #{$devie__color__warning};
+        --badge-background: #{$devie__color__warning};
+        --badge-color: #{$devie__color__warning-label};
+        --badge-border: #{$devie__color__warning};
     }
 
     @each $name, $color in $badge-literal-colors {
         .#{$name} {
-            --badge-tone: #{$color};
+            --badge-background: #{$color};
+            --badge-color: #FFFFFF;
+            --badge-border: #{$color};
         }
     }
 }

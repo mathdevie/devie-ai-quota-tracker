@@ -142,7 +142,7 @@ Built on [Base UI](https://base-ui.com/react/components/autocomplete#command-pal
         padding: $devie__spacing__x1 $devie__spacing__x2;
         padding-top: $devie__spacing__x2;
         font-size: 11px;
-        font-weight: 500;
+        font-weight: 600;
         color: $devie__color__text-sub;
         user-select: none;
         text-transform: uppercase;
