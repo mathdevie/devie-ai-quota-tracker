@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
-import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
+import { accountLabel, PROVIDER_NAMES, visibleWindows } from "@/lib/labels";
 import { StatusBadge } from "./ConnectionCard";
 import styles from "./PopoverRow.module.scss";
 import ProviderIcon from "./ProviderIcon";
@@ -19,6 +19,7 @@ export default function PopoverRow({
 }) {
   const { t } = useTranslation();
   const plan = connection.identity?.plan;
+  const windows = visibleWindows(connection);
   return (
     <article className={styles.row}>
       <header className={styles.header}>
@@ -33,16 +34,18 @@ export default function PopoverRow({
         </p>
         <StatusBadge connection={connection} />
       </header>
-      {connection.windows.length > 0 ? (
+      {windows.length > 0 ? (
         <QuotaBars
           onPin={onPin}
           pinnedKey={pinnedKey}
           size="sm"
-          windows={connection.windows}
+          windows={windows}
         />
       ) : (
         <p className={styles.empty}>
-          {connection.lastError ?? t("Connection.NoQuotaData")}
+          {connection.windows.length > 0
+            ? t("Connection.AllBarsHidden")
+            : (connection.lastError ?? t("Connection.NoQuotaData"))}
         </p>
       )}
     </article>

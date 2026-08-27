@@ -160,6 +160,18 @@ fn set_connection_alerts(
 }
 
 #[tauri::command]
+fn set_hidden_windows(
+    app: AppHandle,
+    core: State<'_, Core>,
+    connection_id: String,
+    window_keys: Vec<String>,
+) -> Result<DashboardState, String> {
+    core.database
+        .set_hidden_windows(&connection_id, &window_keys)?;
+    publish_state(&app, &core)
+}
+
+#[tauri::command]
 fn set_auto_ping(
     app: AppHandle,
     core: State<'_, Core>,
@@ -340,13 +352,27 @@ async fn get_codex_resets_status(
     codex_resets::status(&core.client, &core.codex_resets).await
 }
 
-/// Opens a web link in the default browser. Only `https` links leave the app.
+/// The sites the reset news links to. Nothing else opens from the app.
+const EXTERNAL_HOSTS: &[&str] = &["codex-resets.com", "x.com", "twitter.com"];
+
+/// Opens a web link in the default browser: `https` only, no credentials,
+/// a known host, and a sane length.
 #[tauri::command]
 fn open_external_url(url: String) -> Result<(), String> {
-    if !url.starts_with("https://") {
-        return Err("Only https links can open.".to_string());
+    let parsed = reqwest::Url::parse(&url).map_err(|_| "The link is not valid.".to_string())?;
+    let host = parsed.host_str().unwrap_or_default();
+    let known = EXTERNAL_HOSTS
+        .iter()
+        .any(|allowed| host == *allowed || host.ends_with(&format!(".{allowed}")));
+    if url.len() > 2048
+        || parsed.scheme() != "https"
+        || !parsed.username().is_empty()
+        || parsed.password().is_some()
+        || !known
+    {
+        return Err("The link cannot open from the app.".to_string());
     }
-    open::that_detached(&url).map_err(|_| "The browser could not open.".to_string())
+    open::that_detached(parsed.as_str()).map_err(|_| "The browser could not open.".to_string())
 }
 
 #[tauri::command]
@@ -443,8 +469,9 @@ fn publish_state(app: &AppHandle, core: &Core) -> Result<DashboardState, String>
     Ok(state)
 }
 
-/// The window the menu bar summarizes: the user's pick when it still exists
-/// and is enabled, else the enabled window with the least quota left.
+/// The window the menu bar summarizes: the user's pick when it still exists,
+/// is enabled and is not hidden, else the enabled, visible window with the
+/// least quota left.
 fn tray_window<'a>(
     state: &'a DashboardState,
 ) -> Option<(&'a model::ProviderConnection, &'a model::QuotaWindow)> {
@@ -459,12 +486,14 @@ fn tray_window<'a>(
         let window = connection
             .windows
             .iter()
+            .filter(|window| !connection.hidden_windows.contains(&window.key))
             .find(|window| window.key == summary.window_key)?;
         Some((connection, window))
     });
     picked.or_else(|| {
         enabled()
             .flat_map(|connection| connection.windows.iter().map(move |w| (connection, w)))
+            .filter(|(connection, window)| !connection.hidden_windows.contains(&window.key))
             .filter(|(_, window)| !window.paid && !window.unlimited)
             .min_by(|(_, a), (_, b)| a.used_percent.total_cmp(&b.used_percent).reverse())
     })
@@ -781,6 +810,7 @@ pub fn run() {
             set_connection_enabled,
             rename_connection,
             set_connection_alerts,
+            set_hidden_windows,
             set_auto_ping,
             use_reset_credit,
             set_tray_summary,

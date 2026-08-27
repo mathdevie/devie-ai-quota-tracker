@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renommer",
+      "Bars": "Barres de quota",
       "Alerts": "Alertes",
       "AutoPing": "Optimiseur de quota",
       "Refresh": "Actualiser",
@@ -43,7 +44,8 @@
       "On": "Activé",
       "Off": "Désactivé"
     },
-    "MoreActions": "Plus d’actions"
+    "MoreActions": "Plus d’actions",
+    "AllBarsHidden": "Toutes les barres de quota sont masquées."
   },
   "Quota": {
     "FilterProvider": "Fournisseur",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} est affiché dans la barre de menus",
-      "Show": "Afficher {{label}} dans la barre de menus",
-      "Title": "Afficher dans la barre de menus"
+      "Show": "Afficher {{label}} dans la barre de menus"
     },
     "Unlimited": "Illimité",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} restants",
     "LimitReached": "Limite atteinte",
     "News": {
-      "Title": "Actualités des resets Codex",
-      "Watch": "{{percent}} % de chances d’un reset {{window}}",
-      "WatchNoPercent": "Un reset est probable {{window}}",
-      "WatchUntil": "Prévision valable jusqu’au {{date}}",
-      "NoWatch": "Aucune prévision de reset pour le moment.",
-      "LastReset": "Dernier reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Aucun reset enregistré pour le moment.",
-      "Average": "Un reset tous les {{days}} jours en moyenne · {{total}} suivis",
-      "Source": "Source",
-      "Disclaimer": "Données communautaires, pas un engagement d’OpenAI.",
-      "Loading": "Chargement…",
-      "Unavailable": "Les actualités des resets n’ont pas pu être chargées."
+      "Watch": "{{percent}} % de chances d’une réinitialisation Codex",
+      "WatchNoPercent": "Une réinitialisation Codex est probable",
+      "Reset": "Les limites Codex ont été réinitialisées {{ago}}",
+      "Banked": "Codex a accordé un crédit de réinitialisation {{ago}}",
+      "Open": "Ouvrir la source",
+      "Dismiss": "Fermer"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Renommer le compte",
     "Label": "Libellé",
     "Description": "Laissez le champ vide pour afficher de nouveau l'identifiant du compte."
+  },
+  "Bars": {
+    "Title": "Barres de quota",
+    "Description": "Les barres masquées disparaissent de la carte et du popover de la barre des menus. Elles ne comptent ni pour le tri ni pour le pourcentage de la barre des menus.",
+    "Left": "{{percent}} % restants",
+    "Resets": "réinitialisation {{time}}"
   },
   "Alerts": {
     "Title": "Alertes",

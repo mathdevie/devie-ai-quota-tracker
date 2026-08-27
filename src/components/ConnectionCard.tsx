@@ -4,12 +4,18 @@ import {
   Pencil,
   Power,
   RefreshCw,
+  SlidersHorizontal,
   Trash2,
   Zap,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
-import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
+import {
+  accountLabel,
+  fullName,
+  PROVIDER_NAMES,
+  visibleWindows,
+} from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
@@ -39,6 +45,8 @@ export function StatusBadge({
 export interface ConnectionActions {
   onRefresh?: (id: string) => void;
   onRename?: (connection: ProviderConnection) => void;
+  /** Opens the dialog that shows or hides the quota bars of the card. */
+  onBars?: (connection: ProviderConnection) => void;
   onAlerts?: (connection: ProviderConnection) => void;
   onAutoPing?: (connection: ProviderConnection) => void;
   onEnabledChange?: (id: string, enabled: boolean) => void;
@@ -64,8 +72,7 @@ function alertsOn(connection: ProviderConnection): boolean {
 
 /**
  * Alert and Quota Optimizer shortcuts in the card header. An active feature
- * always shows; an inactive one shows on hover. Codex cards also get the
- * community reset news, always visible.
+ * always shows; an inactive one shows on hover.
  */
 function FeatureFlags({
   connection,
@@ -81,9 +88,6 @@ function FeatureFlags({
   const optimizer = connection.autoPing.enabled;
   return (
     <div className={styles.flags}>
-      {connection.provider === "codex" && (
-        <CodexResetsNews className={styles.flag} />
-      )}
       {onAlerts && (
         <IconTip label={t("Connection.Menu.Alerts")}>
           <button
@@ -122,6 +126,7 @@ export function ConnectionMenu({
   busy = false,
   onRefresh,
   onRename,
+  onBars,
   onAlerts,
   onAutoPing,
   onEnabledChange,
@@ -152,6 +157,12 @@ export function ConnectionMenu({
               <Menu.Item onClick={() => onRename(connection)}>
                 <Pencil size={14} />
                 {t("Connection.Menu.Rename")}
+              </Menu.Item>
+            )}
+            {onBars && connection.windows.length > 0 && (
+              <Menu.Item onClick={() => onBars(connection)}>
+                <SlidersHorizontal size={14} />
+                {t("Connection.Menu.Bars")}
               </Menu.Item>
             )}
             {onAlerts && (
@@ -217,6 +228,7 @@ export default function ConnectionCard({
   const { t } = useTranslation();
   const hasActions = Object.values(actions).some(Boolean);
   const plan = connection.identity?.plan;
+  const windows = visibleWindows(connection);
 
   return (
     <article className={styles.card}>
@@ -241,6 +253,9 @@ export default function ConnectionCard({
         )}
       </header>
 
+      {connection.provider === "codex" && (
+        <CodexResetsNews className={styles.news} />
+      )}
       {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
         <div className={styles.credits}>
           <ResetCredits
@@ -250,11 +265,13 @@ export default function ConnectionCard({
         </div>
       )}
       <div className={styles.body}>
-        {connection.windows.length > 0 ? (
-          <QuotaBars windows={connection.windows} />
+        {windows.length > 0 ? (
+          <QuotaBars windows={windows} />
         ) : (
           <p className={styles.empty}>
-            {connection.lastError ?? t("Connection.NoQuotaData")}
+            {connection.windows.length > 0
+              ? t("Connection.AllBarsHidden")
+              : (connection.lastError ?? t("Connection.NoQuotaData"))}
           </p>
         )}
       </div>

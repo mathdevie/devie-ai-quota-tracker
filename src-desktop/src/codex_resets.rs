@@ -20,11 +20,15 @@ use crate::{oauth::USER_AGENT, parse::number};
 pub const STATUS_URL: &str = "https://codex-resets.com/api/v1/status";
 /// The API allows 30 s client caching; the news changes a few times a week.
 const CACHE_FOR: Duration = Duration::from_secs(10 * 60);
+/// The status body is about 1 KB. Anything far bigger is not the API.
+const MAX_BODY_BYTES: usize = 256 * 1024;
 
 /// One reset announcement.
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetNews {
+    /// The source X post id, or an "observed-…" id. Stable across reads.
+    pub id: String,
     pub announced_at: String,
     /// "regular" for a reset, "banked" for a granted reset credit.
     pub reset_type: String,
@@ -96,8 +100,15 @@ pub async fn status(client: &reqwest::Client, cache: &Cache) -> Result<CodexRese
     }
 }
 
+/// The shared client follows redirects; this third-party endpoint gets a
+/// client that does not, so the answer always comes from codex-resets.com.
 async fn fetch(client: &reqwest::Client) -> Result<CodexResetsStatus, String> {
-    let response = client
+    let strict = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .timeout(Duration::from_secs(20))
+        .build()
+        .unwrap_or_else(|_| client.clone());
+    let mut response = strict
         .get(STATUS_URL)
         .header(reqwest::header::ACCEPT, "application/json")
         .header(reqwest::header::USER_AGENT, USER_AGENT)
@@ -110,9 +121,22 @@ async fn fetch(client: &reqwest::Client) -> Result<CodexResetsStatus, String> {
             response.status().as_u16()
         ));
     }
-    let json: Value = response
-        .json()
+    let too_big = || "codex-resets.com returned too much data.".to_string();
+    if response.content_length().is_some_and(|len| len > MAX_BODY_BYTES as u64) {
+        return Err(too_big());
+    }
+    let mut body = Vec::new();
+    while let Some(chunk) = response
+        .chunk()
         .await
+        .map_err(|_| "codex-resets.com could not be reached.".to_string())?
+    {
+        if body.len() + chunk.len() > MAX_BODY_BYTES {
+            return Err(too_big());
+        }
+        body.extend_from_slice(&chunk);
+    }
+    let json: Value = serde_json::from_slice(&body)
         .map_err(|_| "codex-resets.com returned invalid data.".to_string())?;
     parse(&json)
 }
@@ -140,6 +164,7 @@ pub fn parse(json: &Value) -> Result<CodexResetsStatus, String> {
 fn reset_news(value: &Value) -> Option<ResetNews> {
     let object = value.as_object()?;
     Some(ResetNews {
+        id: text(object.get("id"))?,
         announced_at: text(object.get("announced_at"))?,
         reset_type: text(object.get("reset_type")).unwrap_or_else(|| "regular".to_string()),
         text: text(object.get("text")).unwrap_or_default(),
@@ -154,7 +179,7 @@ fn reset_watch(value: &Value) -> Option<ResetWatch> {
         reset_chance_percent: number(object.get("reset_chance_percent"))
             .map(|value| value.clamp(0.0, 100.0) as u8),
         forecast_window: text(object.get("forecast_window")).unwrap_or_default(),
-        observed_at: text(object.get("observed_at")).unwrap_or_default(),
+        observed_at: text(object.get("observed_at"))?,
         expires_at: text(object.get("expires_at"))?,
         text: text(object.get("text")).unwrap_or_default(),
         source_url: source_url(object.get("source")),
@@ -199,6 +224,7 @@ mod tests {
             Some("https://x.com/thsottiaux/status/2")
         );
         let reset = status.latest_reset.expect("reset");
+        assert_eq!(reset.id, "observed-20260825T143200Z");
         assert_eq!(reset.announced_at, "2026-08-25T14:30:00.000Z");
         assert_eq!(status.stats.total, 46);
         assert_eq!(status.stats.avg_interval_days, Some(7.6));
@@ -208,7 +234,7 @@ mod tests {
     fn accepts_a_quiet_period_and_drops_unsafe_links() {
         let json = serde_json::json!({
             "data": {
-                "latest_reset": {"announced_at": "2026-08-25T14:30:00Z", "source": {"type": "observed", "url": "javascript:alert(1)"}},
+                "latest_reset": {"id": "1", "announced_at": "2026-08-25T14:30:00Z", "source": {"type": "observed", "url": "javascript:alert(1)"}},
                 "active_watch": null,
                 "stats": {"total": 0, "last_reset_at": null, "days_since_last": null, "avg_interval_days": null}
             },
@@ -218,6 +244,18 @@ mod tests {
         assert!(status.active_watch.is_none());
         assert!(status.latest_reset.expect("reset").source_url.is_none());
         assert_eq!(status.stats.total, 0);
+    }
+
+    #[test]
+    fn drops_a_watch_without_times() {
+        let json = serde_json::json!({
+            "data": {
+                "latest_reset": null,
+                "active_watch": {"level": "strong", "forecast_window": "soon", "expires_at": "2026-08-28T07:00:00Z"},
+                "stats": {"total": 1}
+            }
+        });
+        assert!(parse(&json).expect("status").active_watch.is_none());
     }
 
     #[test]

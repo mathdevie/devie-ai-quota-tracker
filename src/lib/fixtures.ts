@@ -233,6 +233,7 @@ export const previewState: DashboardState = {
 /** The codex-resets.com news shown in the browser preview. */
 export const previewCodexResets: CodexResetsStatus = {
   latestReset: {
+    id: "observed-20260825T143200Z",
     announcedAt: "2026-08-25T14:30:00Z",
     resetType: "regular",
     text: "Reset button pressed. Enjoy!",

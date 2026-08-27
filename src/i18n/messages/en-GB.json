@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Rename",
+      "Bars": "Quota bars",
       "Alerts": "Alerts",
       "AutoPing": "Quota Optimiser",
       "Refresh": "Refresh",
@@ -43,7 +44,8 @@
       "On": "On",
       "Off": "Off"
     },
-    "MoreActions": "More actions"
+    "MoreActions": "More actions",
+    "AllBarsHidden": "All quota bars are hidden."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} is shown in the menu bar",
-      "Show": "Show {{label}} in the menu bar",
-      "Title": "Show in the menu bar"
+      "Show": "Show {{label}} in the menu bar"
     },
     "Unlimited": "Unlimited",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} left",
     "LimitReached": "Limit reached",
     "News": {
-      "Title": "Codex reset news",
-      "Watch": "{{percent}}% chance of a reset {{window}}",
-      "WatchNoPercent": "A reset is likely {{window}}",
-      "WatchUntil": "Forecast valid until {{date}}",
-      "NoWatch": "No reset forecast right now.",
-      "LastReset": "Last reset {{ago}} · {{date}}",
-      "LastResetUnknown": "No reset recorded yet.",
-      "Average": "One reset every {{days}} days on average · {{total}} tracked",
-      "Source": "Source",
-      "Disclaimer": "Community data, not an OpenAI commitment.",
-      "Loading": "Loading…",
-      "Unavailable": "The reset news could not load."
+      "Watch": "{{percent}}% chance of a Codex reset",
+      "WatchNoPercent": "A Codex reset is likely",
+      "Reset": "Codex limits were reset {{ago}}",
+      "Banked": "Codex granted a reset credit {{ago}}",
+      "Open": "Open the source",
+      "Dismiss": "Dismiss"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Rename account",
     "Label": "Label",
     "Description": "Leave the field empty to show the account id again."
+  },
+  "Bars": {
+    "Title": "Quota bars",
+    "Description": "Hidden bars leave the card and the menu bar popover. They do not count for the sort or the menu bar percent.",
+    "Left": "{{percent}}% left",
+    "Resets": "resets {{time}}"
   },
   "Alerts": {
     "Title": "Alerts",

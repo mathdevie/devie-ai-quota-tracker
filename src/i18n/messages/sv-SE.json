@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Byt namn",
+      "Bars": "Kvotstaplar",
       "Alerts": "Aviseringar",
       "AutoPing": "Kvotoptimering",
       "Refresh": "Uppdatera",
@@ -43,7 +44,8 @@
       "On": "På",
       "Off": "Av"
     },
-    "MoreActions": "Fler åtgärder"
+    "MoreActions": "Fler åtgärder",
+    "AllBarsHidden": "Alla kvotstaplar är dolda."
   },
   "Quota": {
     "FilterProvider": "Leverantör",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} visas i menyraden",
-      "Show": "Visa {{label}} i menyraden",
-      "Title": "Visa i menyraden"
+      "Show": "Visa {{label}} i menyraden"
     },
     "Unlimited": "Obegränsat",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} kvar",
     "LimitReached": "Gräns nådd",
     "News": {
-      "Title": "Codex-återställningsnyheter",
-      "Watch": "{{percent}} % chans för en återställning {{window}}",
-      "WatchNoPercent": "En återställning är trolig {{window}}",
-      "WatchUntil": "Prognosen gäller till {{date}}",
-      "NoWatch": "Ingen återställningsprognos just nu.",
-      "LastReset": "Senaste återställning {{ago}} · {{date}}",
-      "LastResetUnknown": "Ingen återställning registrerad ännu.",
-      "Average": "I genomsnitt en återställning var {{days}} dag · {{total}} registrerade",
-      "Source": "Källa",
-      "Disclaimer": "Communitydata, inget åtagande från OpenAI.",
-      "Loading": "Läser in…",
-      "Unavailable": "Återställningsnyheterna kunde inte läsas in."
+      "Watch": "{{percent}} % chans för en Codex-återställning",
+      "WatchNoPercent": "En Codex-återställning är trolig",
+      "Reset": "Codex-gränserna återställdes {{ago}}",
+      "Banked": "Codex gav en återställningskredit {{ago}}",
+      "Open": "Öppna källan",
+      "Dismiss": "Stäng"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Byt namn på konto",
     "Label": "Etikett",
     "Description": "Lämna fältet tomt för att visa konto-id:t igen."
+  },
+  "Bars": {
+    "Title": "Kvotstaplar",
+    "Description": "Dolda staplar försvinner från kortet och menyradens popover. De räknas inte för sorteringen eller menyradens procent.",
+    "Left": "{{percent}} % kvar",
+    "Resets": "återställs {{time}}"
   },
   "Alerts": {
     "Title": "Aviseringar",

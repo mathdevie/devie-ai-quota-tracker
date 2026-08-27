@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renomear",
+      "Bars": "Barras de cota",
       "Alerts": "Alertas",
       "AutoPing": "Otimizador de cota",
       "Refresh": "Atualizar",
@@ -43,7 +44,8 @@
       "On": "Ativado",
       "Off": "Desativado"
     },
-    "MoreActions": "Mais ações"
+    "MoreActions": "Mais ações",
+    "AllBarsHidden": "Todas as barras de cota estão ocultas."
   },
   "Quota": {
     "FilterProvider": "Provedor",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} está na barra de menus",
-      "Show": "Mostrar {{label}} na barra de menus",
-      "Title": "Mostrar na barra de menus"
+      "Show": "Mostrar {{label}} na barra de menus"
     },
     "Unlimited": "Ilimitado",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} restantes",
     "LimitReached": "Limite atingido",
     "News": {
-      "Title": "Notícias de resets do Codex",
-      "Watch": "{{percent}}% de chance de um reset {{window}}",
-      "WatchNoPercent": "Um reset é provável {{window}}",
-      "WatchUntil": "Previsão válida até {{date}}",
-      "NoWatch": "Nenhuma previsão de reset no momento.",
-      "LastReset": "Último reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Nenhum reset registrado ainda.",
-      "Average": "Um reset a cada {{days}} dias em média · {{total}} registrados",
-      "Source": "Fonte",
-      "Disclaimer": "Dados da comunidade, não um compromisso da OpenAI.",
-      "Loading": "Carregando…",
-      "Unavailable": "Não foi possível carregar as notícias de resets."
+      "Watch": "{{percent}}% de chance de uma redefinição do Codex",
+      "WatchNoPercent": "Uma redefinição do Codex é provável",
+      "Reset": "Os limites do Codex foram redefinidos {{ago}}",
+      "Banked": "O Codex concedeu um crédito de redefinição {{ago}}",
+      "Open": "Abrir a fonte",
+      "Dismiss": "Fechar"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Renomear conta",
     "Label": "Rótulo",
     "Description": "Deixe o campo vazio para mostrar o id da conta novamente."
+  },
+  "Bars": {
+    "Title": "Barras de cota",
+    "Description": "As barras ocultas somem do cartão e do popover da barra de menus. Elas não contam para a ordenação nem para a porcentagem da barra de menus.",
+    "Left": "{{percent}}% restante",
+    "Resets": "redefine {{time}}"
   },
   "Alerts": {
     "Title": "Alertas",

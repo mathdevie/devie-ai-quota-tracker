@@ -24,6 +24,7 @@ import {
   setAutoPing,
   setConnectionAlerts,
   setConnectionEnabled,
+  setHiddenWindows,
   setMenuBarItemVisible,
   setRemoteAccess,
   setRemoteToken,
@@ -40,6 +41,7 @@ import AutoPingDialog from "./AutoPingDialog";
 import IconTip from "./IconTip";
 import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
+import QuotaBarsDialog from "./QuotaBarsDialog";
 import RemoteTokenGate from "./RemoteTokenGate";
 import RenameDialog from "./RenameDialog";
 import Sidebar, { type SidebarItem } from "./Sidebar";
@@ -88,6 +90,7 @@ function Shell() {
   const [settingsBusy, setSettingsBusy] = useState(false);
   const [login, setLogin] = useState({ open: false });
   const [renaming, setRenaming] = useState<ProviderConnection>();
+  const [barsFor, setBarsFor] = useState<ProviderConnection>();
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
   const [surface, setSurface] = useState<"main" | "popover">("main");
@@ -192,6 +195,7 @@ function Shell() {
     : {
         onRefresh,
         onRename: setRenaming,
+        onBars: setBarsFor,
         onAlerts: setAlertsFor,
         onAutoPing: setAutoPingFor,
         onEnabledChange: (id: string, enabled: boolean) =>
@@ -354,6 +358,13 @@ function Shell() {
             setRenaming(undefined);
             void run(() => renameConnection(id, label), withBusyId(id));
           }}
+        />
+        <QuotaBarsDialog
+          connection={barsFor}
+          onOpenChange={(open) => !open && setBarsFor(undefined)}
+          onSubmit={(id, hiddenKeys) =>
+            run(() => setHiddenWindows(id, hiddenKeys), withBusyId(id))
+          }
         />
         <AlertsDialog
           connection={alertsFor}
