@@ -93,6 +93,7 @@
       "Watch": "{{percent}} % de probabilidad de un restablecimiento de Codex",
       "WatchNoPercent": "Es probable un restablecimiento de Codex",
       "Reset": "Los límites de Codex se restablecieron {{ago}}",
+      "Banked": "Codex concedió un crédito de restablecimiento {{ago}}",
       "Open": "Abrir la fuente",
       "Dismiss": "Cerrar"
     }

@@ -93,6 +93,7 @@
       "Watch": "{{percent}}% chance of a Codex reset",
       "WatchNoPercent": "A Codex reset is likely",
       "Reset": "Codex limits were reset {{ago}}",
+      "Banked": "Codex granted a reset credit {{ago}}",
       "Open": "Open the source",
       "Dismiss": "Dismiss"
     }

@@ -93,6 +93,7 @@
       "Watch": "{{percent}} % chans för en Codex-återställning",
       "WatchNoPercent": "En Codex-återställning är trolig",
       "Reset": "Codex-gränserna återställdes {{ago}}",
+      "Banked": "Codex gav en återställningskredit {{ago}}",
       "Open": "Öppna källan",
       "Dismiss": "Stäng"
     }

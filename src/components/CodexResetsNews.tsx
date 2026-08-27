@@ -16,7 +16,7 @@ const CACHE_FOR = 10 * 60_000;
 const MAX_AGE = 3 * 86_400_000;
 /** The time of the last dismissed item. Everything up to it stays hidden. */
 const DISMISSED_KEY = "codexResetsNews.dismissedAt";
-/** How often the banner re-checks the clock (expiry, age). */
+/** How often the banner re-checks the clock and the cached status. */
 const TICK = 60_000;
 
 const cache: {
@@ -43,7 +43,8 @@ function loadStatus(): Promise<CodexResetsStatus> {
 
 /** The one piece of news the banner shows. */
 interface NewsItem {
-  kind: "watch" | "reset";
+  /** "banked": a granted reset credit, not an executed reset. */
+  kind: "watch" | "reset" | "banked";
   /** When it happened. A dismissal hides this item and every older one. */
   at: string;
   percent?: number;
@@ -74,7 +75,7 @@ export function latestNews(
   const reset = status.latestReset;
   if (reset) {
     items.push({
-      kind: "reset",
+      kind: reset.resetType === "banked" ? "banked" : "reset",
       at: reset.announcedAt,
       sourceUrl: reset.sourceUrl,
     });
@@ -146,14 +147,17 @@ export default function CodexResetsNews({ className }: { className?: string }) {
 
   // The forecast window is English text from the site. It follows the
   // translated sentence after a separator instead of being inlined.
+  const ago = agoText(item.at, i18n.language, now);
   const text =
     item.kind === "reset"
-      ? t("Quota.News.Reset", { ago: agoText(item.at, i18n.language, now) })
-      : `${
-          item.percent === undefined
-            ? t("Quota.News.WatchNoPercent")
-            : t("Quota.News.Watch", { percent: item.percent })
-        }${item.window ? ` · ${item.window}` : ""}`;
+      ? t("Quota.News.Reset", { ago })
+      : item.kind === "banked"
+        ? t("Quota.News.Banked", { ago })
+        : `${
+            item.percent === undefined
+              ? t("Quota.News.WatchNoPercent")
+              : t("Quota.News.Watch", { percent: item.percent })
+          }${item.window ? ` · ${item.window}` : ""}`;
 
   return (
     <Callout.Root className={clsx(styles.banner, className)} variant="warning">

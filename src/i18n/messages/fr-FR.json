@@ -93,6 +93,7 @@
       "Watch": "{{percent}} % de chances d’une réinitialisation Codex",
       "WatchNoPercent": "Une réinitialisation Codex est probable",
       "Reset": "Les limites Codex ont été réinitialisées {{ago}}",
+      "Banked": "Codex a accordé un crédit de réinitialisation {{ago}}",
       "Open": "Ouvrir la source",
       "Dismiss": "Fermer"
     }

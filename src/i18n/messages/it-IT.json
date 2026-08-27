@@ -93,6 +93,7 @@
       "Watch": "{{percent}}% di probabilità di un azzeramento Codex",
       "WatchNoPercent": "Un azzeramento Codex è probabile",
       "Reset": "I limiti Codex sono stati azzerati {{ago}}",
+      "Banked": "Codex ha concesso un credito di azzeramento {{ago}}",
       "Open": "Apri la fonte",
       "Dismiss": "Chiudi"
     }
