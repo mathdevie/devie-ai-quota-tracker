@@ -613,7 +613,9 @@ const POPOVER_WIDTH: f64 = 440.0;
 #[cfg(target_os = "macos")]
 fn make_non_activating_panel(window: &tauri::WebviewWindow) {
     use objc2::{runtime::AnyObject, ClassType};
-    use objc2_app_kit::{NSPanel, NSWindowStyleMask};
+    use objc2_app_kit::{
+        NSPanel, NSPopUpMenuWindowLevel, NSWindowCollectionBehavior, NSWindowStyleMask,
+    };
 
     let Ok(pointer) = window.ns_window() else {
         return;
@@ -630,6 +632,14 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         // A window that is not key gets no mouse-moved events by default, so
         // hover tooltips in the webview never open. Ask for them.
         panel.setAcceptsMouseMovedEvents(true);
+        // Like a native menu bar menu: it shows on every Space, also over an
+        // app in full screen, and above every other window.
+        panel.setCollectionBehavior(
+            NSWindowCollectionBehavior::CanJoinAllSpaces
+                | NSWindowCollectionBehavior::FullScreenAuxiliary
+                | NSWindowCollectionBehavior::Stationary,
+        );
+        panel.setLevel(NSPopUpMenuWindowLevel);
     }
 }
 
