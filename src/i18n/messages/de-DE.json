@@ -82,8 +82,8 @@
       "Confirm": "Limits zurücksetzen"
     },
     "Pin": {
-      "Shown": "{{label}} wird in der Menüleiste angezeigt",
-      "Show": "{{label}} in der Menüleiste anzeigen"
+      "Shown": "An Menüleiste angeheftet",
+      "Show": "An Menüleiste anheften"
     },
     "Unlimited": "Unbegrenzt",
     "Amount": "{{used}} / {{total}} {{unit}}",

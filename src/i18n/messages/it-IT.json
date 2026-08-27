@@ -82,8 +82,8 @@
       "Confirm": "Azzera limiti"
     },
     "Pin": {
-      "Shown": "{{label}} è mostrato nella barra dei menu",
-      "Show": "Mostra {{label}} nella barra dei menu"
+      "Shown": "Fissato alla barra dei menu",
+      "Show": "Fissa alla barra dei menu"
     },
     "Unlimited": "Illimitato",
     "Amount": "{{used}} / {{total}} {{unit}}",

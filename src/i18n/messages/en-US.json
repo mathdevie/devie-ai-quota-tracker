@@ -82,8 +82,8 @@
       "Confirm": "Reset limits"
     },
     "Pin": {
-      "Shown": "{{label}} is shown in the menu bar",
-      "Show": "Show {{label}} in the menu bar"
+      "Shown": "Pinned to menu bar",
+      "Show": "Pin to menu bar"
     },
     "Unlimited": "Unlimited",
     "Amount": "{{used}} / {{total}} {{unit}}",
