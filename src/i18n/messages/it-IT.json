@@ -81,8 +81,7 @@
     },
     "Pin": {
       "Shown": "{{label}} è mostrato nella barra dei menu",
-      "Show": "Mostra {{label}} nella barra dei menu",
-      "Title": "Mostra nella barra dei menu"
+      "Show": "Mostra {{label}} nella barra dei menu"
     },
     "Unlimited": "Illimitato",
     "Amount": "{{used}} / {{total}} {{unit}}",
