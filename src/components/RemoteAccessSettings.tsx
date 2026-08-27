@@ -1,12 +1,11 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { Copy, ExternalLink, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { copyText } from "@/lib/clipboard";
 import type { RemoteAccess } from "@/lib/contracts";
-import { openExternalUrl } from "@/lib/desktop";
 import Button from "@/ui/Button";
 import NumberField from "@/ui/NumberField";
 import Switch from "@/ui/Switch";
@@ -15,8 +14,6 @@ import SettingRow from "./SettingRow";
 
 const MIN_PORT = 1024;
 const MAX_PORT = 65535;
-const GUIDE_URL =
-  "https://github.com/mathdevie/devie-quota/blob/main/docs/remote-access.md";
 
 export interface RemoteAccessChange {
   enabled: boolean;
@@ -33,7 +30,7 @@ function shareLink(access: RemoteAccess): string | undefined {
 
 /**
  * The "Remote dashboard" rows in Settings: the switch, the port, the network
- * scope, the address to open, the token, and the Cloudflare Tunnel command.
+ * scope, the address to open, and the token.
  */
 export default function RemoteAccessSettings({
   access,
@@ -74,15 +71,11 @@ export default function RemoteAccessSettings({
   }
 
   const link = shareLink(access);
-  const tunnelCommand = `cloudflared tunnel --url http://localhost:${access.port}`;
   const maskedToken = access.token ? "•".repeat(24) : "";
 
   return (
     <>
-      <SettingRow.Row
-        subtitle={t("Settings.Remote.Description")}
-        title={t("Settings.Remote.Title")}
-      >
+      <SettingRow.Row title={t("Settings.Remote.Enable")}>
         <Switch.Root
           aria-label={t("Settings.Remote.Enable")}
           checked={access.enabled}
@@ -206,33 +199,6 @@ export default function RemoteAccessSettings({
             >
               <RefreshCw size={14} />
               {t("Settings.Remote.Regenerate")}
-            </Button>
-          </SettingRow.Row>
-
-          <SettingRow.Row
-            subtitle={
-              <span className={styles.token}>
-                <code>{tunnelCommand}</code>
-                <span>{t("Settings.Remote.TunnelDescription")}</span>
-              </span>
-            }
-            title={t("Settings.Remote.Tunnel")}
-          >
-            <Button
-              aria-label={t("Settings.Remote.Copy")}
-              onClick={() => void copy(tunnelCommand)}
-              size="sm"
-              variant="icon-secondary"
-            >
-              <Copy size={14} />
-            </Button>
-            <Button
-              onClick={() => void openExternalUrl(GUIDE_URL)}
-              size="sm"
-              variant="secondary"
-            >
-              <ExternalLink size={14} />
-              {t("Settings.Remote.Guide")}
             </Button>
           </SettingRow.Row>
         </>

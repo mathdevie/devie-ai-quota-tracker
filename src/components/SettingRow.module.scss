@@ -5,6 +5,46 @@
   flex-direction: column;
 }
 
+.group {
+  display: grid;
+  gap: $devie__spacing__x1;
+}
+
+.groupHeader {
+  display: grid;
+  gap: 2px;
+
+  h2 {
+    margin: 0;
+    font-size: $devie__font-size__normal;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: $devie__color__text-sub;
+    font-size: $devie__font-size__small;
+  }
+}
+
+// Rows inside a frame: side padding instead of the page-wide lines.
+.groupBody {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius;
+  background: $devie__color__background;
+
+  .row {
+    padding-right: $devie__spacing__x2;
+    padding-left: $devie__spacing__x2;
+  }
+
+  .row:last-child {
+    border-bottom: 0;
+  }
+}
+
 .row {
   display: flex;
   min-height: 56px;

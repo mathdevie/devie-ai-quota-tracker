@@ -26,6 +26,27 @@ function Row({
   );
 }
 
-const SettingRow = { List, Row };
+/** A titled block of rows: a heading, an optional line under it, a frame. */
+function Group({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section className={styles.group}>
+      <header className={styles.groupHeader}>
+        <h2>{title}</h2>
+        {description && <p>{description}</p>}
+      </header>
+      <div className={styles.groupBody}>{children}</div>
+    </section>
+  );
+}
+
+const SettingRow = { List, Row, Group };
 
 export default SettingRow;

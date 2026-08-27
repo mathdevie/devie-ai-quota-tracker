@@ -162,6 +162,7 @@
     "LastRequest": "Viimeisin pyyntö: {{date}}"
   },
   "Settings": {
+    "General": "Yleiset",
     "Theme": "Teema",
     "Language": "Kieli",
     "MenuBarItem": "Valikkorivin kohde",
@@ -189,7 +190,7 @@
       "Port": "Portti",
       "PortDescription": "Muutos käynnistää palvelimen uudelleen.",
       "Lan": "Paikallisverkko",
-      "LanDescription": "Pois: vain tämä Mac, Cloudflare Tunnelia varten. Päällä: jokainen laite verkossasi.",
+      "LanDescription": "Pois: vain tämä Mac. Päällä: jokainen laite verkossasi.",
       "LanSwitch": "Salli paikallisverkko",
       "Address": "Osoite",
       "AddressDescription": "Avaa osoite toisella laitteella. Kopioitu linkki sisältää käyttöoikeustunnuksen.",
@@ -203,9 +204,6 @@
       "Regenerate": "Luo uusi",
       "Copied": "Kopioitu leikepöydälle.",
       "CopyFailed": "Leikepöytä ei ole käytettävissä.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Suorita tämä komento tällä Macilla saadaksesi julkisen osoitteen.",
-      "Guide": "Ohje",
       "Gate": {
         "Description": "Syötä käyttöoikeustunnus kohdasta Asetukset › Etäkojelauta Macisi sovelluksessa.",
         "Label": "Käyttöoikeustunnus",
