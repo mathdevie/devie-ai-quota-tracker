@@ -77,14 +77,30 @@ export interface TraySummary {
   windowKey: string;
 }
 
+/** The local HTTP server that serves the dashboard to other devices. */
+export interface RemoteAccess {
+  enabled: boolean;
+  port: number;
+  /** True: every network interface. False: this Mac only (tunnel use). */
+  lan: boolean;
+  /** The bearer token. Absent on a remote page. */
+  token?: string;
+  /** The addresses the server listens on right now. Empty while stopped. */
+  urls: string[];
+  /** Why the server is not running although it is enabled. */
+  error?: string;
+}
+
 export interface AppSettings {
   showMenuBarItem: boolean;
   /** Absent: the menu bar shows the window with the least quota left. */
   traySummary?: TraySummary;
+  remoteAccess: RemoteAccess;
 }
 
 export interface DashboardState {
-  mode: "native" | "preview";
+  /** `remote`: served by the HTTP server to a browser on another device. */
+  mode: "native" | "preview" | "remote";
   connections: ProviderConnection[];
   refreshedAt?: string;
   settings: AppSettings;

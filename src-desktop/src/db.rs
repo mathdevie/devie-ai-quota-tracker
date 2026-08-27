@@ -5,12 +5,17 @@ use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
     AppSettings, AutoPingState, ConnectionAlerts, ConnectionStatus, DashboardState, NewConnection,
-    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity, TraySummary,
+    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteAccess, RemoteIdentity,
+    TraySummary,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
 const TRAY_SUMMARY: &str = "tray_summary";
 const LANGUAGE: &str = "language";
+const REMOTE_ENABLED: &str = "remote_enabled";
+const REMOTE_PORT: &str = "remote_port";
+const REMOTE_LAN: &str = "remote_lan";
+const REMOTE_TOKEN: &str = "remote_token";
 
 #[derive(Clone, Debug)]
 pub struct Database {
@@ -198,10 +203,34 @@ impl Database {
         // A summary that no longer parses falls back to the default silently.
         let tray_summary = Self::setting(&connection, TRAY_SUMMARY)?
             .and_then(|value| serde_json::from_str::<TraySummary>(&value).ok());
+        let remote_defaults = RemoteAccess::default();
+        let remote_access = RemoteAccess {
+            enabled: Self::setting(&connection, REMOTE_ENABLED)?
+                .map_or(remote_defaults.enabled, |value| value == "1"),
+            port: Self::setting(&connection, REMOTE_PORT)?
+                .and_then(|value| value.parse().ok())
+                .unwrap_or(remote_defaults.port),
+            lan: Self::setting(&connection, REMOTE_LAN)?
+                .map_or(remote_defaults.lan, |value| value == "1"),
+            token: Self::setting(&connection, REMOTE_TOKEN)?,
+            ..remote_defaults
+        };
         Ok(AppSettings {
             show_menu_bar_item,
             tray_summary,
+            remote_access,
         })
+    }
+
+    /// Stores the remote dashboard switch, port, and network scope.
+    pub fn set_remote_access(&self, enabled: bool, port: u16, lan: bool) -> Result<(), String> {
+        self.put_setting(REMOTE_ENABLED, Some(if enabled { "1" } else { "0" }))?;
+        self.put_setting(REMOTE_PORT, Some(&port.to_string()))?;
+        self.put_setting(REMOTE_LAN, Some(if lan { "1" } else { "0" }))
+    }
+
+    pub fn set_remote_token(&self, token: &str) -> Result<(), String> {
+        self.put_setting(REMOTE_TOKEN, Some(token))
     }
 
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
@@ -806,5 +835,17 @@ mod tests {
         );
         database.set_tray_summary(None).expect("clear summary");
         assert_eq!(database.settings().expect("settings").tray_summary, None);
+
+        let remote = database.settings().expect("settings").remote_access;
+        assert_eq!(remote, RemoteAccess::default());
+        database
+            .set_remote_access(true, 5000, true)
+            .expect("remote access");
+        database.set_remote_token("secret").expect("remote token");
+        let remote = database.settings().expect("settings").remote_access;
+        assert!(remote.enabled);
+        assert_eq!(remote.port, 5000);
+        assert!(remote.lan);
+        assert_eq!(remote.token.as_deref(), Some("secret"));
     }
 }

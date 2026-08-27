@@ -27,6 +27,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - Any number of accounts per provider.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
+- An optional remote dashboard: a local HTTP server that serves the same interface to other devices, read and refresh only, behind one access token. Works with a Cloudflare Tunnel or on the local network. See [docs/remote-access.md](docs/remote-access.md).
 - Ten bundled Devie UI themes.
 - Thirteen interface languages, with the same i18next setup as Mana.
 - Signed and notarized Apple silicon builds through GitHub Actions.
@@ -70,6 +71,7 @@ Tauri and Rust core
   |-- direct provider quota requests
   |-- quota normalization and refresh scheduling
   |-- SQLite state and quota history
+  |-- optional HTTP server for the remote dashboard
   `-- macOS menu bar and windows
 ```
 
@@ -83,7 +85,7 @@ src/                    Next.js interface and application components
 src/ui/                 Complete Devie UI component and theme folder
 src-desktop/            Tauri application and Rust core
 src-desktop/src/oauth/  Claude, Codex, Gemini, and Copilot sign-in and quota adapters
-docs/                   Build and signing documentation
+docs/                   Build, signing, update, and remote access documentation
 plans/                  Product research and feasibility analysis
 ```
 
@@ -95,7 +97,8 @@ theme context uses the versioned `devie-quota-theme:v1` storage key.
 
 - Devie Quota has no product login or remote application database.
 - Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
-- Provider tokens never enter the React webview.
+- Provider tokens never enter the React webview or the remote dashboard.
+- The remote dashboard is off by default, listens on `localhost` unless the user allows the local network, and needs a bearer token for every API call.
 - SQLite does not store provider tokens or complete provider responses.
 - The app owns the tokens for every Claude, Codex, Gemini, and Copilot sign-in.
 - Devie Quota never reads or changes the CLI logins on this Mac.

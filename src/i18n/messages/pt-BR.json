@@ -179,6 +179,37 @@
       },
       "Version": "Versão: {{version}}",
       "UpToDateToast": "Você está na versão mais recente."
+    },
+    "Remote": {
+      "Title": "Painel remoto",
+      "Description": "Disponibilize este painel para seus outros dispositivos.",
+      "Enable": "Ativar o painel remoto",
+      "Port": "Porta",
+      "PortDescription": "Uma alteração reinicia o servidor.",
+      "Lan": "Rede local",
+      "LanDescription": "Desligado: só este Mac, para um Cloudflare Tunnel. Ligado: todo dispositivo da sua rede.",
+      "LanSwitch": "Permitir a rede local",
+      "Address": "Endereço",
+      "AddressDescription": "Abra o endereço em outro dispositivo. O link copiado inclui o token de acesso.",
+      "Starting": "Iniciando…",
+      "CopyLink": "Copiar link",
+      "Token": "Token de acesso",
+      "TokenDescription": "Os outros dispositivos pedem este token uma vez. Um novo token desconecta todos os dispositivos.",
+      "Show": "Mostrar",
+      "Hide": "Ocultar",
+      "Copy": "Copiar",
+      "Regenerate": "Gerar novo",
+      "Copied": "Copiado para a área de transferência.",
+      "CopyFailed": "A área de transferência não está disponível.",
+      "Tunnel": "Cloudflare Tunnel",
+      "TunnelDescription": "Execute este comando neste Mac para obter um endereço público.",
+      "Guide": "Guia",
+      "Gate": {
+        "Description": "Digite o token de acesso de Ajustes › Painel remoto no app do seu Mac.",
+        "Label": "Token de acesso",
+        "Submit": "Continuar",
+        "Wrong": "O token de acesso está incorreto."
+      }
     }
   },
   "Tray": {

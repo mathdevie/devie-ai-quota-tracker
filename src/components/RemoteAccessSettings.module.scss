@@ -1,0 +1,24 @@
+@use "../ui/_devie.scss" as *;
+
+.portInput {
+  width: 72px;
+  text-align: center;
+}
+
+.urls,
+.token {
+  display: grid;
+  gap: 2px;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: $devie__font-size__small;
+    color: $devie__color__text;
+    user-select: text;
+    word-break: break-all;
+  }
+}
+
+.danger {
+  color: $devie__color__danger;
+}
