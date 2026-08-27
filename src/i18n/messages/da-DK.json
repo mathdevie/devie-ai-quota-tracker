@@ -88,7 +88,21 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} over",
     "Balance": "{{balance}} tilbage",
-    "LimitReached": "Grænse nået"
+    "LimitReached": "Grænse nået",
+    "News": {
+      "Title": "Codex-nulstillingsnyheder",
+      "Watch": "{{percent}} % chance for en nulstilling {{window}}",
+      "WatchNoPercent": "En nulstilling er sandsynlig {{window}}",
+      "WatchUntil": "Prognosen gælder indtil {{date}}",
+      "NoWatch": "Ingen nulstillingsprognose lige nu.",
+      "LastReset": "Seneste nulstilling {{ago}} · {{date}}",
+      "LastResetUnknown": "Ingen nulstilling registreret endnu.",
+      "Average": "En nulstilling hver {{days}} dage i gennemsnit · {{total}} registreret",
+      "Source": "Kilde",
+      "Disclaimer": "Fællesskabsdata, ikke et løfte fra OpenAI.",
+      "Loading": "Indlæser…",
+      "Unavailable": "Nulstillingsnyhederne kunne ikke indlæses."
+    }
   },
   "Popover": {
     "OpenDashboard": "Åbn dashboard",

@@ -88,7 +88,21 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} extra",
     "Balance": "{{balance}} restantes",
-    "LimitReached": "Límite alcanzado"
+    "LimitReached": "Límite alcanzado",
+    "News": {
+      "Title": "Noticias de reinicios de Codex",
+      "Watch": "{{percent}} % de probabilidad de un reinicio {{window}}",
+      "WatchNoPercent": "Es probable un reinicio {{window}}",
+      "WatchUntil": "Pronóstico válido hasta el {{date}}",
+      "NoWatch": "No hay pronóstico de reinicio por ahora.",
+      "LastReset": "Último reinicio {{ago}} · {{date}}",
+      "LastResetUnknown": "Aún no hay reinicios registrados.",
+      "Average": "Un reinicio cada {{days}} días en promedio · {{total}} registrados",
+      "Source": "Fuente",
+      "Disclaimer": "Datos de la comunidad, no un compromiso de OpenAI.",
+      "Loading": "Cargando…",
+      "Unavailable": "No se pudieron cargar las noticias de reinicios."
+    }
   },
   "Popover": {
     "OpenDashboard": "Abrir el panel",

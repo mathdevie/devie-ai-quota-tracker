@@ -219,10 +219,12 @@ pub async fn usage(
 
 /// Turns `/api/usage-summary` into quota windows.
 ///
-/// - `individualUsage.plan`: the included plan usage, as a percent. This is
-///   the main window and resets at `billingCycleEnd`.
-/// - `individualUsage.onDemand`: usage-based spending in cents, when enabled
-///   and capped.
+/// - `individualUsage.plan`: the included plan usage. Current dashboards
+///   split it into two pools, `autoPercentUsed` ("Cursor Models": Composer
+///   and Cursor Grok) and `apiPercentUsed` ("Other Models"). Older shapes
+///   give one `totalPercentUsed` or cents. Both reset at `billingCycleEnd`.
+/// - `individualUsage.onDemand`: usage-based spending in cents. Capped: a
+///   paid window with the amount. Uncapped: an unlimited "On-demand" row.
 /// - `individualUsage.overall`: a personal cap for team and enterprise seats.
 /// - `teamUsage.pooled`: the pool shared by a team, when capped.
 pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
@@ -233,27 +235,12 @@ pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
 
     if let Some(plan) = individual.and_then(|value| value.get("plan")) {
         let enabled = plan.get("enabled").and_then(Value::as_bool).unwrap_or(true);
-        let percent = number(plan.get("totalPercentUsed")).or_else(|| {
-            let used = number(plan.get("used"))?;
-            let limit = number(plan.get("limit"))?;
-            (limit > 0.0).then(|| used / limit * 100.0)
-        });
-        if let (true, Some(percent)) = (enabled, percent) {
-            windows.push(QuotaWindow {
-                key: "plan".to_string(),
-                label: "Plan".to_string(),
-                used_percent: percent.clamp(0.0, 100.0),
-                resets_at: resets_at.clone(),
-                unlimited: false,
-                amount: None,
-                paid: false,
-            });
+        if enabled {
+            add_plan_windows(plan, &resets_at, &mut windows);
         }
     }
-    add_cents_window(
+    add_on_demand(
         individual.and_then(|value| value.get("onDemand")),
-        "on_demand",
-        "On-demand",
         &resets_at,
         &mut windows,
     );
@@ -290,6 +277,65 @@ pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
         windows,
         reset_credits: None,
     })
+}
+
+/// The included plan: the two model pools when the dashboard reports them,
+/// else one "Plan" window from the total percent or the cents.
+fn add_plan_windows(plan: &Value, resets_at: &Option<String>, windows: &mut Vec<QuotaWindow>) {
+    let pool = |key: &str, label: &str, percent: f64| QuotaWindow {
+        key: key.to_string(),
+        label: label.to_string(),
+        used_percent: percent.clamp(0.0, 100.0),
+        resets_at: resets_at.clone(),
+        unlimited: false,
+        amount: None,
+        paid: false,
+    };
+    let auto = number(plan.get("autoPercentUsed"));
+    let api = number(plan.get("apiPercentUsed"));
+    if auto.is_some() || api.is_some() {
+        if let Some(percent) = auto {
+            windows.push(pool("cursor_models", "Cursor Models", percent));
+        }
+        if let Some(percent) = api {
+            windows.push(pool("other_models", "Other Models", percent));
+        }
+        return;
+    }
+    let percent = number(plan.get("totalPercentUsed")).or_else(|| {
+        let used = number(plan.get("used"))?;
+        let limit = number(plan.get("limit"))?;
+        (limit > 0.0).then(|| used / limit * 100.0)
+    });
+    if let Some(percent) = percent {
+        windows.push(pool("plan", "Plan", percent));
+    }
+}
+
+/// On-demand spending: a capped block is a paid window with the amount; an
+/// enabled block without a cap shows as unlimited, so the user sees that
+/// usage past the plan is billed.
+fn add_on_demand(
+    block: Option<&Value>,
+    resets_at: &Option<String>,
+    windows: &mut Vec<QuotaWindow>,
+) {
+    let Some(block) = block else { return };
+    let enabled = block.get("enabled").and_then(Value::as_bool);
+    let capped = number(block.get("limit")).is_some_and(|limit| limit > 0.0);
+    if capped {
+        add_cents_window(Some(block), "on_demand", "On-demand", resets_at, windows);
+    } else if enabled == Some(true) {
+        windows.push(QuotaWindow {
+            key: "on_demand".to_string(),
+            label: "On-demand".to_string(),
+            used_percent: 0.0,
+            resets_at: resets_at.clone(),
+            unlimited: true,
+            amount: None,
+            paid: true,
+        });
+    }
 }
 
 /// A window from a `{enabled, used, limit}` block in cents. Skipped when the
@@ -414,7 +460,7 @@ mod tests {
     }
 
     #[test]
-    fn skips_unlimited_on_demand_and_uses_cents_when_percent_is_missing() {
+    fn shows_uncapped_on_demand_and_uses_cents_when_percent_is_missing() {
         let json = serde_json::json!({
             "individualUsage": {
                 "plan": {"enabled": true, "used": 500, "limit": 2000},
@@ -422,8 +468,48 @@ mod tests {
             }
         });
         let reading = parse_usage_summary(&json).expect("reading");
-        assert_eq!(reading.windows.len(), 1);
+        assert_eq!(reading.windows.len(), 2);
         assert_eq!(reading.windows[0].used_percent, 25.0);
         assert!(reading.windows[0].resets_at.is_none());
+        // Enabled on-demand without a cap shows as unlimited paid usage.
+        assert_eq!(reading.windows[1].key, "on_demand");
+        assert!(reading.windows[1].unlimited);
+        assert!(reading.windows[1].paid);
+    }
+
+    #[test]
+    fn splits_the_plan_into_the_two_model_pools() {
+        let json = serde_json::json!({
+            "billingCycleEnd": "2026-08-29T00:00:00.000Z",
+            "membershipType": "enterprise",
+            "individualUsage": {
+                "plan": {
+                    "enabled": true, "used": 0, "limit": 2000,
+                    "totalPercentUsed": 0.0, "autoPercentUsed": 12.5, "apiPercentUsed": 40.0
+                },
+                "onDemand": {"enabled": false}
+            }
+        });
+        let reading = parse_usage_summary(&json).expect("reading");
+        let keys: Vec<&str> = reading.windows.iter().map(|w| w.key.as_str()).collect();
+        assert_eq!(keys, ["cursor_models", "other_models"]);
+        assert_eq!(reading.windows[0].label, "Cursor Models");
+        assert_eq!(reading.windows[0].used_percent, 12.5);
+        assert_eq!(reading.windows[1].label, "Other Models");
+        assert_eq!(reading.windows[1].used_percent, 40.0);
+        assert!(reading.windows.iter().all(|w| w.resets_at.is_some()));
+    }
+
+    #[test]
+    fn skips_disabled_on_demand() {
+        let json = serde_json::json!({
+            "individualUsage": {
+                "plan": {"enabled": true, "totalPercentUsed": 5.0},
+                "onDemand": {"enabled": false, "used": 0}
+            }
+        });
+        let reading = parse_usage_summary(&json).expect("reading");
+        assert_eq!(reading.windows.len(), 1);
+        assert_eq!(reading.windows[0].key, "plan");
     }
 }
