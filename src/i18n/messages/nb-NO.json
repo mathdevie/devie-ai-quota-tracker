@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Kvotelinjer",
-    "Description": "Skjulte linjer forsvinner fra kortet og menylinje-popoveren. De teller ikke for sorteringen eller prosenten i menylinjen.",
+    "Shown": "Vist",
+    "Hidden": "Skjult",
     "Left": "{{percent}} % igjen",
     "Resets": "tilbakestilles {{time}}"
   },

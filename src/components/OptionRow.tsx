@@ -10,6 +10,7 @@ function Row({
   label,
   onChange,
   plain,
+  state,
 }: {
   checked: boolean;
   description: string;
@@ -18,6 +19,8 @@ function Row({
   onChange: (checked: boolean) => void;
   /** No frame and no side padding: the row sits alone in a dialog body. */
   plain?: boolean;
+  /** A short word for the current state, next to the switch: "Shown". */
+  state?: string;
 }) {
   return (
     <div
@@ -29,6 +32,7 @@ function Row({
         <strong>{label}</strong>
         <small>{description}</small>
       </span>
+      {state && <span className={styles.state}>{state}</span>}
       <Switch.Root
         aria-label={label}
         checked={checked}
