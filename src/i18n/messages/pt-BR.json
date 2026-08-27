@@ -82,8 +82,8 @@
       "Confirm": "Redefinir limites"
     },
     "Pin": {
-      "Shown": "{{label}} está na barra de menus",
-      "Show": "Mostrar {{label}} na barra de menus"
+      "Shown": "Fixado na barra de menus",
+      "Show": "Fixar na barra de menus"
     },
     "Unlimited": "Ilimitado",
     "Amount": "{{used}} / {{total}} {{unit}}",

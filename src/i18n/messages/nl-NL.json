@@ -82,8 +82,8 @@
       "Confirm": "Limieten resetten"
     },
     "Pin": {
-      "Shown": "{{label}} staat in de menubalk",
-      "Show": "{{label}} in de menubalk tonen"
+      "Shown": "Vastgezet in de menubalk",
+      "Show": "Vastzetten in de menubalk"
     },
     "Unlimited": "Onbeperkt",
     "Amount": "{{used}} / {{total}} {{unit}}",

@@ -82,8 +82,8 @@
       "Confirm": "Réinitialiser"
     },
     "Pin": {
-      "Shown": "{{label}} est affiché dans la barre de menus",
-      "Show": "Afficher {{label}} dans la barre de menus"
+      "Shown": "Épinglé à la barre de menus",
+      "Show": "Épingler à la barre de menus"
     },
     "Unlimited": "Illimité",
     "Amount": "{{used}} / {{total}} {{unit}}",
