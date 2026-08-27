@@ -162,6 +162,7 @@
     "LastRequest": "Ultima richiesta: {{date}}"
   },
   "Settings": {
+    "General": "Generale",
     "Theme": "Tema",
     "Language": "Lingua",
     "MenuBarItem": "Elemento nella barra dei menu",
@@ -189,7 +190,7 @@
       "Port": "Porta",
       "PortDescription": "Una modifica riavvia il server.",
       "Lan": "Rete locale",
-      "LanDescription": "Off: solo questo Mac, per un Cloudflare Tunnel. On: ogni dispositivo della tua rete.",
+      "LanDescription": "Off: solo questo Mac. On: ogni dispositivo della tua rete.",
       "LanSwitch": "Consenti la rete locale",
       "Address": "Indirizzo",
       "AddressDescription": "Apri l'indirizzo su un altro dispositivo. Il link copiato include il token di accesso.",
@@ -203,9 +204,6 @@
       "Regenerate": "Rigenera",
       "Copied": "Copiato negli appunti.",
       "CopyFailed": "Gli appunti non sono disponibili.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Esegui questo comando su questo Mac per ottenere un indirizzo pubblico.",
-      "Guide": "Guida",
       "Gate": {
         "Description": "Inserisci il token di accesso da Impostazioni › Dashboard remota nell'app sul tuo Mac.",
         "Label": "Token di accesso",

@@ -162,6 +162,7 @@
     "LastRequest": "Letzte Anfrage: {{date}}"
   },
   "Settings": {
+    "General": "Allgemein",
     "Theme": "Design",
     "Language": "Sprache",
     "MenuBarItem": "Menüleistensymbol",
@@ -189,7 +190,7 @@
       "Port": "Port",
       "PortDescription": "Eine Änderung startet den Server neu.",
       "Lan": "Lokales Netzwerk",
-      "LanDescription": "Aus: nur dieser Mac, für einen Cloudflare Tunnel. An: jedes Gerät in deinem Netzwerk.",
+      "LanDescription": "Aus: nur dieser Mac. An: jedes Gerät in deinem Netzwerk.",
       "LanSwitch": "Lokales Netzwerk erlauben",
       "Address": "Adresse",
       "AddressDescription": "Öffne die Adresse auf einem anderen Gerät. Der kopierte Link enthält das Zugriffstoken.",
@@ -203,9 +204,6 @@
       "Regenerate": "Neu erzeugen",
       "Copied": "In die Zwischenablage kopiert.",
       "CopyFailed": "Die Zwischenablage ist nicht verfügbar.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Führe diesen Befehl auf diesem Mac aus, um eine öffentliche Adresse zu erhalten.",
-      "Guide": "Anleitung",
       "Gate": {
         "Description": "Gib das Zugriffstoken aus Einstellungen › Remote-Dashboard in der App auf deinem Mac ein.",
         "Label": "Zugriffstoken",

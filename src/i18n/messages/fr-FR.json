@@ -162,6 +162,7 @@
     "LastRequest": "Dernière requête : {{date}}"
   },
   "Settings": {
+    "General": "Général",
     "Theme": "Thème",
     "Language": "Langue",
     "MenuBarItem": "Élément de la barre de menus",
@@ -189,7 +190,7 @@
       "Port": "Port",
       "PortDescription": "Un changement redémarre le serveur.",
       "Lan": "Réseau local",
-      "LanDescription": "Désactivé : ce Mac seulement, pour un Cloudflare Tunnel. Activé : chaque appareil de votre réseau.",
+      "LanDescription": "Désactivé : ce Mac seulement. Activé : chaque appareil de votre réseau.",
       "LanSwitch": "Autoriser le réseau local",
       "Address": "Adresse",
       "AddressDescription": "Ouvrez l'adresse sur un autre appareil. Le lien copié inclut le jeton d'accès.",
@@ -203,9 +204,6 @@
       "Regenerate": "Régénérer",
       "Copied": "Copié dans le presse-papiers.",
       "CopyFailed": "Le presse-papiers n'est pas disponible.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Exécutez cette commande sur ce Mac pour obtenir une adresse publique.",
-      "Guide": "Guide",
       "Gate": {
         "Description": "Saisissez le jeton d'accès depuis Réglages › Tableau de bord distant dans l'app sur votre Mac.",
         "Label": "Jeton d'accès",

@@ -627,6 +627,9 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
         panel.setHidesOnDeactivate(false);
+        // A window that is not key gets no mouse-moved events by default, so
+        // hover tooltips in the webview never open. Ask for them.
+        panel.setAcceptsMouseMovedEvents(true);
     }
 }
 
