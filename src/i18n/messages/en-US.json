@@ -90,8 +90,8 @@
     "Balance": "{{balance}} left",
     "LimitReached": "Limit reached",
     "News": {
-      "Watch": "{{percent}}% chance of a Codex reset {{window}}",
-      "WatchNoPercent": "A Codex reset is likely {{window}}",
+      "Watch": "{{percent}}% chance of a Codex reset",
+      "WatchNoPercent": "A Codex reset is likely",
       "Reset": "Codex limits were reset {{ago}}",
       "Open": "Open the source",
       "Dismiss": "Dismiss"
