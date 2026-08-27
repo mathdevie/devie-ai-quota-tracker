@@ -23,6 +23,22 @@
     margin: 0;
   }
 
+  // The same reset as devie-ui.com. The Devie UI components (toast, dialog,
+  // callout) set no margins on their headings and paragraphs and expect it.
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd,
+  ol,
+  ul {
+    margin-block: 0;
+  }
+
   body {
     overflow: hidden;
     background: $devie__color__background;
