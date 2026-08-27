@@ -83,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} wird in der Menüleiste angezeigt",
-      "Show": "{{label}} in der Menüleiste anzeigen",
-      "Title": "In der Menüleiste anzeigen"
+      "Show": "{{label}} in der Menüleiste anzeigen"
     },
     "Unlimited": "Unbegrenzt",
     "Amount": "{{used}} / {{total}} {{unit}}",
