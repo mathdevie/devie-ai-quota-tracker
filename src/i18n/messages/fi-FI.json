@@ -93,6 +93,7 @@
       "Watch": "{{percent}} % todennäköisyys Codex-nollaukselle",
       "WatchNoPercent": "Codex-nollaus on todennäköinen",
       "Reset": "Codex-rajat nollattiin {{ago}}",
+      "Banked": "Codex myönsi nollaushyvityksen {{ago}}",
       "Open": "Avaa lähde",
       "Dismiss": "Sulje"
     }

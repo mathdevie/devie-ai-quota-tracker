@@ -93,6 +93,7 @@
       "Watch": "{{percent}} % chance for en Codex-nulstilling",
       "WatchNoPercent": "En Codex-nulstilling er sandsynlig",
       "Reset": "Codex-grænserne blev nulstillet {{ago}}",
+      "Banked": "Codex gav en nulstillingskredit {{ago}}",
       "Open": "Åbn kilden",
       "Dismiss": "Luk"
     }

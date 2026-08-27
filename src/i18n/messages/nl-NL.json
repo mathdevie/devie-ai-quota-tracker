@@ -93,6 +93,7 @@
       "Watch": "{{percent}}% kans op een Codex-reset",
       "WatchNoPercent": "Een Codex-reset is waarschijnlijk",
       "Reset": "De Codex-limieten zijn {{ago}} gereset",
+      "Banked": "Codex heeft {{ago}} een resettegoed toegekend",
       "Open": "Bron openen",
       "Dismiss": "Sluiten"
     }

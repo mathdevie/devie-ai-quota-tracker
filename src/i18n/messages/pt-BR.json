@@ -93,6 +93,7 @@
       "Watch": "{{percent}}% de chance de uma redefinição do Codex",
       "WatchNoPercent": "Uma redefinição do Codex é provável",
       "Reset": "Os limites do Codex foram redefinidos {{ago}}",
+      "Banked": "O Codex concedeu um crédito de redefinição {{ago}}",
       "Open": "Abrir a fonte",
       "Dismiss": "Fechar"
     }
