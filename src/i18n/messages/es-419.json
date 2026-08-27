@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renombrar",
+      "Bars": "Barras de cuota",
       "Alerts": "Alertas",
       "AutoPing": "Optimizador de cuota",
       "Refresh": "Actualizar",
@@ -43,7 +44,8 @@
       "On": "Activado",
       "Off": "Desactivado"
     },
-    "MoreActions": "Más acciones"
+    "MoreActions": "Más acciones",
+    "AllBarsHidden": "Todas las barras de cuota están ocultas."
   },
   "Quota": {
     "FilterProvider": "Proveedor",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} se muestra en la barra de menús",
-      "Show": "Mostrar {{label}} en la barra de menús",
-      "Title": "Mostrar en la barra de menús"
+      "Show": "Mostrar {{label}} en la barra de menús"
     },
     "Unlimited": "Ilimitado",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} restantes",
     "LimitReached": "Límite alcanzado",
     "News": {
-      "Title": "Noticias de reinicios de Codex",
-      "Watch": "{{percent}} % de probabilidad de un reinicio {{window}}",
-      "WatchNoPercent": "Es probable un reinicio {{window}}",
-      "WatchUntil": "Pronóstico válido hasta el {{date}}",
-      "NoWatch": "No hay pronóstico de reinicio por ahora.",
-      "LastReset": "Último reinicio {{ago}} · {{date}}",
-      "LastResetUnknown": "Aún no hay reinicios registrados.",
-      "Average": "Un reinicio cada {{days}} días en promedio · {{total}} registrados",
-      "Source": "Fuente",
-      "Disclaimer": "Datos de la comunidad, no un compromiso de OpenAI.",
-      "Loading": "Cargando…",
-      "Unavailable": "No se pudieron cargar las noticias de reinicios."
+      "Watch": "{{percent}} % de probabilidad de un restablecimiento de Codex",
+      "WatchNoPercent": "Es probable un restablecimiento de Codex",
+      "Reset": "Los límites de Codex se restablecieron {{ago}}",
+      "Banked": "Codex otorgó un crédito de restablecimiento {{ago}}",
+      "Open": "Abrir la fuente",
+      "Dismiss": "Cerrar"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Renombrar cuenta",
     "Label": "Etiqueta",
     "Description": "Deja el campo vacío para mostrar de nuevo el id de la cuenta."
+  },
+  "Bars": {
+    "Title": "Barras de cuota",
+    "Description": "Las barras ocultas desaparecen de la tarjeta y del popover de la barra de menús. No cuentan para el orden ni para el porcentaje de la barra de menús.",
+    "Left": "{{percent}}% restante",
+    "Resets": "se restablece {{time}}"
   },
   "Alerts": {
     "Title": "Alertas",

@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Hernoemen",
+      "Bars": "Quotabalken",
       "Alerts": "Meldingen",
       "AutoPing": "Quota-optimalisatie",
       "Refresh": "Vernieuwen",
@@ -43,7 +44,8 @@
       "On": "Aan",
       "Off": "Uit"
     },
-    "MoreActions": "Meer acties"
+    "MoreActions": "Meer acties",
+    "AllBarsHidden": "Alle quotabalken zijn verborgen."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} staat in de menubalk",
-      "Show": "{{label}} in de menubalk tonen",
-      "Title": "In de menubalk tonen"
+      "Show": "{{label}} in de menubalk tonen"
     },
     "Unlimited": "Onbeperkt",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} over",
     "LimitReached": "Limiet bereikt",
     "News": {
-      "Title": "Codex-resetnieuws",
-      "Watch": "{{percent}}% kans op een reset {{window}}",
-      "WatchNoPercent": "Een reset is waarschijnlijk {{window}}",
-      "WatchUntil": "Voorspelling geldig tot {{date}}",
-      "NoWatch": "Momenteel geen resetvoorspelling.",
-      "LastReset": "Laatste reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Nog geen reset geregistreerd.",
-      "Average": "Gemiddeld één reset per {{days}} dagen · {{total}} geregistreerd",
-      "Source": "Bron",
-      "Disclaimer": "Communitygegevens, geen toezegging van OpenAI.",
-      "Loading": "Laden…",
-      "Unavailable": "Het resetnieuws kon niet worden geladen."
+      "Watch": "{{percent}}% kans op een Codex-reset",
+      "WatchNoPercent": "Een Codex-reset is waarschijnlijk",
+      "Reset": "De Codex-limieten zijn {{ago}} gereset",
+      "Banked": "Codex heeft {{ago}} een resettegoed toegekend",
+      "Open": "Bron openen",
+      "Dismiss": "Sluiten"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Account hernoemen",
     "Label": "Label",
     "Description": "Laat het veld leeg om weer de account-id te tonen."
+  },
+  "Bars": {
+    "Title": "Quotabalken",
+    "Description": "Verborgen balken verdwijnen van de kaart en uit de menubalk-popover. Ze tellen niet mee voor de sortering of het percentage in de menubalk.",
+    "Left": "{{percent}}% over",
+    "Resets": "reset {{time}}"
   },
   "Alerts": {
     "Title": "Meldingen",

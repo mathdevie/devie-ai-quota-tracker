@@ -319,6 +319,11 @@ async fn asset(State(app): State<AppHandle>, uri: Uri) -> Response {
 /// gives the single-page app. The embedded assets do this on their own; the
 /// `tauri dev` fallback reads files by their exact name only.
 fn resolve_asset(app: &AppHandle, path: &str) -> Option<tauri::Asset> {
+    // The `tauri dev` resolver reads files by path, so a `..` segment must
+    // never reach it.
+    if path.split('/').any(|segment| segment == "..") {
+        return None;
+    }
     let resolver = app.asset_resolver();
     asset_candidates(path)
         .into_iter()

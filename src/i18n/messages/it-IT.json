@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Rinomina",
+      "Bars": "Barre di quota",
       "Alerts": "Avvisi",
       "AutoPing": "Ottimizzatore quota",
       "Refresh": "Aggiorna",
@@ -43,7 +44,8 @@
       "On": "Attivo",
       "Off": "Disattivo"
     },
-    "MoreActions": "Altre azioni"
+    "MoreActions": "Altre azioni",
+    "AllBarsHidden": "Tutte le barre di quota sono nascoste."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} è mostrato nella barra dei menu",
-      "Show": "Mostra {{label}} nella barra dei menu",
-      "Title": "Mostra nella barra dei menu"
+      "Show": "Mostra {{label}} nella barra dei menu"
     },
     "Unlimited": "Illimitato",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} rimanenti",
     "LimitReached": "Limite raggiunto",
     "News": {
-      "Title": "Notizie sui reset di Codex",
-      "Watch": "{{percent}}% di probabilità di un reset {{window}}",
-      "WatchNoPercent": "Un reset è probabile {{window}}",
-      "WatchUntil": "Previsione valida fino al {{date}}",
-      "NoWatch": "Nessuna previsione di reset al momento.",
-      "LastReset": "Ultimo reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Nessun reset registrato finora.",
-      "Average": "Un reset ogni {{days}} giorni in media · {{total}} registrati",
-      "Source": "Fonte",
-      "Disclaimer": "Dati della community, non un impegno di OpenAI.",
-      "Loading": "Caricamento…",
-      "Unavailable": "Impossibile caricare le notizie sui reset."
+      "Watch": "{{percent}}% di probabilità di un azzeramento Codex",
+      "WatchNoPercent": "Un azzeramento Codex è probabile",
+      "Reset": "I limiti Codex sono stati azzerati {{ago}}",
+      "Banked": "Codex ha concesso un credito di azzeramento {{ago}}",
+      "Open": "Apri la fonte",
+      "Dismiss": "Chiudi"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Rinomina account",
     "Label": "Etichetta",
     "Description": "Lascia il campo vuoto per mostrare di nuovo l'id dell'account."
+  },
+  "Bars": {
+    "Title": "Barre di quota",
+    "Description": "Le barre nascoste scompaiono dalla scheda e dal popover della barra dei menu. Non contano per l'ordinamento né per la percentuale della barra dei menu.",
+    "Left": "{{percent}}% rimanente",
+    "Resets": "reset {{time}}"
   },
   "Alerts": {
     "Title": "Avvisi",

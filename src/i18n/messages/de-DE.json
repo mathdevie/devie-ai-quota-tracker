@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Umbenennen",
+      "Bars": "Kontingentbalken",
       "Alerts": "Hinweise",
       "AutoPing": "Quota-Optimierer",
       "Refresh": "Aktualisieren",
@@ -43,7 +44,8 @@
       "On": "An",
       "Off": "Aus"
     },
-    "MoreActions": "Weitere Aktionen"
+    "MoreActions": "Weitere Aktionen",
+    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet."
   },
   "Quota": {
     "FilterProvider": "Anbieter",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} wird in der Menüleiste angezeigt",
-      "Show": "{{label}} in der Menüleiste anzeigen",
-      "Title": "In der Menüleiste anzeigen"
+      "Show": "{{label}} in der Menüleiste anzeigen"
     },
     "Unlimited": "Unbegrenzt",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} übrig",
     "LimitReached": "Limit erreicht",
     "News": {
-      "Title": "Codex-Reset-News",
-      "Watch": "{{percent}} % Chance auf einen Reset {{window}}",
-      "WatchNoPercent": "Ein Reset ist wahrscheinlich {{window}}",
-      "WatchUntil": "Prognose gültig bis {{date}}",
-      "NoWatch": "Derzeit keine Reset-Prognose.",
-      "LastReset": "Letzter Reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Noch kein Reset erfasst.",
-      "Average": "Im Durchschnitt ein Reset alle {{days}} Tage · {{total}} erfasst",
-      "Source": "Quelle",
-      "Disclaimer": "Community-Daten, keine Zusage von OpenAI.",
-      "Loading": "Wird geladen…",
-      "Unavailable": "Die Reset-News konnten nicht geladen werden."
+      "Watch": "{{percent}} % Chance auf einen Codex-Reset",
+      "WatchNoPercent": "Ein Codex-Reset ist wahrscheinlich",
+      "Reset": "Die Codex-Limits wurden {{ago}} zurückgesetzt",
+      "Banked": "Codex hat {{ago}} ein Reset-Guthaben gewährt",
+      "Open": "Quelle öffnen",
+      "Dismiss": "Schließen"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Konto umbenennen",
     "Label": "Bezeichnung",
     "Description": "Lass das Feld leer, um wieder die Konto-ID anzuzeigen."
+  },
+  "Bars": {
+    "Title": "Kontingentbalken",
+    "Description": "Ausgeblendete Balken verschwinden von der Karte und aus dem Menüleisten-Popover. Sie zählen nicht für die Sortierung oder den Prozentwert in der Menüleiste.",
+    "Left": "{{percent}} % übrig",
+    "Resets": "Zurücksetzung {{time}}"
   },
   "Alerts": {
     "Title": "Hinweise",

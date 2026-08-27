@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Gi nytt navn",
+      "Bars": "Kvotelinjer",
       "Alerts": "Varsler",
       "AutoPing": "Kvoteoptimalisering",
       "Refresh": "Oppdater",
@@ -43,7 +44,8 @@
       "On": "På",
       "Off": "Av"
     },
-    "MoreActions": "Flere handlinger"
+    "MoreActions": "Flere handlinger",
+    "AllBarsHidden": "Alle kvotelinjer er skjult."
   },
   "Quota": {
     "FilterProvider": "Leverandør",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} vises i menylinjen",
-      "Show": "Vis {{label}} i menylinjen",
-      "Title": "Vis i menylinjen"
+      "Show": "Vis {{label}} i menylinjen"
     },
     "Unlimited": "Ubegrenset",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} igjen",
     "LimitReached": "Grense nådd",
     "News": {
-      "Title": "Codex-nullstillingsnyheter",
-      "Watch": "{{percent}} % sjanse for en nullstilling {{window}}",
-      "WatchNoPercent": "En nullstilling er sannsynlig {{window}}",
-      "WatchUntil": "Prognosen gjelder til {{date}}",
-      "NoWatch": "Ingen nullstillingsprognose akkurat nå.",
-      "LastReset": "Siste nullstilling {{ago}} · {{date}}",
-      "LastResetUnknown": "Ingen nullstilling registrert ennå.",
-      "Average": "Én nullstilling hver {{days}} dag i gjennomsnitt · {{total}} registrert",
-      "Source": "Kilde",
-      "Disclaimer": "Fellesskapsdata, ikke et løfte fra OpenAI.",
-      "Loading": "Laster…",
-      "Unavailable": "Nullstillingsnyhetene kunne ikke lastes."
+      "Watch": "{{percent}} % sjanse for en Codex-nullstilling",
+      "WatchNoPercent": "En Codex-nullstilling er sannsynlig",
+      "Reset": "Codex-grensene ble nullstilt {{ago}}",
+      "Banked": "Codex ga en nullstillingskreditt {{ago}}",
+      "Open": "Åpne kilden",
+      "Dismiss": "Lukk"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Gi kontoen nytt navn",
     "Label": "Etikett",
     "Description": "La feltet stå tomt for å vise konto-ID-en igjen."
+  },
+  "Bars": {
+    "Title": "Kvotelinjer",
+    "Description": "Skjulte linjer forsvinner fra kortet og menylinje-popoveren. De teller ikke for sorteringen eller prosenten i menylinjen.",
+    "Left": "{{percent}} % igjen",
+    "Resets": "tilbakestilles {{time}}"
   },
   "Alerts": {
     "Title": "Varsler",

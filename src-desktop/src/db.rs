@@ -115,6 +115,13 @@ impl Database {
             "INTEGER NOT NULL DEFAULT 0",
         )?;
         Self::add_column_if_missing(&connection, "provider_connections", "reset_credits", "TEXT")?;
+        // JSON array of window keys the user hid on the account card.
+        Self::add_column_if_missing(
+            &connection,
+            "provider_connections",
+            "hidden_windows",
+            "TEXT",
+        )?;
         Self::add_column_if_missing(
             &connection,
             "provider_connections",
@@ -355,7 +362,7 @@ impl Database {
                         alert_reset_happened, auto_ping_enabled,
                         last_auto_ping_reset_key, last_auto_ping_at,
                         last_auto_ping_error, auto_ping_observed_reset_at,
-                        last_auto_ping_attempt_at, reset_credits
+                        last_auto_ping_attempt_at, reset_credits, hidden_windows
                  FROM provider_connections
                  ORDER BY CASE provider
                    WHEN 'claude' THEN 0
@@ -412,6 +419,10 @@ impl Database {
                     windows: Vec::new(),
                     reset_credits: row
                         .get::<_, Option<String>>(22)?
+                        .and_then(|json| serde_json::from_str(&json).ok())
+                        .unwrap_or_default(),
+                    hidden_windows: row
+                        .get::<_, Option<String>>(23)?
                         .and_then(|json| serde_json::from_str(&json).ok())
                         .unwrap_or_default(),
                 })
@@ -519,6 +530,26 @@ impl Database {
                     alerts.reset_happened as i64,
                     Utc::now().to_rfc3339(),
                 ],
+            )
+            .map_err(|error| error.to_string())?;
+        if changed == 0 {
+            return Err("The connection does not exist.".to_string());
+        }
+        Ok(())
+    }
+
+    /// Remembers which quota bars the user hid on the account card.
+    pub fn set_hidden_windows(&self, id: &str, keys: &[String]) -> Result<(), String> {
+        let json = if keys.is_empty() {
+            None
+        } else {
+            Some(serde_json::to_string(keys).map_err(|error| error.to_string())?)
+        };
+        let changed = self
+            .connection()?
+            .execute(
+                "UPDATE provider_connections SET hidden_windows = ?2, updated_at = ?3 WHERE id = ?1",
+                params![id, json, Utc::now().to_rfc3339()],
             )
             .map_err(|error| error.to_string())?;
         if changed == 0 {
@@ -765,6 +796,36 @@ mod tests {
         let state = database.dashboard_state().expect("state");
         assert_eq!(state.connections.len(), 1);
         assert_eq!(state.connections[0].id, "claude-two");
+    }
+
+    #[test]
+    fn stores_hidden_windows() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
+        database
+            .upsert_connections(&[NewConnection {
+                id: "claude-one".into(),
+                provider: Provider::Claude,
+                label: "Claude · One".into(),
+                source_locator: "/tmp/.claude-one".into(),
+                identity: None,
+            }])
+            .expect("upsert");
+
+        database
+            .set_hidden_windows("claude-one", &["seven_day".into(), "extra_usage".into()])
+            .expect("hide");
+        let state = database.dashboard_state().expect("state");
+        assert_eq!(
+            state.connections[0].hidden_windows,
+            vec!["seven_day".to_string(), "extra_usage".to_string()]
+        );
+        database
+            .set_hidden_windows("claude-one", &[])
+            .expect("show all");
+        let state = database.dashboard_state().expect("state");
+        assert!(state.connections[0].hidden_windows.is_empty());
+        assert!(database.set_hidden_windows("missing", &[]).is_err());
     }
 
     #[test]

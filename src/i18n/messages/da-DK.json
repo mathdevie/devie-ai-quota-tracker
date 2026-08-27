@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Omdøb",
+      "Bars": "Kvotebjælker",
       "Alerts": "Advarsler",
       "AutoPing": "Kvoteoptimering",
       "Refresh": "Opdater",
@@ -43,7 +44,8 @@
       "On": "Til",
       "Off": "Fra"
     },
-    "MoreActions": "Flere handlinger"
+    "MoreActions": "Flere handlinger",
+    "AllBarsHidden": "Alle kvotebjælker er skjult."
   },
   "Quota": {
     "FilterProvider": "Udbyder",
@@ -81,8 +83,7 @@
     },
     "Pin": {
       "Shown": "{{label}} vises i menulinjen",
-      "Show": "Vis {{label}} i menulinjen",
-      "Title": "Vis i menulinjen"
+      "Show": "Vis {{label}} i menulinjen"
     },
     "Unlimited": "Ubegrænset",
     "Amount": "{{used}} / {{total}} {{unit}}",
@@ -90,18 +91,12 @@
     "Balance": "{{balance}} tilbage",
     "LimitReached": "Grænse nået",
     "News": {
-      "Title": "Codex-nulstillingsnyheder",
-      "Watch": "{{percent}} % chance for en nulstilling {{window}}",
-      "WatchNoPercent": "En nulstilling er sandsynlig {{window}}",
-      "WatchUntil": "Prognosen gælder indtil {{date}}",
-      "NoWatch": "Ingen nulstillingsprognose lige nu.",
-      "LastReset": "Seneste nulstilling {{ago}} · {{date}}",
-      "LastResetUnknown": "Ingen nulstilling registreret endnu.",
-      "Average": "En nulstilling hver {{days}} dage i gennemsnit · {{total}} registreret",
-      "Source": "Kilde",
-      "Disclaimer": "Fællesskabsdata, ikke et løfte fra OpenAI.",
-      "Loading": "Indlæser…",
-      "Unavailable": "Nulstillingsnyhederne kunne ikke indlæses."
+      "Watch": "{{percent}} % chance for en Codex-nulstilling",
+      "WatchNoPercent": "En Codex-nulstilling er sandsynlig",
+      "Reset": "Codex-grænserne blev nulstillet {{ago}}",
+      "Banked": "Codex gav en nulstillingskredit {{ago}}",
+      "Open": "Åbn kilden",
+      "Dismiss": "Luk"
     }
   },
   "Popover": {
@@ -141,6 +136,12 @@
     "Title": "Omdøb konto",
     "Label": "Etiket",
     "Description": "Lad feltet være tomt for at vise konto-id'et igen."
+  },
+  "Bars": {
+    "Title": "Kvotebjælker",
+    "Description": "Skjulte bjælker forsvinder fra kortet og menulinjens popover. De tæller ikke med i sorteringen eller menulinjens procent.",
+    "Left": "{{percent}} % tilbage",
+    "Resets": "nulstilles {{time}}"
   },
   "Alerts": {
     "Title": "Advarsler",

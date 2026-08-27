@@ -59,6 +59,8 @@ export interface ProviderConnection {
   alerts: ConnectionAlerts;
   autoPing: AutoPingState;
   windows: QuotaWindow[];
+  /** Keys of the quota windows the user hid on this account's card. */
+  hiddenWindows?: string[];
   /** Codex only: banked reset credits the user can spend. */
   resetCredits?: ResetCredit[];
 }
@@ -119,6 +121,8 @@ export interface LoginStart {
 
 /** One Codex reset announcement, from codex-resets.com. */
 export interface CodexResetNews {
+  /** The source post id, or an "observed-…" id. Stable across reads. */
+  id: string;
   announcedAt: string;
   /** "regular" for a reset, "banked" for a granted reset credit. */
   resetType: string;
