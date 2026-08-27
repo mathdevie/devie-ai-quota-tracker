@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Quota bars",
-    "Description": "Hidden bars leave the card and the menu bar popover. They do not count for the sort or the menu bar percent.",
+    "Shown": "Shown",
+    "Hidden": "Hidden",
     "Left": "{{percent}}% left",
     "Resets": "resets {{time}}"
   },

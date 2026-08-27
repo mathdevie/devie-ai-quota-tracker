@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Kontingentbalken",
-    "Description": "Ausgeblendete Balken verschwinden von der Karte und aus dem Menüleisten-Popover. Sie zählen nicht für die Sortierung oder den Prozentwert in der Menüleiste.",
+    "Shown": "Sichtbar",
+    "Hidden": "Ausgeblendet",
     "Left": "{{percent}} % übrig",
     "Resets": "Zurücksetzung {{time}}"
   },

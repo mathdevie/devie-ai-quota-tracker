@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Kvotebjælker",
-    "Description": "Skjulte bjælker forsvinder fra kortet og menulinjens popover. De tæller ikke med i sorteringen eller menulinjens procent.",
+    "Shown": "Vist",
+    "Hidden": "Skjult",
     "Left": "{{percent}} % tilbage",
     "Resets": "nulstilles {{time}}"
   },

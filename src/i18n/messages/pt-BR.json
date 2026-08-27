@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Barras de cota",
-    "Description": "As barras ocultas somem do cartão e do popover da barra de menus. Elas não contam para a ordenação nem para a porcentagem da barra de menus.",
+    "Shown": "Visível",
+    "Hidden": "Oculta",
     "Left": "{{percent}}% restante",
     "Resets": "redefine {{time}}"
   },

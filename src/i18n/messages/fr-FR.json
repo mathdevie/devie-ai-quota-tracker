@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Barres de quota",
-    "Description": "Les barres masquées disparaissent de la carte et du popover de la barre des menus. Elles ne comptent ni pour le tri ni pour le pourcentage de la barre des menus.",
+    "Shown": "Affichée",
+    "Hidden": "Masquée",
     "Left": "{{percent}} % restants",
     "Resets": "réinitialisation {{time}}"
   },

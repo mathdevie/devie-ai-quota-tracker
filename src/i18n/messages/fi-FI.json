@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Kiintiöpalkit",
-    "Description": "Piilotetut palkit poistuvat kortista ja valikkorivin ponnahdusikkunasta. Ne eivät vaikuta lajitteluun eivätkä valikkorivin prosenttilukuun.",
+    "Shown": "Näkyvissä",
+    "Hidden": "Piilotettu",
     "Left": "{{percent}} % jäljellä",
     "Resets": "nollautuu {{time}}"
   },
