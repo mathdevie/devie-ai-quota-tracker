@@ -64,8 +64,7 @@ function alertsOn(connection: ProviderConnection): boolean {
 
 /**
  * Alert and Quota Optimizer shortcuts in the card header. An active feature
- * always shows; an inactive one shows on hover. Codex cards also get the
- * community reset news, always visible.
+ * always shows; an inactive one shows on hover.
  */
 function FeatureFlags({
   connection,
@@ -81,9 +80,6 @@ function FeatureFlags({
   const optimizer = connection.autoPing.enabled;
   return (
     <div className={styles.flags}>
-      {connection.provider === "codex" && (
-        <CodexResetsNews className={styles.flag} />
-      )}
       {onAlerts && (
         <IconTip label={t("Connection.Menu.Alerts")}>
           <button
@@ -241,6 +237,9 @@ export default function ConnectionCard({
         )}
       </header>
 
+      {connection.provider === "codex" && (
+        <CodexResetsNews className={styles.news} />
+      )}
       {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
         <div className={styles.credits}>
           <ResetCredits

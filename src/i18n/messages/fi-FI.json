@@ -90,18 +90,11 @@
     "Balance": "{{balance}} jäljellä",
     "LimitReached": "Raja saavutettu",
     "News": {
-      "Title": "Codexin nollausuutiset",
-      "Watch": "{{percent}} % todennäköisyys nollaukselle {{window}}",
-      "WatchNoPercent": "Nollaus on todennäköinen {{window}}",
-      "WatchUntil": "Ennuste voimassa {{date}} asti",
-      "NoWatch": "Ei nollausennustetta juuri nyt.",
-      "LastReset": "Viimeisin nollaus {{ago}} · {{date}}",
-      "LastResetUnknown": "Nollauksia ei ole vielä kirjattu.",
-      "Average": "Keskimäärin yksi nollaus {{days}} päivän välein · {{total}} kirjattu",
-      "Source": "Lähde",
-      "Disclaimer": "Yhteisön tietoja, ei OpenAI:n sitoumus.",
-      "Loading": "Ladataan…",
-      "Unavailable": "Nollausuutisia ei voitu ladata."
+      "Watch": "{{percent}} % todennäköisyys Codex-nollaukselle {{window}}",
+      "WatchNoPercent": "Codex-nollaus on todennäköinen {{window}}",
+      "Reset": "Codex-rajat nollattiin {{ago}}",
+      "Open": "Avaa lähde",
+      "Dismiss": "Sulje"
     }
   },
   "Popover": {
