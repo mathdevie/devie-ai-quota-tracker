@@ -9,6 +9,8 @@
   border: 1px solid $devie__color__line;
   border-radius: 12px;
   background: $devie__color__background;
+  // A menu, not a document: nothing in it is text to select.
+  user-select: none;
 }
 
 .header {
@@ -19,7 +21,6 @@
   gap: $devie__spacing__x2;
   padding: $devie__spacing__x05 $devie__spacing__x1;
   border-bottom: 1px solid $devie__color__line;
-  user-select: none;
 }
 
 // Flat rows with a line between them, no card frames.
