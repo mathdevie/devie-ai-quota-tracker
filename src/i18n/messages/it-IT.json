@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Barre di quota",
-    "Description": "Le barre nascoste scompaiono dalla scheda e dal popover della barra dei menu. Non contano per l'ordinamento né per la percentuale della barra dei menu.",
+    "Shown": "Visibile",
+    "Hidden": "Nascosta",
     "Left": "{{percent}}% rimanente",
     "Resets": "reset {{time}}"
   },

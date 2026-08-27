@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { accountLabel, PROVIDER_NAMES, visibleWindows } from "@/lib/labels";
+import CodexResetsNews from "./CodexResetsNews";
 import { StatusBadge } from "./ConnectionCard";
 import styles from "./PopoverRow.module.scss";
 import ProviderIcon from "./ProviderIcon";
@@ -34,6 +35,9 @@ export default function PopoverRow({
         </p>
         <StatusBadge connection={connection} />
       </header>
+      {connection.provider === "codex" && (
+        <CodexResetsNews className={styles.news} />
+      )}
       {windows.length > 0 ? (
         <QuotaBars
           onPin={onPin}

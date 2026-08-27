@@ -146,7 +146,7 @@ export default function CodexResetsNews({ className }: { className?: string }) {
   if (!item || new Date(item.at).getTime() <= dismissedAt) return null;
 
   // The forecast window is English text from the site. It follows the
-  // translated sentence after a separator instead of being inlined.
+  // translated sentence instead of being inlined.
   const ago = agoText(item.at, i18n.language, now);
   const text =
     item.kind === "reset"
@@ -157,7 +157,7 @@ export default function CodexResetsNews({ className }: { className?: string }) {
             item.percent === undefined
               ? t("Quota.News.WatchNoPercent")
               : t("Quota.News.Watch", { percent: item.percent })
-          }${item.window ? ` · ${item.window}` : ""}`;
+          }${item.window ? ` ${item.window}` : ""}`;
 
   return (
     <Callout.Root className={clsx(styles.banner, className)} variant="warning">

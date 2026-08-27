@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Kvotstaplar",
-    "Description": "Dolda staplar försvinner från kortet och menyradens popover. De räknas inte för sorteringen eller menyradens procent.",
+    "Shown": "Visas",
+    "Hidden": "Dold",
     "Left": "{{percent}} % kvar",
     "Resets": "återställs {{time}}"
   },

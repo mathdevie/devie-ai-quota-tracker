@@ -80,17 +80,20 @@ export default function QuotaBarsDialog({
             <Dialog.Body>
               <div className={styles.group}>
                 <OptionRow.List>
-                  {connection?.windows.map((window) => (
-                    <OptionRow.Row
-                      checked={!hidden.includes(window.key)}
-                      description={describe(window)}
-                      key={window.key}
-                      label={window.label}
-                      onChange={(shown) => setShown(window.key, shown)}
-                    />
-                  ))}
+                  {connection?.windows.map((window) => {
+                    const shown = !hidden.includes(window.key);
+                    return (
+                      <OptionRow.Row
+                        checked={shown}
+                        description={describe(window)}
+                        key={window.key}
+                        label={window.label}
+                        onChange={(next) => setShown(window.key, next)}
+                        state={shown ? t("Bars.Shown") : t("Bars.Hidden")}
+                      />
+                    );
+                  })}
                 </OptionRow.List>
-                <OptionRow.Note>{t("Bars.Description")}</OptionRow.Note>
               </div>
             </Dialog.Body>
             <Dialog.Footer>
