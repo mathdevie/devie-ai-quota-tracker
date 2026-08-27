@@ -82,8 +82,8 @@
       "Confirm": "Nulstil grænser"
     },
     "Pin": {
-      "Shown": "{{label}} vises i menulinjen",
-      "Show": "Vis {{label}} i menulinjen"
+      "Shown": "Fastgjort til menulinjen",
+      "Show": "Fastgør til menulinjen"
     },
     "Unlimited": "Ubegrænset",
     "Amount": "{{used}} / {{total}} {{unit}}",
