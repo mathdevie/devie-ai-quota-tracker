@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Rinomina",
+      "Bars": "Barre di quota",
       "Alerts": "Avvisi",
       "AutoPing": "Ottimizzatore quota",
       "Refresh": "Aggiorna",
@@ -43,7 +44,8 @@
       "On": "Attivo",
       "Off": "Disattivo"
     },
-    "MoreActions": "Altre azioni"
+    "MoreActions": "Altre azioni",
+    "AllBarsHidden": "Tutte le barre di quota sono nascoste."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -135,6 +137,12 @@
     "Title": "Rinomina account",
     "Label": "Etichetta",
     "Description": "Lascia il campo vuoto per mostrare di nuovo l'id dell'account."
+  },
+  "Bars": {
+    "Title": "Barre di quota",
+    "Description": "Le barre nascoste scompaiono dalla scheda e dal popover della barra dei menu. Non contano per l'ordinamento né per la percentuale della barra dei menu.",
+    "Left": "{{percent}}% rimanente",
+    "Resets": "reset {{time}}"
   },
   "Alerts": {
     "Title": "Avvisi",

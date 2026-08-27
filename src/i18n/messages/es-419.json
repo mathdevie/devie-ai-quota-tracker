@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renombrar",
+      "Bars": "Barras de cuota",
       "Alerts": "Alertas",
       "AutoPing": "Optimizador de cuota",
       "Refresh": "Actualizar",
@@ -43,7 +44,8 @@
       "On": "Activado",
       "Off": "Desactivado"
     },
-    "MoreActions": "Más acciones"
+    "MoreActions": "Más acciones",
+    "AllBarsHidden": "Todas las barras de cuota están ocultas."
   },
   "Quota": {
     "FilterProvider": "Proveedor",
@@ -135,6 +137,12 @@
     "Title": "Renombrar cuenta",
     "Label": "Etiqueta",
     "Description": "Deja el campo vacío para mostrar de nuevo el id de la cuenta."
+  },
+  "Bars": {
+    "Title": "Barras de cuota",
+    "Description": "Las barras ocultas desaparecen de la tarjeta y del popover de la barra de menús. No cuentan para el orden ni para el porcentaje de la barra de menús.",
+    "Left": "{{percent}}% restante",
+    "Resets": "se restablece {{time}}"
   },
   "Alerts": {
     "Title": "Alertas",

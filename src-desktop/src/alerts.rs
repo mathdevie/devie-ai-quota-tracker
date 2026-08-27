@@ -231,6 +231,7 @@ mod tests {
             auto_ping: AutoPingState::default(),
             windows: vec![previous],
             reset_credits: Vec::new(),
+            hidden_windows: Vec::new(),
         }
     }
 

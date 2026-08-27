@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Nimeä uudelleen",
+      "Bars": "Kiintiöpalkit",
       "Alerts": "Hälytykset",
       "AutoPing": "Kiintiön optimointi",
       "Refresh": "Päivitä",
@@ -43,7 +44,8 @@
       "On": "Päällä",
       "Off": "Pois"
     },
-    "MoreActions": "Lisää toimintoja"
+    "MoreActions": "Lisää toimintoja",
+    "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu."
   },
   "Quota": {
     "FilterProvider": "Palveluntarjoaja",
@@ -135,6 +137,12 @@
     "Title": "Nimeä tili uudelleen",
     "Label": "Nimike",
     "Description": "Jätä kenttä tyhjäksi näyttääksesi tilin tunnuksen uudelleen."
+  },
+  "Bars": {
+    "Title": "Kiintiöpalkit",
+    "Description": "Piilotetut palkit poistuvat kortista ja valikkorivin ponnahdusikkunasta. Ne eivät vaikuta lajitteluun eivätkä valikkorivin prosenttilukuun.",
+    "Left": "{{percent}} % jäljellä",
+    "Resets": "nollautuu {{time}}"
   },
   "Alerts": {
     "Title": "Hälytykset",
