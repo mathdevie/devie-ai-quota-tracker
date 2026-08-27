@@ -90,8 +90,8 @@
     "Balance": "{{balance}} igjen",
     "LimitReached": "Grense nådd",
     "News": {
-      "Watch": "{{percent}} % sjanse for en Codex-nullstilling {{window}}",
-      "WatchNoPercent": "En Codex-nullstilling er sannsynlig {{window}}",
+      "Watch": "{{percent}} % sjanse for en Codex-nullstilling",
+      "WatchNoPercent": "En Codex-nullstilling er sannsynlig",
       "Reset": "Codex-grensene ble nullstilt {{ago}}",
       "Open": "Åpne kilden",
       "Dismiss": "Lukk"

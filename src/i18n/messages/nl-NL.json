@@ -90,8 +90,8 @@
     "Balance": "{{balance}} over",
     "LimitReached": "Limiet bereikt",
     "News": {
-      "Watch": "{{percent}}% kans op een Codex-reset {{window}}",
-      "WatchNoPercent": "Een Codex-reset is waarschijnlijk {{window}}",
+      "Watch": "{{percent}}% kans op een Codex-reset",
+      "WatchNoPercent": "Een Codex-reset is waarschijnlijk",
       "Reset": "De Codex-limieten zijn {{ago}} gereset",
       "Open": "Bron openen",
       "Dismiss": "Sluiten"

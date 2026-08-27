@@ -12,9 +12,12 @@ import IconTip from "./IconTip";
 
 /** One request serves every Codex card; the core caches the answer too. */
 const CACHE_FOR = 10 * 60_000;
-/** Older news is not shown. */
+/** Older resets are not shown. A forecast lasts until it expires. */
 const MAX_AGE = 3 * 86_400_000;
-const DISMISSED_KEY = "codexResetsNews.dismissed";
+/** The time of the last dismissed item. Everything up to it stays hidden. */
+const DISMISSED_KEY = "codexResetsNews.dismissedAt";
+/** How often the banner re-checks the clock (expiry, age). */
+const TICK = 60_000;
 
 const cache: {
   value?: CodexResetsStatus;
@@ -40,9 +43,8 @@ function loadStatus(): Promise<CodexResetsStatus> {
 
 /** The one piece of news the banner shows. */
 interface NewsItem {
-  /** Stable across reads, so a dismissal sticks. */
-  id: string;
   kind: "watch" | "reset";
+  /** When it happened. A dismissal hides this item and every older one. */
   at: string;
   percent?: number;
   window?: string;
@@ -50,9 +52,9 @@ interface NewsItem {
 }
 
 /**
- * The newest item of the last three days: an active forecast, else the last
- * reset. The API gives the reset a stable id; the forecast has none, so the
- * time it was observed stands in.
+ * The newest item: an active forecast, or a reset from the last three days.
+ * Items are told apart by time, because the API gives the reset an id but
+ * the forecast none.
  */
 export function latestNews(
   status: CodexResetsStatus,
@@ -62,7 +64,6 @@ export function latestNews(
   const watch = status.activeWatch;
   if (watch && new Date(watch.expiresAt).getTime() > now) {
     items.push({
-      id: `watch:${watch.observedAt}`,
       kind: "watch",
       at: watch.observedAt,
       percent: watch.resetChancePercent,
@@ -73,76 +74,86 @@ export function latestNews(
   const reset = status.latestReset;
   if (reset) {
     items.push({
-      id: `reset:${reset.id}`,
       kind: "reset",
       at: reset.announcedAt,
       sourceUrl: reset.sourceUrl,
     });
   }
   return items
-    .filter((item) => now - new Date(item.at).getTime() < MAX_AGE)
+    .filter((item) => {
+      const age = now - new Date(item.at).getTime();
+      return Number.isFinite(age) && (item.kind === "watch" || age < MAX_AGE);
+    })
     .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())[0];
 }
 
-function readDismissed(): string | undefined {
+/** The time of the last dismissed item, as milliseconds. */
+function readDismissedAt(): number {
   try {
-    return window.localStorage.getItem(DISMISSED_KEY) ?? undefined;
+    return new Date(window.localStorage.getItem(DISMISSED_KEY) ?? 0).getTime();
   } catch {
-    return undefined;
+    return 0;
   }
 }
 
-function writeDismissed(id: string) {
+function writeDismissedAt(at: string) {
   try {
-    window.localStorage.setItem(DISMISSED_KEY, id);
+    window.localStorage.setItem(DISMISSED_KEY, at);
   } catch {
     // Private mode or a full store: the banner comes back next time.
   }
 }
 
 /** "2 days ago", "5 hours ago", or "yesterday", in the interface language. */
-function agoText(value: string, locale: string): string {
-  const hours = (Date.now() - new Date(value).getTime()) / 3_600_000;
+function agoText(value: string, locale: string, now: number): string {
+  const hours = (now - new Date(value).getTime()) / 3_600_000;
+  if (hours < 24) {
+    const format = new Intl.RelativeTimeFormat(locale, { numeric: "always" });
+    return format.format(-Math.max(0, Math.round(hours)), "hour");
+  }
   const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-  if (hours < 24) return format.format(-Math.max(0, Math.round(hours)), "hour");
   return format.format(-Math.round(hours / 24), "day");
 }
 
 /**
  * A warning banner in the Codex card with the latest reset news from
  * codex-resets.com: one line of text, a link to the source, and a cross.
- * A dismissed item stays hidden; a newer item shows again.
+ * A dismissed item stays hidden, with everything older; a newer item shows.
  */
 export default function CodexResetsNews({ className }: { className?: string }) {
   const { t, i18n } = useTranslation();
   const [status, setStatus] = useState<CodexResetsStatus>();
-  const [dismissed, setDismissed] = useState<string>();
+  const [dismissedAt, setDismissedAt] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let live = true;
-    setDismissed(readDismissed());
+    setDismissedAt(readDismissedAt());
     loadStatus()
       .then((value) => live && setStatus(value))
       .catch(() => {
         // No news is not an error worth a message in the card.
       });
+    const timer = window.setInterval(() => setNow(Date.now()), TICK);
     return () => {
       live = false;
+      window.clearInterval(timer);
     };
   }, []);
 
-  const item = status ? latestNews(status) : undefined;
-  if (!item || item.id === dismissed) return null;
+  const item = status ? latestNews(status, now) : undefined;
+  if (!item || new Date(item.at).getTime() <= dismissedAt) return null;
 
+  // The forecast window is English text from the site. It follows the
+  // translated sentence after a separator instead of being inlined.
   const text =
     item.kind === "reset"
-      ? t("Quota.News.Reset", { ago: agoText(item.at, i18n.language) })
-      : item.percent === undefined
-        ? t("Quota.News.WatchNoPercent", { window: item.window })
-        : t("Quota.News.Watch", {
-            percent: item.percent,
-            window: item.window,
-          });
+      ? t("Quota.News.Reset", { ago: agoText(item.at, i18n.language, now) })
+      : `${
+          item.percent === undefined
+            ? t("Quota.News.WatchNoPercent")
+            : t("Quota.News.Watch", { percent: item.percent })
+        }${item.window ? ` · ${item.window}` : ""}`;
 
   return (
     <Callout.Root className={clsx(styles.banner, className)} variant="warning">
@@ -167,8 +178,8 @@ export default function CodexResetsNews({ className }: { className?: string }) {
           aria-label={t("Quota.News.Dismiss")}
           className={styles.action}
           onClick={() => {
-            writeDismissed(item.id);
-            setDismissed(item.id);
+            writeDismissedAt(item.at);
+            setDismissedAt(new Date(item.at).getTime());
           }}
           type="button"
         >

@@ -90,8 +90,8 @@
     "Balance": "{{balance}} kvar",
     "LimitReached": "Gräns nådd",
     "News": {
-      "Watch": "{{percent}} % chans för en Codex-återställning {{window}}",
-      "WatchNoPercent": "En Codex-återställning är trolig {{window}}",
+      "Watch": "{{percent}} % chans för en Codex-återställning",
+      "WatchNoPercent": "En Codex-återställning är trolig",
       "Reset": "Codex-gränserna återställdes {{ago}}",
       "Open": "Öppna källan",
       "Dismiss": "Stäng"

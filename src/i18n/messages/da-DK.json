@@ -90,8 +90,8 @@
     "Balance": "{{balance}} tilbage",
     "LimitReached": "Grænse nået",
     "News": {
-      "Watch": "{{percent}} % chance for en Codex-nulstilling {{window}}",
-      "WatchNoPercent": "En Codex-nulstilling er sandsynlig {{window}}",
+      "Watch": "{{percent}} % chance for en Codex-nulstilling",
+      "WatchNoPercent": "En Codex-nulstilling er sandsynlig",
       "Reset": "Codex-grænserne blev nulstillet {{ago}}",
       "Open": "Åbn kilden",
       "Dismiss": "Luk"

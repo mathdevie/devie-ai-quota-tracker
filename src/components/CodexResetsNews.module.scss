@@ -1,16 +1,30 @@
 @use "../ui/_devie.scss" as *;
 
 // One line: icon, text, source link, cross. The text gives way first.
+// Callout sets its own icon offset and text size; the banner is smaller.
 .banner {
   display: flex;
   align-items: center;
   gap: $devie__spacing__x1;
   padding: $devie__spacing__x05 $devie__spacing__x1;
-  font-size: 11px;
+
+  > :first-child {
+    margin-top: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
 
   > :nth-child(2) {
     min-width: 0;
     flex: 1;
+
+    > * {
+      font-size: 11px;
+      line-height: 1.35;
+    }
   }
 }
 
