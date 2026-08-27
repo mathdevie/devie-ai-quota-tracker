@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Omdøb",
+      "Bars": "Kvotebjælker",
       "Alerts": "Advarsler",
       "AutoPing": "Kvoteoptimering",
       "Refresh": "Opdater",
@@ -43,7 +44,8 @@
       "On": "Til",
       "Off": "Fra"
     },
-    "MoreActions": "Flere handlinger"
+    "MoreActions": "Flere handlinger",
+    "AllBarsHidden": "Alle kvotebjælker er skjult."
   },
   "Quota": {
     "FilterProvider": "Udbyder",
@@ -141,6 +143,12 @@
     "Title": "Omdøb konto",
     "Label": "Etiket",
     "Description": "Lad feltet være tomt for at vise konto-id'et igen."
+  },
+  "Bars": {
+    "Title": "Kvotebjælker",
+    "Description": "Skjulte bjælker forsvinder fra kortet og menulinjens popover. De tæller ikke med i sorteringen eller menulinjens procent.",
+    "Left": "{{percent}} % tilbage",
+    "Resets": "nulstilles {{time}}"
   },
   "Alerts": {
     "Title": "Advarsler",

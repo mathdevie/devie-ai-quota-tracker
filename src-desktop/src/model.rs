@@ -132,6 +132,9 @@ pub struct ProviderConnection {
     pub alerts: ConnectionAlerts,
     pub auto_ping: AutoPingState,
     pub windows: Vec<QuotaWindow>,
+    /// Keys of the quota windows the user hid on this account's card.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub hidden_windows: Vec<String>,
     /// Codex only: banked rate-limit reset credits the user can spend.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub reset_credits: Vec<ResetCredit>,

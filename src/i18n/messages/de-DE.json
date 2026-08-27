@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Umbenennen",
+      "Bars": "Kontingentbalken",
       "Alerts": "Hinweise",
       "AutoPing": "Quota-Optimierer",
       "Refresh": "Aktualisieren",
@@ -43,7 +44,8 @@
       "On": "An",
       "Off": "Aus"
     },
-    "MoreActions": "Weitere Aktionen"
+    "MoreActions": "Weitere Aktionen",
+    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet."
   },
   "Quota": {
     "FilterProvider": "Anbieter",
@@ -141,6 +143,12 @@
     "Title": "Konto umbenennen",
     "Label": "Bezeichnung",
     "Description": "Lass das Feld leer, um wieder die Konto-ID anzuzeigen."
+  },
+  "Bars": {
+    "Title": "Kontingentbalken",
+    "Description": "Ausgeblendete Balken verschwinden von der Karte und aus dem Menüleisten-Popover. Sie zählen nicht für die Sortierung oder den Prozentwert in der Menüleiste.",
+    "Left": "{{percent}} % übrig",
+    "Resets": "Zurücksetzung {{time}}"
   },
   "Alerts": {
     "Title": "Hinweise",
