@@ -612,10 +612,24 @@ const POPOVER_WIDTH: f64 = 440.0;
 /// without bringing the main window forward, like a native menu bar popover.
 #[cfg(target_os = "macos")]
 fn make_non_activating_panel(window: &tauri::WebviewWindow) {
-    use objc2::{runtime::AnyObject, ClassType};
-    use objc2_app_kit::{
-        NSPanel, NSPopUpMenuWindowLevel, NSWindowCollectionBehavior, NSWindowStyleMask,
-    };
+    use objc2::{define_class, runtime::AnyObject, ClassType, MainThreadOnly};
+    use objc2_app_kit::{NSPanel, NSWindowCollectionBehavior, NSWindowStyleMask};
+
+    define_class!(
+        // A borderless NSPanel refuses to become key, so the webview gets no
+        // hover, no tooltips, and no focus-lost event. This subclass accepts.
+        #[unsafe(super(NSPanel))]
+        #[thread_kind = MainThreadOnly]
+        #[name = "DevieQuotaPopoverPanel"]
+        struct PopoverPanel;
+
+        impl PopoverPanel {
+            #[unsafe(method(canBecomeKeyWindow))]
+            fn can_become_key_window(&self) -> bool {
+                true
+            }
+        }
+    );
 
     let Ok(pointer) = window.ns_window() else {
         return;
@@ -624,7 +638,7 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
     // NSPanel only adds behavior on top of NSWindow.
     unsafe {
         let object = &*(pointer as *const AnyObject);
-        AnyObject::set_class(object, NSPanel::class());
+        AnyObject::set_class(object, PopoverPanel::class());
         let panel = &*(pointer as *const NSPanel);
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
@@ -633,13 +647,14 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         // hover tooltips in the webview never open. Ask for them.
         panel.setAcceptsMouseMovedEvents(true);
         // Like a native menu bar menu: it shows on every Space, also over an
-        // app in full screen, and above every other window.
+        // app in full screen. The window level stays "floating" (from
+        // always_on_top): a higher level is not kept out of the menu bar and
+        // ends up under the notch.
         panel.setCollectionBehavior(
             NSWindowCollectionBehavior::CanJoinAllSpaces
                 | NSWindowCollectionBehavior::FullScreenAuxiliary
                 | NSWindowCollectionBehavior::Stationary,
         );
-        panel.setLevel(NSPopUpMenuWindowLevel);
     }
 }
 
