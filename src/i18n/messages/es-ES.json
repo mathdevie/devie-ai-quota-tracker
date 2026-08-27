@@ -139,7 +139,8 @@
   },
   "Bars": {
     "Title": "Barras de cuota",
-    "Description": "Las barras ocultas desaparecen de la tarjeta y del popover de la barra de menús. No cuentan para el orden ni para el porcentaje de la barra de menús.",
+    "Shown": "Visible",
+    "Hidden": "Oculta",
     "Left": "{{percent}} % restante",
     "Resets": "se restablece {{time}}"
   },

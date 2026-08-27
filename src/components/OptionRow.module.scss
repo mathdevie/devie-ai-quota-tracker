@@ -54,6 +54,12 @@
     font-size: $devie__font-size__small;
   }
 
+  .state {
+    flex-shrink: 0;
+    color: $devie__color__text-sub;
+    font-size: $devie__font-size__small;
+  }
+
   &[data-disabled] {
     opacity: 0.58;
   }
