@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renomear",
+      "Bars": "Barras de cota",
       "Alerts": "Alertas",
       "AutoPing": "Otimizador de cota",
       "Refresh": "Atualizar",
@@ -43,7 +44,8 @@
       "On": "Ativado",
       "Off": "Desativado"
     },
-    "MoreActions": "Mais ações"
+    "MoreActions": "Mais ações",
+    "AllBarsHidden": "Todas as barras de cota estão ocultas."
   },
   "Quota": {
     "FilterProvider": "Provedor",
@@ -135,6 +137,12 @@
     "Title": "Renomear conta",
     "Label": "Rótulo",
     "Description": "Deixe o campo vazio para mostrar o id da conta novamente."
+  },
+  "Bars": {
+    "Title": "Barras de cota",
+    "Description": "As barras ocultas somem do cartão e do popover da barra de menus. Elas não contam para a ordenação nem para a porcentagem da barra de menus.",
+    "Left": "{{percent}}% restante",
+    "Resets": "redefine {{time}}"
   },
   "Alerts": {
     "Title": "Alertas",

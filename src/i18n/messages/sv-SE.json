@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Byt namn",
+      "Bars": "Kvotstaplar",
       "Alerts": "Aviseringar",
       "AutoPing": "Kvotoptimering",
       "Refresh": "Uppdatera",
@@ -43,7 +44,8 @@
       "On": "På",
       "Off": "Av"
     },
-    "MoreActions": "Fler åtgärder"
+    "MoreActions": "Fler åtgärder",
+    "AllBarsHidden": "Alla kvotstaplar är dolda."
   },
   "Quota": {
     "FilterProvider": "Leverantör",
@@ -135,6 +137,12 @@
     "Title": "Byt namn på konto",
     "Label": "Etikett",
     "Description": "Lämna fältet tomt för att visa konto-id:t igen."
+  },
+  "Bars": {
+    "Title": "Kvotstaplar",
+    "Description": "Dolda staplar försvinner från kortet och menyradens popover. De räknas inte för sorteringen eller menyradens procent.",
+    "Left": "{{percent}} % kvar",
+    "Resets": "återställs {{time}}"
   },
   "Alerts": {
     "Title": "Aviseringar",

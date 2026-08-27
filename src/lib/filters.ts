@@ -1,5 +1,5 @@
 import type { Provider, ProviderConnection } from "./contracts";
-import { accountLabel, PROVIDER_NAMES } from "./labels";
+import { accountLabel, PROVIDER_NAMES, visibleWindows } from "./labels";
 
 export type ProviderFilter = "all" | Provider;
 export type Sort = "expiring" | "least-left" | "most-left" | "name";
@@ -48,15 +48,17 @@ export function writeFilters(filters: Filters): void {
 
 /** Minutes until the soonest reset, or Infinity without one. */
 function nextReset(connection: ProviderConnection): number {
-  const times = connection.windows
+  const times = visibleWindows(connection)
     .map((window) => (window.resetsAt ? Date.parse(window.resetsAt) : NaN))
     .filter((time) => !Number.isNaN(time));
   return times.length > 0 ? Math.min(...times) : Number.POSITIVE_INFINITY;
 }
 
-/** The lowest remaining percent across the windows, or 101 without data. */
+/** The lowest remaining percent across the shown windows, or 101 without data. */
 function leastLeft(connection: ProviderConnection): number {
-  const windows = connection.windows.filter((w) => !w.paid && !w.unlimited);
+  const windows = visibleWindows(connection).filter(
+    (w) => !w.paid && !w.unlimited,
+  );
   if (windows.length === 0) return 101;
   return 100 - Math.max(...windows.map((w) => w.usedPercent));
 }

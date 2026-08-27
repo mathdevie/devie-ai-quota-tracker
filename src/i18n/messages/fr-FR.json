@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Renommer",
+      "Bars": "Barres de quota",
       "Alerts": "Alertes",
       "AutoPing": "Optimiseur de quota",
       "Refresh": "Actualiser",
@@ -43,7 +44,8 @@
       "On": "Activé",
       "Off": "Désactivé"
     },
-    "MoreActions": "Plus d’actions"
+    "MoreActions": "Plus d’actions",
+    "AllBarsHidden": "Toutes les barres de quota sont masquées."
   },
   "Quota": {
     "FilterProvider": "Fournisseur",
@@ -135,6 +137,12 @@
     "Title": "Renommer le compte",
     "Label": "Libellé",
     "Description": "Laissez le champ vide pour afficher de nouveau l'identifiant du compte."
+  },
+  "Bars": {
+    "Title": "Barres de quota",
+    "Description": "Les barres masquées disparaissent de la carte et du popover de la barre des menus. Elles ne comptent ni pour le tri ni pour le pourcentage de la barre des menus.",
+    "Left": "{{percent}} % restants",
+    "Resets": "réinitialisation {{time}}"
   },
   "Alerts": {
     "Title": "Alertes",

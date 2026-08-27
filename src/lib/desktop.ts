@@ -160,6 +160,19 @@ export async function setConnectionAlerts(
   return call("set_connection_alerts", { connectionId, alerts });
 }
 
+/** Saves the quota bars the user hid on one account card. */
+export async function setHiddenWindows(
+  connectionId: string,
+  windowKeys: string[],
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return withConnection(connectionId, () => ({
+      hiddenWindows: windowKeys.length > 0 ? windowKeys : undefined,
+    }));
+  }
+  return call("set_hidden_windows", { connectionId, windowKeys });
+}
+
 export async function setAutoPing(
   connectionId: string,
   enabled: boolean,
