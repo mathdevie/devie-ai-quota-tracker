@@ -111,7 +111,7 @@ export default function SettingsView({
   const remote = state.mode === "remote";
   return (
     <section className={styles.page}>
-      <SettingRow.List>
+      <SettingRow.Group title={t("Settings.General")}>
         <SettingRow.Row title={t("Settings.Theme")}>
           <ThemePicker />
         </SettingRow.Row>
@@ -133,16 +133,23 @@ export default function SettingsView({
                 <Switch.Thumb />
               </Switch.Root>
             </SettingRow.Row>
-            <RemoteAccessSettings
-              access={state.settings.remoteAccess}
-              busy={busy}
-              onChange={onRemoteAccessChange}
-              onRegenerateToken={onRegenerateRemoteToken}
-            />
             <UpdateRow />
           </>
         )}
-      </SettingRow.List>
+      </SettingRow.Group>
+      {!remote && (
+        <SettingRow.Group
+          description={t("Settings.Remote.Description")}
+          title={t("Settings.Remote.Title")}
+        >
+          <RemoteAccessSettings
+            access={state.settings.remoteAccess}
+            busy={busy}
+            onChange={onRemoteAccessChange}
+            onRegenerateToken={onRegenerateRemoteToken}
+          />
+        </SettingRow.Group>
+      )}
     </section>
   );
 }

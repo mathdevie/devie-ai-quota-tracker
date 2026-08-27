@@ -162,6 +162,7 @@
     "LastRequest": "Siste forespørsel: {{date}}"
   },
   "Settings": {
+    "General": "Generelt",
     "Theme": "Tema",
     "Language": "Språk",
     "MenuBarItem": "Menylinjeelement",
@@ -189,7 +190,7 @@
       "Port": "Port",
       "PortDescription": "En endring starter serveren på nytt.",
       "Lan": "Lokalt nettverk",
-      "LanDescription": "Av: bare denne Macen, for en Cloudflare Tunnel. På: alle enheter på nettverket ditt.",
+      "LanDescription": "Av: bare denne Macen. På: alle enheter på nettverket ditt.",
       "LanSwitch": "Tillat det lokale nettverket",
       "Address": "Adresse",
       "AddressDescription": "Åpne adressen på en annen enhet. Den kopierte lenken inneholder tilgangstokenet.",
@@ -203,9 +204,6 @@
       "Regenerate": "Lag nytt",
       "Copied": "Kopiert til utklippstavlen.",
       "CopyFailed": "Utklippstavlen er ikke tilgjengelig.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Kjør denne kommandoen på denne Macen for å få en offentlig adresse.",
-      "Guide": "Veiledning",
       "Gate": {
         "Description": "Skriv inn tilgangstokenet fra Innstillinger › Eksternt dashbord i appen på Macen din.",
         "Label": "Tilgangstoken",
