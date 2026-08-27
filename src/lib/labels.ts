@@ -1,4 +1,4 @@
-import type { Provider, ProviderConnection } from "./contracts";
+import type { Provider, ProviderConnection, QuotaWindow } from "./contracts";
 
 export const PROVIDER_NAMES: Record<Provider, string> = {
   claude: "Claude Code",
@@ -27,6 +27,13 @@ export function accountLabel(connection: ProviderConnection): string {
     connection.identity?.providerUserId ||
     connection.label
   );
+}
+
+/** The quota windows the user did not hide on this account's card. */
+export function visibleWindows(connection: ProviderConnection): QuotaWindow[] {
+  const hidden = connection.hiddenWindows ?? [];
+  if (hidden.length === 0) return connection.windows;
+  return connection.windows.filter((window) => !hidden.includes(window.key));
 }
 
 /** "Claude Code · work@example.com" for menus and accessible names. */

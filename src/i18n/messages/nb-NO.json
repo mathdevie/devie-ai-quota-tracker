@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Gi nytt navn",
+      "Bars": "Kvotelinjer",
       "Alerts": "Varsler",
       "AutoPing": "Kvoteoptimalisering",
       "Refresh": "Oppdater",
@@ -43,7 +44,8 @@
       "On": "På",
       "Off": "Av"
     },
-    "MoreActions": "Flere handlinger"
+    "MoreActions": "Flere handlinger",
+    "AllBarsHidden": "Alle kvotelinjer er skjult."
   },
   "Quota": {
     "FilterProvider": "Leverandør",
@@ -141,6 +143,12 @@
     "Title": "Gi kontoen nytt navn",
     "Label": "Etikett",
     "Description": "La feltet stå tomt for å vise konto-ID-en igjen."
+  },
+  "Bars": {
+    "Title": "Kvotelinjer",
+    "Description": "Skjulte linjer forsvinner fra kortet og menylinje-popoveren. De teller ikke for sorteringen eller prosenten i menylinjen.",
+    "Left": "{{percent}} % igjen",
+    "Resets": "tilbakestilles {{time}}"
   },
   "Alerts": {
     "Title": "Varsler",

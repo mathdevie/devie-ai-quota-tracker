@@ -268,6 +268,7 @@ mod tests {
             },
             windows: Vec::new(),
             reset_credits: Vec::new(),
+            hidden_windows: Vec::new(),
         }
     }
 

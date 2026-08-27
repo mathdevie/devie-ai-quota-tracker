@@ -34,6 +34,7 @@
     },
     "Menu": {
       "Rename": "Hernoemen",
+      "Bars": "Quotabalken",
       "Alerts": "Meldingen",
       "AutoPing": "Quota-optimalisatie",
       "Refresh": "Vernieuwen",
@@ -43,7 +44,8 @@
       "On": "Aan",
       "Off": "Uit"
     },
-    "MoreActions": "Meer acties"
+    "MoreActions": "Meer acties",
+    "AllBarsHidden": "Alle quotabalken zijn verborgen."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -141,6 +143,12 @@
     "Title": "Account hernoemen",
     "Label": "Label",
     "Description": "Laat het veld leeg om weer de account-id te tonen."
+  },
+  "Bars": {
+    "Title": "Quotabalken",
+    "Description": "Verborgen balken verdwijnen van de kaart en uit de menubalk-popover. Ze tellen niet mee voor de sortering of het percentage in de menubalk.",
+    "Left": "{{percent}}% over",
+    "Resets": "reset {{time}}"
   },
   "Alerts": {
     "Title": "Meldingen",

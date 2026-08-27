@@ -59,6 +59,8 @@ export interface ProviderConnection {
   alerts: ConnectionAlerts;
   autoPing: AutoPingState;
   windows: QuotaWindow[];
+  /** Keys of the quota windows the user hid on this account's card. */
+  hiddenWindows?: string[];
   /** Codex only: banked reset credits the user can spend. */
   resetCredits?: ResetCredit[];
 }
