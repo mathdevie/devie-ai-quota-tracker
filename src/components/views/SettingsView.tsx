@@ -7,6 +7,9 @@ import type { DashboardState } from "@/lib/contracts";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
 import LanguagePicker from "../LanguagePicker";
+import RemoteAccessSettings, {
+  type RemoteAccessChange,
+} from "../RemoteAccessSettings";
 import SettingRow from "../SettingRow";
 import ThemePicker from "../ThemePicker";
 import { useAppUpdater } from "../updater/AppUpdater";
@@ -93,12 +96,19 @@ export default function SettingsView({
   state,
   busy,
   onMenuBarItemChange,
+  onRemoteAccessChange,
+  onRegenerateRemoteToken,
 }: {
   state: DashboardState;
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
+  onRemoteAccessChange: (change: RemoteAccessChange) => void;
+  onRegenerateRemoteToken: () => void;
 }) {
   const { t } = useTranslation();
+  // A remote browser keeps its own theme and language. The Mac owns the
+  // menu bar, the server, and the updates.
+  const remote = state.mode === "remote";
   return (
     <section className={styles.page}>
       <SettingRow.List>
@@ -108,20 +118,30 @@ export default function SettingsView({
         <SettingRow.Row title={t("Settings.Language")}>
           <LanguagePicker />
         </SettingRow.Row>
-        <SettingRow.Row
-          subtitle={t("Settings.MenuBarItemDescription")}
-          title={t("Settings.MenuBarItem")}
-        >
-          <Switch.Root
-            aria-label={t("Settings.ShowMenuBarItem")}
-            checked={state.settings.showMenuBarItem}
-            disabled={busy}
-            onCheckedChange={(checked) => onMenuBarItemChange(checked)}
-          >
-            <Switch.Thumb />
-          </Switch.Root>
-        </SettingRow.Row>
-        <UpdateRow />
+        {!remote && (
+          <>
+            <SettingRow.Row
+              subtitle={t("Settings.MenuBarItemDescription")}
+              title={t("Settings.MenuBarItem")}
+            >
+              <Switch.Root
+                aria-label={t("Settings.ShowMenuBarItem")}
+                checked={state.settings.showMenuBarItem}
+                disabled={busy}
+                onCheckedChange={(checked) => onMenuBarItemChange(checked)}
+              >
+                <Switch.Thumb />
+              </Switch.Root>
+            </SettingRow.Row>
+            <RemoteAccessSettings
+              access={state.settings.remoteAccess}
+              busy={busy}
+              onChange={onRemoteAccessChange}
+              onRegenerateToken={onRegenerateRemoteToken}
+            />
+            <UpdateRow />
+          </>
+        )}
       </SettingRow.List>
     </section>
   );

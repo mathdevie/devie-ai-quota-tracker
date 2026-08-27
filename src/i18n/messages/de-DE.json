@@ -180,6 +180,37 @@
       },
       "Version": "Version: {{version}}",
       "UpToDateToast": "Sie verwenden die neueste Version."
+    },
+    "Remote": {
+      "Title": "Remote-Dashboard",
+      "Description": "Dieses Dashboard für deine anderen Geräte bereitstellen.",
+      "Enable": "Remote-Dashboard einschalten",
+      "Port": "Port",
+      "PortDescription": "Eine Änderung startet den Server neu.",
+      "Lan": "Lokales Netzwerk",
+      "LanDescription": "Aus: nur dieser Mac, für einen Cloudflare Tunnel. An: jedes Gerät in deinem Netzwerk.",
+      "LanSwitch": "Lokales Netzwerk erlauben",
+      "Address": "Adresse",
+      "AddressDescription": "Öffne die Adresse auf einem anderen Gerät. Der kopierte Link enthält das Zugriffstoken.",
+      "Starting": "Wird gestartet…",
+      "CopyLink": "Link kopieren",
+      "Token": "Zugriffstoken",
+      "TokenDescription": "Andere Geräte fragen einmal nach diesem Token. Ein neues Token meldet jedes Gerät ab.",
+      "Show": "Anzeigen",
+      "Hide": "Verbergen",
+      "Copy": "Kopieren",
+      "Regenerate": "Neu erzeugen",
+      "Copied": "In die Zwischenablage kopiert.",
+      "CopyFailed": "Die Zwischenablage ist nicht verfügbar.",
+      "Tunnel": "Cloudflare Tunnel",
+      "TunnelDescription": "Führe diesen Befehl auf diesem Mac aus, um eine öffentliche Adresse zu erhalten.",
+      "Guide": "Anleitung",
+      "Gate": {
+        "Description": "Gib das Zugriffstoken aus Einstellungen › Remote-Dashboard in der App auf deinem Mac ein.",
+        "Label": "Zugriffstoken",
+        "Submit": "Weiter",
+        "Wrong": "Das Zugriffstoken ist falsch."
+      }
     }
   },
   "Tray": {

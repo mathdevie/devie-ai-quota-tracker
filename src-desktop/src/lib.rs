@@ -7,6 +7,7 @@ mod messages;
 mod model;
 mod oauth;
 mod parse;
+mod remote;
 mod tray_icons;
 
 use std::{path::PathBuf, sync::Arc, time::Duration};
@@ -30,11 +31,20 @@ struct Core {
     refresh_gate: Arc<tokio::sync::Mutex<()>>,
     /// The cached codex-resets.com news, shared by every window.
     codex_resets: codex_resets::Cache,
+    /// The remote dashboard server, when the user turned it on.
+    remote: remote::Server,
+}
+
+/// The dashboard state with the live remote server status added.
+fn current_state(core: &Core) -> Result<DashboardState, String> {
+    let mut state = core.database.dashboard_state()?;
+    core.remote.decorate(&mut state.settings.remote_access);
+    Ok(state)
 }
 
 #[tauri::command]
 fn get_dashboard_state(core: State<'_, Core>) -> Result<DashboardState, String> {
-    core.database.dashboard_state()
+    current_state(&core)
 }
 
 #[tauri::command]
@@ -98,13 +108,20 @@ async fn refresh_connection(
     app: AppHandle,
     connection_id: String,
 ) -> Result<DashboardState, String> {
+    refresh_connection_internal(&app, &connection_id).await
+}
+
+async fn refresh_connection_internal(
+    app: &AppHandle,
+    connection_id: &str,
+) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
     let connection = core
         .database
-        .connection_by_id(&connection_id)?
+        .connection_by_id(connection_id)?
         .ok_or_else(|| "The connection does not exist.".to_string())?;
-    refresh_one(&app, &core, &connection, true).await;
-    publish_state(&app, &core)
+    refresh_one(app, &core, &connection, true).await;
+    publish_state(app, &core)
 }
 
 #[tauri::command]
@@ -220,6 +237,47 @@ fn set_menu_bar_item_visible(
 ) -> Result<DashboardState, String> {
     core.database.set_show_menu_bar_item(visible)?;
     apply_tray_visibility(&app, visible);
+    publish_state(&app, &core)
+}
+
+/// Turns the remote dashboard on or off and picks its port and scope. A
+/// server that cannot start leaves the switch off and reports why.
+#[tauri::command]
+async fn set_remote_access(
+    app: AppHandle,
+    enabled: bool,
+    port: u16,
+    lan: bool,
+) -> Result<DashboardState, String> {
+    let core = app.state::<Core>().inner().clone();
+    if port < remote::MIN_PORT {
+        return Err(format!(
+            "Pick a port between {} and 65535.",
+            remote::MIN_PORT
+        ));
+    }
+    core.database.set_remote_access(enabled, port, lan)?;
+    let mut settings = core.database.settings()?.remote_access;
+    if settings.token.is_none() {
+        let token = remote::new_token();
+        core.database.set_remote_token(&token)?;
+        settings.token = Some(token);
+    }
+    if let Err(message) = core.remote.apply(&app, &settings).await {
+        core.database.set_remote_access(false, port, lan)?;
+        let _ = publish_state(&app, &core);
+        return Err(message);
+    }
+    publish_state(&app, &core)
+}
+
+/// Replaces the remote access token. Every remote page must sign in again.
+#[tauri::command]
+fn regenerate_remote_token(
+    app: AppHandle,
+    core: State<'_, Core>,
+) -> Result<DashboardState, String> {
+    core.database.set_remote_token(&remote::new_token())?;
     publish_state(&app, &core)
 }
 
@@ -405,7 +463,7 @@ async fn auto_ping_tick(app: &AppHandle) {
 }
 
 fn publish_state(app: &AppHandle, core: &Core) -> Result<DashboardState, String> {
-    let state = core.database.dashboard_state()?;
+    let state = current_state(core)?;
     let _ = app.emit("quota:updated", &state);
     update_tray_title(app, &state);
     Ok(state)
@@ -692,6 +750,7 @@ pub fn run() {
                 logins: LoginSessions::default(),
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
                 codex_resets: codex_resets::Cache::default(),
+                remote: remote::Server::default(),
             });
             build_windows(app)?;
             #[cfg(target_os = "macos")]
@@ -700,6 +759,16 @@ pub fn run() {
             build_tray(app, &locale)?;
             let settings = app.state::<Core>().database.settings().unwrap_or_default();
             apply_tray_visibility(app.handle(), settings.show_menu_bar_item);
+            if settings.remote_access.enabled {
+                let handle = app.handle().clone();
+                tauri::async_runtime::spawn(async move {
+                    let core = handle.state::<Core>().inner().clone();
+                    // A failure stays visible in Settings; the switch stays on
+                    // so that the user can pick another port.
+                    let _ = core.remote.apply(&handle, &settings.remote_access).await;
+                    let _ = publish_state(&handle, &core);
+                });
+            }
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -746,6 +815,8 @@ pub fn run() {
             use_reset_credit,
             set_tray_summary,
             set_menu_bar_item_visible,
+            set_remote_access,
+            regenerate_remote_token,
             set_language,
             get_codex_resets_status,
             open_external_url,

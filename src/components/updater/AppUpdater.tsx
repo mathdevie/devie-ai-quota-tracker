@@ -10,7 +10,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { IS_DESKTOP_BUILD } from "@/lib/desktop";
+import { IS_DESKTOP_BUILD, isDesktop } from "@/lib/desktop";
+
+/** Packaged build in a Tauri window. A remote browser has no updater. */
+const UPDATER_ENABLED = IS_DESKTOP_BUILD && isDesktop();
 
 type Update = Awaited<
   ReturnType<typeof import("@tauri-apps/plugin-updater").check>
@@ -102,7 +105,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   }, [commit]);
 
   const checkForUpdates = useCallback(async (): Promise<CheckResult> => {
-    if (!IS_DESKTOP_BUILD) return "up-to-date";
+    if (!UPDATER_ENABLED) return "up-to-date";
     const current = statusRef.current;
     if (current === "ready") return "ready";
     if (current === "downloading" || current === "installing") return "busy";
@@ -144,7 +147,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   }, [commit]);
 
   useEffect(() => {
-    if (!IS_DESKTOP_BUILD || startedRef.current) return;
+    if (!UPDATER_ENABLED || startedRef.current) return;
     startedRef.current = true;
     void checkForUpdates().then((result) => {
       if (result === "ready") void installUpdate();
@@ -158,7 +161,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
-      enabled: IS_DESKTOP_BUILD,
+      enabled: UPDATER_ENABLED,
       status,
       progress,
       info,

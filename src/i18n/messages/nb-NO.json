@@ -180,6 +180,37 @@
       },
       "Version": "Versjon: {{version}}",
       "UpToDateToast": "Du har den nyeste versjonen."
+    },
+    "Remote": {
+      "Title": "Eksternt dashbord",
+      "Description": "Del dette dashbordet med de andre enhetene dine.",
+      "Enable": "Slå på det eksterne dashbordet",
+      "Port": "Port",
+      "PortDescription": "En endring starter serveren på nytt.",
+      "Lan": "Lokalt nettverk",
+      "LanDescription": "Av: bare denne Macen, for en Cloudflare Tunnel. På: alle enheter på nettverket ditt.",
+      "LanSwitch": "Tillat det lokale nettverket",
+      "Address": "Adresse",
+      "AddressDescription": "Åpne adressen på en annen enhet. Den kopierte lenken inneholder tilgangstokenet.",
+      "Starting": "Starter…",
+      "CopyLink": "Kopier lenke",
+      "Token": "Tilgangstoken",
+      "TokenDescription": "Andre enheter spør om dette tokenet én gang. Et nytt token logger ut alle enheter.",
+      "Show": "Vis",
+      "Hide": "Skjul",
+      "Copy": "Kopier",
+      "Regenerate": "Lag nytt",
+      "Copied": "Kopiert til utklippstavlen.",
+      "CopyFailed": "Utklippstavlen er ikke tilgjengelig.",
+      "Tunnel": "Cloudflare Tunnel",
+      "TunnelDescription": "Kjør denne kommandoen på denne Macen for å få en offentlig adresse.",
+      "Guide": "Veiledning",
+      "Gate": {
+        "Description": "Skriv inn tilgangstokenet fra Innstillinger › Eksternt dashbord i appen på Macen din.",
+        "Label": "Tilgangstoken",
+        "Submit": "Fortsett",
+        "Wrong": "Tilgangstokenet er feil."
+      }
     }
   },
   "Tray": {
