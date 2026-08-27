@@ -162,6 +162,7 @@
     "LastRequest": "Laatste verzoek: {{date}}"
   },
   "Settings": {
+    "General": "Algemeen",
     "Theme": "Thema",
     "Language": "Taal",
     "MenuBarItem": "Menubalkitem",
@@ -189,7 +190,7 @@
       "Port": "Poort",
       "PortDescription": "Een wijziging herstart de server.",
       "Lan": "Lokaal netwerk",
-      "LanDescription": "Uit: alleen deze Mac, voor een Cloudflare Tunnel. Aan: elk apparaat in je netwerk.",
+      "LanDescription": "Uit: alleen deze Mac. Aan: elk apparaat in je netwerk.",
       "LanSwitch": "Lokaal netwerk toestaan",
       "Address": "Adres",
       "AddressDescription": "Open het adres op een ander apparaat. De gekopieerde link bevat het toegangstoken.",
@@ -203,9 +204,6 @@
       "Regenerate": "Opnieuw genereren",
       "Copied": "Gekopieerd naar het klembord.",
       "CopyFailed": "Het klembord is niet beschikbaar.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Voer deze opdracht uit op deze Mac voor een openbaar adres.",
-      "Guide": "Handleiding",
       "Gate": {
         "Description": "Voer het toegangstoken in uit Instellingen › Extern dashboard in de app op je Mac.",
         "Label": "Toegangstoken",

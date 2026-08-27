@@ -162,6 +162,7 @@
     "LastRequest": "Última solicitação: {{date}}"
   },
   "Settings": {
+    "General": "Geral",
     "Theme": "Tema",
     "Language": "Idioma",
     "MenuBarItem": "Item da barra de menus",
@@ -189,7 +190,7 @@
       "Port": "Porta",
       "PortDescription": "Uma alteração reinicia o servidor.",
       "Lan": "Rede local",
-      "LanDescription": "Desligado: só este Mac, para um Cloudflare Tunnel. Ligado: todo dispositivo da sua rede.",
+      "LanDescription": "Desligado: só este Mac. Ligado: todo dispositivo da sua rede.",
       "LanSwitch": "Permitir a rede local",
       "Address": "Endereço",
       "AddressDescription": "Abra o endereço em outro dispositivo. O link copiado inclui o token de acesso.",
@@ -203,9 +204,6 @@
       "Regenerate": "Gerar novo",
       "Copied": "Copiado para a área de transferência.",
       "CopyFailed": "A área de transferência não está disponível.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Execute este comando neste Mac para obter um endereço público.",
-      "Guide": "Guia",
       "Gate": {
         "Description": "Digite o token de acesso de Ajustes › Painel remoto no app do seu Mac.",
         "Label": "Token de acesso",

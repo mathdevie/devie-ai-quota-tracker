@@ -162,6 +162,7 @@
     "LastRequest": "Seneste forespørgsel: {{date}}"
   },
   "Settings": {
+    "General": "Generelt",
     "Theme": "Tema",
     "Language": "Sprog",
     "MenuBarItem": "Menulinjeelement",
@@ -189,7 +190,7 @@
       "Port": "Port",
       "PortDescription": "En ændring genstarter serveren.",
       "Lan": "Lokalt netværk",
-      "LanDescription": "Fra: kun denne Mac, til en Cloudflare Tunnel. Til: alle enheder på dit netværk.",
+      "LanDescription": "Fra: kun denne Mac. Til: alle enheder på dit netværk.",
       "LanSwitch": "Tillad det lokale netværk",
       "Address": "Adresse",
       "AddressDescription": "Åbn adressen på en anden enhed. Det kopierede link indeholder adgangstokenet.",
@@ -203,9 +204,6 @@
       "Regenerate": "Generér nyt",
       "Copied": "Kopieret til udklipsholderen.",
       "CopyFailed": "Udklipsholderen er ikke tilgængelig.",
-      "Tunnel": "Cloudflare Tunnel",
-      "TunnelDescription": "Kør denne kommando på denne Mac for at få en offentlig adresse.",
-      "Guide": "Vejledning",
       "Gate": {
         "Description": "Indtast adgangstokenet fra Indstillinger › Fjern-dashboard i appen på din Mac.",
         "Label": "Adgangstoken",
