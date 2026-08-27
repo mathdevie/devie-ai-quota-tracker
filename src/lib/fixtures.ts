@@ -1,4 +1,4 @@
-import type { DashboardState } from "./contracts";
+import type { CodexResetsStatus, DashboardState } from "./contracts";
 
 export const previewState: DashboardState = {
   mode: "preview",
@@ -122,6 +122,49 @@ export const previewState: DashboardState = {
       ],
     },
     {
+      id: "cursor-team",
+      provider: "cursor",
+      label: "Cursor · work@example.com",
+      sourceLocator: "oauth/cursor/user_01",
+      enabled: true,
+      status: "ready",
+      source: "Cursor dashboard API",
+      lastUpdatedAt: "2026-08-25T13:40:00Z",
+      identity: { displayName: "work@example.com", plan: "Enterprise" },
+      alerts: { lowQuota: false, resetSoon: false, resetHappened: false },
+      autoPing: { enabled: false },
+      windows: [
+        {
+          key: "cursor_models",
+          label: "Cursor Models",
+          usedPercent: 12,
+          resetsAt: "2026-08-29T00:00:00Z",
+        },
+        {
+          key: "other_models",
+          label: "Other Models",
+          usedPercent: 100,
+          resetsAt: "2026-08-29T00:00:00Z",
+        },
+        {
+          key: "on_demand",
+          label: "On-demand",
+          usedPercent: 100,
+          resetsAt: "2026-08-29T00:00:00Z",
+          amount: { used: 50, total: 50, unit: "USD" },
+          paid: true,
+        },
+        {
+          key: "pooled",
+          label: "Team pool",
+          usedPercent: 0,
+          resetsAt: "2026-08-29T00:00:00Z",
+          unlimited: true,
+          paid: true,
+        },
+      ],
+    },
+    {
       id: "gemini-personal",
       provider: "gemini-cli",
       label: "Gemini CLI · me@example.com",
@@ -178,4 +221,31 @@ export const previewState: DashboardState = {
       ],
     },
   ],
+};
+
+/** The codex-resets.com news shown in the browser preview. */
+export const previewCodexResets: CodexResetsStatus = {
+  latestReset: {
+    announcedAt: "2026-08-25T14:30:00Z",
+    resetType: "regular",
+    text: "Reset button pressed. Enjoy!",
+    sourceUrl: "https://x.com/thsottiaux/status/2092311059197808936",
+  },
+  activeWatch: {
+    level: "strong",
+    resetChancePercent: 60,
+    forecastWindow: "by end of thursday",
+    observedAt: "2026-08-27T06:31:31Z",
+    expiresAt: "2026-08-28T07:00:00Z",
+    text: "Intrigued to see if I can find the reset button tomorrow.",
+    sourceUrl: "https://x.com/thsottiaux/status/2092862554632826968",
+  },
+  stats: {
+    total: 46,
+    lastResetAt: "2026-08-25T14:30:00Z",
+    daysSinceLast: 1.8,
+    avgIntervalDays: 7.6,
+  },
+  siteUrl: "https://codex-resets.com/",
+  fetchedAt: "2026-08-27T09:04:36Z",
 };

@@ -25,7 +25,7 @@ function Row({
       data-disabled={disabled || undefined}
       data-plain={plain || undefined}
     >
-      <span>
+      <span className={styles.text}>
         <strong>{label}</strong>
         <small>{description}</small>
       </span>

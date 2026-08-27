@@ -1,0 +1,72 @@
+@use "../ui/_devie.scss" as *;
+
+.popup {
+  display: grid;
+  width: 300px;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x2;
+  font-size: $devie__font-size__small;
+
+  p {
+    margin: 0;
+  }
+}
+
+.title {
+  font-size: $devie__font-size__small;
+  font-weight: 600;
+}
+
+.section {
+  display: grid;
+  gap: 2px;
+}
+
+// The forecast: bold, in the accent color while a watch is active.
+.lead {
+  font-weight: 500;
+
+  &[data-active] {
+    color: $devie__color__primary;
+  }
+}
+
+.muted {
+  color: $devie__color__text-sub;
+  font-size: 11px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $devie__color__primary;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $devie__spacing__x1;
+  margin-top: $devie__spacing__x05;
+  padding-top: $devie__spacing__x1;
+  border-top: 1px solid $devie__color__line;
+  color: $devie__color__text-sub;
+  font-size: 10.5px;
+}

@@ -100,3 +100,37 @@ export interface LoginStart {
   /** True when the user can paste an authorization code by hand. */
   acceptsManualCode: boolean;
 }
+
+/** One Codex reset announcement, from codex-resets.com. */
+export interface CodexResetNews {
+  announcedAt: string;
+  /** "regular" for a reset, "banked" for a granted reset credit. */
+  resetType: string;
+  text: string;
+  sourceUrl?: string;
+}
+
+/** An active forecast of a coming Codex reset. Community data, not official. */
+export interface CodexResetWatch {
+  level: "elevated" | "strong" | string;
+  resetChancePercent?: number;
+  /** Free text, for example "by end of thursday". */
+  forecastWindow: string;
+  observedAt: string;
+  expiresAt: string;
+  text: string;
+  sourceUrl?: string;
+}
+
+export interface CodexResetsStatus {
+  latestReset?: CodexResetNews;
+  activeWatch?: CodexResetWatch;
+  stats: {
+    total: number;
+    lastResetAt?: string;
+    daysSinceLast?: number;
+    avgIntervalDays?: number;
+  };
+  siteUrl: string;
+  fetchedAt: string;
+}
