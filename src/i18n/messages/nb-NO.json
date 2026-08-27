@@ -82,8 +82,8 @@
       "Confirm": "Tilbakestill grenser"
     },
     "Pin": {
-      "Shown": "{{label}} vises i menylinjen",
-      "Show": "Vis {{label}} i menylinjen"
+      "Shown": "Festet til menylinjen",
+      "Show": "Fest til menylinjen"
     },
     "Unlimited": "Ubegrenset",
     "Amount": "{{used}} / {{total}} {{unit}}",

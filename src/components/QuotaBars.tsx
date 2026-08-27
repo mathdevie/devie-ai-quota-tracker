@@ -130,9 +130,7 @@ export default function QuotaBars({
       {windows.map((window) => {
         const left = Math.max(0, Math.round(100 - window.usedPercent));
         const pinned = window.key === pinnedKey;
-        const pinLabel = pinned
-          ? t("Quota.Pin.Shown", { label: window.label })
-          : t("Quota.Pin.Show", { label: window.label });
+        const pinLabel = pinned ? t("Quota.Pin.Shown") : t("Quota.Pin.Show");
         // A paid allowance that is spent. The reset time stays at the end of
         // the row when the provider gives one; the note moves under the bar.
         const reached = Boolean(window.paid) && left === 0;

@@ -82,8 +82,8 @@
       "Confirm": "Nollaa rajat"
     },
     "Pin": {
-      "Shown": "{{label}} näkyy valikkorivillä",
-      "Show": "Näytä {{label}} valikkorivillä"
+      "Shown": "Kiinnitetty valikkoriville",
+      "Show": "Kiinnitä valikkoriville"
     },
     "Unlimited": "Rajaton",
     "Amount": "{{used}} / {{total}} {{unit}}",

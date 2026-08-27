@@ -82,8 +82,8 @@
       "Confirm": "Återställ gränser"
     },
     "Pin": {
-      "Shown": "{{label}} visas i menyraden",
-      "Show": "Visa {{label}} i menyraden"
+      "Shown": "Fastsatt i menyraden",
+      "Show": "Fäst i menyraden"
     },
     "Unlimited": "Obegränsat",
     "Amount": "{{used}} / {{total}} {{unit}}",
