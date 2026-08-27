@@ -79,7 +79,8 @@ export default function QuotaView({
   busyId?: string;
   refreshing?: boolean;
   onRefreshAll: () => void;
-  onOpenProviders: () => void;
+  /** Absent on a remote page, where accounts cannot be added. */
+  onOpenProviders?: () => void;
 } & ConnectionActions) {
   const { t } = useTranslation();
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
@@ -153,10 +154,12 @@ export default function QuotaView({
       {connections.length === 0 && (
         <div className={styles.emptyState}>
           <p>{hasAccounts ? t("Quota.NoMatch") : t("Quota.NoAccounts")}</p>
-          <Button onClick={onOpenProviders} size="sm">
-            <Plug size={14} />
-            {t("Quota.OpenProviders")}
-          </Button>
+          {onOpenProviders && (
+            <Button onClick={onOpenProviders} size="sm">
+              <Plug size={14} />
+              {t("Quota.OpenProviders")}
+            </Button>
+          )}
         </div>
       )}
     </section>

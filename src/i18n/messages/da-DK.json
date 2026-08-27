@@ -179,6 +179,37 @@
       },
       "Version": "Version: {{version}}",
       "UpToDateToast": "Du har den nyeste version."
+    },
+    "Remote": {
+      "Title": "Fjern-dashboard",
+      "Description": "Del dette dashboard med dine andre enheder.",
+      "Enable": "Slå fjern-dashboardet til",
+      "Port": "Port",
+      "PortDescription": "En ændring genstarter serveren.",
+      "Lan": "Lokalt netværk",
+      "LanDescription": "Fra: kun denne Mac, til en Cloudflare Tunnel. Til: alle enheder på dit netværk.",
+      "LanSwitch": "Tillad det lokale netværk",
+      "Address": "Adresse",
+      "AddressDescription": "Åbn adressen på en anden enhed. Det kopierede link indeholder adgangstokenet.",
+      "Starting": "Starter…",
+      "CopyLink": "Kopiér link",
+      "Token": "Adgangstoken",
+      "TokenDescription": "Andre enheder beder om dette token én gang. Et nyt token logger alle enheder ud.",
+      "Show": "Vis",
+      "Hide": "Skjul",
+      "Copy": "Kopiér",
+      "Regenerate": "Generér nyt",
+      "Copied": "Kopieret til udklipsholderen.",
+      "CopyFailed": "Udklipsholderen er ikke tilgængelig.",
+      "Tunnel": "Cloudflare Tunnel",
+      "TunnelDescription": "Kør denne kommando på denne Mac for at få en offentlig adresse.",
+      "Guide": "Vejledning",
+      "Gate": {
+        "Description": "Indtast adgangstokenet fra Indstillinger › Fjern-dashboard i appen på din Mac.",
+        "Label": "Adgangstoken",
+        "Submit": "Fortsæt",
+        "Wrong": "Adgangstokenet er forkert."
+      }
     }
   },
   "Tray": {

@@ -1,5 +1,12 @@
 # Remote dashboard
 
+> Shipped. The user guide is `docs/remote-access.md`; the server lives in
+> `src-desktop/src/remote.rs`. Differences from this plan: the remote page
+> polls `/api/state` every 30 seconds instead of server-sent events (simpler,
+> and Cloudflare buffers long streams), the copied link carries the token in
+> the URL fragment, and the files come from Tauri's embedded assets, so no
+> `tower-http` static file service is needed.
+
 Goal: read the quota dashboard from another device. The user puts the app
 behind a Cloudflare Tunnel or a Tailscale network. Devie Quota only needs to
 serve the dashboard on a local URL.
