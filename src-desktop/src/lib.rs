@@ -282,13 +282,27 @@ async fn get_codex_resets_status(
     codex_resets::status(&core.client, &core.codex_resets).await
 }
 
-/// Opens a web link in the default browser. Only `https` links leave the app.
+/// The sites the reset news links to. Nothing else opens from the app.
+const EXTERNAL_HOSTS: &[&str] = &["codex-resets.com", "x.com", "twitter.com"];
+
+/// Opens a web link in the default browser: `https` only, no credentials,
+/// a known host, and a sane length.
 #[tauri::command]
 fn open_external_url(url: String) -> Result<(), String> {
-    if !url.starts_with("https://") {
-        return Err("Only https links can open.".to_string());
+    let parsed = reqwest::Url::parse(&url).map_err(|_| "The link is not valid.".to_string())?;
+    let host = parsed.host_str().unwrap_or_default();
+    let known = EXTERNAL_HOSTS
+        .iter()
+        .any(|allowed| host == *allowed || host.ends_with(&format!(".{allowed}")));
+    if url.len() > 2048
+        || parsed.scheme() != "https"
+        || !parsed.username().is_empty()
+        || parsed.password().is_some()
+        || !known
+    {
+        return Err("The link cannot open from the app.".to_string());
     }
-    open::that_detached(&url).map_err(|_| "The browser could not open.".to_string())
+    open::that_detached(parsed.as_str()).map_err(|_| "The browser could not open.".to_string())
 }
 
 #[tauri::command]
