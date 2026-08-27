@@ -88,7 +88,21 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} extra",
     "Balance": "{{balance}} over",
-    "LimitReached": "Limiet bereikt"
+    "LimitReached": "Limiet bereikt",
+    "News": {
+      "Title": "Codex-resetnieuws",
+      "Watch": "{{percent}}% kans op een reset {{window}}",
+      "WatchNoPercent": "Een reset is waarschijnlijk {{window}}",
+      "WatchUntil": "Voorspelling geldig tot {{date}}",
+      "NoWatch": "Momenteel geen resetvoorspelling.",
+      "LastReset": "Laatste reset {{ago}} · {{date}}",
+      "LastResetUnknown": "Nog geen reset geregistreerd.",
+      "Average": "Gemiddeld één reset per {{days}} dagen · {{total}} geregistreerd",
+      "Source": "Bron",
+      "Disclaimer": "Communitygegevens, geen toezegging van OpenAI.",
+      "Loading": "Laden…",
+      "Unavailable": "Het resetnieuws kon niet worden geladen."
+    }
   },
   "Popover": {
     "OpenDashboard": "Dashboard openen",

@@ -1,4 +1,5 @@
 import type {
+  CodexResetsStatus,
   ConnectionAlerts,
   DashboardState,
   LoginStart,
@@ -7,7 +8,7 @@ import type {
   TraySummary,
 } from "./contracts";
 import type { Filters } from "./filters";
-import { previewState } from "./fixtures";
+import { previewCodexResets, previewState } from "./fixtures";
 
 declare global {
   interface Window {
@@ -228,6 +229,24 @@ export async function setMenuBarItemVisible(
 export async function setLanguage(locale: string): Promise<void> {
   if (!isDesktop()) return;
   await call("set_language", { locale });
+}
+
+/** The community reset news from codex-resets.com, cached by the core. */
+export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
+  if (!isDesktop()) {
+    await delay(300);
+    return previewCodexResets;
+  }
+  return call("get_codex_resets_status");
+}
+
+/** Opens a web link in the default browser. */
+export async function openExternalUrl(url: string): Promise<void> {
+  if (!isDesktop()) {
+    window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  await call("open_external_url", { url });
 }
 
 export async function openMainWindow(): Promise<void> {

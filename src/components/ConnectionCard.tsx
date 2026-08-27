@@ -13,6 +13,7 @@ import { accountLabel, fullName, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
+import CodexResetsNews from "./CodexResetsNews";
 import styles from "./ConnectionCard.module.scss";
 import IconTip from "./IconTip";
 import ProviderIcon from "./ProviderIcon";
@@ -63,7 +64,8 @@ function alertsOn(connection: ProviderConnection): boolean {
 
 /**
  * Alert and Quota Optimizer shortcuts in the card header. An active feature
- * always shows; an inactive one shows on hover.
+ * always shows; an inactive one shows on hover. Codex cards also get the
+ * community reset news, always visible.
  */
 function FeatureFlags({
   connection,
@@ -79,6 +81,9 @@ function FeatureFlags({
   const optimizer = connection.autoPing.enabled;
   return (
     <div className={styles.flags}>
+      {connection.provider === "codex" && (
+        <CodexResetsNews className={styles.flag} />
+      )}
       {onAlerts && (
         <IconTip label={t("Connection.Menu.Alerts")}>
           <button
@@ -236,6 +241,14 @@ export default function ConnectionCard({
         )}
       </header>
 
+      {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
+        <div className={styles.credits}>
+          <ResetCredits
+            connection={connection}
+            onUseReset={actions.onUseReset}
+          />
+        </div>
+      )}
       <div className={styles.body}>
         {connection.windows.length > 0 ? (
           <QuotaBars windows={connection.windows} />
@@ -245,14 +258,6 @@ export default function ConnectionCard({
           </p>
         )}
       </div>
-      {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
-        <footer className={styles.footer}>
-          <ResetCredits
-            connection={connection}
-            onUseReset={actions.onUseReset}
-          />
-        </footer>
-      )}
     </article>
   );
 }

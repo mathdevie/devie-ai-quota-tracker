@@ -43,10 +43,13 @@
   }
 }
 
-// Spans the bar, percent, and reset columns of an uncapped window.
+// Small colored text in place of the bar and percent of an uncapped window.
 .unlimited {
-  grid-column: 3 / 6;
+  grid-column: 3 / 5;
   justify-self: start;
+  color: $devie__color__success;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 // The absolute count, in small print under the bar, left aligned.
@@ -63,8 +66,18 @@
   white-space: nowrap;
 }
 
+// Small colored text: at the end of the row when there is no reset time,
+// else under the bar next to the amount.
 .reached {
   justify-self: end;
+  color: $devie__color__danger;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  .amount & {
+    font-size: inherit;
+  }
 }
 
 .overage {
