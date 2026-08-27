@@ -1,72 +1,54 @@
 @use "../ui/_devie.scss" as *;
 
-.popup {
-  display: grid;
-  width: 300px;
-  gap: $devie__spacing__x1;
-  padding: $devie__spacing__x2;
-  font-size: $devie__font-size__small;
-
-  p {
-    margin: 0;
-  }
-}
-
-.title {
-  font-size: $devie__font-size__small;
-  font-weight: 600;
-}
-
-.section {
-  display: grid;
-  gap: 2px;
-}
-
-// The forecast: bold, in the accent color while a watch is active.
-.lead {
-  font-weight: 500;
-
-  &[data-active] {
-    color: $devie__color__primary;
-  }
-}
-
-.muted {
-  color: $devie__color__text-sub;
-  font-size: 11px;
-}
-
-.link {
-  display: inline-flex;
+// One line: icon, text, source link, cross. The text gives way first.
+// Callout sets its own icon offset and text size; the banner is smaller.
+.banner {
+  display: flex;
   align-items: center;
-  gap: 2px;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x05 $devie__spacing__x1;
+
+  > :first-child {
+    margin-top: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  > :nth-child(2) {
+    min-width: 0;
+    flex: 1;
+
+    > * {
+      font-size: 11px;
+      line-height: 1.35;
+    }
+  }
+}
+
+.action {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  place-items: center;
   padding: 0;
   border: 0;
-  background: none;
-  color: $devie__color__primary;
-  font: inherit;
-  white-space: nowrap;
-  cursor: pointer;
+  border-radius: $devie__radius;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: default;
 
   &:hover {
-    text-decoration: underline;
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    opacity: 1;
   }
 
   &:focus-visible {
-    outline: 2px solid $devie__color__primary;
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
   }
-}
-
-.footer {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: $devie__spacing__x1;
-  margin-top: $devie__spacing__x05;
-  padding-top: $devie__spacing__x1;
-  border-top: 1px solid $devie__color__line;
-  color: $devie__color__text-sub;
-  font-size: 10.5px;
 }

@@ -69,11 +69,6 @@
     opacity: 1;
   }
 
-  // Information shortcuts, like the reset news, never hide.
-  &[data-always] {
-    opacity: 1;
-  }
-
   .card:hover &,
   &:focus-visible {
     opacity: 1;
@@ -98,6 +93,11 @@
   border: 1px solid $devie__color__line;
   border-radius: calc($devie__radius-strong - $devie__spacing__x05);
   background: $devie__color__background;
+}
+
+// The Codex reset news banner, between the header and the quota panel.
+.news {
+  margin: 0 $devie__spacing__x05 $devie__spacing__x05;
 }
 
 // Reset credits sit between the header and the quota panel, on the card frame.

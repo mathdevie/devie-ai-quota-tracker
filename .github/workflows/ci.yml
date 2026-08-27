@@ -2,6 +2,12 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner for the checks"
+        type: choice
+        default: self-hosted
+        options: [self-hosted, macos-15]
 
 permissions:
   contents: read
@@ -13,7 +19,10 @@ concurrency:
 jobs:
   check:
     name: Check the POC
-    runs-on: macos-15
+    # GitHub-hosted macOS runners are not available for this private repo
+    # (jobs fail before a runner is assigned), so the checks run on the
+    # self-hosted Mac by default, like the release workflow.
+    runs-on: ${{ inputs.runner == 'macos-15' && 'macos-15' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     timeout-minutes: 30
     steps:
       - name: Check out the repository

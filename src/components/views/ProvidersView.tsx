@@ -9,7 +9,6 @@ import styles from "./views.module.scss";
 /** Subscription tools other quota trackers cover. Not read by Devie Quota yet. */
 const UNSUPPORTED: { name: string; brand: BrandId }[] = [
   { name: "Antigravity", brand: "antigravity" },
-  { name: "Cursor", brand: "cursor" },
   { name: "Kiro", brand: "kiro" },
   { name: "Kimchi", brand: "kimchi" },
   { name: "OpenCode", brand: "opencode" },
