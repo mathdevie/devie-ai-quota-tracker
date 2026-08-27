@@ -25,6 +25,8 @@ const CACHE_FOR: Duration = Duration::from_secs(10 * 60);
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetNews {
+    /// The source X post id, or an "observed-…" id. Stable across reads.
+    pub id: String,
     pub announced_at: String,
     /// "regular" for a reset, "banked" for a granted reset credit.
     pub reset_type: String,
@@ -140,6 +142,7 @@ pub fn parse(json: &Value) -> Result<CodexResetsStatus, String> {
 fn reset_news(value: &Value) -> Option<ResetNews> {
     let object = value.as_object()?;
     Some(ResetNews {
+        id: text(object.get("id"))?,
         announced_at: text(object.get("announced_at"))?,
         reset_type: text(object.get("reset_type")).unwrap_or_else(|| "regular".to_string()),
         text: text(object.get("text")).unwrap_or_default(),
@@ -199,6 +202,7 @@ mod tests {
             Some("https://x.com/thsottiaux/status/2")
         );
         let reset = status.latest_reset.expect("reset");
+        assert_eq!(reset.id, "observed-20260825T143200Z");
         assert_eq!(reset.announced_at, "2026-08-25T14:30:00.000Z");
         assert_eq!(status.stats.total, 46);
         assert_eq!(status.stats.avg_interval_days, Some(7.6));
@@ -208,7 +212,7 @@ mod tests {
     fn accepts_a_quiet_period_and_drops_unsafe_links() {
         let json = serde_json::json!({
             "data": {
-                "latest_reset": {"announced_at": "2026-08-25T14:30:00Z", "source": {"type": "observed", "url": "javascript:alert(1)"}},
+                "latest_reset": {"id": "1", "announced_at": "2026-08-25T14:30:00Z", "source": {"type": "observed", "url": "javascript:alert(1)"}},
                 "active_watch": null,
                 "stats": {"total": 0, "last_reset_at": null, "days_since_last": null, "avg_interval_days": null}
             },

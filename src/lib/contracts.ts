@@ -103,6 +103,8 @@ export interface LoginStart {
 
 /** One Codex reset announcement, from codex-resets.com. */
 export interface CodexResetNews {
+  /** The source post id, or an "observed-…" id. Stable across reads. */
+  id: string;
   announcedAt: string;
   /** "regular" for a reset, "banked" for a granted reset credit. */
   resetType: string;

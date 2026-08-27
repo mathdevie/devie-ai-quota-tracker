@@ -90,18 +90,11 @@
     "Balance": "{{balance}} restantes",
     "LimitReached": "Limite atingido",
     "News": {
-      "Title": "Notícias de resets do Codex",
-      "Watch": "{{percent}}% de chance de um reset {{window}}",
-      "WatchNoPercent": "Um reset é provável {{window}}",
-      "WatchUntil": "Previsão válida até {{date}}",
-      "NoWatch": "Nenhuma previsão de reset no momento.",
-      "LastReset": "Último reset {{ago}} · {{date}}",
-      "LastResetUnknown": "Nenhum reset registrado ainda.",
-      "Average": "Um reset a cada {{days}} dias em média · {{total}} registrados",
-      "Source": "Fonte",
-      "Disclaimer": "Dados da comunidade, não um compromisso da OpenAI.",
-      "Loading": "Carregando…",
-      "Unavailable": "Não foi possível carregar as notícias de resets."
+      "Watch": "{{percent}}% de chance de um reset do Codex {{window}}",
+      "WatchNoPercent": "Um reset do Codex é provável {{window}}",
+      "Reset": "Os limites do Codex foram redefinidos {{ago}}",
+      "Open": "Abrir a fonte",
+      "Dismiss": "Fechar"
     }
   },
   "Popover": {
