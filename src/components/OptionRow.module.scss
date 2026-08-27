@@ -36,16 +36,12 @@
     border-top: 1px solid $devie__color__line;
   }
 
-  > span {
+  // Named, because the switch is a span too and must keep its own size.
+  .text {
     display: grid;
     min-width: 0;
     flex: 1;
     gap: 1px;
-  }
-
-  // The switch keeps its size next to a long description.
-  > :last-child {
-    flex-shrink: 0;
   }
 
   strong {

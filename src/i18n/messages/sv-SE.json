@@ -88,7 +88,21 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} över",
     "Balance": "{{balance}} kvar",
-    "LimitReached": "Gräns nådd"
+    "LimitReached": "Gräns nådd",
+    "News": {
+      "Title": "Codex-återställningsnyheter",
+      "Watch": "{{percent}} % chans för en återställning {{window}}",
+      "WatchNoPercent": "En återställning är trolig {{window}}",
+      "WatchUntil": "Prognosen gäller till {{date}}",
+      "NoWatch": "Ingen återställningsprognos just nu.",
+      "LastReset": "Senaste återställning {{ago}} · {{date}}",
+      "LastResetUnknown": "Ingen återställning registrerad ännu.",
+      "Average": "I genomsnitt en återställning var {{days}} dag · {{total}} registrerade",
+      "Source": "Källa",
+      "Disclaimer": "Communitydata, inget åtagande från OpenAI.",
+      "Loading": "Läser in…",
+      "Unavailable": "Återställningsnyheterna kunde inte läsas in."
+    }
   },
   "Popover": {
     "OpenDashboard": "Öppna instrumentpanelen",

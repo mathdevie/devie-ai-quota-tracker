@@ -1,5 +1,6 @@
 mod alerts;
 mod auto_ping;
+mod codex_resets;
 mod credentials;
 mod db;
 mod messages;
@@ -27,6 +28,8 @@ struct Core {
     client: reqwest::Client,
     logins: LoginSessions,
     refresh_gate: Arc<tokio::sync::Mutex<()>>,
+    /// The cached codex-resets.com news, shared by every window.
+    codex_resets: codex_resets::Cache,
 }
 
 #[tauri::command]
@@ -268,6 +271,24 @@ fn apply_tray_visibility(app: &AppHandle, visible: bool) {
     if let Some(tray) = app.tray_by_id("main-tray") {
         let _ = tray.set_visible(visible);
     }
+}
+
+/// The community reset news shown in the Codex cards.
+#[tauri::command]
+async fn get_codex_resets_status(
+    app: AppHandle,
+) -> Result<codex_resets::CodexResetsStatus, String> {
+    let core = app.state::<Core>().inner().clone();
+    codex_resets::status(&core.client, &core.codex_resets).await
+}
+
+/// Opens a web link in the default browser. Only `https` links leave the app.
+#[tauri::command]
+fn open_external_url(url: String) -> Result<(), String> {
+    if !url.starts_with("https://") {
+        return Err("Only https links can open.".to_string());
+    }
+    open::that_detached(&url).map_err(|_| "The browser could not open.".to_string())
 }
 
 #[tauri::command]
@@ -641,6 +662,7 @@ pub fn run() {
                 client,
                 logins: LoginSessions::default(),
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
+                codex_resets: codex_resets::Cache::default(),
             });
             build_windows(app)?;
             #[cfg(target_os = "macos")]
@@ -695,6 +717,8 @@ pub fn run() {
             set_tray_summary,
             set_menu_bar_item_visible,
             set_language,
+            get_codex_resets_status,
+            open_external_url,
             open_main_window,
             hide_popover,
         ])

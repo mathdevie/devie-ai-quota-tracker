@@ -69,6 +69,11 @@
     opacity: 1;
   }
 
+  // Information shortcuts, like the reset news, never hide.
+  &[data-always] {
+    opacity: 1;
+  }
+
   .card:hover &,
   &:focus-visible {
     opacity: 1;
@@ -95,10 +100,10 @@
   background: $devie__color__background;
 }
 
-// Reset credits sit under the quota panel, on the card frame.
-.footer {
+// Reset credits sit between the header and the quota panel, on the card frame.
+.credits {
   display: flex;
-  padding: 0 $devie__spacing__x05;
+  padding: 0 $devie__spacing__x05 $devie__spacing__x05;
 }
 
 .empty {
