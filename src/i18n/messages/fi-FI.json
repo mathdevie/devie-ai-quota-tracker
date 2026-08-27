@@ -81,8 +81,7 @@
     },
     "Pin": {
       "Shown": "{{label}} näkyy valikkorivillä",
-      "Show": "Näytä {{label}} valikkorivillä",
-      "Title": "Näytä valikkorivillä"
+      "Show": "Näytä {{label}} valikkorivillä"
     },
     "Unlimited": "Rajaton",
     "Amount": "{{used}} / {{total}} {{unit}}",

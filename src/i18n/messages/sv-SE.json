@@ -81,8 +81,7 @@
     },
     "Pin": {
       "Shown": "{{label}} visas i menyraden",
-      "Show": "Visa {{label}} i menyraden",
-      "Title": "Visa i menyraden"
+      "Show": "Visa {{label}} i menyraden"
     },
     "Unlimited": "Obegränsat",
     "Amount": "{{used}} / {{total}} {{unit}}",
