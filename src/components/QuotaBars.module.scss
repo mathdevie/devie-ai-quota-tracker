@@ -34,7 +34,7 @@
   grid-template-rows: auto;
   min-height: 22px;
   row-gap: 0;
-  --quota-color: #30d158;
+  --quota-color: #{$devie__color__success};
 
   &[data-level="warning"] {
     --quota-color: #{$devie__color__warning};
@@ -104,6 +104,7 @@
 
 .percent {
   color: var(--quota-color);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
