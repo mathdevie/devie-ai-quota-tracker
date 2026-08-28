@@ -182,34 +182,6 @@
       },
       "Version": "Versione: {{version}}",
       "UpToDateToast": "Stai usando l’ultima versione."
-    },
-    "Remote": {
-      "Title": "Dashboard remota",
-      "Description": "Servi questa dashboard agli altri tuoi dispositivi.",
-      "Enable": "Attiva la dashboard remota",
-      "Port": "Porta",
-      "PortDescription": "Una modifica riavvia il server.",
-      "Lan": "Rete locale",
-      "LanDescription": "Off: solo questo Mac. On: ogni dispositivo della tua rete.",
-      "LanSwitch": "Consenti la rete locale",
-      "Address": "Indirizzo",
-      "AddressDescription": "Apri l'indirizzo su un altro dispositivo. Il link copiato include il token di accesso.",
-      "Starting": "Avvio…",
-      "CopyLink": "Copia link",
-      "Token": "Token di accesso",
-      "TokenDescription": "Gli altri dispositivi chiedono questo token una volta. Un nuovo token disconnette ogni dispositivo.",
-      "Show": "Mostra",
-      "Hide": "Nascondi",
-      "Copy": "Copia",
-      "Regenerate": "Rigenera",
-      "Copied": "Copiato negli appunti.",
-      "CopyFailed": "Gli appunti non sono disponibili.",
-      "Gate": {
-        "Description": "Inserisci il token di accesso da Impostazioni › Dashboard remota nell'app sul tuo Mac.",
-        "Label": "Token di accesso",
-        "Submit": "Continua",
-        "Wrong": "Il token di accesso è errato."
-      }
     }
   },
   "Tray": {

@@ -11,14 +11,11 @@ import type {
   ProviderConnection,
 } from "@/lib/contracts";
 import {
-  detectMode,
   ensureNotificationPermission,
   getDashboardState,
-  type Mode,
-  RemoteAuthError,
+  isDesktop,
   refreshAll,
   refreshConnection,
-  regenerateRemoteToken,
   removeConnection,
   renameConnection,
   setAutoPing,
@@ -26,8 +23,6 @@ import {
   setConnectionEnabled,
   setHiddenWindows,
   setMenuBarItemVisible,
-  setRemoteAccess,
-  setRemoteToken,
   spendResetCredit,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
@@ -42,7 +37,6 @@ import IconTip from "./IconTip";
 import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
 import QuotaBarsDialog from "./QuotaBarsDialog";
-import RemoteTokenGate from "./RemoteTokenGate";
 import RenameDialog from "./RenameDialog";
 import Sidebar, { type SidebarItem } from "./Sidebar";
 import TitleBar from "./TitleBar";
@@ -60,9 +54,6 @@ const NAV: SidebarItem<View>[] = [
   { value: "providers", label: "Nav.Providers", icon: Plug, tint: "#34a853" },
   { value: "settings", label: "Nav.Settings", icon: Settings, tint: "#8e8e93" },
 ];
-
-/** How often a remote browser reads the state again. */
-const REMOTE_POLL_INTERVAL = 30_000;
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
@@ -94,10 +85,6 @@ function Shell() {
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
   const [surface, setSurface] = useState<"main" | "popover">("main");
-  const [mode, setMode] = useState<Mode>();
-  const [tokenGate, setTokenGate] = useState<{ open: boolean; wrong: boolean }>(
-    { open: false, wrong: false },
-  );
 
   const showError = useCallback(
     (reason: unknown) =>
@@ -108,14 +95,7 @@ function Shell() {
   const load = useCallback(async () => {
     try {
       setState(await getDashboardState());
-      setTokenGate({ open: false, wrong: false });
     } catch (reason) {
-      if (reason instanceof RemoteAuthError) {
-        // A page with a token that the server refused shows the reason; a
-        // page without a token only asks for one.
-        setTokenGate((gate) => ({ open: true, wrong: gate.open }));
-        return;
-      }
       showError(reason);
     }
   }, [showError]);
@@ -126,35 +106,17 @@ function Shell() {
 
     let cleanup: (() => void) | undefined;
     let cancelled = false;
-    void detectMode().then((found) => {
-      if (cancelled) return;
-      setMode(found);
-      void load();
-      if (found === "native") {
-        void import("@tauri-apps/api/event").then(({ listen }) =>
-          listen<DashboardState>("quota:updated", (event) =>
-            setState(event.payload),
-          ).then((stop) => {
-            cleanup = stop;
-          }),
-        );
-      } else if (found === "remote") {
-        // The Mac refreshes on its own timer; the page reads the result
-        // every half minute and when it comes back to the front.
-        const timer = window.setInterval(
-          () => void load(),
-          REMOTE_POLL_INTERVAL,
-        );
-        const onVisible = () => {
-          if (document.visibilityState === "visible") void load();
-        };
-        document.addEventListener("visibilitychange", onVisible);
-        cleanup = () => {
-          window.clearInterval(timer);
-          document.removeEventListener("visibilitychange", onVisible);
-        };
-      }
-    });
+    void load();
+    if (isDesktop()) {
+      void import("@tauri-apps/api/event").then(({ listen }) =>
+        listen<DashboardState>("quota:updated", (event) =>
+          setState(event.payload),
+        ).then((stop) => {
+          if (cancelled) void stop();
+          else cleanup = stop;
+        }),
+      );
+    }
     return () => {
       cancelled = true;
       cleanup?.();
@@ -185,27 +147,21 @@ function Shell() {
   const withBusyId = (id: string) => (busy: boolean) =>
     setBusyId(busy ? id : undefined);
 
-  // A remote browser reads and refreshes only. Every change to an account
-  // stays in the app on the Mac.
-  const remote = mode === "remote";
   const onRefresh = (id: string) =>
     void run(() => refreshConnection(id), withBusyId(id));
-  const actions = remote
-    ? { onRefresh }
-    : {
-        onRefresh,
-        onRename: setRenaming,
-        onBars: setBarsFor,
-        onAlerts: setAlertsFor,
-        onAutoPing: setAutoPingFor,
-        onEnabledChange: (id: string, enabled: boolean) =>
-          void run(() => setConnectionEnabled(id, enabled), withBusyId(id)),
-        onRemove: (id: string) =>
-          void run(() => removeConnection(id), withBusyId(id)),
-        onUseReset: (id: string, creditId: string) =>
-          run(() => spendResetCredit(id, creditId), withBusyId(id)),
-      };
-  const nav = remote ? NAV.filter((item) => item.value !== "providers") : NAV;
+  const actions = {
+    onRefresh,
+    onRename: setRenaming,
+    onBars: setBarsFor,
+    onAlerts: setAlertsFor,
+    onAutoPing: setAutoPingFor,
+    onEnabledChange: (id: string, enabled: boolean) =>
+      void run(() => setConnectionEnabled(id, enabled), withBusyId(id)),
+    onRemove: (id: string) =>
+      void run(() => removeConnection(id), withBusyId(id)),
+    onUseReset: (id: string, creditId: string) =>
+      run(() => spendResetCredit(id, creditId), withBusyId(id)),
+  };
 
   async function handleAlertsSubmit(
     id: string,
@@ -222,18 +178,6 @@ function Shell() {
   function changeView(next: View) {
     setView(next);
     setProviderPage(undefined);
-  }
-
-  if (tokenGate.open) {
-    return (
-      <RemoteTokenGate
-        onSubmit={(token) => {
-          setRemoteToken(token);
-          void load();
-        }}
-        wrong={tokenGate.wrong}
-      />
-    );
   }
 
   if (!state) {
@@ -258,15 +202,14 @@ function Shell() {
   const onProviderPage = view === "providers" && providerPage !== undefined;
   const title = onProviderPage
     ? PROVIDER_NAMES[providerPage]
-    : t(nav.find((item) => item.value === view)?.label ?? "Nav.Quota");
+    : t(NAV.find((item) => item.value === view)?.label ?? "Nav.Quota");
 
   return (
     <AppUpdaterProvider>
       <div className={styles.shell}>
         <Sidebar
-          compact={remote}
           footer={<UpdateButton />}
-          items={nav}
+          items={NAV}
           onChange={changeView}
           value={view}
         />
@@ -295,9 +238,7 @@ function Shell() {
               {view === "quota" && (
                 <QuotaView
                   busyId={busyId}
-                  onOpenProviders={
-                    remote ? undefined : () => changeView("providers")
-                  }
+                  onOpenProviders={() => changeView("providers")}
                   onRefreshAll={() => void handleRefresh()}
                   refreshing={refreshing}
                   state={state}
@@ -324,12 +265,6 @@ function Shell() {
                       () => setMenuBarItemVisible(visible),
                       setSettingsBusy,
                     )
-                  }
-                  onRegenerateRemoteToken={() =>
-                    void run(regenerateRemoteToken, setSettingsBusy)
-                  }
-                  onRemoteAccessChange={(change) =>
-                    void run(() => setRemoteAccess(change), setSettingsBusy)
                   }
                   state={state}
                 />
