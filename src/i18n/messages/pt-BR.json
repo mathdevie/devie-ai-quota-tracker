@@ -20,7 +20,8 @@
     "Quota": "Cota",
     "Providers": "Provedores",
     "Settings": "Configurações",
-    "BackToProviders": "Voltar aos provedores"
+    "Back": "Voltar",
+    "Forward": "Avançar"
   },
   "Connection": {
     "ActionsFor": "Ações para {{name}}",

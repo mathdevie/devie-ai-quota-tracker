@@ -121,14 +121,16 @@ function ChannelRow({
       title={t("Settings.Updates.Channel")}
     >
       <Select.Root
-        aria-label={t("Settings.Updates.Channel")}
         disabled={busy || !enabled}
         onValueChange={(value: UpdateChannel | null) =>
           value && void change(value)
         }
         value={channel}
       >
-        <Select.Trigger className={pickerStyles.trigger}>
+        <Select.Trigger
+          aria-label={t("Settings.Updates.Channel")}
+          className={pickerStyles.trigger}
+        >
           <Select.Value>{labels[channel]}</Select.Value>
           <Select.Icon />
         </Select.Trigger>
@@ -164,7 +166,7 @@ export default function SettingsView({
 }) {
   const { t } = useTranslation();
   return (
-    <section className={styles.page}>
+    <section className={styles.page} data-settings>
       <SettingRow.Group title={t("Settings.General")}>
         <SettingRow.Row title={t("Settings.Theme")}>
           <ThemePicker />

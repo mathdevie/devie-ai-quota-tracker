@@ -20,7 +20,8 @@
     "Quota": "Kiintiö",
     "Providers": "Palveluntarjoajat",
     "Settings": "Asetukset",
-    "BackToProviders": "Takaisin palveluntarjoajiin"
+    "Back": "Takaisin",
+    "Forward": "Eteenpäin"
   },
   "Connection": {
     "ActionsFor": "Toiminnot: {{name}}",

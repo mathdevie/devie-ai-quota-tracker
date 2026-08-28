@@ -1,7 +1,7 @@
 @use "../ui/_devie.scss" as *;
 
 .trigger {
-  min-width: 180px;
+  min-width: 164px;
 }
 
 .value,
@@ -20,7 +20,6 @@
   border-radius: 4px;
 }
 
-// The list is wider than the trigger so theme names never wrap.
 .popup {
-  min-width: 220px;
+  min-width: 164px;
 }

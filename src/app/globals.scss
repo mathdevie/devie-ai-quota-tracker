@@ -41,7 +41,7 @@
 
   body {
     overflow: hidden;
-    background: var(--devie-app__canvas, #{$devie__color__background});
+    background: transparent;
     color: $devie__color__text;
     font-family: $devie__font-family;
     font-size: $devie__font-size__normal;

@@ -20,7 +20,8 @@
     "Quota": "Quota",
     "Providers": "Fournisseurs",
     "Settings": "Réglages",
-    "BackToProviders": "Retour aux fournisseurs"
+    "Back": "Retour",
+    "Forward": "Suivant"
   },
   "Connection": {
     "ActionsFor": "Actions pour {{name}}",
