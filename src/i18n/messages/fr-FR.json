@@ -64,9 +64,9 @@
     "RefreshQuotas": "Actualiser les quotas",
     "Reset": {
       "Now": "maintenant",
-      "InDaysHours": "dans {{days}}j {{hours}}h",
-      "InHoursMinutes": "dans {{hours}}h {{minutes}}min",
-      "InMinutes": "dans {{minutes}}min",
+      "InDaysHours": "{{days}}j {{hours}}h",
+      "InHoursMinutes": "{{hours}}h {{minutes}}min",
+      "InMinutes": "{{minutes}}min",
       "On": "Réinitialisation le {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Affichée",
     "Hidden": "Masquée",
     "Left": "{{percent}} % restants",
-    "Resets": "réinitialisation {{time}}"
+    "Resets": "réinitialisation dans {{time}}"
   },
   "Alerts": {
     "Title": "Alertes",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Général",
+    "Appearance": "Apparence",
+    "About": "À propos",
     "Theme": "Thème",
     "Language": "Langue",
     "MenuBarItem": "Élément de la barre de menus",
     "MenuBarItemDescription": "Afficher les quotas dans la barre de menus macOS",
     "ShowMenuBarItem": "Afficher l'élément de la barre de menus",
     "Updates": {
-      "Title": "Mises à jour",
+      "Title": "Version",
       "RestartToUpdate": "Redémarrer pour mettre à jour",
       "CheckForUpdates": "Rechercher des mises à jour",
       "UpdateAvailable": "Mise à jour disponible",
@@ -182,7 +184,7 @@
       },
       "Version": "Version : {{version}}",
       "UpToDateToast": "Vous utilisez la dernière version.",
-      "Channel": "Canal de mise à jour",
+      "Channel": "Accès aux mises à jour",
       "ChannelDescription": "Les versions nightly reçoivent les nouveautés en premier mais peuvent être instables.",
       "Channels": {
         "Stable": "Stable",

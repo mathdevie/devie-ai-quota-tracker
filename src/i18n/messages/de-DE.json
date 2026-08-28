@@ -64,9 +64,9 @@
     "RefreshQuotas": "Kontingente aktualisieren",
     "Reset": {
       "Now": "jetzt",
-      "InDaysHours": "in {{days}} T {{hours}} Std",
-      "InHoursMinutes": "in {{hours}} Std {{minutes}} Min",
-      "InMinutes": "in {{minutes}} Min",
+      "InDaysHours": "{{days}} T {{hours}} Std",
+      "InHoursMinutes": "{{hours}} Std {{minutes}} Min",
+      "InMinutes": "{{minutes}} Min",
       "On": "Zurücksetzung am {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Sichtbar",
     "Hidden": "Ausgeblendet",
     "Left": "{{percent}} % übrig",
-    "Resets": "Zurücksetzung {{time}}"
+    "Resets": "Zurücksetzung in {{time}}"
   },
   "Alerts": {
     "Title": "Hinweise",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Allgemein",
+    "Appearance": "Erscheinungsbild",
+    "About": "Info",
     "Theme": "Design",
     "Language": "Sprache",
     "MenuBarItem": "Menüleistensymbol",
     "MenuBarItemDescription": "Kontingente in der macOS-Menüleiste anzeigen",
     "ShowMenuBarItem": "Menüleistensymbol anzeigen",
     "Updates": {
-      "Title": "Updates",
+      "Title": "Version",
       "RestartToUpdate": "Zum Aktualisieren neu starten",
       "CheckForUpdates": "Nach Updates suchen",
       "UpdateAvailable": "Update verfügbar",
@@ -182,7 +184,7 @@
       },
       "Version": "Version: {{version}}",
       "UpToDateToast": "Sie verwenden die neueste Version.",
-      "Channel": "Update-Kanal",
+      "Channel": "Update-Zugriff",
       "ChannelDescription": "Nightly-Versionen erhalten neue Funktionen zuerst, können aber instabil sein.",
       "Channels": {
         "Stable": "Stabil",

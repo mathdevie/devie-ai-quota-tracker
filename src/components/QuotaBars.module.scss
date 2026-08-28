@@ -34,7 +34,7 @@
   grid-template-rows: auto;
   min-height: 22px;
   row-gap: 0;
-  --quota-color: #{$devie__color__primary};
+  --quota-color: #30d158;
 
   &[data-level="warning"] {
     --quota-color: #{$devie__color__warning};
@@ -115,6 +115,10 @@
   white-space: nowrap;
 }
 
+.resetTooltip {
+  z-index: 100;
+}
+
 .pin {
   display: grid;
   width: 20px;
@@ -125,17 +129,22 @@
   border-radius: $devie__radius;
   background: transparent;
   color: $devie__color__text-sub;
-  opacity: 0.55;
+  opacity: 0;
+  transition: opacity 120ms;
   cursor: default;
+
+  .window:hover &,
+  .window:focus-within &,
+  &[aria-pressed="true"] {
+    opacity: 1;
+  }
 
   &:hover {
     background: color-mix(in srgb, $devie__color__text 8%, transparent);
-    opacity: 1;
   }
 
   &[aria-pressed="true"] {
     color: $devie__color__primary;
-    opacity: 1;
   }
 
   &:focus-visible {

@@ -64,9 +64,9 @@
     "RefreshQuotas": "Atualizar cotas",
     "Reset": {
       "Now": "agora",
-      "InDaysHours": "em {{days}}d {{hours}}h",
-      "InHoursMinutes": "em {{hours}}h {{minutes}}min",
-      "InMinutes": "em {{minutes}}min",
+      "InDaysHours": "{{days}}d {{hours}}h",
+      "InHoursMinutes": "{{hours}}h {{minutes}}min",
+      "InMinutes": "{{minutes}}min",
       "On": "Redefine em {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Visível",
     "Hidden": "Oculta",
     "Left": "{{percent}}% restante",
-    "Resets": "redefine {{time}}"
+    "Resets": "redefine em {{time}}"
   },
   "Alerts": {
     "Title": "Alertas",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Geral",
+    "Appearance": "Aparência",
+    "About": "Sobre",
     "Theme": "Tema",
     "Language": "Idioma",
     "MenuBarItem": "Item da barra de menus",
     "MenuBarItemDescription": "Mostrar as cotas na barra de menus do macOS",
     "ShowMenuBarItem": "Mostrar o item da barra de menus",
     "Updates": {
-      "Title": "Atualizações",
+      "Title": "Versão",
       "RestartToUpdate": "Reiniciar para atualizar",
       "CheckForUpdates": "Verificar atualizações",
       "UpdateAvailable": "Atualização disponível",
@@ -182,7 +184,7 @@
       },
       "Version": "Versão: {{version}}",
       "UpToDateToast": "Você está na versão mais recente.",
-      "Channel": "Canal de atualização",
+      "Channel": "Acesso a atualizações",
       "ChannelDescription": "As versões nightly recebem as novidades primeiro, mas podem ser instáveis.",
       "Channels": {
         "Stable": "Estável",

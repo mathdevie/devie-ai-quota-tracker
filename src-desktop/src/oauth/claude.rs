@@ -407,12 +407,8 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     model_keys.sort();
     for key in model_keys {
         let model = key.trim_start_matches("seven_day_");
-        add_window(
-            object,
-            &key,
-            &format!("{} (weekly)", title_case(model)),
-            &mut windows,
-        );
+        let label = weekly_model_label(&title_case(model));
+        add_window(object, &key, &label, &mut windows);
     }
     add_scoped_limits(object, &mut windows);
     if windows.is_empty() {
@@ -489,13 +485,21 @@ fn add_scoped_limits(object: &serde_json::Map<String, Value>, windows: &mut Vec<
         }
         windows.push(QuotaWindow {
             key,
-            label: format!("{name} (weekly)"),
+            label: weekly_model_label(name),
             used_percent: used.clamp(0.0, 100.0),
             resets_at: reset_time(limit.get("resets_at")),
             unlimited: false,
             amount: None,
             paid: false,
         });
+    }
+}
+
+fn weekly_model_label(name: &str) -> String {
+    if name.eq_ignore_ascii_case("fable") {
+        "Fable".to_string()
+    } else {
+        format!("{name} (weekly)")
     }
 }
 
@@ -661,7 +665,7 @@ mod tests {
             .iter()
             .find(|window| window.key == "seven_day_fable")
             .expect("Fable window");
-        assert_eq!(fable.label, "Fable (weekly)");
+        assert_eq!(fable.label, "Fable");
         assert_eq!(fable.used_percent, 36.0);
     }
 
@@ -691,7 +695,7 @@ mod tests {
             .iter()
             .find(|window| window.key == "seven_day_fable")
             .expect("Fable window");
-        assert_eq!(fable.label, "Fable (weekly)");
+        assert_eq!(fable.label, "Fable");
         assert_eq!(fable.used_percent, 25.0);
         assert_eq!(fable.resets_at.as_deref(), Some("2026-09-02T10:00:00Z"));
     }

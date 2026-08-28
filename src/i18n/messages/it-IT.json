@@ -64,9 +64,9 @@
     "RefreshQuotas": "Aggiorna le quote",
     "Reset": {
       "Now": "adesso",
-      "InDaysHours": "tra {{days}}g {{hours}}h",
-      "InHoursMinutes": "tra {{hours}}h {{minutes}}min",
-      "InMinutes": "tra {{minutes}}min",
+      "InDaysHours": "{{days}}g {{hours}}h",
+      "InHoursMinutes": "{{hours}}h {{minutes}}min",
+      "InMinutes": "{{minutes}}min",
       "On": "Si azzera il {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Visibile",
     "Hidden": "Nascosta",
     "Left": "{{percent}}% rimanente",
-    "Resets": "reset {{time}}"
+    "Resets": "reset tra {{time}}"
   },
   "Alerts": {
     "Title": "Avvisi",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Generale",
+    "Appearance": "Aspetto",
+    "About": "Informazioni",
     "Theme": "Tema",
     "Language": "Lingua",
     "MenuBarItem": "Elemento nella barra dei menu",
     "MenuBarItemDescription": "Mostra le quote nella barra dei menu di macOS",
     "ShowMenuBarItem": "Mostra l'elemento nella barra dei menu",
     "Updates": {
-      "Title": "Aggiornamenti",
+      "Title": "Versione",
       "RestartToUpdate": "Riavvia per aggiornare",
       "CheckForUpdates": "Cerca aggiornamenti",
       "UpdateAvailable": "Aggiornamento disponibile",
@@ -182,7 +184,7 @@
       },
       "Version": "Versione: {{version}}",
       "UpToDateToast": "Stai usando l’ultima versione.",
-      "Channel": "Canale di aggiornamento",
+      "Channel": "Accesso agli aggiornamenti",
       "ChannelDescription": "Le versioni nightly ricevono per prime le novità ma possono essere instabili.",
       "Channels": {
         "Stable": "Stabile",

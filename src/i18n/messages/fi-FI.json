@@ -64,9 +64,9 @@
     "RefreshQuotas": "Päivitä kiintiöt",
     "Reset": {
       "Now": "nyt",
-      "InDaysHours": "{{days}} pv {{hours}} t kuluttua",
-      "InHoursMinutes": "{{hours}} t {{minutes}} min kuluttua",
-      "InMinutes": "{{minutes}} min kuluttua",
+      "InDaysHours": "{{days}} pv {{hours}} t",
+      "InHoursMinutes": "{{hours}} t {{minutes}} min",
+      "InMinutes": "{{minutes}} min",
       "On": "Nollautuu {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Näkyvissä",
     "Hidden": "Piilotettu",
     "Left": "{{percent}} % jäljellä",
-    "Resets": "nollautuu {{time}}"
+    "Resets": "nollautuu {{time}} kuluttua"
   },
   "Alerts": {
     "Title": "Hälytykset",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Yleiset",
+    "Appearance": "Ulkoasu",
+    "About": "Tietoja",
     "Theme": "Teema",
     "Language": "Kieli",
     "MenuBarItem": "Valikkorivin kohde",
     "MenuBarItemDescription": "Näytä kiintiöt macOS:n valikkorivillä",
     "ShowMenuBarItem": "Näytä valikkorivin kohde",
     "Updates": {
-      "Title": "Päivitykset",
+      "Title": "Versio",
       "RestartToUpdate": "Käynnistä uudelleen päivittääksesi",
       "CheckForUpdates": "Tarkista päivitykset",
       "UpdateAvailable": "Päivitys saatavilla",
@@ -182,7 +184,7 @@
       },
       "Version": "Versio: {{version}}",
       "UpToDateToast": "Käytössäsi on uusin versio.",
-      "Channel": "Päivityskanava",
+      "Channel": "Päivitysten käyttöoikeus",
       "ChannelDescription": "Nightly-versiot saavat uudet ominaisuudet ensin, mutta voivat olla epävakaita.",
       "Channels": {
         "Stable": "Vakaa",
