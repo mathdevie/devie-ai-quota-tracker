@@ -550,6 +550,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .effects(
             EffectsBuilder::new()
                 .effect(Effect::Sidebar)
+                .radius(14.0)
                 .state(EffectState::FollowsWindowActiveState)
                 .build(),
         );
@@ -571,6 +572,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let popover = popover.effects(
         EffectsBuilder::new()
             .effect(Effect::Popover)
+            .radius(12.0)
             .state(EffectState::FollowsWindowActiveState)
             .build(),
     );

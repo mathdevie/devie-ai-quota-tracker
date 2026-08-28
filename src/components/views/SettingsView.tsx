@@ -68,11 +68,16 @@ function UpdateRow() {
       title={t("Settings.Updates.Title")}
     >
       {status === "ready" ? (
-        <Button onClick={() => void installUpdate()} size="sm">
+        <Button
+          className={styles.updateAction}
+          onClick={() => void installUpdate()}
+          size="md"
+        >
           {t("Settings.Updates.RestartToUpdate")}
         </Button>
       ) : (
         <Button
+          className={styles.updateAction}
           disabled={
             !enabled ||
             status === "checking" ||
@@ -80,7 +85,7 @@ function UpdateRow() {
             status === "installing"
           }
           onClick={() => void check()}
-          size="sm"
+          size="md"
           variant="secondary"
         >
           <RefreshCw size={14} />
@@ -168,12 +173,6 @@ export default function SettingsView({
   return (
     <section className={styles.page} data-settings>
       <SettingRow.Group title={t("Settings.General")}>
-        <SettingRow.Row title={t("Settings.Theme")}>
-          <ThemePicker />
-        </SettingRow.Row>
-        <SettingRow.Row title={t("Settings.Language")}>
-          <LanguagePicker />
-        </SettingRow.Row>
         <SettingRow.Row
           subtitle={t("Settings.MenuBarItemDescription")}
           title={t("Settings.MenuBarItem")}
@@ -187,6 +186,16 @@ export default function SettingsView({
             <Switch.Thumb />
           </Switch.Root>
         </SettingRow.Row>
+      </SettingRow.Group>
+      <SettingRow.Group title={t("Settings.Appearance")}>
+        <SettingRow.Row title={t("Settings.Theme")}>
+          <ThemePicker />
+        </SettingRow.Row>
+        <SettingRow.Row title={t("Settings.Language")}>
+          <LanguagePicker />
+        </SettingRow.Row>
+      </SettingRow.Group>
+      <SettingRow.Group title={t("Settings.About")}>
         <UpdateRow />
         <ChannelRow
           busy={busy}
