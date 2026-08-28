@@ -238,7 +238,7 @@ export default function ConnectionCard({
           <h2>{PROVIDER_NAMES[connection.provider]}</h2>
           <p>
             {accountLabel(connection)}
-            {plan && <span className={styles.plan}> · {plan}</span>}
+            {plan && <span className={styles.plan}> ({plan})</span>}
           </p>
         </div>
         <StatusBadge connection={connection} />

@@ -30,11 +30,13 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
 }
 
 function detailText(connection: ProviderConnection): string | undefined {
-  const parts = [
-    connection.customLabel ? connection.identity?.displayName : undefined,
-    connection.identity?.plan,
-  ].filter((part): part is string => Boolean(part));
-  return parts.length > 0 ? parts.join(" · ") : undefined;
+  const name = connection.customLabel
+    ? connection.identity?.displayName
+    : undefined;
+  const plan = connection.identity?.plan;
+  if (name && plan) return `${name} (${plan})`;
+  if (plan) return `(${plan})`;
+  return name;
 }
 
 export default function ProviderDetailView({

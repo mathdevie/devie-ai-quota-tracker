@@ -40,7 +40,7 @@ export const previewState: DashboardState = {
         },
         {
           key: "seven_day_fable",
-          label: "Fable (weekly)",
+          label: "Fable",
           usedPercent: 12,
           resetsAt: "2026-08-29T07:00:00Z",
         },

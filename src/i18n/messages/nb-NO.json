@@ -64,9 +64,9 @@
     "RefreshQuotas": "Oppdater kvoter",
     "Reset": {
       "Now": "nå",
-      "InDaysHours": "om {{days}}d {{hours}}t",
-      "InHoursMinutes": "om {{hours}}t {{minutes}}m",
-      "InMinutes": "om {{minutes}}m",
+      "InDaysHours": "{{days}}d {{hours}}t",
+      "InHoursMinutes": "{{hours}}t {{minutes}}m",
+      "InMinutes": "{{minutes}}m",
       "On": "Tilbakestilles {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Vist",
     "Hidden": "Skjult",
     "Left": "{{percent}} % igjen",
-    "Resets": "tilbakestilles {{time}}"
+    "Resets": "tilbakestilles om {{time}}"
   },
   "Alerts": {
     "Title": "Varsler",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Generelt",
+    "Appearance": "Utseende",
+    "About": "Om",
     "Theme": "Tema",
     "Language": "Språk",
     "MenuBarItem": "Menylinjeelement",
     "MenuBarItemDescription": "Vis kvotene i macOS-menylinjen",
     "ShowMenuBarItem": "Vis menylinjeelementet",
     "Updates": {
-      "Title": "Oppdateringer",
+      "Title": "Versjon",
       "RestartToUpdate": "Start på nytt for å oppdatere",
       "CheckForUpdates": "Se etter oppdateringer",
       "UpdateAvailable": "Oppdatering tilgjengelig",
@@ -182,7 +184,7 @@
       },
       "Version": "Versjon: {{version}}",
       "UpToDateToast": "Du har den nyeste versjonen.",
-      "Channel": "Oppdateringskanal",
+      "Channel": "Oppdateringstilgang",
       "ChannelDescription": "Nightly-versjoner får nye funksjoner først, men kan være ustabile.",
       "Channels": {
         "Stable": "Stabil",

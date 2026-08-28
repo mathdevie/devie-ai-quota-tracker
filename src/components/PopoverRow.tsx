@@ -28,9 +28,9 @@ export default function PopoverRow({
         <p className={styles.identity}>
           <strong>{PROVIDER_NAMES[connection.provider]}</strong>
           <span>
-            {" · "}
+            {" "}
             {accountLabel(connection)}
-            {plan && ` · ${plan}`}
+            {plan && ` (${plan})`}
           </span>
         </p>
         <StatusBadge connection={connection} />
