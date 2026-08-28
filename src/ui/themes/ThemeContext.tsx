@@ -10,7 +10,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { THEMES } from "@/ui/themes/registry";
+import {
+  DARK_THEME,
+  LIGHT_THEME,
+  SYSTEM_THEME,
+  THEMES,
+} from "@/ui/themes/registry";
 
 interface ThemeContextType {
   selectedTheme: string;
@@ -27,15 +32,19 @@ interface Props {
   defaultTheme?: string;
 }
 
-const DEFAULT_THEME = "theme-default";
+const DEFAULT_THEME = SYSTEM_THEME;
 const STORAGE_KEY = "devie-quota-theme:v1";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
+// Versions before the macOS themes stored the old Devie light theme.
+const LEGACY_THEMES: Record<string, string> = { "theme-default": LIGHT_THEME };
+const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 function getStoredTheme(): string | null {
   if (typeof window === "undefined") return null;
 
   try {
-    const storedTheme = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const storedTheme = raw ? (LEGACY_THEMES[raw] ?? raw) : null;
     if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
       return storedTheme;
     }
@@ -56,6 +65,16 @@ function persistTheme(theme: string): void {
   }
 }
 
+function systemPrefersDark(): boolean {
+  return typeof window !== "undefined" && window.matchMedia(DARK_QUERY).matches;
+}
+
+/** The `system` option maps to the light or dark theme of the OS. */
+function resolveTheme(theme: string, prefersDark: boolean): string {
+  if (theme !== SYSTEM_THEME) return theme;
+  return prefersDark ? DARK_THEME : LIGHT_THEME;
+}
+
 function applyThemeToDOM(theme: string): void {
   if (typeof document === "undefined") return;
   document.documentElement.dataset.devieTheme = theme;
@@ -70,8 +89,20 @@ export function ThemeProvider({
   );
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState("#7B7481");
+  const [prefersDark, setPrefersDark] = useState(systemPrefersDark);
 
-  const currentTheme = previewedTheme ?? selectedTheme;
+  const currentTheme = resolveTheme(
+    previewedTheme ?? selectedTheme,
+    prefersDark,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(DARK_QUERY);
+    const update = () => setPrefersDark(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     applyThemeToDOM(currentTheme);
