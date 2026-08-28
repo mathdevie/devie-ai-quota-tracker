@@ -188,34 +188,6 @@
         "Stable": "Stable",
         "Nightly": "Nightly"
       }
-    },
-    "Remote": {
-      "Title": "Tableau de bord distant",
-      "Description": "Servir ce tableau de bord à vos autres appareils.",
-      "Enable": "Activer le tableau de bord distant",
-      "Port": "Port",
-      "PortDescription": "Un changement redémarre le serveur.",
-      "Lan": "Réseau local",
-      "LanDescription": "Désactivé : ce Mac seulement. Activé : chaque appareil de votre réseau.",
-      "LanSwitch": "Autoriser le réseau local",
-      "Address": "Adresse",
-      "AddressDescription": "Ouvrez l'adresse sur un autre appareil. Le lien copié inclut le jeton d'accès.",
-      "Starting": "Démarrage…",
-      "CopyLink": "Copier le lien",
-      "Token": "Jeton d'accès",
-      "TokenDescription": "Les autres appareils demandent ce jeton une fois. Un nouveau jeton déconnecte chaque appareil.",
-      "Show": "Afficher",
-      "Hide": "Masquer",
-      "Copy": "Copier",
-      "Regenerate": "Régénérer",
-      "Copied": "Copié dans le presse-papiers.",
-      "CopyFailed": "Le presse-papiers n'est pas disponible.",
-      "Gate": {
-        "Description": "Saisissez le jeton d'accès depuis Réglages › Tableau de bord distant dans l'app sur votre Mac.",
-        "Label": "Jeton d'accès",
-        "Submit": "Continuer",
-        "Wrong": "Le jeton d'accès est incorrect."
-      }
     }
   },
   "Tray": {

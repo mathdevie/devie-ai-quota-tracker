@@ -5,18 +5,14 @@ use rusqlite::{params, Connection, OptionalExtension};
 
 use crate::model::{
     AppSettings, AutoPingState, ConnectionAlerts, ConnectionStatus, DashboardState, NewConnection,
-    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteAccess, RemoteIdentity,
-    TraySummary, UpdateChannel,
+    Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity, TraySummary,
+    UpdateChannel,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
 const UPDATE_CHANNEL: &str = "update_channel";
 const TRAY_SUMMARY: &str = "tray_summary";
 const LANGUAGE: &str = "language";
-const REMOTE_ENABLED: &str = "remote_enabled";
-const REMOTE_PORT: &str = "remote_port";
-const REMOTE_LAN: &str = "remote_lan";
-const REMOTE_TOKEN: &str = "remote_token";
 
 #[derive(Clone, Debug)]
 pub struct Database {
@@ -177,6 +173,14 @@ impl Database {
             "last_auto_ping_attempt_at",
             "TEXT",
         )?;
+        // The remote dashboard is gone; its rows, including the token, go too.
+        connection
+            .execute(
+                "DELETE FROM settings
+                 WHERE key IN ('remote_enabled', 'remote_port', 'remote_lan', 'remote_token')",
+                [],
+            )
+            .map_err(|error| error.to_string())?;
         Ok(())
     }
 
@@ -211,18 +215,6 @@ impl Database {
         // A summary that no longer parses falls back to the default silently.
         let tray_summary = Self::setting(&connection, TRAY_SUMMARY)?
             .and_then(|value| serde_json::from_str::<TraySummary>(&value).ok());
-        let remote_defaults = RemoteAccess::default();
-        let remote_access = RemoteAccess {
-            enabled: Self::setting(&connection, REMOTE_ENABLED)?
-                .map_or(remote_defaults.enabled, |value| value == "1"),
-            port: Self::setting(&connection, REMOTE_PORT)?
-                .and_then(|value| value.parse().ok())
-                .unwrap_or(remote_defaults.port),
-            lan: Self::setting(&connection, REMOTE_LAN)?
-                .map_or(remote_defaults.lan, |value| value == "1"),
-            token: Self::setting(&connection, REMOTE_TOKEN)?,
-            ..remote_defaults
-        };
         let update_channel = Self::setting(&connection, UPDATE_CHANNEL)?
             .map_or(defaults.update_channel, |value| {
                 UpdateChannel::from_db(&value)
@@ -230,7 +222,6 @@ impl Database {
         Ok(AppSettings {
             show_menu_bar_item,
             tray_summary,
-            remote_access,
             update_channel,
         })
     }
@@ -239,16 +230,6 @@ impl Database {
         self.put_setting(UPDATE_CHANNEL, Some(channel.as_str()))
     }
 
-    /// Stores the remote dashboard switch, port, and network scope.
-    pub fn set_remote_access(&self, enabled: bool, port: u16, lan: bool) -> Result<(), String> {
-        self.put_setting(REMOTE_ENABLED, Some(if enabled { "1" } else { "0" }))?;
-        self.put_setting(REMOTE_PORT, Some(&port.to_string()))?;
-        self.put_setting(REMOTE_LAN, Some(if lan { "1" } else { "0" }))
-    }
-
-    pub fn set_remote_token(&self, token: &str) -> Result<(), String> {
-        self.put_setting(REMOTE_TOKEN, Some(token))
-    }
 
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
         self.put_setting(SHOW_MENU_BAR_ITEM, Some(if visible { "1" } else { "0" }))
@@ -906,18 +887,6 @@ mod tests {
         );
         database.set_tray_summary(None).expect("clear summary");
         assert_eq!(database.settings().expect("settings").tray_summary, None);
-
-        let remote = database.settings().expect("settings").remote_access;
-        assert_eq!(remote, RemoteAccess::default());
-        database
-            .set_remote_access(true, 5000, true)
-            .expect("remote access");
-        database.set_remote_token("secret").expect("remote token");
-        let remote = database.settings().expect("settings").remote_access;
-        assert!(remote.enabled);
-        assert_eq!(remote.port, 5000);
-        assert!(remote.lan);
-        assert_eq!(remote.token.as_deref(), Some("secret"));
 
         assert_eq!(state.settings.update_channel, UpdateChannel::Stable);
         database

@@ -188,34 +188,6 @@
         "Stable": "Stabil",
         "Nightly": "Nightly"
       }
-    },
-    "Remote": {
-      "Title": "Fjärrpanel",
-      "Description": "Dela den här panelen med dina andra enheter.",
-      "Enable": "Slå på fjärrpanelen",
-      "Port": "Port",
-      "PortDescription": "En ändring startar om servern.",
-      "Lan": "Lokalt nätverk",
-      "LanDescription": "Av: bara den här Macen. På: alla enheter i ditt nätverk.",
-      "LanSwitch": "Tillåt det lokala nätverket",
-      "Address": "Adress",
-      "AddressDescription": "Öppna adressen på en annan enhet. Den kopierade länken innehåller åtkomsttoken.",
-      "Starting": "Startar…",
-      "CopyLink": "Kopiera länk",
-      "Token": "Åtkomsttoken",
-      "TokenDescription": "Andra enheter frågar efter denna token en gång. En ny token loggar ut alla enheter.",
-      "Show": "Visa",
-      "Hide": "Dölj",
-      "Copy": "Kopiera",
-      "Regenerate": "Skapa ny",
-      "Copied": "Kopierat till urklipp.",
-      "CopyFailed": "Urklipp är inte tillgängligt.",
-      "Gate": {
-        "Description": "Ange åtkomsttoken från Inställningar › Fjärrpanel i appen på din Mac.",
-        "Label": "Åtkomsttoken",
-        "Submit": "Fortsätt",
-        "Wrong": "Åtkomsttoken är fel."
-      }
     }
   },
   "Tray": {

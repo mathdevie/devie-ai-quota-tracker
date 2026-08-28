@@ -25,10 +25,6 @@ $sidebar-inset: 8px;
   align-items: center;
   margin-bottom: $devie__spacing__x3;
   padding-left: 68px;
-
-  [data-compact] & {
-    padding-left: $devie__spacing__x1;
-  }
 }
 
 .brand {

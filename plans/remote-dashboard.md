@@ -1,11 +1,21 @@
 # Remote dashboard
 
-> Shipped. The user guide is `docs/remote-access.md`; the server lives in
-> `src-desktop/src/remote.rs`. Differences from this plan: the remote page
-> polls `/api/state` every 30 seconds instead of server-sent events (simpler,
-> and Cloudflare buffers long streams), the copied link carries the token in
-> the URL fragment, and the files come from Tauri's embedded assets, so no
-> `tower-http` static file service is needed.
+> Removed from the product: the feature shipped in 0.9.x but was not ready,
+> so it is out of every build after 0.9.6. The complete implementation, the
+> `src-desktop/src/remote.rs` server, the `RemoteAccessSettings` and
+> `RemoteTokenGate` components, the `Settings.Remote` translations, and the
+> `docs/remote-access.md` user guide, stays on the `archive/remote-dashboard`
+> branch. Start from there to bring it back.
+>
+> What the shipped version did differently from this plan: the remote page
+> polled `/api/state` every 30 seconds instead of server-sent events (simpler,
+> and Cloudflare buffers long streams), the copied link carried the token in
+> the URL fragment, and the files came from Tauri's embedded assets, so no
+> `tower-http` static file service was needed.
+>
+> One thing to redo on the way back: `Database::initialize` now deletes the
+> `remote_enabled`, `remote_port`, `remote_lan`, and `remote_token` rows on
+> every start. Drop that statement before the settings can persist again.
 
 Goal: read the quota dashboard from another device. The user puts the app
 behind a Cloudflare Tunnel or a Tailscale network. Devie Quota only needs to
