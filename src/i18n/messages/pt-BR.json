@@ -181,7 +181,13 @@
         "Failed": "A atualização falhou."
       },
       "Version": "Versão: {{version}}",
-      "UpToDateToast": "Você está na versão mais recente."
+      "UpToDateToast": "Você está na versão mais recente.",
+      "Channel": "Canal de atualização",
+      "ChannelDescription": "As versões nightly recebem as novidades primeiro, mas podem ser instáveis.",
+      "Channels": {
+        "Stable": "Estável",
+        "Nightly": "Nightly"
+      }
     },
     "Remote": {
       "Title": "Painel remoto",

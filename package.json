@@ -26,7 +26,6 @@
     "@tauri-apps/plugin-notification": "^2.3.3",
     "@tauri-apps/plugin-positioner": "^2.3.1",
     "@tauri-apps/plugin-process": "^2.3.1",
-    "@tauri-apps/plugin-updater": "^2.10.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.23",
     "i18next": "26.3.6",

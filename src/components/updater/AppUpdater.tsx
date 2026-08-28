@@ -15,10 +15,6 @@ import { IS_DESKTOP_BUILD, isDesktop } from "@/lib/desktop";
 /** Packaged build in a Tauri window. A remote browser has no updater. */
 const UPDATER_ENABLED = IS_DESKTOP_BUILD && isDesktop();
 
-type Update = Awaited<
-  ReturnType<typeof import("@tauri-apps/plugin-updater").check>
->;
-
 export type UpdateStatus =
   | "idle"
   | "checking"
@@ -30,11 +26,18 @@ export type UpdateStatus =
 /** What a check found. `busy` means a download or install is in progress. */
 export type CheckResult = "ready" | "up-to-date" | "error" | "busy";
 
+/** What the Rust `fetch_update` command answers when it finds an update. */
 export interface UpdateInfo {
   version: string;
   currentVersion: string;
   body?: string;
 }
+
+/** The download progress the Rust `download_update` command streams. */
+type DownloadEvent =
+  | { event: "Started"; data: { contentLength?: number } }
+  | { event: "Progress"; data: { chunkLength: number } }
+  | { event: "Finished" };
 
 interface AppUpdaterValue {
   enabled: boolean;
@@ -46,6 +49,8 @@ interface AppUpdaterValue {
   checkForUpdates: () => Promise<CheckResult>;
   /** Installs the downloaded update and restarts the app. */
   installUpdate: () => Promise<void>;
+  /** After a channel change: forgets any found update and checks again. */
+  recheck: () => Promise<void>;
 }
 
 const AppUpdaterContext = createContext<AppUpdaterValue | null>(null);
@@ -60,6 +65,9 @@ function message(reason: unknown): string {
  * Mirrors the Mana desktop app: the app checks at start and installs a
  * found update right away. Later checks download in the background and
  * show an "Update available" button, which installs on click.
+ *
+ * The checks run on the Rust side (`src-desktop/src/updater.rs`), which
+ * builds the update endpoint from the release channel setting.
  */
 export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<UpdateStatus>("idle");
@@ -67,7 +75,6 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const [info, setInfo] = useState<UpdateInfo>();
   const [error, setError] = useState<string>();
   const statusRef = useRef<UpdateStatus>("idle");
-  const updateRef = useRef<Update>(null);
   const startedRef = useRef(false);
 
   const commit = useCallback((next: UpdateStatus) => {
@@ -76,14 +83,14 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const download = useCallback(async (): Promise<boolean> => {
-    const update = updateRef.current;
-    if (!update) return false;
     commit("downloading");
     setProgress(0);
     let total = 0;
     let received = 0;
     try {
-      await update.download((event) => {
+      const { Channel, invoke } = await import("@tauri-apps/api/core");
+      const onEvent = new Channel<DownloadEvent>();
+      onEvent.onmessage = (event) => {
         if (event.event === "Started") {
           total = event.data.contentLength ?? 0;
         } else if (event.event === "Progress") {
@@ -94,7 +101,8 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
         } else if (event.event === "Finished") {
           setProgress(100);
         }
-      });
+      };
+      await invoke("download_update", { onEvent });
       commit("ready");
       return true;
     } catch (reason) {
@@ -112,18 +120,13 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
     commit("checking");
     setError(undefined);
     try {
-      const { check } = await import("@tauri-apps/plugin-updater");
-      const update = await check();
-      if (!update) {
+      const { invoke } = await import("@tauri-apps/api/core");
+      const found = await invoke<UpdateInfo | null>("fetch_update");
+      if (!found) {
         commit("idle");
         return "up-to-date";
       }
-      updateRef.current = update;
-      setInfo({
-        version: update.version,
-        currentVersion: update.currentVersion,
-        body: update.body,
-      });
+      setInfo(found);
       return (await download()) ? "ready" : "error";
     } catch (reason) {
       setError(message(reason));
@@ -133,11 +136,11 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   }, [commit, download]);
 
   const installUpdate = useCallback(async () => {
-    const update = updateRef.current;
-    if (!update || statusRef.current !== "ready") return;
+    if (statusRef.current !== "ready") return;
     commit("installing");
     try {
-      await update.install();
+      const { invoke } = await import("@tauri-apps/api/core");
+      await invoke("install_update");
       const { relaunch } = await import("@tauri-apps/plugin-process");
       await relaunch();
     } catch (reason) {
@@ -145,6 +148,17 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
       commit("error");
     }
   }, [commit]);
+
+  // The Rust side already forgot the pending update of the old channel.
+  const recheck = useCallback(async () => {
+    if (!UPDATER_ENABLED) return;
+    if (statusRef.current === "installing") return;
+    commit("idle");
+    setInfo(undefined);
+    setError(undefined);
+    setProgress(0);
+    await checkForUpdates();
+  }, [checkForUpdates, commit]);
 
   useEffect(() => {
     if (!UPDATER_ENABLED || startedRef.current) return;
@@ -168,8 +182,9 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
       error,
       checkForUpdates,
       installUpdate,
+      recheck,
     }),
-    [status, progress, info, error, checkForUpdates, installUpdate],
+    [status, progress, info, error, checkForUpdates, installUpdate, recheck],
   );
 
   return (
@@ -185,6 +200,7 @@ const disabled: AppUpdaterValue = {
   progress: 0,
   checkForUpdates: async () => "up-to-date",
   installUpdate: async () => {},
+  recheck: async () => {},
 };
 
 export function useAppUpdater(): AppUpdaterValue {

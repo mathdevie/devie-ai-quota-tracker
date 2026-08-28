@@ -6,10 +6,11 @@ use rusqlite::{params, Connection, OptionalExtension};
 use crate::model::{
     AppSettings, AutoPingState, ConnectionAlerts, ConnectionStatus, DashboardState, NewConnection,
     Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteAccess, RemoteIdentity,
-    TraySummary,
+    TraySummary, UpdateChannel,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
+const UPDATE_CHANNEL: &str = "update_channel";
 const TRAY_SUMMARY: &str = "tray_summary";
 const LANGUAGE: &str = "language";
 const REMOTE_ENABLED: &str = "remote_enabled";
@@ -222,11 +223,20 @@ impl Database {
             token: Self::setting(&connection, REMOTE_TOKEN)?,
             ..remote_defaults
         };
+        let update_channel = Self::setting(&connection, UPDATE_CHANNEL)?
+            .map_or(defaults.update_channel, |value| {
+                UpdateChannel::from_db(&value)
+            });
         Ok(AppSettings {
             show_menu_bar_item,
             tray_summary,
             remote_access,
+            update_channel,
         })
+    }
+
+    pub fn set_update_channel(&self, channel: UpdateChannel) -> Result<(), String> {
+        self.put_setting(UPDATE_CHANNEL, Some(channel.as_str()))
     }
 
     /// Stores the remote dashboard switch, port, and network scope.
@@ -908,5 +918,14 @@ mod tests {
         assert_eq!(remote.port, 5000);
         assert!(remote.lan);
         assert_eq!(remote.token.as_deref(), Some("secret"));
+
+        assert_eq!(state.settings.update_channel, UpdateChannel::Stable);
+        database
+            .set_update_channel(UpdateChannel::Nightly)
+            .expect("channel");
+        assert_eq!(
+            database.settings().expect("settings").update_channel,
+            UpdateChannel::Nightly
+        );
     }
 }
