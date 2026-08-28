@@ -18,7 +18,11 @@ function ResetTime({ value }: { value?: string }) {
         {text}
       </Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Positioner side="top" sideOffset={6}>
+        <Tooltip.Positioner
+          className={styles.resetTooltip}
+          side="top"
+          sideOffset={6}
+        >
           <Tooltip.Popup>
             {t("Quota.Reset.On", {
               date: formatDateTime(value, i18n.language),
@@ -30,7 +34,7 @@ function ResetTime({ value }: { value?: string }) {
   );
 }
 
-/** "in 4h 13m", "in 6d 4h", or "now" for a past reset. */
+/** "4h 13m", "6d 4h", or "now" for a past reset. */
 export function untilText(t: TFunction, value?: string): string | undefined {
   if (!value) return undefined;
   const minutes = Math.round((new Date(value).getTime() - Date.now()) / 60000);
@@ -118,8 +122,9 @@ export default function QuotaBars({
         const left = Math.max(0, Math.round(100 - window.usedPercent));
         const pinned = window.key === pinnedKey;
         const pinLabel = pinned ? t("Quota.Pin.Shown") : t("Quota.Pin.Show");
-        // Keep a short red fill when a paid allowance is fully spent.
-        const reached = Boolean(window.paid) && left === 0;
+        // Keep a short red fill when any limited allowance is fully spent.
+        const empty = left === 0;
+        const reached = Boolean(window.paid) && empty;
         return (
           <div
             className={styles.window}
@@ -141,7 +146,7 @@ export default function QuotaBars({
                   <span
                     className={styles.fill}
                     style={{
-                      width: reached ? "8px" : `${Math.min(100, left)}%`,
+                      width: empty ? "8px" : `${Math.min(100, left)}%`,
                     }}
                   />
                 </span>

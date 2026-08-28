@@ -64,9 +64,9 @@
     "RefreshQuotas": "Uppdatera kvoter",
     "Reset": {
       "Now": "nu",
-      "InDaysHours": "om {{days}}d {{hours}}h",
-      "InHoursMinutes": "om {{hours}}h {{minutes}}m",
-      "InMinutes": "om {{minutes}}m",
+      "InDaysHours": "{{days}}d {{hours}}h",
+      "InHoursMinutes": "{{hours}}h {{minutes}}m",
+      "InMinutes": "{{minutes}}m",
       "On": "Återställs {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Visas",
     "Hidden": "Dold",
     "Left": "{{percent}} % kvar",
-    "Resets": "återställs {{time}}"
+    "Resets": "återställs om {{time}}"
   },
   "Alerts": {
     "Title": "Aviseringar",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Allmänt",
+    "Appearance": "Utseende",
+    "About": "Om",
     "Theme": "Tema",
     "Language": "Språk",
     "MenuBarItem": "Menyradsobjekt",
     "MenuBarItemDescription": "Visa kvoterna i macOS-menyraden",
     "ShowMenuBarItem": "Visa menyradsobjektet",
     "Updates": {
-      "Title": "Uppdateringar",
+      "Title": "Version",
       "RestartToUpdate": "Starta om för att uppdatera",
       "CheckForUpdates": "Sök efter uppdateringar",
       "UpdateAvailable": "Uppdatering tillgänglig",
@@ -182,7 +184,7 @@
       },
       "Version": "Version: {{version}}",
       "UpToDateToast": "Du har den senaste versionen.",
-      "Channel": "Uppdateringskanal",
+      "Channel": "Uppdateringsåtkomst",
       "ChannelDescription": "Nightly-versioner får nya funktioner först men kan vara instabila.",
       "Channels": {
         "Stable": "Stabil",

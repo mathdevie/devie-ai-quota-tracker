@@ -64,9 +64,9 @@
     "RefreshQuotas": "Refresh quotas",
     "Reset": {
       "Now": "now",
-      "InDaysHours": "in {{days}}d {{hours}}h",
-      "InHoursMinutes": "in {{hours}}h {{minutes}}m",
-      "InMinutes": "in {{minutes}}m",
+      "InDaysHours": "{{days}}d {{hours}}h",
+      "InHoursMinutes": "{{hours}}h {{minutes}}m",
+      "InMinutes": "{{minutes}}m",
       "On": "Resets on {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Shown",
     "Hidden": "Hidden",
     "Left": "{{percent}}% left",
-    "Resets": "resets {{time}}"
+    "Resets": "resets in {{time}}"
   },
   "Alerts": {
     "Title": "Alerts",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "General",
+    "Appearance": "Appearance",
+    "About": "About",
     "Theme": "Theme",
     "Language": "Language",
     "MenuBarItem": "Menu bar item",
     "MenuBarItemDescription": "Show the quotas in the macOS menu bar",
     "ShowMenuBarItem": "Show the menu bar item",
     "Updates": {
-      "Title": "Updates",
+      "Title": "Version",
       "RestartToUpdate": "Restart to update",
       "CheckForUpdates": "Check for updates",
       "UpdateAvailable": "Update available",
@@ -182,7 +184,7 @@
       },
       "Version": "Version: {{version}}",
       "UpToDateToast": "You are on the latest version.",
-      "Channel": "Update channel",
+      "Channel": "Update access",
       "ChannelDescription": "Nightly builds get new features first but can be unstable.",
       "Channels": {
         "Stable": "Stable",

@@ -235,6 +235,11 @@
   color: $devie__color__danger;
 }
 
+.updateAction {
+  width: 164px;
+  min-height: 34px;
+}
+
 .spinning {
   animation: spin 0.8s linear infinite;
 }

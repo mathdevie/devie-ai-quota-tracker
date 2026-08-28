@@ -64,9 +64,9 @@
     "RefreshQuotas": "Quota vernieuwen",
     "Reset": {
       "Now": "nu",
-      "InDaysHours": "over {{days}}d {{hours}}u",
-      "InHoursMinutes": "over {{hours}}u {{minutes}}m",
-      "InMinutes": "over {{minutes}}m",
+      "InDaysHours": "{{days}}d {{hours}}u",
+      "InHoursMinutes": "{{hours}}u {{minutes}}m",
+      "InMinutes": "{{minutes}}m",
       "On": "Reset op {{date}}"
     },
     "ResetCredits": {
@@ -142,7 +142,7 @@
     "Shown": "Zichtbaar",
     "Hidden": "Verborgen",
     "Left": "{{percent}}% over",
-    "Resets": "reset {{time}}"
+    "Resets": "reset over {{time}}"
   },
   "Alerts": {
     "Title": "Meldingen",
@@ -163,13 +163,15 @@
   },
   "Settings": {
     "General": "Algemeen",
+    "Appearance": "Weergave",
+    "About": "Info",
     "Theme": "Thema",
     "Language": "Taal",
     "MenuBarItem": "Menubalkitem",
     "MenuBarItemDescription": "De quota in de macOS-menubalk tonen",
     "ShowMenuBarItem": "Het menubalkitem tonen",
     "Updates": {
-      "Title": "Updates",
+      "Title": "Versie",
       "RestartToUpdate": "Herstarten om bij te werken",
       "CheckForUpdates": "Op updates controleren",
       "UpdateAvailable": "Update beschikbaar",
@@ -182,7 +184,7 @@
       },
       "Version": "Versie: {{version}}",
       "UpToDateToast": "Je gebruikt de nieuwste versie.",
-      "Channel": "Updatekanaal",
+      "Channel": "Updatetoegang",
       "ChannelDescription": "Nightly-versies krijgen nieuwe functies als eerste, maar kunnen instabiel zijn.",
       "Channels": {
         "Stable": "Stabiel",
