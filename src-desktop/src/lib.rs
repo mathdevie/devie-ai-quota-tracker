@@ -7,7 +7,6 @@ mod messages;
 mod model;
 mod oauth;
 mod parse;
-mod remote;
 mod tray_icons;
 mod updater;
 
@@ -32,20 +31,11 @@ struct Core {
     refresh_gate: Arc<tokio::sync::Mutex<()>>,
     /// The cached codex-resets.com news, shared by every window.
     codex_resets: codex_resets::Cache,
-    /// The remote dashboard server, when the user turned it on.
-    remote: remote::Server,
-}
-
-/// The dashboard state with the live remote server status added.
-fn current_state(core: &Core) -> Result<DashboardState, String> {
-    let mut state = core.database.dashboard_state()?;
-    core.remote.decorate(&mut state.settings.remote_access);
-    Ok(state)
 }
 
 #[tauri::command]
 fn get_dashboard_state(core: State<'_, Core>) -> Result<DashboardState, String> {
-    current_state(&core)
+    core.database.dashboard_state()
 }
 
 #[tauri::command]
@@ -238,47 +228,6 @@ fn set_menu_bar_item_visible(
 ) -> Result<DashboardState, String> {
     core.database.set_show_menu_bar_item(visible)?;
     apply_tray_visibility(&app, visible);
-    publish_state(&app, &core)
-}
-
-/// Turns the remote dashboard on or off and picks its port and scope. A
-/// server that cannot start leaves the switch off and reports why.
-#[tauri::command]
-async fn set_remote_access(
-    app: AppHandle,
-    enabled: bool,
-    port: u16,
-    lan: bool,
-) -> Result<DashboardState, String> {
-    let core = app.state::<Core>().inner().clone();
-    if port < remote::MIN_PORT {
-        return Err(format!(
-            "Pick a port between {} and 65535.",
-            remote::MIN_PORT
-        ));
-    }
-    core.database.set_remote_access(enabled, port, lan)?;
-    let mut settings = core.database.settings()?.remote_access;
-    if settings.token.is_none() {
-        let token = remote::new_token();
-        core.database.set_remote_token(&token)?;
-        settings.token = Some(token);
-    }
-    if let Err(message) = core.remote.apply(&app, &settings).await {
-        core.database.set_remote_access(false, port, lan)?;
-        let _ = publish_state(&app, &core);
-        return Err(message);
-    }
-    publish_state(&app, &core)
-}
-
-/// Replaces the remote access token. Every remote page must sign in again.
-#[tauri::command]
-fn regenerate_remote_token(
-    app: AppHandle,
-    core: State<'_, Core>,
-) -> Result<DashboardState, String> {
-    core.database.set_remote_token(&remote::new_token())?;
     publish_state(&app, &core)
 }
 
@@ -478,7 +427,7 @@ async fn auto_ping_tick(app: &AppHandle) {
 }
 
 fn publish_state(app: &AppHandle, core: &Core) -> Result<DashboardState, String> {
-    let state = current_state(core)?;
+    let state = core.database.dashboard_state()?;
     let _ = app.emit("quota:updated", &state);
     update_tray_title(app, &state);
     Ok(state)
@@ -793,7 +742,6 @@ pub fn run() {
                 logins: LoginSessions::default(),
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
                 codex_resets: codex_resets::Cache::default(),
-                remote: remote::Server::default(),
             });
             app.manage(updater::PendingUpdate::default());
             build_windows(app)?;
@@ -803,16 +751,6 @@ pub fn run() {
             build_tray(app, &locale)?;
             let settings = app.state::<Core>().database.settings().unwrap_or_default();
             apply_tray_visibility(app.handle(), settings.show_menu_bar_item);
-            if settings.remote_access.enabled {
-                let handle = app.handle().clone();
-                tauri::async_runtime::spawn(async move {
-                    let core = handle.state::<Core>().inner().clone();
-                    // A failure stays visible in Settings; the switch stays on
-                    // so that the user can pick another port.
-                    let _ = core.remote.apply(&handle, &settings.remote_access).await;
-                    let _ = publish_state(&handle, &core);
-                });
-            }
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -859,8 +797,6 @@ pub fn run() {
             use_reset_credit,
             set_tray_summary,
             set_menu_bar_item_visible,
-            set_remote_access,
-            regenerate_remote_token,
             set_language,
             set_update_channel,
             updater::fetch_update,

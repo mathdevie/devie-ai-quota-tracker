@@ -188,34 +188,6 @@
         "Stable": "Vakaa",
         "Nightly": "Nightly"
       }
-    },
-    "Remote": {
-      "Title": "Etäkojelauta",
-      "Description": "Jaa tämä kojelauta muille laitteillesi.",
-      "Enable": "Ota etäkojelauta käyttöön",
-      "Port": "Portti",
-      "PortDescription": "Muutos käynnistää palvelimen uudelleen.",
-      "Lan": "Paikallisverkko",
-      "LanDescription": "Pois: vain tämä Mac. Päällä: jokainen laite verkossasi.",
-      "LanSwitch": "Salli paikallisverkko",
-      "Address": "Osoite",
-      "AddressDescription": "Avaa osoite toisella laitteella. Kopioitu linkki sisältää käyttöoikeustunnuksen.",
-      "Starting": "Käynnistyy…",
-      "CopyLink": "Kopioi linkki",
-      "Token": "Käyttöoikeustunnus",
-      "TokenDescription": "Muut laitteet kysyvät tätä tunnusta kerran. Uusi tunnus kirjaa jokaisen laitteen ulos.",
-      "Show": "Näytä",
-      "Hide": "Piilota",
-      "Copy": "Kopioi",
-      "Regenerate": "Luo uusi",
-      "Copied": "Kopioitu leikepöydälle.",
-      "CopyFailed": "Leikepöytä ei ole käytettävissä.",
-      "Gate": {
-        "Description": "Syötä käyttöoikeustunnus kohdasta Asetukset › Etäkojelauta Macisi sovelluksessa.",
-        "Label": "Käyttöoikeustunnus",
-        "Submit": "Jatka",
-        "Wrong": "Käyttöoikeustunnus on väärä."
-      }
     }
   },
   "Tray": {

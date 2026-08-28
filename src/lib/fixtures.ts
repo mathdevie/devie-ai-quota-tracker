@@ -7,13 +7,6 @@ export const previewState: DashboardState = {
     showMenuBarItem: true,
     updateChannel: "stable",
     traySummary: { connectionId: "claude-work", windowKey: "five_hour" },
-    remoteAccess: {
-      enabled: true,
-      port: 47321,
-      lan: false,
-      token: "previewtokenpreviewtokenpreviewtoken1234",
-      urls: ["http://localhost:47321"],
-    },
   },
   connections: [
     {

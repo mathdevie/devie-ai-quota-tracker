@@ -18,19 +18,16 @@ export default function Sidebar<T extends string>({
   value,
   onChange,
   footer,
-  compact = false,
 }: {
   items: SidebarItem<T>[];
   value: T;
   onChange: (value: T) => void;
   /** Sits above the brand, for example an update button. */
   footer?: React.ReactNode;
-  /** A browser page: no macOS traffic lights to make room for. */
-  compact?: boolean;
 }) {
   const { t } = useTranslation();
   return (
-    <aside className={styles.sidebar} data-compact={compact || undefined}>
+    <aside className={styles.sidebar}>
       <div className={styles.handle} data-tauri-drag-region>
         <strong className={styles.brand}>{t("Common.AppName")}</strong>
       </div>

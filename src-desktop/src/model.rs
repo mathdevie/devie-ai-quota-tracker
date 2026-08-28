@@ -186,43 +186,6 @@ pub struct TraySummary {
     pub window_key: String,
 }
 
-/// The local HTTP server that serves the dashboard to other devices.
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub struct RemoteAccess {
-    pub enabled: bool,
-    pub port: u16,
-    /// True: listen on every network interface. False: this Mac only, which
-    /// is enough for a Cloudflare Tunnel or `tailscale serve`.
-    pub lan: bool,
-    /// The bearer token remote pages send. Never sent to a remote page.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub token: Option<String>,
-    /// The addresses the server listens on right now. Empty while stopped.
-    #[serde(default)]
-    pub urls: Vec<String>,
-    /// Why the server is not running although it is enabled.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub error: Option<String>,
-}
-
-impl Default for RemoteAccess {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            port: Self::DEFAULT_PORT,
-            lan: false,
-            token: None,
-            urls: Vec::new(),
-            error: None,
-        }
-    }
-}
-
-impl RemoteAccess {
-    pub const DEFAULT_PORT: u16 = 47321;
-}
-
 /// The CrabNebula Cloud release channel updates come from.
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -247,7 +210,6 @@ impl UpdateChannel {
         }
     }
 }
-
 /// User preferences stored in the database.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -258,8 +220,6 @@ pub struct AppSettings {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tray_summary: Option<TraySummary>,
     #[serde(default)]
-    pub remote_access: RemoteAccess,
-    #[serde(default)]
     pub update_channel: UpdateChannel,
 }
 
@@ -268,7 +228,6 @@ impl Default for AppSettings {
         Self {
             show_menu_bar_item: true,
             tray_summary: None,
-            remote_access: RemoteAccess::default(),
             update_channel: UpdateChannel::Stable,
         }
     }

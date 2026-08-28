@@ -188,34 +188,6 @@
         "Stable": "Stable",
         "Nightly": "Nightly"
       }
-    },
-    "Remote": {
-      "Title": "Remote dashboard",
-      "Description": "Serve this dashboard to your other devices.",
-      "Enable": "Turn on the remote dashboard",
-      "Port": "Port",
-      "PortDescription": "A change restarts the server.",
-      "Lan": "Local network",
-      "LanDescription": "Off: this Mac only. On: every device on your network.",
-      "LanSwitch": "Allow the local network",
-      "Address": "Address",
-      "AddressDescription": "Open the address on another device. The copied link includes the access token.",
-      "Starting": "Starting…",
-      "CopyLink": "Copy link",
-      "Token": "Access token",
-      "TokenDescription": "Other devices ask for this token once. A new token signs every device out.",
-      "Show": "Show",
-      "Hide": "Hide",
-      "Copy": "Copy",
-      "Regenerate": "Regenerate",
-      "Copied": "Copied to the clipboard.",
-      "CopyFailed": "The clipboard is not available.",
-      "Gate": {
-        "Description": "Enter the access token from Settings › Remote dashboard in the app on your Mac.",
-        "Label": "Access token",
-        "Submit": "Continue",
-        "Wrong": "The access token is wrong."
-      }
     }
   },
   "Tray": {

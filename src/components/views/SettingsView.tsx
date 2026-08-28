@@ -8,9 +8,6 @@ import Button from "@/ui/Button";
 import Select from "@/ui/Select";
 import Switch from "@/ui/Switch";
 import LanguagePicker from "../LanguagePicker";
-import RemoteAccessSettings, {
-  type RemoteAccessChange,
-} from "../RemoteAccessSettings";
 import SettingRow from "../SettingRow";
 import ThemePicker from "../ThemePicker";
 import pickerStyles from "../ThemePicker.module.scss";
@@ -158,21 +155,14 @@ export default function SettingsView({
   state,
   busy,
   onMenuBarItemChange,
-  onRemoteAccessChange,
-  onRegenerateRemoteToken,
   onUpdateChannelChange,
 }: {
   state: DashboardState;
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
-  onRemoteAccessChange: (change: RemoteAccessChange) => void;
-  onRegenerateRemoteToken: () => void;
   onUpdateChannelChange: (channel: UpdateChannel) => Promise<boolean>;
 }) {
   const { t } = useTranslation();
-  // A remote browser keeps its own theme and language. The Mac owns the
-  // menu bar, the server, and the updates.
-  const remote = state.mode === "remote";
   return (
     <section className={styles.page}>
       <SettingRow.Group title={t("Settings.General")}>
@@ -182,43 +172,26 @@ export default function SettingsView({
         <SettingRow.Row title={t("Settings.Language")}>
           <LanguagePicker />
         </SettingRow.Row>
-        {!remote && (
-          <>
-            <SettingRow.Row
-              subtitle={t("Settings.MenuBarItemDescription")}
-              title={t("Settings.MenuBarItem")}
-            >
-              <Switch.Root
-                aria-label={t("Settings.ShowMenuBarItem")}
-                checked={state.settings.showMenuBarItem}
-                disabled={busy}
-                onCheckedChange={(checked) => onMenuBarItemChange(checked)}
-              >
-                <Switch.Thumb />
-              </Switch.Root>
-            </SettingRow.Row>
-            <UpdateRow />
-            <ChannelRow
-              busy={busy}
-              channel={state.settings.updateChannel}
-              onChange={onUpdateChannelChange}
-            />
-          </>
-        )}
-      </SettingRow.Group>
-      {!remote && (
-        <SettingRow.Group
-          description={t("Settings.Remote.Description")}
-          title={t("Settings.Remote.Title")}
+        <SettingRow.Row
+          subtitle={t("Settings.MenuBarItemDescription")}
+          title={t("Settings.MenuBarItem")}
         >
-          <RemoteAccessSettings
-            access={state.settings.remoteAccess}
-            busy={busy}
-            onChange={onRemoteAccessChange}
-            onRegenerateToken={onRegenerateRemoteToken}
-          />
-        </SettingRow.Group>
-      )}
+          <Switch.Root
+            aria-label={t("Settings.ShowMenuBarItem")}
+            checked={state.settings.showMenuBarItem}
+            disabled={busy}
+            onCheckedChange={(checked) => onMenuBarItemChange(checked)}
+          >
+            <Switch.Thumb />
+          </Switch.Root>
+        </SettingRow.Row>
+        <UpdateRow />
+        <ChannelRow
+          busy={busy}
+          channel={state.settings.updateChannel}
+          onChange={onUpdateChannelChange}
+        />
+      </SettingRow.Group>
     </section>
   );
 }
