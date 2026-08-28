@@ -7,7 +7,7 @@
 
 .group {
   display: grid;
-  gap: $devie__spacing__x1;
+  gap: 7px;
 }
 
 .groupHeader {
@@ -31,13 +31,14 @@
 .groupBody {
   display: flex;
   flex-direction: column;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
-  background: $devie__color__background;
+  overflow: hidden;
+  border: 1px solid var(--macos__container-border);
+  border-radius: var(--macos__radius__group);
+  background: var(--macos__group-background);
 
   .row {
-    padding-right: $devie__spacing__x2;
-    padding-left: $devie__spacing__x2;
+    padding-right: 14px;
+    padding-left: 14px;
   }
 
   .row:last-child {
@@ -47,10 +48,10 @@
 
 .row {
   display: flex;
-  min-height: 56px;
+  min-height: 48px;
   align-items: center;
-  gap: $devie__spacing__x3;
-  padding: $devie__spacing__x2 0;
+  gap: $devie__spacing__x2;
+  padding: 10px 0;
   border-bottom: 1px solid $devie__color__line;
 }
 

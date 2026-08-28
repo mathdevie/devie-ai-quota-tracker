@@ -2,9 +2,9 @@
 
 import { useTranslation } from "react-i18next";
 import { DEFAULT_LOCALE } from "@/i18n/locales";
+import { THEMES } from "@/theme/registry";
+import { useTheme } from "@/theme/ThemeContext";
 import Select from "@/ui/Select";
-import { THEMES } from "@/ui/themes/registry";
-import { useTheme } from "@/ui/themes/ThemeContext";
 import styles from "./ThemePicker.module.scss";
 
 function displayName(theme: (typeof THEMES)[number], language: string): string {
@@ -25,11 +25,10 @@ export default function ThemePicker() {
 
   return (
     <Select.Root
-      aria-label={t("Common.Theme")}
       onValueChange={(value) => value && setTheme(value)}
       value={selectedTheme}
     >
-      <Select.Trigger className={styles.trigger}>
+      <Select.Trigger aria-label={t("Common.Theme")} className={styles.trigger}>
         <Select.Value>
           <span className={styles.value}>
             {CurrentThumbnail && (

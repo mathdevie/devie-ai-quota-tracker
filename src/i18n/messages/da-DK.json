@@ -20,7 +20,8 @@
     "Quota": "Kvote",
     "Providers": "Udbydere",
     "Settings": "Indstillinger",
-    "BackToProviders": "Tilbage til udbydere"
+    "Back": "Tilbage",
+    "Forward": "Frem"
   },
   "Connection": {
     "ActionsFor": "Handlinger for {{name}}",
