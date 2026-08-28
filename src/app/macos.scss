@@ -1,17 +1,20 @@
 // App-level macOS styling. The Devie UI source stays unchanged under `src/ui`.
 :root {
   --devie__color__primary-label: #ffffff;
+  --devie__color__success: #34c759;
+  --devie__color__warning: #ff8d28;
+  --devie__color__literal-green: #34c759;
+  --devie__color__literal-orange: #ff8d28;
   --devie__radius: 8px;
   --devie__radius-strong: 14px;
   --macos__radius__group: 11px;
   --macos__radius__sidebar: 16px;
   --macos__container-border: rgba(0, 0, 0, 0.14);
-  --macos__content-background: #f0f0f0;
+  --macos__content-background: #ffffff;
   --macos__dialog-background: #ffffff;
-  --macos__group-background: #ffffff;
-  --macos__popover-tint: rgba(255, 255, 255, 0.22);
-  --macos__sidebar-background: #e5e5e7;
-  --macos__sidebar-tint: rgba(255, 255, 255, 0.18);
+  --macos__group-background: #f7f7f7;
+  --macos__popover-tint: rgba(255, 255, 255, 0.34);
+  --macos__sidebar-background: #fafaf9;
   --macos__selection-background: rgba(0, 0, 0, 0.1);
   --macos__toolbar-control-background: rgba(255, 255, 255, 0.62);
   --macos__toolbar-control-border: rgba(0, 0, 0, 0.15);
@@ -19,15 +22,18 @@
 }
 
 [data-devie-theme="theme-dark"] {
+  --devie__color__success: #30d158;
+  --devie__color__warning: #ff9f0a;
+  --devie__color__literal-green: #30d158;
+  --devie__color__literal-orange: #ff9f0a;
   --devie__color__line: #313031;
   --devie__color__primary: #117cfd;
   --macos__container-border: #313031;
   --macos__content-background: #1e1e1e;
   --macos__dialog-background: #201d1f;
   --macos__group-background: #282828;
-  --macos__popover-tint: rgba(0, 0, 0, 0.2);
+  --macos__popover-tint: rgba(0, 0, 0, 0.3);
   --macos__sidebar-background: #1a1a1c;
-  --macos__sidebar-tint: rgba(0, 0, 0, 0.16);
   --macos__selection-background: rgba(255, 255, 255, 0.14);
   --macos__toolbar-control-background: rgba(255, 255, 255, 0.08);
   --macos__toolbar-control-border: #313031;
@@ -46,7 +52,6 @@
     --devie__color__text: -apple-system-label;
     --devie__color__text-sub: -apple-system-secondary-label;
     --macos__content-background: -apple-system-background;
-    --macos__group-background: -apple-system-control-background;
     --macos__selection-background: -apple-system-unemphasized-selected-content-background;
   }
 

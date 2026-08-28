@@ -5,22 +5,21 @@
   height: 52px;
   flex-shrink: 0;
   align-items: center;
-  gap: $devie__spacing__x2;
+  gap: 12px;
   margin: 0 $devie__spacing__x3;
   padding-top: 2px;
-  border-bottom: 1px solid $devie__color__line;
   box-sizing: border-box;
   user-select: none;
 }
 
 .navigation {
   display: flex;
-  height: 36px;
+  height: 32px;
   flex-shrink: 0;
   align-items: center;
   overflow: hidden;
   border: 1px solid var(--macos__toolbar-control-border);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--macos__toolbar-control-background);
   box-shadow: 0 1px 1px color-mix(in srgb, black 4%, transparent);
 }
@@ -28,7 +27,7 @@
 .navigationButton {
   position: relative;
   display: grid;
-  width: 36px;
+  width: 32px;
   height: 100%;
   padding: 0;
   border: 0;
@@ -38,14 +37,14 @@
   cursor: default;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   & + &::before {
     position: absolute;
-    top: 7px;
-    bottom: 7px;
+    top: 6px;
+    bottom: 6px;
     left: 0;
     width: 1px;
     background: var(--macos__toolbar-control-divider);

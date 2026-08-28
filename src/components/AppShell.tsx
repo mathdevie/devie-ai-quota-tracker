@@ -239,7 +239,7 @@ function Shell() {
 
   return (
     <AppUpdaterProvider>
-      <div className={styles.shell} data-desktop={isDesktop() || undefined}>
+      <div className={styles.shell}>
         <Sidebar
           footer={<UpdateButton />}
           items={NAV}

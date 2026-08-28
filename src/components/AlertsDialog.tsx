@@ -90,12 +90,13 @@ export default function AlertsDialog({
             <Dialog.Footer>
               <Button
                 onClick={() => onOpenChange(false)}
+                size="sm"
                 type="button"
                 variant="secondary"
               >
                 {t("Common.Cancel")}
               </Button>
-              <Button isLoading={saving} type="submit">
+              <Button isLoading={saving} size="sm" type="submit">
                 {t("Common.Save")}
               </Button>
             </Dialog.Footer>
