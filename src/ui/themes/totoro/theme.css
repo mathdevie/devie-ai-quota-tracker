@@ -1,6 +1,7 @@
 @layer devie {
   [data-devie-theme="theme-totoro"] {
     --devie__theme-name: Totoro;
+    color-scheme: light;
     --devie__color__text: #4a4036;
     --devie__color__text-sub: #948c85;
     --devie__color__line: #dcd6cc;
