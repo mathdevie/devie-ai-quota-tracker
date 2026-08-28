@@ -91,13 +91,39 @@ This makes the direct OAuth usage endpoint the better source for now.
 
 Recommended hardening work:
 
-1. Add an explicit parser test for `seven_day_fable`.
-2. Capture one sanitized response from an eligible live account.
-3. Keep the current dynamic `seven_day_*` scan for future model limits.
+1. Add an explicit parser test for `seven_day_fable`. **Done.**
+2. Capture one sanitized response from an eligible live account. **Done.**
+3. Keep the current dynamic `seven_day_*` scan for future model limits. **Kept.**
 4. Add a second parser only if a live response uses a scoped `limits` array.
-5. Show the server label when available, instead of a fixed model list.
+   **Done.**
+5. Show the server label when available, instead of a fixed model list. **Done.**
 
-This work is small. The only uncertain part is the undocumented response shape.
+### Resolved on 2026-08-28
+
+A live call to `https://api.anthropic.com/api/oauth/usage` settled the shape.
+The server no longer sends `seven_day_fable`. Every `seven_day_<model>` field
+arrives as `null`. The same limit now comes in a `limits` array:
+
+```json
+{"kind":"weekly_scoped","group":"weekly","percent":25,"severity":"normal",
+ "resets_at":"2026-09-02T10:00:00Z",
+ "scope":{"model":{"id":null,"display_name":"Fable"},"surface":null},
+ "is_active":true}
+```
+
+The array also repeats the session and plan-wide weekly windows as `session`
+and `weekly_all`, so it is a superset of the legacy top-level fields.
+
+`add_scoped_limits` in `src-desktop/src/oauth/claude.rs` reads the scoped
+entries. It builds the window key from the server label, so "Fable" still lands
+on `seven_day_fable` and saved tray, label, and hidden-window settings survive.
+A real `seven_day_<model>` field still wins when a response carries both.
+
+The response also holds unnamed future buckets: `nimbus_quill`, `cinder_cove`,
+`amber_ladder`, `juniper_tide`, `tangelo`, `iguana_necktie`,
+`omelette_promotional`, `seven_day_cowork`, and `seven_day_omelette`. All were
+`null` except `nimbus_quill` at 0%. The parser ignores them, because none of
+them is a `seven_day_*` object or a scoped limit.
 
 References:
 
@@ -231,7 +257,7 @@ repository. This avoids shipping remote images and keeps the app usable offline.
 ### Slice A
 
 - Add the history command and quota line charts.
-- Add an explicit Fable parser fixture.
+- ~~Add an explicit Fable parser fixture.~~ Done, see section 2.
 - Add reset detection from local snapshots.
 
 ### Slice B

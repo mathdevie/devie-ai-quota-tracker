@@ -5,6 +5,7 @@ export const previewState: DashboardState = {
   refreshedAt: "2026-08-25T13:42:00Z",
   settings: {
     showMenuBarItem: true,
+    updateChannel: "stable",
     traySummary: { connectionId: "claude-work", windowKey: "five_hour" },
   },
   connections: [

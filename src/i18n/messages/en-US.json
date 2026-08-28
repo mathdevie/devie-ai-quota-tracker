@@ -181,7 +181,13 @@
         "Failed": "The update failed."
       },
       "Version": "Version: {{version}}",
-      "UpToDateToast": "You are on the latest version."
+      "UpToDateToast": "You are on the latest version.",
+      "Channel": "Update channel",
+      "ChannelDescription": "Nightly builds get new features first but can be unstable.",
+      "Channels": {
+        "Stable": "Stable",
+        "Nightly": "Nightly"
+      }
     }
   },
   "Tray": {

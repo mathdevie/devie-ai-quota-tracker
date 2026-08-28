@@ -79,10 +79,14 @@ export interface TraySummary {
   windowKey: string;
 }
 
+/** The CrabNebula Cloud release channel updates come from. */
+export type UpdateChannel = "stable" | "nightly";
+
 export interface AppSettings {
   showMenuBarItem: boolean;
   /** Absent: the menu bar shows the window with the least quota left. */
   traySummary?: TraySummary;
+  updateChannel: UpdateChannel;
 }
 
 export interface DashboardState {

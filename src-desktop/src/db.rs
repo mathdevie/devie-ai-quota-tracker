@@ -6,9 +6,11 @@ use rusqlite::{params, Connection, OptionalExtension};
 use crate::model::{
     AppSettings, AutoPingState, ConnectionAlerts, ConnectionStatus, DashboardState, NewConnection,
     Provider, ProviderConnection, QuotaReading, QuotaWindow, RemoteIdentity, TraySummary,
+    UpdateChannel,
 };
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
+const UPDATE_CHANNEL: &str = "update_channel";
 const TRAY_SUMMARY: &str = "tray_summary";
 const LANGUAGE: &str = "language";
 
@@ -213,11 +215,21 @@ impl Database {
         // A summary that no longer parses falls back to the default silently.
         let tray_summary = Self::setting(&connection, TRAY_SUMMARY)?
             .and_then(|value| serde_json::from_str::<TraySummary>(&value).ok());
+        let update_channel = Self::setting(&connection, UPDATE_CHANNEL)?
+            .map_or(defaults.update_channel, |value| {
+                UpdateChannel::from_db(&value)
+            });
         Ok(AppSettings {
             show_menu_bar_item,
             tray_summary,
+            update_channel,
         })
     }
+
+    pub fn set_update_channel(&self, channel: UpdateChannel) -> Result<(), String> {
+        self.put_setting(UPDATE_CHANNEL, Some(channel.as_str()))
+    }
+
 
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
         self.put_setting(SHOW_MENU_BAR_ITEM, Some(if visible { "1" } else { "0" }))
@@ -875,5 +887,14 @@ mod tests {
         );
         database.set_tray_summary(None).expect("clear summary");
         assert_eq!(database.settings().expect("settings").tray_summary, None);
+
+        assert_eq!(state.settings.update_channel, UpdateChannel::Stable);
+        database
+            .set_update_channel(UpdateChannel::Nightly)
+            .expect("channel");
+        assert_eq!(
+            database.settings().expect("settings").update_channel,
+            UpdateChannel::Nightly
+        );
     }
 }

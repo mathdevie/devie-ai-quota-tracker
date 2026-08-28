@@ -181,7 +181,13 @@
         "Failed": "L'aggiornamento non è riuscito."
       },
       "Version": "Versione: {{version}}",
-      "UpToDateToast": "Stai usando l’ultima versione."
+      "UpToDateToast": "Stai usando l’ultima versione.",
+      "Channel": "Canale di aggiornamento",
+      "ChannelDescription": "Le versioni nightly ricevono per prime le novità ma possono essere instabili.",
+      "Channels": {
+        "Stable": "Stabile",
+        "Nightly": "Nightly"
+      }
     }
   },
   "Tray": {
