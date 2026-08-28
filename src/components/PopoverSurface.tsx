@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { DashboardState, TraySummary } from "@/lib/contracts";
 import {
   hidePopover,
+  isDesktop,
   listenFilters,
   openMainWindow,
   resizePopover,
@@ -109,7 +110,10 @@ export default function PopoverSurface({
 
   return (
     <Tooltip.Provider>
-      <main className={styles.popover}>
+      <main
+        className={styles.popover}
+        data-native-material={isDesktop() || undefined}
+      >
         <header className={styles.header} ref={headerRef}>
           <IconTip label={t("Popover.OpenDashboard")}>
             <Button

@@ -545,7 +545,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(20.0, 22.0))
+        .traffic_light_position(tauri::LogicalPosition::new(20.0, 35.0))
         .transparent(true)
         .effects(
             EffectsBuilder::new()
@@ -566,12 +566,20 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             .resizable(false)
             .decorations(false)
             // The interface draws a rounded frame on a transparent window.
-            .transparent(true)
-            .always_on_top(true)
-            .skip_taskbar(true)
-            .shadow(true)
-            .visible(false)
-            .build()?;
+            .transparent(true);
+    #[cfg(target_os = "macos")]
+    let popover = popover.effects(
+        EffectsBuilder::new()
+            .effect(Effect::Popover)
+            .state(EffectState::FollowsWindowActiveState)
+            .build(),
+    );
+    let popover = popover
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .shadow(true)
+        .visible(false)
+        .build()?;
     #[cfg(target_os = "macos")]
     make_non_activating_panel(&popover);
     #[cfg(target_os = "macos")]

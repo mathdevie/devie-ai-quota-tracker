@@ -90,7 +90,6 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} extra",
     "Balance": "{{balance}} rimanenti",
-    "LimitReached": "Limite raggiunto",
     "News": {
       "Watch": "{{percent}}% di probabilità di un azzeramento Codex",
       "WatchNoPercent": "Un azzeramento Codex è probabile",
