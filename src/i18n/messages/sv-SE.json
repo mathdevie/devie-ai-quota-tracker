@@ -181,7 +181,13 @@
         "Failed": "Uppdateringen misslyckades."
       },
       "Version": "Version: {{version}}",
-      "UpToDateToast": "Du har den senaste versionen."
+      "UpToDateToast": "Du har den senaste versionen.",
+      "Channel": "Uppdateringskanal",
+      "ChannelDescription": "Nightly-versioner får nya funktioner först men kan vara instabila.",
+      "Channels": {
+        "Stable": "Stabil",
+        "Nightly": "Nightly"
+      }
     }
   },
   "Tray": {

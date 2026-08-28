@@ -23,6 +23,7 @@ import {
   setConnectionEnabled,
   setHiddenWindows,
   setMenuBarItemVisible,
+  setUpdateChannel,
   spendResetCredit,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
@@ -265,6 +266,9 @@ function Shell() {
                       () => setMenuBarItemVisible(visible),
                       setSettingsBusy,
                     )
+                  }
+                  onUpdateChannelChange={(channel) =>
+                    run(() => setUpdateChannel(channel), setSettingsBusy)
                   }
                   state={state}
                 />

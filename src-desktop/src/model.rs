@@ -186,6 +186,30 @@ pub struct TraySummary {
     pub window_key: String,
 }
 
+/// The CrabNebula Cloud release channel updates come from.
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum UpdateChannel {
+    #[default]
+    Stable,
+    Nightly,
+}
+
+impl UpdateChannel {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Stable => "stable",
+            Self::Nightly => "nightly",
+        }
+    }
+
+    pub fn from_db(value: &str) -> Self {
+        match value {
+            "nightly" => Self::Nightly,
+            _ => Self::Stable,
+        }
+    }
+}
 /// User preferences stored in the database.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -195,6 +219,8 @@ pub struct AppSettings {
     /// None: the menu bar shows the window with the least quota left.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tray_summary: Option<TraySummary>,
+    #[serde(default)]
+    pub update_channel: UpdateChannel,
 }
 
 impl Default for AppSettings {
@@ -202,6 +228,7 @@ impl Default for AppSettings {
         Self {
             show_menu_bar_item: true,
             tray_summary: None,
+            update_channel: UpdateChannel::Stable,
         }
     }
 }

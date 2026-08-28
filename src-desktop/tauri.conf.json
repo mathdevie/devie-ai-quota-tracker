@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Devie Quota",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "identifier": "com.devie.quota",
   "build": {
     "frontendDist": "../out",
@@ -16,12 +16,7 @@
       "csp": {
         "default-src": ["'self'", "tauri:", "asset:"],
         "base-uri": ["'self'"],
-        "connect-src": [
-          "'self'",
-          "ipc:",
-          "http://ipc.localhost",
-          "https://cdn.crabnebula.app"
-        ],
+        "connect-src": ["'self'", "ipc:", "http://ipc.localhost"],
         "font-src": ["'self'", "data:"],
         "form-action": ["'self'"],
         "frame-ancestors": ["'none'"],
@@ -49,10 +44,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM1QjYzRDhGODZDMzQ2MkMKUldRc1JzT0dqejIyeFNmcVkxTkxYUXJDMkpUeGpFS21wVmVTT3AxYVMrSS8xYlJwTy93VWorYkIK",
-      "endpoints": [
-        "https://cdn.crabnebula.app/update/mathdev/devie-quota/{{target}}-{{arch}}/{{current_version}}"
-      ]
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM1QjYzRDhGODZDMzQ2MkMKUldRc1JzT0dqejIyeFNmcVkxTkxYUXJDMkpUeGpFS21wVmVTT3AxYVMrSS8xYlJwTy93VWorYkIK"
     }
   }
 }
