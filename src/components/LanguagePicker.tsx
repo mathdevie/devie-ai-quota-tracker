@@ -13,11 +13,13 @@ export default function LanguagePicker() {
 
   return (
     <Select.Root
-      aria-label={t("Settings.Language")}
       onValueChange={(value) => value && void i18n.changeLanguage(value)}
       value={i18n.language}
     >
-      <Select.Trigger className={styles.trigger}>
+      <Select.Trigger
+        aria-label={t("Settings.Language")}
+        className={styles.trigger}
+      >
         <Select.Value>{current}</Select.Value>
         <Select.Icon />
       </Select.Trigger>

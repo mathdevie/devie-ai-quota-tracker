@@ -15,6 +15,8 @@ use std::{path::PathBuf, sync::Arc, time::Duration};
 use db::Database;
 use model::{ConnectionAlerts, ConnectionStatus, DashboardState, TraySummary, UpdateChannel};
 use oauth::{LoginSessions, LoginStart};
+#[cfg(target_os = "macos")]
+use tauri::window::{Effect, EffectState, EffectsBuilder};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -543,7 +545,14 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(20.0, 22.0));
+        .traffic_light_position(tauri::LogicalPosition::new(20.0, 22.0))
+        .transparent(true)
+        .effects(
+            EffectsBuilder::new()
+                .effect(Effect::Sidebar)
+                .state(EffectState::FollowsWindowActiveState)
+                .build(),
+        );
     main.build()?;
 
     let popover =

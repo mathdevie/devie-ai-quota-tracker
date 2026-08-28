@@ -2,28 +2,68 @@
 
 .titleBar {
   display: flex;
-  height: 64px;
+  height: 52px;
   flex-shrink: 0;
   align-items: center;
   gap: $devie__spacing__x2;
-  margin: 0 $devie__spacing__x4;
-  padding-top: $devie__spacing__x1;
+  margin: 0 $devie__spacing__x3;
+  padding-top: 2px;
   border-bottom: 1px solid $devie__color__line;
   box-sizing: border-box;
   user-select: none;
 }
 
-.leading {
+.navigation {
   display: flex;
-  min-width: 0;
+  height: 28px;
+  flex-shrink: 0;
   align-items: center;
-  gap: $devie__spacing__x1;
+  overflow: hidden;
+  border: 1px solid var(--macos__container-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, $devie__color__background 70%, transparent);
+}
+
+.navigationButton {
+  display: grid;
+  width: 32px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: $devie__color__text;
+  place-items: center;
+  cursor: default;
+
+  & + & {
+    border-left: 1px solid $devie__color__line;
+  }
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, $devie__color__text 8%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    background: color-mix(in srgb, $devie__color__text 13%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
+  }
 }
 
 .title {
   margin: 0;
-  font-size: $devie__font-size__title2;
+  overflow: hidden;
+  font-size: 17px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
 }

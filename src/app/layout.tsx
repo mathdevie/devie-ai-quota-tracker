@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import I18nProvider from "@/i18n/I18nProvider";
-import { ThemeProvider } from "@/ui/themes/ThemeContext";
-import "@/ui/_themes.scss";
+import { ThemeProvider } from "@/theme/ThemeContext";
+import "@/ui/themes/default.css";
+import "@/ui/themes/light/theme.css";
+import "@/ui/themes/dark/theme.css";
 import "./globals.scss";
+import "./macos.scss";
 
 export const metadata: Metadata = {
   title: "Devie Quota",
@@ -13,18 +16,16 @@ export const metadata: Metadata = {
 const themeBootScript = `(() => {
   try {
     const key = "devie-quota-theme:v1";
-    const allowed = new Set([
-      "system", "theme-light", "theme-dark", "theme-midnight-ink",
-      "theme-copper-sunset", "theme-aurora-green", "theme-sharingan",
-      "theme-alpine-snow", "theme-command-prompt", "theme-totoro",
-      "theme-catpuccin-latte"
-    ]);
+    const allowed = new Set(["system", "theme-light", "theme-dark"]);
     const system = () => matchMedia("(prefers-color-scheme: dark)").matches
       ? "theme-dark"
       : "theme-light";
     let saved = localStorage.getItem(key);
     if (saved === "theme-default") saved = "theme-light";
-    if (!allowed.has(saved)) saved = "system";
+    if (!allowed.has(saved)) {
+      saved = "system";
+      localStorage.setItem(key, saved);
+    }
     document.documentElement.dataset.devieTheme =
       saved === "system" ? system() : saved;
   } catch {

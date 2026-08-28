@@ -1,7 +1,7 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { ChevronLeft, Gauge, LoaderCircle, Plug, Settings } from "lucide-react";
+import { Gauge, LoaderCircle, Plug, Settings } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -27,14 +27,12 @@ import {
   spendResetCredit,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
-import Button from "@/ui/Button";
 import ScrollArea from "@/ui/ScrollArea";
 import { Toaster } from "@/ui/Toaster";
 import Tooltip from "@/ui/Tooltip";
 import AlertsDialog from "./AlertsDialog";
 import styles from "./AppShell.module.scss";
 import AutoPingDialog from "./AutoPingDialog";
-import IconTip from "./IconTip";
 import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
 import QuotaBarsDialog from "./QuotaBarsDialog";
@@ -50,6 +48,11 @@ import SettingsView from "./views/SettingsView";
 
 type View = "quota" | "providers" | "settings";
 
+interface AppPage {
+  view: View;
+  provider?: Provider;
+}
+
 const NAV: SidebarItem<View>[] = [
   { value: "quota", label: "Nav.Quota", icon: Gauge, tint: "#2f7cf6" },
   { value: "providers", label: "Nav.Providers", icon: Plug, tint: "#34a853" },
@@ -58,6 +61,10 @@ const NAV: SidebarItem<View>[] = [
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
+}
+
+function isSamePage(first: AppPage, second: AppPage): boolean {
+  return first.view === second.view && first.provider === second.provider;
 }
 
 export default function AppShell() {
@@ -75,8 +82,9 @@ function Shell() {
   const { t } = useTranslation();
   const toasts = Toast.useToastManager();
   const [state, setState] = useState<DashboardState | null>(null);
-  const [view, setView] = useState<View>("quota");
-  const [providerPage, setProviderPage] = useState<Provider>();
+  const [page, setPage] = useState<AppPage>({ view: "quota" });
+  const [backStack, setBackStack] = useState<AppPage[]>([]);
+  const [forwardStack, setForwardStack] = useState<AppPage[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [settingsBusy, setSettingsBusy] = useState(false);
@@ -86,6 +94,8 @@ function Shell() {
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
   const [surface, setSurface] = useState<"main" | "popover">("main");
+  const view = page.view;
+  const providerPage = page.provider;
 
   const showError = useCallback(
     (reason: unknown) =>
@@ -176,9 +186,31 @@ function Shell() {
     return run(() => setConnectionAlerts(id, alerts), withBusyId(id));
   }
 
+  function navigate(next: AppPage) {
+    if (isSamePage(page, next)) return;
+    setBackStack((history) => [...history, page]);
+    setForwardStack([]);
+    setPage(next);
+  }
+
   function changeView(next: View) {
-    setView(next);
-    setProviderPage(undefined);
+    navigate({ view: next });
+  }
+
+  function goBack() {
+    const previous = backStack.at(-1);
+    if (!previous) return;
+    setBackStack((history) => history.slice(0, -1));
+    setForwardStack((history) => [...history, page]);
+    setPage(previous);
+  }
+
+  function goForward() {
+    const next = forwardStack.at(-1);
+    if (!next) return;
+    setForwardStack((history) => history.slice(0, -1));
+    setBackStack((history) => [...history, page]);
+    setPage(next);
   }
 
   if (!state) {
@@ -207,7 +239,7 @@ function Shell() {
 
   return (
     <AppUpdaterProvider>
-      <div className={styles.shell}>
+      <div className={styles.shell} data-desktop={isDesktop() || undefined}>
         <Sidebar
           footer={<UpdateButton />}
           items={NAV}
@@ -217,20 +249,12 @@ function Shell() {
 
         <div className={styles.content}>
           <TitleBar
-            leading={
-              onProviderPage && (
-                <IconTip label={t("Nav.BackToProviders")}>
-                  <Button
-                    aria-label={t("Nav.BackToProviders")}
-                    onClick={() => setProviderPage(undefined)}
-                    size="sm"
-                    variant="icon-naked"
-                  >
-                    <ChevronLeft size={16} />
-                  </Button>
-                </IconTip>
-              )
-            }
+            backLabel={t("Nav.Back")}
+            canGoBack={backStack.length > 0}
+            canGoForward={forwardStack.length > 0}
+            forwardLabel={t("Nav.Forward")}
+            onBack={goBack}
+            onForward={goForward}
             title={title}
           />
 
@@ -247,7 +271,12 @@ function Shell() {
                 />
               )}
               {view === "providers" && !onProviderPage && (
-                <ProvidersView onOpen={setProviderPage} state={state} />
+                <ProvidersView
+                  onOpen={(provider) =>
+                    navigate({ view: "providers", provider })
+                  }
+                  state={state}
+                />
               )}
               {onProviderPage && (
                 <ProviderDetailView
