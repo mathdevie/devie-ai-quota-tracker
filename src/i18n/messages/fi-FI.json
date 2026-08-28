@@ -90,7 +90,6 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} yli",
     "Balance": "{{balance}} jäljellä",
-    "LimitReached": "Raja saavutettu",
     "News": {
       "Watch": "{{percent}} % todennäköisyys Codex-nollaukselle",
       "WatchNoPercent": "Codex-nollaus on todennäköinen",

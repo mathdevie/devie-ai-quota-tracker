@@ -6,11 +6,18 @@
   overflow: hidden;
   height: 100vh;
   flex-direction: column;
-  border: 1px solid $devie__color__line;
+  border: 1px solid var(--macos__container-border);
   border-radius: 12px;
-  background: $devie__color__background;
+  background: color-mix(in srgb, $devie__color__background 76%, transparent);
+  backdrop-filter: blur(30px) saturate(1.3);
   // A menu, not a document: nothing in it is text to select.
   user-select: none;
+
+  // AppKit supplies the blur behind the native desktop window.
+  &[data-native-material="true"] {
+    background: var(--macos__popover-tint);
+    backdrop-filter: none;
+  }
 }
 
 .header {
