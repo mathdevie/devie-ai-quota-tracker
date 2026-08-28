@@ -1,11 +1,14 @@
 @use "../ui/_devie.scss" as *;
 
-// The sidebar floats over the same background as the content.
+// The window backdrop. The sidebar and the cards sit on it. Themes without
+// a canvas of their own keep the flat look: the backdrop is the surface.
+$canvas: var(--devie-app__canvas, #{$devie__color__background});
+
 .shell {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: $devie__color__background;
+  background: $canvas;
 }
 
 .content {
@@ -13,7 +16,7 @@
   min-width: 0;
   flex: 1;
   flex-direction: column;
-  background: $devie__color__background;
+  background: $canvas;
 }
 
 .main {

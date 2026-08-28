@@ -14,23 +14,27 @@ const themeBootScript = `(() => {
   try {
     const key = "devie-quota-theme:v1";
     const allowed = new Set([
-      "theme-default", "theme-dark", "theme-midnight-ink",
+      "system", "theme-light", "theme-dark", "theme-midnight-ink",
       "theme-copper-sunset", "theme-aurora-green", "theme-sharingan",
       "theme-alpine-snow", "theme-command-prompt", "theme-totoro",
       "theme-catpuccin-latte"
     ]);
-    const saved = localStorage.getItem(key);
-    document.documentElement.dataset.devieTheme = allowed.has(saved)
-      ? saved
-      : "theme-default";
+    const system = () => matchMedia("(prefers-color-scheme: dark)").matches
+      ? "theme-dark"
+      : "theme-light";
+    let saved = localStorage.getItem(key);
+    if (saved === "theme-default") saved = "theme-light";
+    if (!allowed.has(saved)) saved = "system";
+    document.documentElement.dataset.devieTheme =
+      saved === "system" ? system() : saved;
   } catch {
-    document.documentElement.dataset.devieTheme = "theme-default";
+    document.documentElement.dataset.devieTheme = "theme-light";
   }
 })();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html data-devie-theme="theme-default" lang="en" suppressHydrationWarning>
+    <html data-devie-theme="theme-light" lang="en" suppressHydrationWarning>
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: This static script prevents a theme flash before hydration. */}
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />

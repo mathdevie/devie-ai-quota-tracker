@@ -41,7 +41,7 @@
 
   body {
     overflow: hidden;
-    background: $devie__color__background;
+    background: var(--devie-app__canvas, #{$devie__color__background});
     color: $devie__color__text;
     font-family: $devie__font-family;
     font-size: $devie__font-size__normal;
@@ -58,6 +58,11 @@
   button,
   input {
     font: inherit;
+  }
+
+  // Native controls (checkboxes, the caret) follow the macOS accent color.
+  :root {
+    accent-color: $devie__color__primary;
   }
 
   ::selection {

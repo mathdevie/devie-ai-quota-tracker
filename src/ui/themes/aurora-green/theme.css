@@ -1,6 +1,7 @@
 @layer devie {
   [data-devie-theme="theme-aurora-green"] {
     --devie__theme-name: Aurora Green;
+    color-scheme: dark;
     --devie__color__text: #f0fdfa;
     --devie__color__text-sub: #94a3b8;
     --devie__color__line: #334155;
