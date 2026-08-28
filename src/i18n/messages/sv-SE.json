@@ -20,7 +20,8 @@
     "Quota": "Kvot",
     "Providers": "Leverantörer",
     "Settings": "Inställningar",
-    "BackToProviders": "Tillbaka till leverantörer"
+    "Back": "Bakåt",
+    "Forward": "Framåt"
   },
   "Connection": {
     "ActionsFor": "Åtgärder för {{name}}",

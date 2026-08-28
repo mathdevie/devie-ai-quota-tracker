@@ -20,7 +20,8 @@
     "Quota": "Kontingent",
     "Providers": "Anbieter",
     "Settings": "Einstellungen",
-    "BackToProviders": "Zurück zu den Anbietern"
+    "Back": "Zurück",
+    "Forward": "Vorwärts"
   },
   "Connection": {
     "ActionsFor": "Aktionen für {{name}}",

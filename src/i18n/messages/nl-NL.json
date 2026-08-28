@@ -20,7 +20,8 @@
     "Quota": "Quota",
     "Providers": "Providers",
     "Settings": "Instellingen",
-    "BackToProviders": "Terug naar providers"
+    "Back": "Terug",
+    "Forward": "Vooruit"
   },
   "Connection": {
     "ActionsFor": "Acties voor {{name}}",

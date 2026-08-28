@@ -11,6 +11,12 @@
     width: 100%;
     gap: $devie__spacing__x3;
   }
+
+  &[data-settings] {
+    width: min(880px, 100%);
+    padding: 20px $devie__spacing__x3 $devie__spacing__x5;
+    gap: $devie__spacing__x3;
+  }
 }
 
 // Page actions sit here, under the title bar, never in it.
@@ -39,9 +45,9 @@
 
 .list {
   overflow: hidden;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius;
-  background: $devie__color__background;
+  border: 1px solid var(--macos__container-border);
+  border-radius: var(--macos__radius__group);
+  background: var(--macos__group-background);
 }
 
 .row {
@@ -148,9 +154,9 @@
   justify-content: space-between;
   gap: $devie__spacing__x1;
   padding: $devie__spacing__x2;
-  border: 1px solid $devie__color__line;
+  border: 1px solid var(--macos__container-border);
   border-radius: $devie__radius-strong;
-  background: $devie__color__background;
+  background: var(--macos__group-background);
   color: $devie__color__text;
   font: inherit;
   text-align: left;

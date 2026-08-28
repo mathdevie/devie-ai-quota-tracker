@@ -1,40 +1,27 @@
 @use "../ui/_devie.scss" as *;
 
-// A floating, rounded panel, like the sidebar of macOS System Settings.
+// A floating material panel, like the sidebar of macOS System Settings.
 $sidebar-inset: 8px;
 
 .sidebar {
   display: flex;
-  width: 200px;
-  flex: 0 0 200px;
+  width: 232px;
+  flex: 0 0 232px;
   flex-direction: column;
   margin: $sidebar-inset 0 $sidebar-inset $sidebar-inset;
   padding: 0 $devie__spacing__x1 $devie__spacing__x1;
-  border: 1px solid $devie__color__line;
-  border-radius: $devie__radius-strong;
-  background: $devie__color__background-sub;
+  border: 1px solid var(--macos__container-border);
+  border-radius: var(--macos__radius__sidebar);
+  background: var(--macos__sidebar-background);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.04);
   user-select: none;
 }
 
-// The native macOS traffic lights sit at the left of this row; the app
-// name follows them. The margin under it gives some air above the menu.
+// The native macOS traffic lights sit inside this drag region.
 .handle {
-  display: flex;
-  height: 40px;
+  height: 48px;
   flex-shrink: 0;
-  align-items: center;
-  margin-bottom: $devie__spacing__x3;
-  padding-left: 68px;
-}
-
-.brand {
-  overflow: hidden;
-  color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  pointer-events: none;
+  margin-bottom: $devie__spacing__x05;
 }
 
 .nav {
@@ -50,7 +37,7 @@ $sidebar-inset: 8px;
   gap: $devie__spacing__x1;
   padding: 0 $devie__spacing__x1;
   border: 0;
-  border-radius: $devie__radius;
+  border-radius: 7px;
   background: transparent;
   color: $devie__color__text;
   font-size: $devie__font-size__normal;
@@ -62,7 +49,7 @@ $sidebar-inset: 8px;
   }
 
   &[aria-current="page"] {
-    background: color-mix(in srgb, $devie__color__text 11%, transparent);
+    background: var(--macos__selection-background);
     font-weight: 500;
   }
 

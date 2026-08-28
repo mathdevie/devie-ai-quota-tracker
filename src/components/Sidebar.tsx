@@ -22,15 +22,13 @@ export default function Sidebar<T extends string>({
   items: SidebarItem<T>[];
   value: T;
   onChange: (value: T) => void;
-  /** Sits above the brand, for example an update button. */
+  /** Sits at the bottom, for example an update button. */
   footer?: React.ReactNode;
 }) {
   const { t } = useTranslation();
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.handle} data-tauri-drag-region>
-        <strong className={styles.brand}>{t("Common.AppName")}</strong>
-      </div>
+      <div className={styles.handle} data-tauri-drag-region />
       <nav aria-label={t("Nav.Sections")} className={styles.nav}>
         {items.map((item) => {
           const Icon = item.icon;
