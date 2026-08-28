@@ -93,11 +93,15 @@ export interface RemoteAccess {
   error?: string;
 }
 
+/** The CrabNebula Cloud release channel updates come from. */
+export type UpdateChannel = "stable" | "nightly";
+
 export interface AppSettings {
   showMenuBarItem: boolean;
   /** Absent: the menu bar shows the window with the least quota left. */
   traySummary?: TraySummary;
   remoteAccess: RemoteAccess;
+  updateChannel: UpdateChannel;
 }
 
 export interface DashboardState {

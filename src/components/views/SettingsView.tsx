@@ -3,8 +3,9 @@
 import { Toast } from "@base-ui/react/toast";
 import { RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { DashboardState } from "@/lib/contracts";
+import type { DashboardState, UpdateChannel } from "@/lib/contracts";
 import Button from "@/ui/Button";
+import Select from "@/ui/Select";
 import Switch from "@/ui/Switch";
 import LanguagePicker from "../LanguagePicker";
 import RemoteAccessSettings, {
@@ -12,6 +13,7 @@ import RemoteAccessSettings, {
 } from "../RemoteAccessSettings";
 import SettingRow from "../SettingRow";
 import ThemePicker from "../ThemePicker";
+import pickerStyles from "../ThemePicker.module.scss";
 import { useAppUpdater } from "../updater/AppUpdater";
 import styles from "./views.module.scss";
 
@@ -92,18 +94,80 @@ function UpdateRow() {
   );
 }
 
+const CHANNELS: UpdateChannel[] = ["stable", "nightly"];
+
+function ChannelRow({
+  channel,
+  busy,
+  onChange,
+}: {
+  channel: UpdateChannel;
+  busy?: boolean;
+  onChange: (channel: UpdateChannel) => Promise<boolean>;
+}) {
+  const { t } = useTranslation();
+  const { enabled, recheck } = useAppUpdater();
+  const labels: Record<UpdateChannel, string> = {
+    stable: t("Settings.Updates.Channels.Stable"),
+    nightly: t("Settings.Updates.Channels.Nightly"),
+  };
+
+  // A new channel has its own latest version: check it right away.
+  async function change(next: UpdateChannel) {
+    if (next === channel) return;
+    if (await onChange(next)) void recheck();
+  }
+
+  return (
+    <SettingRow.Row
+      subtitle={t("Settings.Updates.ChannelDescription")}
+      title={t("Settings.Updates.Channel")}
+    >
+      <Select.Root
+        aria-label={t("Settings.Updates.Channel")}
+        disabled={busy || !enabled}
+        onValueChange={(value: UpdateChannel | null) =>
+          value && void change(value)
+        }
+        value={channel}
+      >
+        <Select.Trigger className={pickerStyles.trigger}>
+          <Select.Value>{labels[channel]}</Select.Value>
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Positioner alignItemWithTrigger={false} sideOffset={4}>
+            <Select.Popup className={pickerStyles.popup}>
+              <Select.List>
+                {CHANNELS.map((option) => (
+                  <Select.Item key={option} value={option}>
+                    <Select.ItemText>{labels[option]}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+    </SettingRow.Row>
+  );
+}
+
 export default function SettingsView({
   state,
   busy,
   onMenuBarItemChange,
   onRemoteAccessChange,
   onRegenerateRemoteToken,
+  onUpdateChannelChange,
 }: {
   state: DashboardState;
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
   onRemoteAccessChange: (change: RemoteAccessChange) => void;
   onRegenerateRemoteToken: () => void;
+  onUpdateChannelChange: (channel: UpdateChannel) => Promise<boolean>;
 }) {
   const { t } = useTranslation();
   // A remote browser keeps its own theme and language. The Mac owns the
@@ -134,6 +198,11 @@ export default function SettingsView({
               </Switch.Root>
             </SettingRow.Row>
             <UpdateRow />
+            <ChannelRow
+              busy={busy}
+              channel={state.settings.updateChannel}
+              onChange={onUpdateChannelChange}
+            />
           </>
         )}
       </SettingRow.Group>
