@@ -27,12 +27,12 @@
   }
 }
 
-// Rows inside a frame: side padding instead of the page-wide lines.
+// Native settings groups use a quiet filled surface without an outer frame.
 .groupBody {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--macos__container-border);
+  border: 0;
   border-radius: var(--macos__radius__group);
   background: var(--macos__group-background);
 

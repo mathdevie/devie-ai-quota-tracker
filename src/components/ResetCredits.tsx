@@ -121,6 +121,7 @@ export default function ResetCredits({
               <Button
                 disabled={busy}
                 onClick={() => setPending(undefined)}
+                size="sm"
                 type="button"
                 variant="secondary"
               >
@@ -129,6 +130,7 @@ export default function ResetCredits({
               <Button
                 disabled={busy}
                 onClick={() => void confirm()}
+                size="sm"
                 type="button"
                 variant="danger"
               >

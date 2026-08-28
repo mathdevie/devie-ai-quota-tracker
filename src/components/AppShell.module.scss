@@ -4,11 +4,7 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: transparent;
-
-  &[data-desktop="true"] {
-    --macos__sidebar-background: var(--macos__sidebar-tint);
-  }
+  background: var(--macos__content-background);
 }
 
 .content {
