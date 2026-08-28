@@ -73,12 +73,15 @@ export default function RenameDialog({
             <Dialog.Footer>
               <Button
                 onClick={() => onOpenChange(false)}
+                size="sm"
                 type="button"
                 variant="secondary"
               >
                 {t("Common.Cancel")}
               </Button>
-              <Button type="submit">{t("Common.Save")}</Button>
+              <Button size="sm" type="submit">
+                {t("Common.Save")}
+              </Button>
             </Dialog.Footer>
           </form>
         </Dialog.Popup>
