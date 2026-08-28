@@ -8,9 +8,10 @@ import CatpuccinLatteThumbnail from "@/ui/themes/catpuccin-latte/thumbnail.svg";
 import CommandPromptThumbnail from "@/ui/themes/command-prompt/thumbnail.svg";
 import CopperSunsetThumbnail from "@/ui/themes/copper-sunset/thumbnail.svg";
 import DarkThumbnail from "@/ui/themes/dark/thumbnail.svg";
-import DefaultThumbnail from "@/ui/themes/default/thumbnail.svg";
+import LightThumbnail from "@/ui/themes/light/thumbnail.svg";
 import MidnightInkThumbnail from "@/ui/themes/midnight-ink/thumbnail.svg";
 import SharinganThumbnail from "@/ui/themes/sharingan/thumbnail.svg";
+import SystemThumbnail from "@/ui/themes/system/thumbnail.svg";
 import TotoroThumbnail from "@/ui/themes/totoro/thumbnail.svg";
 
 export interface ThemeOption {
@@ -21,11 +22,37 @@ export interface ThemeOption {
   categories?: string[];
 }
 
+/** Follows the macOS appearance: `theme-light` or `theme-dark`. */
+export const SYSTEM_THEME = "system";
+export const LIGHT_THEME = "theme-light";
+export const DARK_THEME = "theme-dark";
+
 export const THEMES: ThemeOption[] = [
   {
-    nameKey: "default",
-    className: "theme-default",
-    thumbnailSrc: DefaultThumbnail,
+    nameKey: "system",
+    className: SYSTEM_THEME,
+    thumbnailSrc: SystemThumbnail,
+    categories: ["All"],
+    displayName: {
+      "en-US": "System",
+      "en-GB": "System",
+      "fr-FR": "Système",
+      "de-DE": "System",
+      "it-IT": "Sistema",
+      "es-ES": "Sistema",
+      "es-419": "Sistema",
+      "pt-BR": "Sistema",
+      "fi-FI": "Järjestelmä",
+      "da-DK": "System",
+      "nl-NL": "Systeem",
+      "nb-NO": "System",
+      "sv-SE": "System",
+    },
+  },
+  {
+    nameKey: "light",
+    className: LIGHT_THEME,
+    thumbnailSrc: LightThumbnail,
     categories: ["All", "Light"],
     displayName: {
       "en-US": "Light",
@@ -45,7 +72,7 @@ export const THEMES: ThemeOption[] = [
   },
   {
     nameKey: "dark",
-    className: "theme-dark",
+    className: DARK_THEME,
     thumbnailSrc: DarkThumbnail,
     categories: ["All", "Dark"],
     displayName: {

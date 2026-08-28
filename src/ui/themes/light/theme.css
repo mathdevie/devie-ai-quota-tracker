@@ -1,50 +1,47 @@
 @layer devie {
   /*
-   * The macOS dark appearance. The hex values follow the Apple Human
+   * The macOS light appearance. The hex values follow the Apple Human
    * Interface Guidelines. In WebKit the -apple-system-* colors and
    * AccentColor replace them, so the window follows the user's accent color.
    */
-  [data-devie-theme="theme-dark"] {
-    --devie__theme-name: Dark;
-    color-scheme: dark;
-    --devie__color__text: rgba(255, 255, 255, 0.85);
-    --devie__color__text-sub: rgba(255, 255, 255, 0.55);
-    --devie__color__line: rgba(255, 255, 255, 0.1);
+  [data-devie-theme="theme-light"] {
+    --devie__theme-name: Light;
+    color-scheme: light;
+    --devie__color__text: rgba(0, 0, 0, 0.85);
+    --devie__color__text-sub: rgba(0, 0, 0, 0.5);
+    --devie__color__line: rgba(0, 0, 0, 0.1);
     /* The window backdrop. The grouped cards sit on it. */
-    --devie-app__canvas: #1e1e1e;
-    --devie__color__background: #2a2a2a;
-    --devie__color__background-sub: #262626;
-    --devie__color__primary: #0a84ff;
+    --devie-app__canvas: #f0f0f0;
+    --devie__color__background: #ffffff;
+    --devie__color__background-sub: #e8e8e8;
+    --devie__color__primary: #007aff;
     --devie__color__primary-label: #ffffff;
-    --devie__color__danger: #ff453a;
+    --devie__color__danger: #ff3b30;
     --devie__color__danger-label: #ffffff;
-    --devie__color__success: #32d74b;
+    --devie__color__success: #28cd41;
     --devie__color__success-label: #ffffff;
-    --devie__color__warning: #ff9f0a;
+    --devie__color__warning: #ff9500;
     --devie__color__warning-label: #ffffff;
-    --devie__color__literal-gray: #98989d;
-    --devie__color__literal-brown: #ac8e68;
-    --devie__color__literal-orange: #ff9f0a;
-    --devie__color__literal-yellow: #ffd60a;
-    --devie__color__literal-green: #32d74b;
-    --devie__color__literal-blue: #0a84ff;
-    --devie__color__literal-purple: #bf5af2;
-    --devie__color__literal-pink: #ff375f;
-    --devie__color__literal-red: #ff453a;
+    --devie__color__literal-gray: #8e8e93;
+    --devie__color__literal-brown: #a2845e;
+    --devie__color__literal-orange: #ff9500;
+    --devie__color__literal-yellow: #ffcc00;
+    --devie__color__literal-green: #28cd41;
+    --devie__color__literal-blue: #007aff;
+    --devie__color__literal-purple: #af52de;
+    --devie__color__literal-pink: #ff2d55;
+    --devie__color__literal-red: #ff3b30;
     --devie__font-family:
       -apple-system, BlinkMacSystemFont, system-ui, "Helvetica Neue", Helvetica,
       Arial, "Apple Color Emoji", sans-serif;
-    --devie__shadow__menu:
-      0px 10px 30px -16px rgba(0, 0, 0, 0.5),
-      0px 4px 10px -6px rgba(0, 0, 0, 0.6);
-    --devie__effect__hover-intensity: 0.4;
-    --devie__effect__disabled-intensity: 0.7;
-    --devie__effect__disabled-desaturate: 0.3;
-    --devie__effect__disabled-target-l: 0.5;
+    --devie__effect__hover-intensity: 0.06;
+    --devie__effect__disabled-intensity: 0.8;
+    --devie__effect__disabled-desaturate: 0.5;
+    --devie__effect__disabled-target-l: 0.9;
   }
 
   @supports (color: -apple-system-blue) {
-    [data-devie-theme="theme-dark"] {
+    [data-devie-theme="theme-light"] {
       --devie__color__text: -apple-system-label;
       --devie__color__text-sub: -apple-system-secondary-label;
       --devie__color__line: -apple-system-separator;
@@ -64,7 +61,7 @@
   }
 
   @supports (color: AccentColor) {
-    [data-devie-theme="theme-dark"] {
+    [data-devie-theme="theme-light"] {
       --devie__color__primary: AccentColor;
       --devie__color__primary-label: AccentColorText;
     }
