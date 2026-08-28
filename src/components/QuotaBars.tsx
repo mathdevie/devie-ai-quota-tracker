@@ -49,16 +49,9 @@ const CENTS_PER_CREDIT = 0.01;
 
 /**
  * "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", or
- * "$12.50 left", in small print under the bar. `reached` adds a "Limit
- * reached" note when the reset time keeps the end of the row.
+ * "$12.50 left", in small print under the bar.
  */
-function Amount({
-  amount,
-  reached = false,
-}: {
-  amount?: QuotaAmount;
-  reached?: boolean;
-}) {
+function Amount({ amount }: { amount?: QuotaAmount }) {
   const { t, i18n } = useTranslation();
   const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "")
     ? amount?.unit
@@ -87,12 +80,6 @@ function Amount({
           {t("Quota.Overage", { overage: format(overage) })}
           {amount?.unit === "credits" &&
             ` (${format(overage * CENTS_PER_CREDIT, "USD")})`}
-        </span>
-      )}
-      {reached && (
-        <span className={styles.reached}>
-          {amount && " · "}
-          {t("Quota.LimitReached")}
         </span>
       )}
     </span>
@@ -131,10 +118,8 @@ export default function QuotaBars({
         const left = Math.max(0, Math.round(100 - window.usedPercent));
         const pinned = window.key === pinnedKey;
         const pinLabel = pinned ? t("Quota.Pin.Shown") : t("Quota.Pin.Show");
-        // A paid allowance that is spent. The reset time stays at the end of
-        // the row when the provider gives one; the note moves under the bar.
+        // Keep a short red fill when a paid allowance is fully spent.
         const reached = Boolean(window.paid) && left === 0;
-        const reachedInline = reached && !window.resetsAt;
         return (
           <div
             className={styles.window}
@@ -155,7 +140,9 @@ export default function QuotaBars({
                 <span className={styles.track}>
                   <span
                     className={styles.fill}
-                    style={{ width: `${Math.min(100, left)}%` }}
+                    style={{
+                      width: reached ? "8px" : `${Math.min(100, left)}%`,
+                    }}
                   />
                 </span>
                 <span className={styles.percent}>
@@ -163,19 +150,12 @@ export default function QuotaBars({
                     ? ""
                     : `${left}%`}
                 </span>
-                {reachedInline ? (
-                  <span className={styles.reached}>
-                    {t("Quota.LimitReached")}
-                  </span>
+                {reached && !window.resetsAt ? (
+                  <span aria-hidden className={styles.reset} />
                 ) : (
                   <ResetTime value={window.resetsAt} />
                 )}
-                {(window.amount || (reached && !reachedInline)) && (
-                  <Amount
-                    amount={window.amount}
-                    reached={reached && !reachedInline}
-                  />
-                )}
+                {window.amount && <Amount amount={window.amount} />}
               </>
             )}
             {onPin && (

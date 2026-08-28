@@ -90,7 +90,6 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} over",
     "Balance": "{{balance}} tilbage",
-    "LimitReached": "Grænse nået",
     "News": {
       "Watch": "{{percent}} % chance for en Codex-nulstilling",
       "WatchNoPercent": "En Codex-nulstilling er sandsynlig",
