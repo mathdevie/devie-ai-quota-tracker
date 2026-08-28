@@ -28,6 +28,7 @@ import {
   setMenuBarItemVisible,
   setRemoteAccess,
   setRemoteToken,
+  setUpdateChannel,
   spendResetCredit,
 } from "@/lib/desktop";
 import { PROVIDER_NAMES } from "@/lib/labels";
@@ -330,6 +331,9 @@ function Shell() {
                   }
                   onRemoteAccessChange={(change) =>
                     void run(() => setRemoteAccess(change), setSettingsBusy)
+                  }
+                  onUpdateChannelChange={(channel) =>
+                    run(() => setUpdateChannel(channel), setSettingsBusy)
                   }
                   state={state}
                 />

@@ -223,6 +223,31 @@ impl RemoteAccess {
     pub const DEFAULT_PORT: u16 = 47321;
 }
 
+/// The CrabNebula Cloud release channel updates come from.
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum UpdateChannel {
+    #[default]
+    Stable,
+    Nightly,
+}
+
+impl UpdateChannel {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Stable => "stable",
+            Self::Nightly => "nightly",
+        }
+    }
+
+    pub fn from_db(value: &str) -> Self {
+        match value {
+            "nightly" => Self::Nightly,
+            _ => Self::Stable,
+        }
+    }
+}
+
 /// User preferences stored in the database.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -234,6 +259,8 @@ pub struct AppSettings {
     pub tray_summary: Option<TraySummary>,
     #[serde(default)]
     pub remote_access: RemoteAccess,
+    #[serde(default)]
+    pub update_channel: UpdateChannel,
 }
 
 impl Default for AppSettings {
@@ -242,6 +269,7 @@ impl Default for AppSettings {
             show_menu_bar_item: true,
             tray_summary: None,
             remote_access: RemoteAccess::default(),
+            update_channel: UpdateChannel::Stable,
         }
     }
 }

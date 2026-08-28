@@ -181,7 +181,13 @@
         "Failed": "Päivitys epäonnistui."
       },
       "Version": "Versio: {{version}}",
-      "UpToDateToast": "Käytössäsi on uusin versio."
+      "UpToDateToast": "Käytössäsi on uusin versio.",
+      "Channel": "Päivityskanava",
+      "ChannelDescription": "Nightly-versiot saavat uudet ominaisuudet ensin, mutta voivat olla epävakaita.",
+      "Channels": {
+        "Stable": "Vakaa",
+        "Nightly": "Nightly"
+      }
     },
     "Remote": {
       "Title": "Etäkojelauta",

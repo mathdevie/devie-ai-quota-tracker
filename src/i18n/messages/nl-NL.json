@@ -181,7 +181,13 @@
         "Failed": "De update is mislukt."
       },
       "Version": "Versie: {{version}}",
-      "UpToDateToast": "Je gebruikt de nieuwste versie."
+      "UpToDateToast": "Je gebruikt de nieuwste versie.",
+      "Channel": "Updatekanaal",
+      "ChannelDescription": "Nightly-versies krijgen nieuwe functies als eerste, maar kunnen instabiel zijn.",
+      "Channels": {
+        "Stable": "Stabiel",
+        "Nightly": "Nightly"
+      }
     },
     "Remote": {
       "Title": "Extern dashboard",
