@@ -12,7 +12,7 @@ import {
 } from "react";
 import { IS_DESKTOP_BUILD, isDesktop } from "@/lib/desktop";
 
-/** Packaged build in a Tauri window. A remote browser has no updater. */
+/** Packaged build in a Tauri window. A browser preview has no updater. */
 const UPDATER_ENABLED = IS_DESKTOP_BUILD && isDesktop();
 
 type Update = Awaited<

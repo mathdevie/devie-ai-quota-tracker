@@ -182,34 +182,6 @@
       },
       "Version": "Versión: {{version}}",
       "UpToDateToast": "Ya tienes la última versión."
-    },
-    "Remote": {
-      "Title": "Panel remoto",
-      "Description": "Sirve este panel a tus otros dispositivos.",
-      "Enable": "Activar el panel remoto",
-      "Port": "Puerto",
-      "PortDescription": "Un cambio reinicia el servidor.",
-      "Lan": "Red local",
-      "LanDescription": "Desactivado: solo este Mac. Activado: cada dispositivo de tu red.",
-      "LanSwitch": "Permitir la red local",
-      "Address": "Dirección",
-      "AddressDescription": "Abre la dirección en otro dispositivo. El enlace copiado incluye el token de acceso.",
-      "Starting": "Iniciando…",
-      "CopyLink": "Copiar enlace",
-      "Token": "Token de acceso",
-      "TokenDescription": "Los demás dispositivos piden este token una vez. Un token nuevo cierra la sesión en todos.",
-      "Show": "Mostrar",
-      "Hide": "Ocultar",
-      "Copy": "Copiar",
-      "Regenerate": "Regenerar",
-      "Copied": "Copiado al portapapeles.",
-      "CopyFailed": "El portapapeles no está disponible.",
-      "Gate": {
-        "Description": "Introduce el token de acceso de Ajustes › Panel remoto en la app de tu Mac.",
-        "Label": "Token de acceso",
-        "Submit": "Continuar",
-        "Wrong": "El token de acceso es incorrecto."
-      }
     }
   },
   "Tray": {

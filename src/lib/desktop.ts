@@ -16,120 +16,8 @@ declare global {
   }
 }
 
-/**
- * Where the page runs. `native`: a Tauri window. `remote`: a browser that
- * loaded the page from the app's HTTP server. `preview`: `bun run dev` or
- * a plain static export, with local fixtures.
- */
-export type Mode = "native" | "remote" | "preview";
-
-let mode: Mode = "preview";
-let detection: Promise<Mode> | undefined;
-
-const REMOTE_TOKEN_KEY = "devie-quota-remote-token:v1";
-
 export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
-}
-
-/** The mode found by `detectMode`. `preview` until detection ran. */
-export function currentMode(): Mode {
-  return mode;
-}
-
-/**
- * Finds the mode once. A remote page answers `/api/state` with data or with
- * `401`; a preview server answers with a 404 page or not at all.
- */
-export function detectMode(): Promise<Mode> {
-  if (!detection) detection = detect();
-  return detection;
-}
-
-async function detect(): Promise<Mode> {
-  if (isDesktop()) {
-    mode = "native";
-    return mode;
-  }
-  adoptTokenFromUrl();
-  try {
-    const response = await fetch("/api/state", {
-      headers: remoteHeaders(),
-      cache: "no-store",
-    });
-    if (response.ok || response.status === 401) mode = "remote";
-  } catch {
-    // No server behind the page: the preview fixtures apply.
-  }
-  return mode;
-}
-
-/** The copied link carries the token in the fragment: `#token=…`. */
-function adoptTokenFromUrl() {
-  const match = /(?:^#|&)token=([A-Za-z0-9]+)/.exec(window.location.hash);
-  if (!match) return;
-  setRemoteToken(match[1]);
-  window.history.replaceState(
-    null,
-    "",
-    window.location.pathname + window.location.search,
-  );
-}
-
-export function setRemoteToken(token: string) {
-  try {
-    window.localStorage.setItem(REMOTE_TOKEN_KEY, token.trim());
-  } catch {
-    // Private browsing without storage: the token lives for this page only.
-    memoryToken = token.trim();
-  }
-}
-
-let memoryToken: string | undefined;
-
-function remoteToken(): string | undefined {
-  try {
-    return window.localStorage.getItem(REMOTE_TOKEN_KEY) ?? memoryToken;
-  } catch {
-    return memoryToken;
-  }
-}
-
-function remoteHeaders(): HeadersInit {
-  const token = remoteToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
-/** The server refused the token. The page must ask for a new one. */
-export class RemoteAuthError extends Error {
-  constructor() {
-    super("The access token is wrong.");
-    this.name = "RemoteAuthError";
-  }
-}
-
-async function remote<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: { ...remoteHeaders(), ...init?.headers },
-    cache: "no-store",
-  });
-  if (response.status === 401) throw new RemoteAuthError();
-  if (!response.ok) {
-    let message: string | undefined;
-    try {
-      message = ((await response.json()) as { error?: string }).error;
-    } catch {
-      // A plain-text or empty body: the status is the message.
-    }
-    throw new Error(message ?? `The server answered with ${response.status}.`);
-  }
-  return response.json() as Promise<T>;
-}
-
-/** Actions a remote page never runs. The interface hides them as well. */
-function readOnly(): never {
-  throw new Error("The remote dashboard is read-only. Use the app on the Mac.");
 }
 
 /**
@@ -149,13 +37,11 @@ function delay(ms: number): Promise<void> {
 }
 
 export async function getDashboardState(): Promise<DashboardState> {
-  if (mode === "remote") return remote("/api/state");
   if (!isDesktop()) return previewState;
   return call("get_dashboard_state");
 }
 
 export async function refreshAll(): Promise<DashboardState> {
-  if (mode === "remote") return remote("/api/refresh", { method: "POST" });
   if (!isDesktop()) {
     await delay(450);
     return previewState;
@@ -166,11 +52,6 @@ export async function refreshAll(): Promise<DashboardState> {
 export async function refreshConnection(
   connectionId: string,
 ): Promise<DashboardState> {
-  if (mode === "remote") {
-    return remote(`/api/refresh/${encodeURIComponent(connectionId)}`, {
-      method: "POST",
-    });
-  }
   if (!isDesktop()) {
     await delay(300);
     return previewState;
@@ -179,7 +60,6 @@ export async function refreshConnection(
 }
 
 export async function startLogin(provider: Provider): Promise<LoginStart> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     await delay(300);
     return {
@@ -197,7 +77,6 @@ export async function finishLogin(
   sessionId: string,
   code?: string,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     await delay(1200);
     throw new Error("The browser preview cannot complete a provider sign-in.");
@@ -213,7 +92,6 @@ export async function cancelLogin(sessionId: string): Promise<void> {
 export async function removeConnection(
   connectionId: string,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -229,7 +107,6 @@ export async function setConnectionEnabled(
   connectionId: string,
   enabled: boolean,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -247,7 +124,6 @@ export async function renameConnection(
   connectionId: string,
   label: string,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   const trimmed = label.trim();
   if (!isDesktop()) {
     return {
@@ -280,7 +156,6 @@ export async function setConnectionAlerts(
   connectionId: string,
   alerts: ConnectionAlerts,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) return withConnection(connectionId, () => ({ alerts }));
   return call("set_connection_alerts", { connectionId, alerts });
 }
@@ -302,7 +177,6 @@ export async function setAutoPing(
   connectionId: string,
   enabled: boolean,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     return withConnection(connectionId, (connection) => ({
       autoPing: { ...connection.autoPing, enabled },
@@ -316,7 +190,6 @@ export async function spendResetCredit(
   connectionId: string,
   creditId: string,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     await delay(600);
     return withConnection(connectionId, (connection) => ({
@@ -335,7 +208,6 @@ export async function spendResetCredit(
 export async function setTraySummary(
   summary: TraySummary | null,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -357,7 +229,6 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 export async function setMenuBarItemVisible(
   visible: boolean,
 ): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -365,38 +236,6 @@ export async function setMenuBarItemVisible(
     };
   }
   return call("set_menu_bar_item_visible", { visible });
-}
-
-/** Starts, changes, or stops the HTTP server that serves the dashboard. */
-export async function setRemoteAccess(options: {
-  enabled: boolean;
-  port: number;
-  lan: boolean;
-}): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
-  if (!isDesktop()) {
-    await delay(300);
-    const remoteAccess = {
-      ...previewState.settings.remoteAccess,
-      ...options,
-      urls: options.enabled ? [`http://localhost:${options.port}`] : [],
-    };
-    return {
-      ...previewState,
-      settings: { ...previewState.settings, remoteAccess },
-    };
-  }
-  return call("set_remote_access", options);
-}
-
-/** Replaces the remote access token. Every remote page must sign in again. */
-export async function regenerateRemoteToken(): Promise<DashboardState> {
-  if (mode === "remote") readOnly();
-  if (!isDesktop()) {
-    await delay(300);
-    return previewState;
-  }
-  return call("regenerate_remote_token");
 }
 
 /** Tells the Rust side which language to use for the tray menu and alerts. */
@@ -407,7 +246,6 @@ export async function setLanguage(locale: string): Promise<void> {
 
 /** The community reset news from codex-resets.com, cached by the core. */
 export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
-  if (mode === "remote") return remote("/api/codex-resets");
   if (!isDesktop()) {
     await delay(300);
     return previewCodexResets;
