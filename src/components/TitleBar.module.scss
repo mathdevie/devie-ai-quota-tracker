@@ -15,18 +15,20 @@
 
 .navigation {
   display: flex;
-  height: 28px;
+  height: 36px;
   flex-shrink: 0;
   align-items: center;
   overflow: hidden;
-  border: 1px solid var(--macos__container-border);
-  border-radius: 8px;
-  background: color-mix(in srgb, $devie__color__background 70%, transparent);
+  border: 1px solid var(--macos__toolbar-control-border);
+  border-radius: 18px;
+  background: var(--macos__toolbar-control-background);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 4%, transparent);
 }
 
 .navigationButton {
+  position: relative;
   display: grid;
-  width: 32px;
+  width: 36px;
   height: 100%;
   padding: 0;
   border: 0;
@@ -35,8 +37,19 @@
   place-items: center;
   cursor: default;
 
-  & + & {
-    border-left: 1px solid $devie__color__line;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  & + &::before {
+    position: absolute;
+    top: 7px;
+    bottom: 7px;
+    left: 0;
+    width: 1px;
+    background: var(--macos__toolbar-control-divider);
+    content: "";
   }
 
   &:hover:not(:disabled) {
@@ -48,7 +61,7 @@
   }
 
   &:disabled {
-    opacity: 0.3;
+    color: color-mix(in srgb, $devie__color__text 30%, transparent);
   }
 
   &:focus-visible {

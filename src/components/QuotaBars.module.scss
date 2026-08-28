@@ -16,6 +16,7 @@
   &[data-size="sm"] {
     gap: $devie__spacing__x05;
     grid-template-columns: 8px 88px minmax(20px, 1fr) 32px auto;
+    padding-left: 6px;
     font-size: 11px;
 
     &:has(.pin) {
@@ -27,11 +28,12 @@
 .window {
   display: grid;
   align-items: center;
-  gap: $devie__spacing__x1;
+  column-gap: $devie__spacing__x1;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
   grid-template-rows: auto;
   min-height: 22px;
+  row-gap: 0;
   --quota-color: #{$devie__color__primary};
 
   &[data-level="warning"] {
@@ -56,7 +58,7 @@
 .amount {
   grid-column: 3 / 6;
   grid-row: 2;
-  margin-top: -3px;
+  margin-top: -4px;
   overflow: hidden;
   color: $devie__color__text-sub;
   font-size: 10.5px;
@@ -64,20 +66,6 @@
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-// Small colored text: at the end of the row when there is no reset time,
-// else under the bar next to the amount.
-.reached {
-  justify-self: end;
-  color: $devie__color__danger;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-
-  .amount & {
-    font-size: inherit;
-  }
 }
 
 .overage {
