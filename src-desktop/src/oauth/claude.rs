@@ -414,6 +414,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
             &mut windows,
         );
     }
+    add_scoped_limits(object, &mut windows);
     if windows.is_empty() {
         return Err("Claude returned no active quota windows.".to_string());
     }
@@ -447,6 +448,69 @@ fn add_window(
         amount: None,
         paid: false,
     });
+}
+
+/// Per-model weekly windows from the newer `limits` array.
+///
+/// Anthropic moved the model-scoped quotas here: the old top-level
+/// `seven_day_<model>` fields now arrive as `null` while the same limit shows
+/// up as a `weekly_scoped` entry carrying its own display name. The array also
+/// repeats the session and plan-wide weekly windows, so only the scoped
+/// entries are read. A matching `seven_day_<model>` field still wins, because
+/// it is already in the list under the same key.
+fn add_scoped_limits(object: &serde_json::Map<String, Value>, windows: &mut Vec<QuotaWindow>) {
+    let Some(limits) = object.get("limits").and_then(Value::as_array) else {
+        return;
+    };
+    for limit in limits {
+        let Some(limit) = limit.as_object() else {
+            continue;
+        };
+        if limit.get("kind").and_then(Value::as_str) != Some("weekly_scoped") {
+            continue;
+        }
+        let Some(name) = limit
+            .get("scope")
+            .and_then(Value::as_object)
+            .and_then(|scope| scope.get("model"))
+            .and_then(Value::as_object)
+            .and_then(|model| model.get("display_name"))
+            .and_then(Value::as_str)
+            .filter(|name| !name.trim().is_empty())
+        else {
+            continue;
+        };
+        let Some(used) = number(limit.get("percent")) else {
+            continue;
+        };
+        let key = format!("seven_day_{}", slug(name));
+        if windows.iter().any(|window| window.key == key) {
+            continue;
+        }
+        windows.push(QuotaWindow {
+            key,
+            label: format!("{name} (weekly)"),
+            used_percent: used.clamp(0.0, 100.0),
+            resets_at: reset_time(limit.get("resets_at")),
+            unlimited: false,
+            amount: None,
+            paid: false,
+        });
+    }
+}
+
+/// "Claude Fable" -> "claude_fable", so a server label and the legacy
+/// `seven_day_<model>` field land on the same key.
+fn slug(value: &str) -> String {
+    let mut slug = String::with_capacity(value.len());
+    for character in value.chars() {
+        if character.is_ascii_alphanumeric() {
+            slug.push(character.to_ascii_lowercase());
+        } else if !slug.ends_with('_') {
+            slug.push('_');
+        }
+    }
+    slug.trim_matches('_').to_string()
 }
 
 /// The paid "extra usage" past the plan: a monthly spend limit in cents.
@@ -599,6 +663,127 @@ mod tests {
             .expect("Fable window");
         assert_eq!(fable.label, "Fable (weekly)");
         assert_eq!(fable.used_percent, 36.0);
+    }
+
+    /// The live shape since Anthropic moved model quotas into `limits`: every
+    /// `seven_day_<model>` field is null and Fable only appears as a scoped
+    /// weekly entry.
+    #[test]
+    fn parses_the_scoped_fable_limit_from_the_limits_array() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":0.0,"resets_at":null},
+                "seven_day":{"utilization":13.0,"resets_at":"2026-09-02T10:00:00Z"},
+                "seven_day_opus":null,"seven_day_sonnet":null,
+                "limits":[
+                  {"kind":"session","group":"session","percent":0,"resets_at":null,"scope":null},
+                  {"kind":"weekly_all","group":"weekly","percent":13,
+                   "resets_at":"2026-09-02T10:00:00Z","scope":null},
+                  {"kind":"weekly_scoped","group":"weekly","percent":25,
+                   "resets_at":"2026-09-02T10:00:00Z",
+                   "scope":{"model":{"id":null,"display_name":"Fable"},"surface":null},
+                   "is_active":true}]}"#,
+        )
+        .expect("json");
+        let reading = parse_usage(&json).expect("reading");
+        assert_eq!(reading.windows.len(), 3);
+        let fable = reading
+            .windows
+            .iter()
+            .find(|window| window.key == "seven_day_fable")
+            .expect("Fable window");
+        assert_eq!(fable.label, "Fable (weekly)");
+        assert_eq!(fable.used_percent, 25.0);
+        assert_eq!(fable.resets_at.as_deref(), Some("2026-09-02T10:00:00Z"));
+    }
+
+    /// A response that carries both shapes must not show the model twice.
+    #[test]
+    fn keeps_one_window_when_both_shapes_carry_the_model() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":5,"resets_at":null},
+                "seven_day_fable":{"utilization":36,"resets_at":null},
+                "limits":[{"kind":"weekly_scoped","percent":25,"resets_at":null,
+                   "scope":{"model":{"display_name":"Fable"}}}]}"#,
+        )
+        .expect("json");
+        let reading = parse_usage(&json).expect("reading");
+        let fable = reading
+            .windows
+            .iter()
+            .filter(|window| window.key == "seven_day_fable")
+            .collect::<Vec<_>>();
+        assert_eq!(fable.len(), 1);
+        assert_eq!(fable[0].used_percent, 36.0);
+    }
+
+    #[test]
+    fn skips_scoped_limits_without_a_usable_model_name() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":5,"resets_at":null},
+                "limits":[
+                  {"kind":"weekly_scoped","percent":9,"scope":{"model":{"display_name":"  "}}},
+                  {"kind":"weekly_scoped","percent":9,"scope":{"surface":"code"}},
+                  {"kind":"weekly_scoped","scope":{"model":{"display_name":"Mythos"}}}]}"#,
+        )
+        .expect("json");
+        let reading = parse_usage(&json).expect("reading");
+        assert_eq!(reading.windows.len(), 1);
+        assert_eq!(reading.windows[0].key, "five_hour");
+    }
+
+    /// A sanitized capture of a live response, taken 2026-08-28. It keeps the
+    /// unnamed buckets the server ships alongside the real ones, so a new
+    /// codename cannot turn into a stray window.
+    #[test]
+    fn reads_a_sanitized_live_response() {
+        let json: Value = serde_json::from_str(
+            r#"{"five_hour":{"utilization":0.0,"resets_at":null,"limit_dollars":null,
+                  "used_dollars":null,"remaining_dollars":null},
+                "seven_day":{"utilization":13.0,"resets_at":"2026-09-02T10:00:00Z",
+                  "limit_dollars":null,"used_dollars":null,"remaining_dollars":null},
+                "seven_day_oauth_apps":null,"seven_day_opus":null,"seven_day_sonnet":null,
+                "seven_day_cowork":null,"seven_day_omelette":null,
+                "tangelo":null,"iguana_necktie":null,"omelette_promotional":null,
+                "nimbus_quill":{"utilization":0.0,"resets_at":null},
+                "cinder_cove":null,"amber_ladder":null,"juniper_tide":null,
+                "extra_usage":{"is_enabled":false,"monthly_limit":2000,"used_credits":100.0,
+                  "utilization":5.0,"currency":"EUR","decimal_places":2,
+                  "disabled_reason":"out_of_credits","user_disabled":false,
+                  "spend_limit_reached":false,"credits_ever_enabled":true,
+                  "daily":null,"weekly":null},
+                "limits":[
+                  {"kind":"session","group":"session","percent":0,"severity":"normal",
+                   "resets_at":null,"scope":null,"is_active":false},
+                  {"kind":"weekly_all","group":"weekly","percent":13,"severity":"normal",
+                   "resets_at":"2026-09-02T10:00:00Z","scope":null,"is_active":false},
+                  {"kind":"weekly_scoped","group":"weekly","percent":25,"severity":"normal",
+                   "resets_at":"2026-09-02T10:00:00Z",
+                   "scope":{"model":{"id":null,"display_name":"Fable"},"surface":null},
+                   "is_active":true}],
+                "member_dashboard_available":false}"#,
+        )
+        .expect("json");
+        let reading = parse_usage(&json).expect("reading");
+        let windows = reading
+            .windows
+            .iter()
+            .map(|window| (window.key.as_str(), window.used_percent))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            windows,
+            vec![
+                ("five_hour", 0.0),
+                ("seven_day", 13.0),
+                ("seven_day_fable", 25.0),
+            ]
+        );
+    }
+
+    #[test]
+    fn builds_window_keys_from_multi_word_model_names() {
+        assert_eq!(slug("Claude Fable 5"), "claude_fable_5");
+        assert_eq!(slug("Fable"), "fable");
+        assert_eq!(slug(" Opus-4.8 "), "opus_4_8");
     }
 
     #[test]
