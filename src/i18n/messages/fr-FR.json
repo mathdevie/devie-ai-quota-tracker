@@ -181,7 +181,13 @@
         "Failed": "La mise à jour a échoué."
       },
       "Version": "Version : {{version}}",
-      "UpToDateToast": "Vous utilisez la dernière version."
+      "UpToDateToast": "Vous utilisez la dernière version.",
+      "Channel": "Canal de mise à jour",
+      "ChannelDescription": "Les versions nightly reçoivent les nouveautés en premier mais peuvent être instables.",
+      "Channels": {
+        "Stable": "Stable",
+        "Nightly": "Nightly"
+      }
     },
     "Remote": {
       "Title": "Tableau de bord distant",

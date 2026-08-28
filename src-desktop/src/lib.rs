@@ -9,11 +9,12 @@ mod oauth;
 mod parse;
 mod remote;
 mod tray_icons;
+mod updater;
 
 use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use db::Database;
-use model::{ConnectionAlerts, ConnectionStatus, DashboardState, TraySummary};
+use model::{ConnectionAlerts, ConnectionStatus, DashboardState, TraySummary, UpdateChannel};
 use oauth::{LoginSessions, LoginStart};
 use tauri::{
     menu::{Menu, MenuItem},
@@ -278,6 +279,20 @@ fn regenerate_remote_token(
     core: State<'_, Core>,
 ) -> Result<DashboardState, String> {
     core.database.set_remote_token(&remote::new_token())?;
+    publish_state(&app, &core)
+}
+
+/// Picks which release channel updates come from.
+#[tauri::command]
+fn set_update_channel(
+    app: AppHandle,
+    core: State<'_, Core>,
+    pending: State<'_, updater::PendingUpdate>,
+    channel: UpdateChannel,
+) -> Result<DashboardState, String> {
+    core.database.set_update_channel(channel)?;
+    // An update found on the old channel must not install any more.
+    pending.clear();
     publish_state(&app, &core)
 }
 
@@ -780,6 +795,7 @@ pub fn run() {
                 codex_resets: codex_resets::Cache::default(),
                 remote: remote::Server::default(),
             });
+            app.manage(updater::PendingUpdate::default());
             build_windows(app)?;
             #[cfg(target_os = "macos")]
             activate_app();
@@ -846,6 +862,10 @@ pub fn run() {
             set_remote_access,
             regenerate_remote_token,
             set_language,
+            set_update_channel,
+            updater::fetch_update,
+            updater::download_update,
+            updater::install_update,
             get_codex_resets_status,
             open_external_url,
             open_main_window,

@@ -6,6 +6,7 @@ import type {
   Provider,
   ProviderConnection,
   TraySummary,
+  UpdateChannel,
 } from "./contracts";
 import type { Filters } from "./filters";
 import { previewCodexResets, previewState } from "./fixtures";
@@ -397,6 +398,20 @@ export async function regenerateRemoteToken(): Promise<DashboardState> {
     return previewState;
   }
   return call("regenerate_remote_token");
+}
+
+/** Picks which release channel updates come from. */
+export async function setUpdateChannel(
+  channel: UpdateChannel,
+): Promise<DashboardState> {
+  if (mode === "remote") readOnly();
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      settings: { ...previewState.settings, updateChannel: channel },
+    };
+  }
+  return call("set_update_channel", { channel });
 }
 
 /** Tells the Rust side which language to use for the tray menu and alerts. */

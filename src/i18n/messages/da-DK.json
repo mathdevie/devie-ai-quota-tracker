@@ -181,7 +181,13 @@
         "Failed": "Opdateringen mislykkedes."
       },
       "Version": "Version: {{version}}",
-      "UpToDateToast": "Du har den nyeste version."
+      "UpToDateToast": "Du har den nyeste version.",
+      "Channel": "Opdateringskanal",
+      "ChannelDescription": "Nightly-versioner får nye funktioner først, men kan være ustabile.",
+      "Channels": {
+        "Stable": "Stabil",
+        "Nightly": "Nightly"
+      }
     },
     "Remote": {
       "Title": "Fjern-dashboard",
