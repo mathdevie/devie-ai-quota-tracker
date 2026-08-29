@@ -122,7 +122,10 @@ async fn fetch(client: &reqwest::Client) -> Result<CodexResetsStatus, String> {
         ));
     }
     let too_big = || "codex-resets.com returned too much data.".to_string();
-    if response.content_length().is_some_and(|len| len > MAX_BODY_BYTES as u64) {
+    if response
+        .content_length()
+        .is_some_and(|len| len > MAX_BODY_BYTES as u64)
+    {
         return Err(too_big());
     }
     let mut body = Vec::new();
