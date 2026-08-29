@@ -152,7 +152,9 @@
     "ResetSoonDescription": "30 Minuten vor dem Zurücksetzen eines Kontingents benachrichtigen.",
     "ResetComplete": "Zurücksetzen abgeschlossen",
     "ResetCompleteDescription": "Nach dem Zurücksetzen eines Kontingents benachrichtigen.",
-    "PermissionRequired": "Erlaube Mitteilungen in den macOS-Einstellungen, um Kontingenthinweise zu nutzen."
+    "PermissionRequired": "Erlaube Mitteilungen in den macOS-Einstellungen, um Kontingenthinweise zu nutzen.",
+    "SendTest": "Test senden",
+    "TestSent": "Testbenachrichtigung gesendet."
   },
   "AutoPing": {
     "Title": "Quota-Optimierer",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}}-Kontingent wird bald zurückgesetzt",
     "ResetSoonBody": "{{window}} für {{account}} wird in {{minutes}} Minuten zurückgesetzt.",
     "ResetHappenedTitle": "{{provider}}-Kontingent zurückgesetzt",
-    "ResetHappenedBody": "{{window}} für {{account}} ist wieder verfügbar."
+    "ResetHappenedBody": "{{window}} für {{account}} ist wieder verfügbar.",
+    "TestTitle": "{{provider}}-Warnungen sind aktiv",
+    "TestBody": "Devie Quota benachrichtigt Sie hier zu {{account}}."
   }
 }

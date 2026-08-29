@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Varsle meg 30 minutter før en kvote nullstilles.",
     "ResetComplete": "Nullstilling fullført",
     "ResetCompleteDescription": "Varsle meg etter at en kvote er nullstilt.",
-    "PermissionRequired": "Tillat varslinger i macOS-innstillingene for å bruke kvotevarsler."
+    "PermissionRequired": "Tillat varslinger i macOS-innstillingene for å bruke kvotevarsler.",
+    "SendTest": "Send test",
+    "TestSent": "Testvarsel sendt."
   },
   "AutoPing": {
     "Title": "Kvoteoptimalisering",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}}-kvoten nullstilles snart",
     "ResetSoonBody": "{{window}} for {{account}} nullstilles om {{minutes}} minutter.",
     "ResetHappenedTitle": "{{provider}}-kvoten er nullstilt",
-    "ResetHappenedBody": "{{window}} for {{account}} er tilgjengelig igjen."
+    "ResetHappenedBody": "{{window}} for {{account}} er tilgjengelig igjen.",
+    "TestTitle": "{{provider}}-varsler er på",
+    "TestBody": "Devie Quota varsler deg her om {{account}}."
   }
 }

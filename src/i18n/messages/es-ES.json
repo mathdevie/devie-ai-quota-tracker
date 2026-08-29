@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Avisarme 30 minutos antes de que se reinicie una cuota.",
     "ResetComplete": "Reinicio completado",
     "ResetCompleteDescription": "Avisarme después de que se reinicie una cuota.",
-    "PermissionRequired": "Permite las notificaciones en los Ajustes de macOS para usar las alertas de cuota."
+    "PermissionRequired": "Permite las notificaciones en los Ajustes de macOS para usar las alertas de cuota.",
+    "SendTest": "Enviar prueba",
+    "TestSent": "Notificación de prueba enviada."
   },
   "AutoPing": {
     "Title": "Optimizador de cuota",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "La cuota de {{provider}} se reinicia pronto",
     "ResetSoonBody": "{{window}} de {{account}} se reinicia en {{minutes}} minutos.",
     "ResetHappenedTitle": "Cuota de {{provider}} reiniciada",
-    "ResetHappenedBody": "{{window}} de {{account}} vuelve a estar disponible."
+    "ResetHappenedBody": "{{window}} de {{account}} vuelve a estar disponible.",
+    "TestTitle": "Alertas de {{provider}} activadas",
+    "TestBody": "Devie Quota te avisará aquí sobre {{account}}."
   }
 }

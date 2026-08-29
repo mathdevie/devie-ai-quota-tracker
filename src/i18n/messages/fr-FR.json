@@ -152,7 +152,9 @@
     "ResetSoonDescription": "M'alerter 30 minutes avant la réinitialisation d'un quota.",
     "ResetComplete": "Réinitialisation terminée",
     "ResetCompleteDescription": "M'alerter après la réinitialisation d'un quota.",
-    "PermissionRequired": "Autorisez les notifications dans les Réglages macOS pour utiliser les alertes de quota."
+    "PermissionRequired": "Autorisez les notifications dans les Réglages macOS pour utiliser les alertes de quota.",
+    "SendTest": "Envoyer un test",
+    "TestSent": "Notification de test envoyée."
   },
   "AutoPing": {
     "Title": "Optimiseur de quota",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "Le quota {{provider}} se réinitialise bientôt",
     "ResetSoonBody": "{{window}} pour {{account}} se réinitialise dans {{minutes}} minutes.",
     "ResetHappenedTitle": "Quota {{provider}} réinitialisé",
-    "ResetHappenedBody": "{{window}} pour {{account}} est de nouveau disponible."
+    "ResetHappenedBody": "{{window}} pour {{account}} est de nouveau disponible.",
+    "TestTitle": "Alertes {{provider}} activées",
+    "TestBody": "Devie Quota vous préviendra ici pour {{account}}."
   }
 }
