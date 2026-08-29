@@ -1,11 +1,11 @@
 use chrono::{DateTime, Duration, Timelike, Utc};
 use tauri::AppHandle;
-use tauri_plugin_notification::NotificationExt;
 
 use crate::{
     db::Database,
     messages,
     model::{Provider, ProviderConnection, QuotaReading, QuotaWindow},
+    notify,
 };
 
 const LOW_QUOTA_REMAINING_PERCENT: f64 = 20.0;
@@ -35,14 +35,7 @@ pub fn after_reading(
         else {
             continue;
         };
-        if app
-            .notification()
-            .builder()
-            .title(&notice.title)
-            .body(&notice.body)
-            .show()
-            .is_err()
-        {
+        if notify::show(app, &notice.title, &notice.body).is_err() {
             database.release_notification_claim(&notice.event_key);
         }
     }
@@ -61,20 +54,17 @@ pub fn send_test(
         .flatten()
         .unwrap_or_else(|| messages::DEFAULT_LOCALE.to_string());
     let provider = provider_name(&connection.provider);
-    app.notification()
-        .builder()
-        .title(messages::t(
-            locale.as_str(),
-            "Notifications.TestTitle",
-            &[("provider", provider)],
-        ))
-        .body(messages::t(
-            locale.as_str(),
-            "Notifications.TestBody",
-            &[("account", &account_name(connection))],
-        ))
-        .show()
-        .map_err(|error| error.to_string())
+    let title = messages::t(
+        &locale,
+        "Notifications.TestTitle",
+        &[("provider", provider)],
+    );
+    let body = messages::t(
+        &locale,
+        "Notifications.TestBody",
+        &[("account", &account_name(connection))],
+    );
+    notify::show(app, &title, &body)
 }
 
 fn notices(

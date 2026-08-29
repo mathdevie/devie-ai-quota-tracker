@@ -228,11 +228,12 @@ export async function setTraySummary(
 
 export async function ensureNotificationPermission(): Promise<boolean> {
   if (!isDesktop()) return true;
-  const { isPermissionGranted, requestPermission } = await import(
-    "@tauri-apps/plugin-notification"
+  const state = await call<"granted" | "denied" | "prompt">(
+    "notification_permission_state",
   );
-  if (await isPermissionGranted()) return true;
-  return (await requestPermission()) === "granted";
+  if (state === "granted") return true;
+  if (state === "denied") return false;
+  return call<boolean>("request_notification_permission");
 }
 
 export async function setMenuBarItemVisible(

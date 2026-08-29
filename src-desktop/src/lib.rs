@@ -5,6 +5,7 @@ mod credentials;
 mod db;
 mod messages;
 mod model;
+mod notify;
 mod oauth;
 mod parse;
 mod tray_icons;
@@ -152,8 +153,19 @@ fn set_connection_alerts(
     publish_state(&app, &core)
 }
 
+/// Runs on the async pool: the native calls wait for the notification daemon.
 #[tauri::command]
-fn send_test_notification(
+async fn notification_permission_state() -> String {
+    notify::permission_state()
+}
+
+#[tauri::command]
+async fn request_notification_permission() -> Result<bool, String> {
+    notify::request_permission()
+}
+
+#[tauri::command]
+async fn send_test_notification(
     app: AppHandle,
     core: State<'_, Core>,
     connection_id: String,
@@ -824,6 +836,8 @@ pub fn run() {
             set_connection_enabled,
             rename_connection,
             set_connection_alerts,
+            notification_permission_state,
+            request_notification_permission,
             send_test_notification,
             set_hidden_windows,
             set_auto_ping,
