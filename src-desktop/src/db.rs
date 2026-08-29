@@ -230,7 +230,6 @@ impl Database {
         self.put_setting(UPDATE_CHANNEL, Some(channel.as_str()))
     }
 
-
     pub fn set_show_menu_bar_item(&self, visible: bool) -> Result<(), String> {
         self.put_setting(SHOW_MENU_BAR_ITEM, Some(if visible { "1" } else { "0" }))
     }
