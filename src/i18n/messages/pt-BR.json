@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Avisar 30 minutos antes de uma cota ser redefinida.",
     "ResetComplete": "Redefinição concluída",
     "ResetCompleteDescription": "Avisar depois que uma cota for redefinida.",
-    "PermissionRequired": "Permita notificações nas Configurações do macOS para usar os alertas de cota."
+    "PermissionRequired": "Permita notificações nas Configurações do macOS para usar os alertas de cota.",
+    "SendTest": "Enviar teste",
+    "TestSent": "Notificação de teste enviada."
   },
   "AutoPing": {
     "Title": "Otimizador de cota",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "A cota do {{provider}} será redefinida em breve",
     "ResetSoonBody": "{{window}} de {{account}} será redefinida em {{minutes}} minutos.",
     "ResetHappenedTitle": "Cota do {{provider}} redefinida",
-    "ResetHappenedBody": "{{window}} de {{account}} está disponível novamente."
+    "ResetHappenedBody": "{{window}} de {{account}} está disponível novamente.",
+    "TestTitle": "Alertas do {{provider}} ativados",
+    "TestBody": "O Devie Quota vai avisar você aqui sobre {{account}}."
   }
 }

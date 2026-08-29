@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Waarschuw me 30 minuten voordat een quota wordt gereset.",
     "ResetComplete": "Reset voltooid",
     "ResetCompleteDescription": "Waarschuw me nadat een quota is gereset.",
-    "PermissionRequired": "Sta meldingen toe in macOS-instellingen om quotameldingen te gebruiken."
+    "PermissionRequired": "Sta meldingen toe in macOS-instellingen om quotameldingen te gebruiken.",
+    "SendTest": "Test verzenden",
+    "TestSent": "Testmelding verzonden."
   },
   "AutoPing": {
     "Title": "Quota-optimalisatie",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}}-quota wordt binnenkort gereset",
     "ResetSoonBody": "{{window}} voor {{account}} wordt over {{minutes}} minuten gereset.",
     "ResetHappenedTitle": "{{provider}}-quota gereset",
-    "ResetHappenedBody": "{{window}} voor {{account}} is weer beschikbaar."
+    "ResetHappenedBody": "{{window}} voor {{account}} is weer beschikbaar.",
+    "TestTitle": "{{provider}}-meldingen staan aan",
+    "TestBody": "Devie Quota waarschuwt je hier over {{account}}."
   }
 }

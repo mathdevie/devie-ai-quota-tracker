@@ -19,15 +19,19 @@ export default function AlertsDialog({
   connection,
   onOpenChange,
   onSubmit,
+  onTest,
 }: {
   connection?: ProviderConnection;
   onOpenChange: (open: boolean) => void;
   /** Resolves to true when the alerts were saved and the dialog can close. */
   onSubmit: (id: string, alerts: ConnectionAlerts) => Promise<boolean>;
+  /** Sends a sample notification; resolves to true when it was shown. */
+  onTest: (id: string) => Promise<boolean>;
 }) {
   const { t } = useTranslation();
   const [alerts, setAlerts] = useState<ConnectionAlerts>(NONE);
   const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
 
   useEffect(() => {
     if (connection) setAlerts(connection.alerts);
@@ -38,7 +42,7 @@ export default function AlertsDialog({
 
   return (
     <Dialog.Root
-      disableInteractions={saving}
+      disableInteractions={saving || testing}
       onOpenChange={onOpenChange}
       open={connection !== undefined}
       size="sm"
@@ -88,6 +92,23 @@ export default function AlertsDialog({
               </OptionRow.List>
             </Dialog.Body>
             <Dialog.Footer>
+              <Button
+                disabled={saving}
+                isLoading={testing}
+                onClick={async () => {
+                  if (!connection) return;
+                  setTesting(true);
+                  try {
+                    await onTest(connection.id);
+                  } finally {
+                    setTesting(false);
+                  }
+                }}
+                type="button"
+                variant="secondary"
+              >
+                {t("Alerts.SendTest")}
+              </Button>
               <Button
                 onClick={() => onOpenChange(false)}
                 size="sm"
