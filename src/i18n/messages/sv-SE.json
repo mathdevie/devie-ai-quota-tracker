@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Meddela mig 30 minuter innan en kvot återställs.",
     "ResetComplete": "Återställning klar",
     "ResetCompleteDescription": "Meddela mig efter att en kvot har återställts.",
-    "PermissionRequired": "Tillåt notiser i macOS-inställningarna för att använda kvotaviseringar."
+    "PermissionRequired": "Tillåt notiser i macOS-inställningarna för att använda kvotaviseringar.",
+    "SendTest": "Skicka test",
+    "TestSent": "Testavisering skickad."
   },
   "AutoPing": {
     "Title": "Kvotoptimering",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}}-kvoten återställs snart",
     "ResetSoonBody": "{{window}} för {{account}} återställs om {{minutes}} minuter.",
     "ResetHappenedTitle": "{{provider}}-kvoten har återställts",
-    "ResetHappenedBody": "{{window}} för {{account}} är tillgänglig igen."
+    "ResetHappenedBody": "{{window}} för {{account}} är tillgänglig igen.",
+    "TestTitle": "{{provider}}-aviseringar är på",
+    "TestBody": "Devie Quota meddelar dig här om {{account}}."
   }
 }

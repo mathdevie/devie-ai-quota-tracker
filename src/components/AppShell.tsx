@@ -18,6 +18,7 @@ import {
   refreshConnection,
   removeConnection,
   renameConnection,
+  sendTestNotification,
   setAutoPing,
   setConnectionAlerts,
   setConnectionEnabled,
@@ -186,6 +187,21 @@ function Shell() {
     return run(() => setConnectionAlerts(id, alerts), withBusyId(id));
   }
 
+  async function handleAlertsTest(id: string): Promise<boolean> {
+    if (!(await ensureNotificationPermission())) {
+      showError(t("Alerts.PermissionRequired"));
+      return false;
+    }
+    try {
+      await sendTestNotification(id);
+      toasts.add({ type: "success", description: t("Alerts.TestSent") });
+      return true;
+    } catch (reason) {
+      showError(reason);
+      return false;
+    }
+  }
+
   function navigate(next: AppPage) {
     if (isSamePage(page, next)) return;
     setBackStack((history) => [...history, page]);
@@ -338,6 +354,7 @@ function Shell() {
           connection={alertsFor}
           onOpenChange={(open) => !open && setAlertsFor(undefined)}
           onSubmit={handleAlertsSubmit}
+          onTest={handleAlertsTest}
         />
         <AutoPingDialog
           connection={autoPingFor}

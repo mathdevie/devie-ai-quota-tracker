@@ -153,6 +153,19 @@ fn set_connection_alerts(
 }
 
 #[tauri::command]
+fn send_test_notification(
+    app: AppHandle,
+    core: State<'_, Core>,
+    connection_id: String,
+) -> Result<(), String> {
+    let connection = core
+        .database
+        .connection_by_id(&connection_id)?
+        .ok_or_else(|| "Unknown account".to_string())?;
+    alerts::send_test(&app, &core.database, &connection)
+}
+
+#[tauri::command]
 fn set_hidden_windows(
     app: AppHandle,
     core: State<'_, Core>,
@@ -811,6 +824,7 @@ pub fn run() {
             set_connection_enabled,
             rename_connection,
             set_connection_alerts,
+            send_test_notification,
             set_hidden_windows,
             set_auto_ping,
             use_reset_credit,

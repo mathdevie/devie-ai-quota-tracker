@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Alert me 30 minutes before a quota resets.",
     "ResetComplete": "Reset complete",
     "ResetCompleteDescription": "Alert me after a quota resets.",
-    "PermissionRequired": "Allow notifications in macOS Settings to use quota alerts."
+    "PermissionRequired": "Allow notifications in macOS Settings to use quota alerts.",
+    "SendTest": "Send test",
+    "TestSent": "Test notification sent."
   },
   "AutoPing": {
     "Title": "Quota Optimiser",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}} quota resets soon",
     "ResetSoonBody": "{{window}} for {{account}} resets in {{minutes}} minutes.",
     "ResetHappenedTitle": "{{provider}} quota reset",
-    "ResetHappenedBody": "{{window}} for {{account}} is available again."
+    "ResetHappenedBody": "{{window}} for {{account}} is available again.",
+    "TestTitle": "{{provider}} alerts are on",
+    "TestBody": "Devie Quota will notify you here about {{account}}."
   }
 }

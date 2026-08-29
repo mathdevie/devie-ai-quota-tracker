@@ -48,6 +48,35 @@ pub fn after_reading(
     }
 }
 
+/// Shows one notification right away so the user sees the feature work and
+/// macOS asks for the notification permission at once.
+pub fn send_test(
+    app: &AppHandle,
+    database: &Database,
+    connection: &ProviderConnection,
+) -> Result<(), String> {
+    let locale = database
+        .language()
+        .ok()
+        .flatten()
+        .unwrap_or_else(|| messages::DEFAULT_LOCALE.to_string());
+    let provider = provider_name(&connection.provider);
+    app.notification()
+        .builder()
+        .title(messages::t(
+            locale.as_str(),
+            "Notifications.TestTitle",
+            &[("provider", provider)],
+        ))
+        .body(messages::t(
+            locale.as_str(),
+            "Notifications.TestBody",
+            &[("account", &account_name(connection))],
+        ))
+        .show()
+        .map_err(|error| error.to_string())
+}
+
 fn notices(
     locale: &str,
     connection: &ProviderConnection,

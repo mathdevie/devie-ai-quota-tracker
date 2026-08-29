@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Hälytä 30 minuuttia ennen kiintiön nollausta.",
     "ResetComplete": "Nollaus valmis",
     "ResetCompleteDescription": "Hälytä kiintiön nollauksen jälkeen.",
-    "PermissionRequired": "Salli ilmoitukset macOS:n asetuksissa käyttääksesi kiintiöhälytyksiä."
+    "PermissionRequired": "Salli ilmoitukset macOS:n asetuksissa käyttääksesi kiintiöhälytyksiä.",
+    "SendTest": "Lähetä testi",
+    "TestSent": "Testi-ilmoitus lähetetty."
   },
   "AutoPing": {
     "Title": "Kiintiön optimointi",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "{{provider}}-kiintiö nollautuu pian",
     "ResetSoonBody": "{{window}} ({{account}}) nollautuu {{minutes}} minuutin kuluttua.",
     "ResetHappenedTitle": "{{provider}}-kiintiö nollattu",
-    "ResetHappenedBody": "{{window}} ({{account}}) on taas käytettävissä."
+    "ResetHappenedBody": "{{window}} ({{account}}) on taas käytettävissä.",
+    "TestTitle": "{{provider}}-hälytykset ovat päällä",
+    "TestBody": "Devie Quota ilmoittaa sinulle täällä tilistä {{account}}."
   }
 }

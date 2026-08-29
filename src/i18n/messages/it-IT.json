@@ -152,7 +152,9 @@
     "ResetSoonDescription": "Avvisami 30 minuti prima del reset di una quota.",
     "ResetComplete": "Reset completato",
     "ResetCompleteDescription": "Avvisami dopo il reset di una quota.",
-    "PermissionRequired": "Consenti le notifiche nelle Impostazioni di macOS per usare gli avvisi sulle quote."
+    "PermissionRequired": "Consenti le notifiche nelle Impostazioni di macOS per usare gli avvisi sulle quote.",
+    "SendTest": "Invia un test",
+    "TestSent": "Notifica di prova inviata."
   },
   "AutoPing": {
     "Title": "Ottimizzatore quota",
@@ -204,6 +206,8 @@
     "ResetSoonTitle": "La quota {{provider}} si reimposta a breve",
     "ResetSoonBody": "{{window}} per {{account}} si reimposta tra {{minutes}} minuti.",
     "ResetHappenedTitle": "Quota {{provider}} reimpostata",
-    "ResetHappenedBody": "{{window}} per {{account}} è di nuovo disponibile."
+    "ResetHappenedBody": "{{window}} per {{account}} è di nuovo disponibile.",
+    "TestTitle": "Avvisi {{provider}} attivi",
+    "TestBody": "Devie Quota ti avviserà qui per {{account}}."
   }
 }
