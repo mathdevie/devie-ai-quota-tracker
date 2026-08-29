@@ -161,6 +161,14 @@ export async function setConnectionAlerts(
   return call("set_connection_alerts", { connectionId, alerts });
 }
 
+/** Shows a sample notification so the user can check the macOS permission. */
+export async function sendTestNotification(
+  connectionId: string,
+): Promise<void> {
+  if (!isDesktop()) return;
+  await call("send_test_notification", { connectionId });
+}
+
 /** Saves the quota bars the user hid on one account card. */
 export async function setHiddenWindows(
   connectionId: string,
