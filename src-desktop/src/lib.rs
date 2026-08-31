@@ -679,12 +679,13 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .min_inner_size(780.0, 560.0)
         .center();
     // The interface draws its own title bar. macOS keeps the native traffic
-    // lights, placed inside the sidebar header.
+    // lights, centered in the 52px title bar; the web side clears them
+    // with a matching left inset (TitleBar.module.scss).
     #[cfg(target_os = "macos")]
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(20.0, 35.0));
+        .traffic_light_position(tauri::LogicalPosition::new(20.0, 19.0));
     main.build()?;
 
     let popover =
