@@ -81,9 +81,18 @@ export default function PopoverSurface({
     return () => observer.disconnect();
   }, []);
 
+  const providerCount = new Set(
+    state.connections
+      .filter((connection) => connection.enabled)
+      .map((connection) => connection.provider),
+  ).size;
   const connections = useMemo(
-    () => applyFilters(state.connections, filters),
-    [state.connections, filters],
+    () =>
+      applyFilters(
+        state.connections,
+        providerCount > 1 ? filters : { ...filters, provider: "all" },
+      ),
+    [state.connections, filters, providerCount],
   );
   const pinned = state.settings.traySummary;
 
@@ -110,7 +119,30 @@ export default function PopoverSurface({
         data-native-material={isDesktop() || undefined}
       >
         <header className={styles.header} ref={headerRef}>
-          <div className={styles.headerGroup}>
+          {providerCount > 1 && (
+            <div className={styles.headerGroup}>
+              <QuotaFilters
+                compact
+                filters={filters}
+                onChange={updateFilters}
+              />
+            </div>
+          )}
+          <div className={styles.headerActions}>
+            <IconTip label={t("Quota.RefreshQuotas")}>
+              <Button
+                aria-label={t("Quota.RefreshQuotas")}
+                disabled={refreshing}
+                onClick={onRefresh}
+                size="sm"
+                variant="icon-naked"
+              >
+                <RefreshCw
+                  className={refreshing ? styles.spinning : undefined}
+                  size={14}
+                />
+              </Button>
+            </IconTip>
             <IconTip label={t("Popover.OpenDashboard")}>
               <Button
                 aria-label={t("Popover.OpenDashboard")}
@@ -121,22 +153,7 @@ export default function PopoverSurface({
                 <Settings size={14} />
               </Button>
             </IconTip>
-            <QuotaFilters compact filters={filters} onChange={updateFilters} />
           </div>
-          <IconTip label={t("Quota.RefreshQuotas")}>
-            <Button
-              aria-label={t("Quota.RefreshQuotas")}
-              disabled={refreshing}
-              onClick={onRefresh}
-              size="sm"
-              variant="icon-naked"
-            >
-              <RefreshCw
-                className={refreshing ? styles.spinning : undefined}
-                size={14}
-              />
-            </Button>
-          </IconTip>
         </header>
 
         <ScrollArea.Root className={styles.list}>

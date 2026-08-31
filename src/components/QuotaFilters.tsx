@@ -54,7 +54,7 @@ function FilterSelect<T extends string>({
           <Select.Value />
         </>
       )}
-      <Select.Icon />
+      <Select.Icon className={compact ? styles.compactChevron : undefined} />
     </Select.Trigger>
   );
   return (
