@@ -19,6 +19,12 @@
   }
 }
 
+// A quiet way out at the top of a page, so nobody gets stuck.
+.pageBack {
+  justify-self: start;
+  color: $devie__color__text-sub;
+}
+
 // Page actions sit here, under the title bar, never in it.
 .toolbar {
   display: flex;

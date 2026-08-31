@@ -16,7 +16,7 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Quota": "Cota",
+    "Quota": "Rastreador de cotas de IA",
     "Providers": "Provedores",
     "Settings": "Configurações",
     "Back": "Voltar",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Adicionar uma conta {{name}}",
     "NoAccountsYet": "Nenhuma conta {{name}} ainda.",
     "EnableAccount": "Ativar {{name}}",
-    "DisableAccount": "Desativar {{name}}"
+    "DisableAccount": "Desativar {{name}}",
+    "BackToSettings": "Voltar às configurações"
   },
   "Login": {
     "Title": "Adicionar uma conta {{name}}",
@@ -189,7 +190,8 @@
         "Stable": "Estável",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Voltar ao painel"
   },
   "Tray": {
     "Open": "Abrir o Devie Quota",

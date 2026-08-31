@@ -16,7 +16,7 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Quota": "Kvote",
+    "Quota": "AI-kvotetracker",
     "Providers": "Udbydere",
     "Settings": "Indstillinger",
     "Back": "Tilbage",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Tilføj en {{name}}-konto",
     "NoAccountsYet": "Ingen {{name}}-konti endnu.",
     "EnableAccount": "Aktivér {{name}}",
-    "DisableAccount": "Deaktivér {{name}}"
+    "DisableAccount": "Deaktivér {{name}}",
+    "BackToSettings": "Tilbage til indstillinger"
   },
   "Login": {
     "Title": "Tilføj en {{name}}-konto",
@@ -189,7 +190,8 @@
         "Stable": "Stabil",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Tilbage til dashboardet"
   },
   "Tray": {
     "Open": "Åbn Devie Quota",

@@ -16,7 +16,7 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Quota": "Quota",
+    "Quota": "Monitoraggio delle quote IA",
     "Providers": "Provider",
     "Settings": "Impostazioni",
     "Back": "Indietro",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Aggiungi un account {{name}}",
     "NoAccountsYet": "Ancora nessun account {{name}}.",
     "EnableAccount": "Attiva {{name}}",
-    "DisableAccount": "Disattiva {{name}}"
+    "DisableAccount": "Disattiva {{name}}",
+    "BackToSettings": "Torna alle impostazioni"
   },
   "Login": {
     "Title": "Aggiungi un account {{name}}",
@@ -189,7 +190,8 @@
         "Stable": "Stabile",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Torna alla dashboard"
   },
   "Tray": {
     "Open": "Apri Devie Quota",
