@@ -5,20 +5,17 @@
   font-size: $devie__font-size__small;
 }
 
-// An icon-only trigger that sits beside the popover header icon buttons.
+// A text-only trigger that sits beside the popover header icon buttons.
 .compact {
   min-height: 24px;
   padding: $devie__spacing__x05;
   border-color: transparent;
   background: transparent;
+  white-space: nowrap;
 }
 
+// The chevron stays put; no open-state flip in the popover header.
 .compactChevron {
   transition: none;
-}
-
-// Colors the sort mark on the compact trigger.
-.sortMark {
-  flex-shrink: 0;
-  color: $devie__color__text-sub;
+  transform: none;
 }
