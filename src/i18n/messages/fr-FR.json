@@ -16,7 +16,7 @@
     "Theme": "Thème"
   },
   "Nav": {
-    "Quota": "Quota",
+    "Quota": "Suivi des quotas d'IA",
     "Providers": "Fournisseurs",
     "Settings": "Réglages",
     "Back": "Retour",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Ajouter un compte {{name}}",
     "NoAccountsYet": "Aucun compte {{name}} pour l'instant.",
     "EnableAccount": "Activer {{name}}",
-    "DisableAccount": "Désactiver {{name}}"
+    "DisableAccount": "Désactiver {{name}}",
+    "BackToSettings": "Revenir aux réglages"
   },
   "Login": {
     "Title": "Ajouter un compte {{name}}",
@@ -196,7 +197,8 @@
         "Stable": "Stable",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Revenir au tableau de bord"
   },
   "Tray": {
     "Open": "Ouvrir Devie Quota",

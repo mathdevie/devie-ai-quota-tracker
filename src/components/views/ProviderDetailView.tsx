@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type {
   DashboardState,
@@ -44,12 +44,14 @@ export default function ProviderDetailView({
   state,
   busyId,
   onAdd,
+  onBack,
   ...actions
 }: {
   provider: Provider;
   state: DashboardState;
   busyId?: string;
   onAdd: () => void;
+  onBack: () => void;
 } & ConnectionActions) {
   const { t } = useTranslation();
   const connections = state.connections.filter(
@@ -59,6 +61,15 @@ export default function ProviderDetailView({
 
   return (
     <section className={styles.page}>
+      <Button
+        className={styles.pageBack}
+        onClick={onBack}
+        size="sm"
+        variant="naked"
+      >
+        <ArrowLeft size={14} />
+        {t("Providers.BackToSettings")}
+      </Button>
       {connections.length > 0 && (
         <div className={styles.toolbar}>
           <Button

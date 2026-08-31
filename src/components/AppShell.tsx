@@ -215,20 +215,27 @@ function Shell() {
   const title = onProviderPage
     ? PROVIDER_NAMES[providerPage]
     : t(view === "settings" ? "Nav.Settings" : "Nav.Quota");
-  // A provider page goes up to Settings; Settings closes back to Quota.
+  // A provider page goes up to Settings with the arrow; anywhere inside
+  // Settings, the cross at the right closes back to the dashboard.
   const leading = onProviderPage
     ? {
         icon: "back" as const,
         label: t("Nav.Back"),
         onClick: () => setPage({ view: "settings" }),
       }
-    : view === "settings"
+    : undefined;
+  const trailing =
+    view === "settings"
       ? {
           icon: "close" as const,
           label: t("Nav.Close"),
           onClick: () => setPage({ view: "quota" }),
         }
-      : undefined;
+      : {
+          icon: "settings" as const,
+          label: t("Nav.Settings"),
+          onClick: () => setPage({ view: "settings" }),
+        };
 
   return (
     <AppUpdaterProvider>
@@ -236,11 +243,8 @@ function Shell() {
         <TitleBar
           actions={<UpdateBadge />}
           leading={leading}
-          onOpenSettings={
-            view === "quota" ? () => setPage({ view: "settings" }) : undefined
-          }
-          settingsLabel={t("Nav.Settings")}
           title={title}
+          trailing={trailing}
           windowControlsInset={desktop}
         />
 
@@ -260,6 +264,7 @@ function Shell() {
               <ProviderDetailView
                 busyId={busyId}
                 onAdd={() => setLogin({ open: true })}
+                onBack={() => setPage({ view: "settings" })}
                 provider={providerPage}
                 state={state}
                 {...actions}
@@ -274,6 +279,7 @@ function Shell() {
                     setSettingsBusy,
                   )
                 }
+                onClose={() => setPage({ view: "quota" })}
                 onOpenProvider={(provider) =>
                   setPage({ view: "settings", provider })
                 }

@@ -16,7 +16,7 @@
     "Theme": "Design"
   },
   "Nav": {
-    "Quota": "Kontingent",
+    "Quota": "KI-Kontingent-Tracker",
     "Providers": "Anbieter",
     "Settings": "Einstellungen",
     "Back": "Zurück",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "{{name}}-Konto hinzufügen",
     "NoAccountsYet": "Noch keine {{name}}-Konten.",
     "EnableAccount": "{{name}} aktivieren",
-    "DisableAccount": "{{name}} deaktivieren"
+    "DisableAccount": "{{name}} deaktivieren",
+    "BackToSettings": "Zurück zu den Einstellungen"
   },
   "Login": {
     "Title": "{{name}}-Konto hinzufügen",
@@ -196,7 +197,8 @@
         "Stable": "Stabil",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Zurück zum Dashboard"
   },
   "Tray": {
     "Open": "Devie Quota öffnen",

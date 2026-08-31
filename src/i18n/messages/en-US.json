@@ -16,7 +16,7 @@
     "Theme": "Theme"
   },
   "Nav": {
-    "Quota": "Quota",
+    "Quota": "AI Quota Tracker",
     "Providers": "Providers",
     "Settings": "Settings",
     "Back": "Back",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Add a {{name}} account",
     "NoAccountsYet": "No {{name}} accounts yet.",
     "EnableAccount": "Enable {{name}}",
-    "DisableAccount": "Disable {{name}}"
+    "DisableAccount": "Disable {{name}}",
+    "BackToSettings": "Back to settings"
   },
   "Login": {
     "Title": "Add a {{name}} account",
@@ -196,7 +197,8 @@
         "Stable": "Stable",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Back to dashboard"
   },
   "Tray": {
     "Open": "Open Devie Quota",
