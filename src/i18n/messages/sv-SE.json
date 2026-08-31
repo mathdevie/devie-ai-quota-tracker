@@ -7,7 +7,6 @@
     "Description": "En lokal kvotspårare för AI-prenumerationer"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Avbryt",
     "Save": "Spara",
     "Close": "Stäng",

@@ -7,7 +7,6 @@
     "Description": "Ein lokaler Kontingent-Tracker für KI-Abonnements"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Abbrechen",
     "Save": "Speichern",
     "Close": "Schließen",

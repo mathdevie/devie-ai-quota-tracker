@@ -1,0 +1,54 @@
+name: Bug report
+description: Report something that does not work.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the Providers view.
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Settings → About, or the menu bar item.
+      placeholder: 0.10.0
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      placeholder: macOS 15.6
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Affected provider
+      multiple: true
+      options:
+        - Claude
+        - Codex
+        - Gemini CLI
+        - GitHub Copilot
+        - Cursor
+        - None / app-wide
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: >
+        Attach screenshots or error text. Never include tokens or the
+        contents of the credentials folder.

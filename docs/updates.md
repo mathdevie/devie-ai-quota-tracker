@@ -1,7 +1,7 @@
 # Auto-updates
 
-Devie Quota updates itself through CrabNebula Cloud, the same way the Mana
-desktop app does. The app checks at start and installs a found update right
+Devie Quota updates itself through CrabNebula Cloud. The app checks at
+start and installs a found update right
 away. Later checks run every 15 minutes; a downloaded update shows an
 **Update available** button in the sidebar.
 

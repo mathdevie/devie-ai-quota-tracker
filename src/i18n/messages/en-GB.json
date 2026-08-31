@@ -7,7 +7,6 @@
     "Description": "A local AI subscription quota tracker"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Cancel",
     "Save": "Save",
     "Close": "Close",
