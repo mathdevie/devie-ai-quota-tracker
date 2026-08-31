@@ -51,6 +51,7 @@
     "FilterProvider": "Palveluntarjoaja",
     "FilterSort": "Järjestys",
     "AllProviders": "Kaikki palveluntarjoajat",
+    "All": "Kaikki",
     "Sort": {
       "Expiring": "Pian vanhenevat ensin",
       "LeastLeft": "Vähiten jäljellä",

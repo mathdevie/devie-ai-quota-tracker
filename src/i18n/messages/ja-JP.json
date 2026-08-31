@@ -51,6 +51,7 @@
     "FilterProvider": "プロバイダー",
     "FilterSort": "並び替え",
     "AllProviders": "すべてのプロバイダー",
+    "All": "すべて",
     "Sort": {
       "Expiring": "リセットが近い順",
       "LeastLeft": "残りが少ない順",

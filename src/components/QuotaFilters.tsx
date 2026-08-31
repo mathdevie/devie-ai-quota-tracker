@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-import { ArrowUpDown } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -29,16 +28,13 @@ function FilterSelect<T extends string>({
   options,
   onChange,
   compact,
-  compactIcon,
 }: {
   label: string;
   value: T;
-  options: { value: T; label: string; icon?: ReactNode }[];
+  options: { value: T; label: string; shortLabel?: string; icon?: ReactNode }[];
   onChange: (value: T) => void;
-  /** An icon-only trigger with a tooltip, for the menu bar popover header. */
+  /** A text-only trigger with a tooltip, for the menu bar popover header. */
   compact?: boolean;
-  /** Shown on the compact trigger when the options carry no icon. */
-  compactIcon?: ReactNode;
 }) {
   const selected = options.find((option) => option.value === value);
   const trigger = (
@@ -47,7 +43,7 @@ function FilterSelect<T extends string>({
       className={clsx(styles.trigger, compact && styles.compact)}
     >
       {compact ? (
-        (selected?.icon ?? compactIcon)
+        (selected?.shortLabel ?? selected?.label)
       ) : (
         <>
           {selected?.icon}
@@ -101,6 +97,7 @@ export default function QuotaFilters({
   const providerOptions = PROVIDER_FILTERS.map((value) => ({
     value,
     label: value === "all" ? t("Quota.AllProviders") : PROVIDER_NAMES[value],
+    shortLabel: value === "all" ? t("Quota.All") : undefined,
     icon:
       value === "all" ? undefined : <ProviderIcon provider={value} size={16} />,
   }));
@@ -120,7 +117,6 @@ export default function QuotaFilters({
       />
       <FilterSelect
         compact={compact}
-        compactIcon={<ArrowUpDown className={styles.sortMark} size={16} />}
         label={t("Quota.FilterSort")}
         onChange={(sort) => onChange({ sort })}
         options={sortOptions}

@@ -51,6 +51,7 @@
     "FilterProvider": "Udbyder",
     "FilterSort": "Sortering",
     "AllProviders": "Alle udbydere",
+    "All": "Alle",
     "Sort": {
       "Expiring": "Udløber snart først",
       "LeastLeft": "Mindst tilbage",
