@@ -13,9 +13,8 @@
   background: transparent;
 }
 
-// Stands in for a brand logo on the "all providers" row, so every row aligns.
-// Also colors the sort mark on the compact trigger.
-.allMark {
+// Colors the sort mark on the compact trigger.
+.sortMark {
   flex-shrink: 0;
   color: $devie__color__text-sub;
 }

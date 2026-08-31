@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { ArrowUpDown, Plug } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -65,7 +65,11 @@ function FilterSelect<T extends string>({
     >
       {compact ? <IconTip label={label}>{trigger}</IconTip> : trigger}
       <Select.Portal>
-        <Select.Positioner sideOffset={4}>
+        <Select.Positioner
+          alignItemWithTrigger={false}
+          side="bottom"
+          sideOffset={4}
+        >
           <Select.Popup>
             <Select.List>
               {options.map((option) => (
@@ -98,11 +102,7 @@ export default function QuotaFilters({
     value,
     label: value === "all" ? t("Quota.AllProviders") : PROVIDER_NAMES[value],
     icon:
-      value === "all" ? (
-        <Plug className={styles.allMark} size={16} />
-      ) : (
-        <ProviderIcon provider={value} size={16} />
-      ),
+      value === "all" ? undefined : <ProviderIcon provider={value} size={16} />,
   }));
   const sortOptions = SORTS.map((value) => ({
     value,
@@ -120,7 +120,7 @@ export default function QuotaFilters({
       />
       <FilterSelect
         compact={compact}
-        compactIcon={<ArrowUpDown className={styles.allMark} size={16} />}
+        compactIcon={<ArrowUpDown className={styles.sortMark} size={16} />}
         label={t("Quota.FilterSort")}
         onChange={(sort) => onChange({ sort })}
         options={sortOptions}
