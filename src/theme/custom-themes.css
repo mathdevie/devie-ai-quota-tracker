@@ -1,0 +1,40 @@
+/*
+ * The app surfaces for the custom Devie UI themes. The native macOS palette
+ * in `app/macos.scss` covers only the Light and Dark appearances; these
+ * rules derive the same surfaces from each theme's own tokens, so the theme
+ * files under `src/ui/themes` stay unchanged.
+ */
+[data-devie-theme="theme-midnight-ink"],
+[data-devie-theme="theme-copper-sunset"],
+[data-devie-theme="theme-aurora-green"],
+[data-devie-theme="theme-sharingan"],
+[data-devie-theme="theme-alpine-snow"],
+[data-devie-theme="theme-command-prompt"],
+[data-devie-theme="theme-totoro"],
+[data-devie-theme="theme-catpuccin-latte"] {
+  --macos__container-border: var(--devie__color__line);
+  --macos__content-background: var(--devie__color__background);
+  --macos__dialog-background: var(--devie__color__background);
+  --macos__group-background: var(--devie__color__background-sub);
+  /* The popover sits on the vibrancy blur; the tint keeps it translucent. */
+  --macos__popover-tint: color-mix(
+    in srgb,
+    var(--devie__color__background) 75%,
+    transparent
+  );
+}
+
+/* Scrollbars and native controls follow each theme's appearance. */
+[data-devie-theme="theme-copper-sunset"],
+[data-devie-theme="theme-alpine-snow"],
+[data-devie-theme="theme-totoro"],
+[data-devie-theme="theme-catpuccin-latte"] {
+  color-scheme: light;
+}
+
+[data-devie-theme="theme-midnight-ink"],
+[data-devie-theme="theme-aurora-green"],
+[data-devie-theme="theme-sharingan"],
+[data-devie-theme="theme-command-prompt"] {
+  color-scheme: dark;
+}

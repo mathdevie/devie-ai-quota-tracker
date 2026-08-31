@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-command-prompt"] {
     --devie__theme-name: Command Prompt;
-    color-scheme: dark;
     --devie__color__text: #00ff00;
     --devie__color__text-sub: #00cc00;
     --devie__color__line: #003300;

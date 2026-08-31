@@ -1,72 +1,18 @@
 @layer devie {
-  /*
-   * The macOS dark appearance. The hex values follow the Apple Human
-   * Interface Guidelines. In WebKit the -apple-system-* colors and
-   * AccentColor replace them, so the window follows the user's accent color.
-   */
   [data-devie-theme="theme-dark"] {
     --devie__theme-name: Dark;
-    color-scheme: dark;
-    --devie__color__text: rgba(255, 255, 255, 0.85);
-    --devie__color__text-sub: rgba(255, 255, 255, 0.55);
-    --devie__color__line: rgba(255, 255, 255, 0.1);
-    /* The window backdrop. The grouped cards sit on it. */
-    --devie-app__canvas: #1e1e1e;
-    --devie__color__background: #2a2a2a;
-    --devie__color__background-sub: #262626;
-    --devie__color__primary: #0a84ff;
-    --devie__color__primary-label: #ffffff;
-    --devie__color__danger: #ff453a;
-    --devie__color__danger-label: #ffffff;
-    --devie__color__success: #32d74b;
-    --devie__color__success-label: #ffffff;
-    --devie__color__warning: #ff9f0a;
-    --devie__color__warning-label: #ffffff;
-    --devie__color__literal-gray: #98989d;
-    --devie__color__literal-brown: #ac8e68;
-    --devie__color__literal-orange: #ff9f0a;
-    --devie__color__literal-yellow: #ffd60a;
-    --devie__color__literal-green: #32d74b;
-    --devie__color__literal-blue: #0a84ff;
-    --devie__color__literal-purple: #bf5af2;
-    --devie__color__literal-pink: #ff375f;
-    --devie__color__literal-red: #ff453a;
+    --devie__color__text: #d2d4d7;
+    --devie__color__text-sub: #717070;
+    --devie__color__line: #303030;
+    --devie__color__background: #131313;
+    --devie__color__background-sub: #1c1c1c;
+    --devie__color__primary: #d1d1d1;
+    --devie__color__primary-label: #131313;
     --devie__font-family:
-      -apple-system, BlinkMacSystemFont, system-ui, "Helvetica Neue", Helvetica,
-      Arial, "Apple Color Emoji", sans-serif;
-    --devie__shadow__menu:
-      0px 10px 30px -16px rgba(0, 0, 0, 0.5),
-      0px 4px 10px -6px rgba(0, 0, 0, 0.6);
+      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     --devie__effect__hover-intensity: 0.4;
     --devie__effect__disabled-intensity: 0.7;
     --devie__effect__disabled-desaturate: 0.3;
     --devie__effect__disabled-target-l: 0.5;
-  }
-
-  @supports (color: -apple-system-blue) {
-    [data-devie-theme="theme-dark"] {
-      --devie__color__text: -apple-system-label;
-      --devie__color__text-sub: -apple-system-secondary-label;
-      --devie__color__line: -apple-system-separator;
-      --devie__color__danger: -apple-system-red;
-      --devie__color__success: -apple-system-green;
-      --devie__color__warning: -apple-system-orange;
-      --devie__color__literal-gray: -apple-system-gray;
-      --devie__color__literal-brown: -apple-system-brown;
-      --devie__color__literal-orange: -apple-system-orange;
-      --devie__color__literal-yellow: -apple-system-yellow;
-      --devie__color__literal-green: -apple-system-green;
-      --devie__color__literal-blue: -apple-system-blue;
-      --devie__color__literal-purple: -apple-system-purple;
-      --devie__color__literal-pink: -apple-system-pink;
-      --devie__color__literal-red: -apple-system-red;
-    }
-  }
-
-  @supports (color: AccentColor) {
-    [data-devie-theme="theme-dark"] {
-      --devie__color__primary: AccentColor;
-      --devie__color__primary-label: AccentColorText;
-    }
   }
 }

@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-sharingan"] {
     --devie__theme-name: Sharingan;
-    color-scheme: dark;
     --devie__color__text: #fafafa;
     --devie__color__text-sub: #a1a1aa;
     --devie__color__line: #27272a;

@@ -17,8 +17,8 @@
 
     /* Font Tokens */
     --devie__font-family:
-      -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
-      "Helvetica Neue", Helvetica, Arial, "Apple Color Emoji", sans-serif;
+      -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     --devie__font-size__title1: 32px;
     --devie__font-size__title2: 24px;
     --devie__font-size__title3: 20.5px;

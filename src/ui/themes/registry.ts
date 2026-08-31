@@ -8,10 +8,9 @@ import CatpuccinLatteThumbnail from "@/ui/themes/catpuccin-latte/thumbnail.svg";
 import CommandPromptThumbnail from "@/ui/themes/command-prompt/thumbnail.svg";
 import CopperSunsetThumbnail from "@/ui/themes/copper-sunset/thumbnail.svg";
 import DarkThumbnail from "@/ui/themes/dark/thumbnail.svg";
-import LightThumbnail from "@/ui/themes/light/thumbnail.svg";
+import DefaultThumbnail from "@/ui/themes/default/thumbnail.svg";
 import MidnightInkThumbnail from "@/ui/themes/midnight-ink/thumbnail.svg";
 import SharinganThumbnail from "@/ui/themes/sharingan/thumbnail.svg";
-import SystemThumbnail from "@/ui/themes/system/thumbnail.svg";
 import TotoroThumbnail from "@/ui/themes/totoro/thumbnail.svg";
 
 export interface ThemeOption {
@@ -22,39 +21,11 @@ export interface ThemeOption {
   categories?: string[];
 }
 
-/** Follows the macOS appearance: `theme-light` or `theme-dark`. */
-export const SYSTEM_THEME = "system";
-export const LIGHT_THEME = "theme-light";
-export const DARK_THEME = "theme-dark";
-
 export const THEMES: ThemeOption[] = [
   {
-    nameKey: "system",
-    className: SYSTEM_THEME,
-    thumbnailSrc: SystemThumbnail,
-    categories: ["All"],
-    displayName: {
-      "en-US": "System",
-      "en-GB": "System",
-      "fr-FR": "Système",
-      "de-DE": "System",
-      "it-IT": "Sistema",
-      "ja-JP": "システム",
-      "es-ES": "Sistema",
-      "es-419": "Sistema",
-      "pt-BR": "Sistema",
-      "fi-FI": "Järjestelmä",
-      "da-DK": "System",
-      "nl-NL": "Systeem",
-      "nb-NO": "System",
-      "sv-SE": "System",
-      "zh-CN": "系统",
-    },
-  },
-  {
-    nameKey: "light",
-    className: LIGHT_THEME,
-    thumbnailSrc: LightThumbnail,
+    nameKey: "default",
+    className: "theme-default",
+    thumbnailSrc: DefaultThumbnail,
     categories: ["All", "Light"],
     displayName: {
       "en-US": "Light",
@@ -62,7 +33,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Clair",
       "de-DE": "Hell",
       "it-IT": "Chiaro",
-      "ja-JP": "ライト",
       "es-ES": "Claro",
       "es-419": "Claro",
       "pt-BR": "Claro",
@@ -71,12 +41,11 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Licht",
       "nb-NO": "Lys",
       "sv-SE": "Ljus",
-      "zh-CN": "浅色",
     },
   },
   {
     nameKey: "dark",
-    className: DARK_THEME,
+    className: "theme-dark",
     thumbnailSrc: DarkThumbnail,
     categories: ["All", "Dark"],
     displayName: {
@@ -85,7 +54,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Sombre",
       "de-DE": "Dunkel",
       "it-IT": "Scuro",
-      "ja-JP": "ダーク",
       "es-ES": "Oscuro",
       "es-419": "Oscuro",
       "pt-BR": "Escuro",
@@ -94,7 +62,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Donker",
       "nb-NO": "Mørk",
       "sv-SE": "Mörk",
-      "zh-CN": "深色",
     },
   },
   {
@@ -108,7 +75,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Encre de Minuit",
       "de-DE": "Mitternacht Tinte",
       "it-IT": "Inchiostro di Mezzanotte",
-      "ja-JP": "ミッドナイトインク",
       "es-ES": "Tinta de Medianoche",
       "es-419": "Tinta de Medianoche",
       "pt-BR": "Tinta da Meia-Noite",
@@ -117,7 +83,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Middernacht Inkt",
       "nb-NO": "Midnattsblekk",
       "sv-SE": "Midnattsbläck",
-      "zh-CN": "午夜墨色",
     },
   },
   {
@@ -131,7 +96,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Coucher de Soleil Cuivré",
       "de-DE": "Kupfer Sonnenuntergang",
       "it-IT": "Tramonto di Rame",
-      "ja-JP": "カッパーサンセット",
       "es-ES": "Atardecer de Cobre",
       "es-419": "Atardecer de Cobre",
       "pt-BR": "Pôr do Sol de Cobre",
@@ -140,7 +104,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Koperen Zonsondergang",
       "nb-NO": "Kobber Solnedgang",
       "sv-SE": "Koppar Solnedgång",
-      "zh-CN": "赤铜夕照",
     },
   },
   {
@@ -154,7 +117,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Aurora Vert",
       "de-DE": "Aurora Grün",
       "it-IT": "Aurora Verde",
-      "ja-JP": "オーロラグリーン",
       "es-ES": "Aurora Verde",
       "es-419": "Aurora Verde",
       "pt-BR": "Aurora Verde",
@@ -163,7 +125,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Aurora Groen",
       "nb-NO": "Aurora Grønn",
       "sv-SE": "Aurora Grön",
-      "zh-CN": "极光绿",
     },
   },
   {
@@ -177,7 +138,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Sharingan",
       "de-DE": "Sharingan",
       "it-IT": "Sharingan",
-      "ja-JP": "写輪眼",
       "es-ES": "Sharingan",
       "es-419": "Sharingan",
       "pt-BR": "Sharingan",
@@ -186,7 +146,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Sharingan",
       "nb-NO": "Sharingan",
       "sv-SE": "Sharingan",
-      "zh-CN": "写轮眼",
     },
   },
   {
@@ -200,7 +159,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Neige Alpine",
       "de-DE": "Alpiner Schnee",
       "it-IT": "Neve Alpina",
-      "ja-JP": "アルパインスノー",
       "es-ES": "Nieve Alpina",
       "es-419": "Nieve Alpina",
       "pt-BR": "Neve Alpina",
@@ -209,7 +167,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Alpijnse Sneeuw",
       "nb-NO": "Alpin Snø",
       "sv-SE": "Alpin Snö",
-      "zh-CN": "高山白雪",
     },
   },
   {
@@ -223,7 +180,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Command Prompt",
       "de-DE": "Command Prompt",
       "it-IT": "Command Prompt",
-      "ja-JP": "Command Prompt",
       "es-ES": "Command Prompt",
       "es-419": "Command Prompt",
       "pt-BR": "Command Prompt",
@@ -232,7 +188,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Command Prompt",
       "nb-NO": "Command Prompt",
       "sv-SE": "Command Prompt",
-      "zh-CN": "Command Prompt",
     },
   },
   {
@@ -246,7 +201,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Totoro",
       "de-DE": "Totoro",
       "it-IT": "Totoro",
-      "ja-JP": "トトロ",
       "es-ES": "Totoro",
       "es-419": "Totoro",
       "pt-BR": "Totoro",
@@ -255,7 +209,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Totoro",
       "nb-NO": "Totoro",
       "sv-SE": "Totoro",
-      "zh-CN": "龙猫",
     },
   },
   {
@@ -269,7 +222,6 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Catpuccin Latte",
       "de-DE": "Catpuccin Latte",
       "it-IT": "Catpuccin Latte",
-      "ja-JP": "Catpuccin Latte",
       "es-ES": "Catpuccin Latte",
       "es-419": "Catpuccin Latte",
       "pt-BR": "Catpuccin Latte",
@@ -278,7 +230,6 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Catpuccin Latte",
       "nb-NO": "Catpuccin Latte",
       "sv-SE": "Catpuccin Latte",
-      "zh-CN": "Catpuccin Latte",
     },
   },
 ];
