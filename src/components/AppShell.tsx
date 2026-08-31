@@ -1,7 +1,7 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { Gauge, LoaderCircle, Plug, Settings } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -38,27 +38,20 @@ import LoginDialog from "./LoginDialog";
 import PopoverSurface from "./PopoverSurface";
 import QuotaBarsDialog from "./QuotaBarsDialog";
 import RenameDialog from "./RenameDialog";
-import Sidebar, { type SidebarItem } from "./Sidebar";
 import TitleBar from "./TitleBar";
 import { AppUpdaterProvider } from "./updater/AppUpdater";
-import UpdateButton from "./updater/UpdateButton";
+import UpdateBadge from "./updater/UpdateBadge";
 import ProviderDetailView from "./views/ProviderDetailView";
-import ProvidersView from "./views/ProvidersView";
 import QuotaView from "./views/QuotaView";
 import SettingsView from "./views/SettingsView";
 
-type View = "quota" | "providers" | "settings";
+type View = "quota" | "settings";
 
 interface AppPage {
   view: View;
+  /** Set on the detail page of one provider, reached from Settings. */
   provider?: Provider;
 }
-
-const NAV: SidebarItem<View>[] = [
-  { value: "quota", label: "Nav.Quota", icon: Gauge, tint: "#2f7cf6" },
-  { value: "providers", label: "Nav.Providers", icon: Plug, tint: "#34a853" },
-  { value: "settings", label: "Nav.Settings", icon: Settings, tint: "#8e8e93" },
-];
 
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
@@ -248,82 +241,71 @@ function Shell() {
     );
   }
 
-  const onProviderPage = view === "providers" && providerPage !== undefined;
+  const onProviderPage = providerPage !== undefined;
   const title = onProviderPage
     ? PROVIDER_NAMES[providerPage]
-    : t(NAV.find((item) => item.value === view)?.label ?? "Nav.Quota");
+    : t(view === "settings" ? "Nav.Settings" : "Nav.Quota");
 
   return (
     <AppUpdaterProvider>
       <div className={styles.shell}>
-        <Sidebar
-          footer={<UpdateButton />}
-          items={NAV}
-          onChange={changeView}
-          value={view}
+        <TitleBar
+          actions={<UpdateBadge />}
+          backLabel={t("Nav.Back")}
+          canGoBack={backStack.length > 0}
+          canGoForward={forwardStack.length > 0}
+          forwardLabel={t("Nav.Forward")}
+          onBack={goBack}
+          onForward={goForward}
+          onOpenSettings={() => changeView("settings")}
+          settingsLabel={t("Nav.Settings")}
+          title={title}
         />
 
-        <div className={styles.content}>
-          <TitleBar
-            backLabel={t("Nav.Back")}
-            canGoBack={backStack.length > 0}
-            canGoForward={forwardStack.length > 0}
-            forwardLabel={t("Nav.Forward")}
-            onBack={goBack}
-            onForward={goForward}
-            title={title}
-          />
-
-          <ScrollArea.Root className={styles.main} render={<main />}>
-            <ScrollArea.Viewport className={styles.viewport}>
-              {view === "quota" && (
-                <QuotaView
-                  busyId={busyId}
-                  onOpenProviders={() => changeView("providers")}
-                  onRefreshAll={() => void handleRefresh()}
-                  refreshing={refreshing}
-                  state={state}
-                  {...actions}
-                />
-              )}
-              {view === "providers" && !onProviderPage && (
-                <ProvidersView
-                  onOpen={(provider) =>
-                    navigate({ view: "providers", provider })
-                  }
-                  state={state}
-                />
-              )}
-              {onProviderPage && (
-                <ProviderDetailView
-                  busyId={busyId}
-                  onAdd={() => setLogin({ open: true })}
-                  provider={providerPage}
-                  state={state}
-                  {...actions}
-                />
-              )}
-              {view === "settings" && (
-                <SettingsView
-                  busy={settingsBusy}
-                  onMenuBarItemChange={(visible) =>
-                    void run(
-                      () => setMenuBarItemVisible(visible),
-                      setSettingsBusy,
-                    )
-                  }
-                  onUpdateChannelChange={(channel) =>
-                    run(() => setUpdateChannel(channel), setSettingsBusy)
-                  }
-                  state={state}
-                />
-              )}
-            </ScrollArea.Viewport>
-            <ScrollArea.Scrollbar>
-              <ScrollArea.Thumb />
-            </ScrollArea.Scrollbar>
-          </ScrollArea.Root>
-        </div>
+        <ScrollArea.Root className={styles.main} render={<main />}>
+          <ScrollArea.Viewport className={styles.viewport}>
+            {view === "quota" && (
+              <QuotaView
+                busyId={busyId}
+                onOpenProviders={() => changeView("settings")}
+                onRefreshAll={() => void handleRefresh()}
+                refreshing={refreshing}
+                state={state}
+                {...actions}
+              />
+            )}
+            {onProviderPage && (
+              <ProviderDetailView
+                busyId={busyId}
+                onAdd={() => setLogin({ open: true })}
+                provider={providerPage}
+                state={state}
+                {...actions}
+              />
+            )}
+            {view === "settings" && !onProviderPage && (
+              <SettingsView
+                busy={settingsBusy}
+                onMenuBarItemChange={(visible) =>
+                  void run(
+                    () => setMenuBarItemVisible(visible),
+                    setSettingsBusy,
+                  )
+                }
+                onOpenProvider={(provider) =>
+                  navigate({ view: "settings", provider })
+                }
+                onUpdateChannelChange={(channel) =>
+                  run(() => setUpdateChannel(channel), setSettingsBusy)
+                }
+                state={state}
+              />
+            )}
+          </ScrollArea.Viewport>
+          <ScrollArea.Scrollbar>
+            <ScrollArea.Thumb />
+          </ScrollArea.Scrollbar>
+        </ScrollArea.Root>
 
         {providerPage && (
           <LoginDialog

@@ -16,7 +16,6 @@
     "Theme": "Teema"
   },
   "Nav": {
-    "Sections": "Osiot",
     "Quota": "Kiintiö",
     "Providers": "Palveluntarjoajat",
     "Settings": "Asetukset",
@@ -104,9 +103,6 @@
     "NoProviders": "Ei palveluntarjoajia"
   },
   "Providers": {
-    "Active": "Aktiiviset",
-    "Available": "Saatavilla",
-    "NotSupportedYet": "Ei vielä tuettu",
     "Connected": "{{total}} yhdistetty",
     "Attention": "Huomio {{total}}",
     "AddAccount": "Lisää tili",
@@ -176,7 +172,8 @@
       "Title": "Versio",
       "RestartToUpdate": "Käynnistä uudelleen päivittääksesi",
       "CheckForUpdates": "Tarkista päivitykset",
-      "UpdateAvailable": "Päivitys saatavilla",
+      "UpdateReady": "Päivitys valmis",
+      "RestartToApply": "Käynnistä uudelleen ottaaksesi päivityksen käyttöön",
       "Status": {
         "PackagedOnly": "Päivitykset toimivat vain paketoidussa sovelluksessa.",
         "Downloading": "Ladataan {{progress}} %",

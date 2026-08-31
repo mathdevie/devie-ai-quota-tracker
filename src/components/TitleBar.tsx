@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
 import styles from "./TitleBar.module.scss";
 
 export default function TitleBar({
@@ -7,16 +7,23 @@ export default function TitleBar({
   canGoForward,
   onBack,
   onForward,
+  onOpenSettings,
   backLabel,
   forwardLabel,
+  settingsLabel,
+  actions,
 }: {
   title: string;
   canGoBack: boolean;
   canGoForward: boolean;
   onBack: () => void;
   onForward: () => void;
+  onOpenSettings: () => void;
   backLabel: string;
   forwardLabel: string;
+  settingsLabel: string;
+  /** Sits before the settings button, for example an update button. */
+  actions?: React.ReactNode;
 }) {
   return (
     <header className={styles.titleBar} data-tauri-drag-region>
@@ -43,6 +50,18 @@ export default function TitleBar({
         </button>
       </div>
       <h1 className={styles.title}>{title}</h1>
+      <div className={styles.end}>
+        {actions}
+        <button
+          aria-label={settingsLabel}
+          className={styles.settingsButton}
+          onClick={onOpenSettings}
+          title={settingsLabel}
+          type="button"
+        >
+          <Settings aria-hidden size={16} strokeWidth={2} />
+        </button>
+      </div>
     </header>
   );
 }
