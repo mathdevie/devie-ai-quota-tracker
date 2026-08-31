@@ -16,7 +16,6 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Sections": "Sektioner",
     "Quota": "Kvote",
     "Providers": "Udbydere",
     "Settings": "Indstillinger",
@@ -104,9 +103,6 @@
     "NoProviders": "Ingen udbydere"
   },
   "Providers": {
-    "Active": "Aktive",
-    "Available": "Tilgængelige",
-    "NotSupportedYet": "Understøttes ikke endnu",
     "Connected": "{{total}} forbundet",
     "Attention": "Bemærk {{total}}",
     "AddAccount": "Tilføj konto",
@@ -180,7 +176,8 @@
       "Title": "Version",
       "RestartToUpdate": "Genstart for at opdatere",
       "CheckForUpdates": "Søg efter opdateringer",
-      "UpdateAvailable": "Opdatering tilgængelig",
+      "UpdateReady": "Opdatering klar",
+      "RestartToApply": "Genstart for at anvende opgraderingen",
       "Status": {
         "PackagedOnly": "Opdateringer virker kun i den pakkede app.",
         "Downloading": "Downloader {{progress}} %",

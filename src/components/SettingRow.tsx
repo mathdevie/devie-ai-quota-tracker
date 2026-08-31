@@ -31,10 +31,13 @@ function Group({
   title,
   description,
   children,
+  plain = false,
 }: {
   title: string;
   description?: ReactNode;
   children: ReactNode;
+  /** Skips the filled frame, for content that draws its own surfaces. */
+  plain?: boolean;
 }) {
   return (
     <section className={styles.group}>
@@ -42,7 +45,7 @@ function Group({
         <h2>{title}</h2>
         {description && <p>{description}</p>}
       </header>
-      <div className={styles.groupBody}>{children}</div>
+      <div className={plain ? undefined : styles.groupBody}>{children}</div>
     </section>
   );
 }
