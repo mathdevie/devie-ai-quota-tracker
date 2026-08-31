@@ -84,5 +84,7 @@ before you open a pull request.
 - Keep a pull request focused on one change.
 - Make sure `bun run check`, `bun run build`, `bun run i18n:verify`, and
   `cargo test --locked` (in `src-desktop/`) pass.
-- Releases are cut by the maintainer: a `v*` tag on `main` triggers the
-  signed release workflow.
+- Releases are cut by the maintainer on demand: `bun run bump X.Y.Z`
+  updates every version file, and a manual dispatch of the
+  `Release Desktop App` workflow publishes the build and tags the
+  released commit.
