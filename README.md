@@ -11,7 +11,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 
 ## Product principles
 
-- Keep the interface minimal, useful, and close to the Mana configuration pages.
+- Keep the interface minimal and useful.
 - Keep product data on the Mac.
 - Sign in with the same public OAuth clients the provider CLIs use.
 - Treat every account or configuration directory as a separate connection.
@@ -28,7 +28,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
 - Ten bundled Devie UI themes.
-- Fifteen interface languages, with the same i18next setup as Mana.
+- Fifteen interface languages through i18next.
 - Signed and notarized Apple silicon builds through GitHub Actions.
 
 ## Provider support
@@ -87,8 +87,8 @@ docs/                   Build, signing, and update documentation
 plans/                  Product research and feasibility analysis
 ```
 
-`src/ui` mirrors the `src/ui` folder from the
-[Devie UI repository](https://github.com/mathdevie/devie-ui.com). The local
+`src/ui` mirrors the `src/ui` folder from
+[Devie UI](https://www.devie-ui.com/). The local
 theme context uses the versioned `devie-quota-theme:v1` storage key.
 
 ## Privacy and security
@@ -182,6 +182,21 @@ The signed workflow uses the GitHub `Release` environment. Read
 [the macOS signing guide](docs/macos-signing.md) for the required secrets and
 setup steps.
 
+## Forking
+
+A fork that ships its own builds must replace these project-specific values:
+
+- The bundle identifier `com.devie.quota` in `src-desktop/tauri.conf.json`.
+- The CrabNebula Cloud slug `mathdev/devie-quota` in the updater endpoint
+  (`src-desktop/src/updater.rs`) and in the release workflow.
+- The updater `pubkey` in `src-desktop/tauri.conf.json`, together with the
+  matching private signing key.
+- The Apple signing and notarization secrets in the GitHub `Release`
+  environment (see [the macOS signing guide](docs/macos-signing.md)).
+
+Without these changes a fork would collide with the upstream bundle id and
+query an updater feed it cannot publish to.
+
 ## Known limits
 
 - The app supports macOS only.
@@ -207,7 +222,6 @@ setup steps.
 
 The initial design combines useful ideas from these projects:
 
-- [Mana](https://github.com/mathdevie/app.mana.re) for the application structure and interface direction.
 - [Devie UI](https://www.devie-ui.com/) for components, tokens, and themes.
 - [AIUsage](https://github.com/sylearn/AIUsage) for the quota dashboard scope.
 - [CodexBar](https://github.com/steipete/CodexBar) for menu bar and provider-source patterns.

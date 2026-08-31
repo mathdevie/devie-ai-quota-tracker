@@ -8,7 +8,8 @@ Status: feasible. The product requirements need approval before the POC starts.
 
 The product is feasible as a local Tauri application.
 
-The Mana architecture is a good base. Mana already uses a Next.js static export,
+The architecture of an earlier desktop app by the same author is a good base.
+It already uses a Next.js static export,
 React, Devie UI, and a Tauri 2 Rust shell. This project can remove the account and
 cloud backend layers. Rust should own provider access, credential discovery,
 scheduling, persistence, and the menu bar. The webview should receive only safe,
@@ -33,8 +34,8 @@ provider changes local to one module.
 | Requirement | Verdict | Notes |
 |---|---|---|
 | Tauri desktop application | Feasible | Tauri officially supports Next.js static exports and tray applications. |
-| Mana-style architecture | Feasible | Mana currently uses Next.js 16, React 19, Bun, Biome, Devie UI, and Tauri 2. |
-| Devie UI | Feasible | Mana keeps 41 themed Base UI components under `src/ui/`. They can be copied with their SCSS tokens and themes. |
+| Proven desktop architecture | Feasible | The earlier app uses Next.js 16, React 19, Bun, Biome, Devie UI, and Tauri 2. |
+| Devie UI | Feasible | Devie UI ships 41 themed Base UI components under `src/ui/`. They can be copied with their SCSS tokens and themes. |
 | No product account | Feasible | The app needs no app login, cloud database, telemetry service, or backend. |
 | All product data is local | Feasible | Settings and history stay local. Quota checks still contact each provider directly. |
 | AIUsage-like quota dashboard | Feasible | Quotas, account groups, history, alerts, and local usage statistics fit the design. Proxy and gateway features stay out of scope. |
@@ -171,7 +172,7 @@ The source audit used these revisions:
 
 | Project | Revision | Useful design |
 |---|---|---|
-| Mana | `a3a54c8` | Next.js static export, Tauri shell, Devie UI, Bun, Biome, updater, and project conventions. |
+| Earlier desktop app | `a3a54c8` | Next.js static export, Tauri shell, Devie UI, Bun, Biome, updater, and project conventions. |
 | AIUsage | `ab859f8` | Wide provider scope, multi-account dashboard, local statistics, and menu-bar presentation. |
 | CodexBar | `f10b605` | Mature source planning, CLI delegation, stale data, account reconciliation, keychain gates, and tolerant quota parsing. |
 | usage4claude | `25bdf2b` | Compact Claude and Codex menu-bar presentation and multi-account settings. |
@@ -179,7 +180,7 @@ The source audit used these revisions:
 
 Recommended reuse by concept:
 
-- Use Mana for the shell, frontend, design system, build, and distribution shape.
+- Use the earlier desktop app for the shell, frontend, design system, build, and distribution shape.
 - Use 9router for the connection-centered core model.
 - Use CodexBar for the provider source planner and delegated CLI refresh pattern.
 - Use AIUsage for the user-visible feature map.
@@ -382,8 +383,8 @@ week after the requirements are approved.
 
 ### Stage 1: shell and data contracts
 
-- Copy the Mana static frontend and Tauri shell shape.
-- Copy Devie UI and its themes without product-specific Mana code.
+- Copy the earlier app's static frontend and Tauri shell shape.
+- Copy Devie UI and its themes without product-specific code.
 - Add the connection, identity, and normalized quota contracts.
 - Add SQLite migrations and fixture-based provider tests.
 
@@ -459,7 +460,6 @@ Official documentation:
 
 Reference implementations:
 
-- [Mana](https://github.com/mathdevie/app.mana.re)
 - [AIUsage](https://github.com/sylearn/AIUsage)
 - [CodexBar](https://github.com/steipete/CodexBar)
 - [usage4claude](https://github.com/f-is-h/usage4claude)
