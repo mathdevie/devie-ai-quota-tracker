@@ -1,5 +1,5 @@
 # Desktop release pipeline: builds, signs, and publishes Devie Quota to
-# CrabNebula Cloud. Same shape as the Mana desktop pipeline.
+# CrabNebula Cloud.
 #
 # Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
 #   must match the tag, because the updater endpoint reads that version.
