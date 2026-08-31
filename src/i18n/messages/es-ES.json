@@ -7,7 +7,6 @@
     "Description": "Un rastreador local de cuotas de suscripciones de IA"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Cancelar",
     "Save": "Guardar",
     "Close": "Cerrar",

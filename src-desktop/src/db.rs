@@ -176,14 +176,23 @@ impl Database {
             "last_auto_ping_attempt_at",
             "TEXT",
         )?;
-        // The remote dashboard is gone; its rows, including the token, go too.
-        connection
-            .execute(
-                "DELETE FROM settings
-                 WHERE key IN ('remote_enabled', 'remote_port', 'remote_lan', 'remote_token')",
-                [],
-            )
+        // One-shot migrations, guarded by the SQLite schema version.
+        let schema_version: i64 = connection
+            .query_row("PRAGMA user_version", [], |row| row.get(0))
             .map_err(|error| error.to_string())?;
+        if schema_version < 1 {
+            // The remote dashboard is gone; its rows, including the token, go too.
+            connection
+                .execute(
+                    "DELETE FROM settings
+                     WHERE key IN ('remote_enabled', 'remote_port', 'remote_lan', 'remote_token')",
+                    [],
+                )
+                .map_err(|error| error.to_string())?;
+            connection
+                .execute_batch("PRAGMA user_version = 1;")
+                .map_err(|error| error.to_string())?;
+        }
         Ok(())
     }
 

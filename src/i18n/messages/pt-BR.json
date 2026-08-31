@@ -7,7 +7,6 @@
     "Description": "Um rastreador local de cotas de assinaturas de IA"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Cancelar",
     "Save": "Salvar",
     "Close": "Fechar",

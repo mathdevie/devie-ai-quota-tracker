@@ -15,6 +15,7 @@ use crate::{
     parse::{number, reset_time},
 };
 
+/// Public OAuth client ID of GitHub's Copilot IDE plugins.
 pub const CLIENT_ID: &str = "Iv1.b507a08c87ecfe98";
 pub const DEVICE_CODE_URL: &str = "https://github.com/login/device/code";
 pub const TOKEN_URL: &str = "https://github.com/login/oauth/access_token";

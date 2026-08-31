@@ -7,7 +7,6 @@
     "Description": "Un suivi local des quotas d'abonnements IA"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Annuler",
     "Save": "Enregistrer",
     "Close": "Fermer",

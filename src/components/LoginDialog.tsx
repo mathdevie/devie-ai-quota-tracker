@@ -5,11 +5,12 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState, LoginStart, Provider } from "@/lib/contracts";
 import { cancelLogin, finishLogin, startLogin } from "@/lib/desktop";
+import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
 import Field from "@/ui/Field";
 import styles from "./LoginDialog.module.scss";
-import ProviderIcon, { PROVIDER_NAMES } from "./ProviderIcon";
+import ProviderIcon from "./ProviderIcon";
 
 type Phase = "starting" | "waiting" | "done" | "error";
 

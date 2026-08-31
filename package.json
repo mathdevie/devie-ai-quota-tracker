@@ -1,13 +1,24 @@
 {
   "name": "devie-quota",
-  "version": "0.1.0",
+  "version": "0.10.0",
   "private": true,
+  "license": "MIT",
+  "description": "A local macOS menu bar app for AI subscription quotas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mathdevie/devie-quota.git"
+  },
+  "homepage": "https://github.com/mathdevie/devie-quota",
+  "bugs": {
+    "url": "https://github.com/mathdevie/devie-quota/issues"
+  },
   "scripts": {
     "dev": "next dev --port 3002",
     "build": "next build",
     "build:desktop-frontend": "NEXT_PUBLIC_IS_DESKTOP_BUILD=true next build",
     "check": "biome check . && tsc --noEmit",
     "format": "biome check --write .",
+    "bump": "bun scripts/bump.js",
     "tauri": "tauri",
     "dev:desktop": "tauri dev",
     "build:desktop": "tauri build",

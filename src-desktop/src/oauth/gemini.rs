@@ -14,8 +14,13 @@ use crate::{
     parse::number,
 };
 
+/// Public installed-application OAuth client of Google's Gemini CLI
+/// (`packages/core/src/code_assist/oauth2.ts`, Apache-2.0).
 pub const CLIENT_ID: &str =
     "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com";
+/// Published in the same Gemini CLI file. Google treats the client
+/// secret of an installed application as non-confidential:
+/// <https://developers.google.com/identity/protocols/oauth2#installed>
 pub const CLIENT_SECRET: &str = "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";
 pub const AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 pub const TOKEN_URL: &str = "https://oauth2.googleapis.com/token";

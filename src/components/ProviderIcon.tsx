@@ -18,8 +18,6 @@ export type BrandId =
   | "windsurf"
   | "openrouter";
 
-export { PROVIDER_NAMES } from "@/lib/labels";
-
 /** The official logo of a tool, with rounded corners like a macOS app icon. */
 export function BrandIcon({
   brand,

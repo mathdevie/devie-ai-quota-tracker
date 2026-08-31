@@ -7,7 +7,6 @@
     "Description": "Een lokale quotatracker voor AI-abonnementen"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "Annuleren",
     "Save": "Opslaan",
     "Close": "Sluiten",
