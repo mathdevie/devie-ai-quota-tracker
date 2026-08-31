@@ -41,7 +41,7 @@ Decisions already made:
 | 3.2 | Trigger CI on `push` to `main` and on `pull_request`. | `.github/workflows/ci.yml` |
 | 3.3 | Rename the job from "Check the POC" to "Check". | `.github/workflows/ci.yml:20` |
 | 3.4 | Set `runs-on: macos-15` in the release and nightly workflows. Remove the self-hosted option. | `.github/workflows/release-desktop.yml`, `.github/workflows/nightly-desktop.yml` |
-| 3.5 | Confirm the release workflow triggers only on `push: tags: v*` and `workflow_dispatch`. Never on `pull_request`. | `.github/workflows/release-desktop.yml` |
+| 3.5 | Confirm the release workflow triggers only on `workflow_dispatch` (it creates the tag itself after publishing). Never on `push` or `pull_request`. | `.github/workflows/release-desktop.yml` |
 | 3.6 | Add `.github/dependabot.yml` for `npm`, `cargo`, and `github-actions`, weekly. | `.github/dependabot.yml` |
 | 3.7 | Add `rust-toolchain.toml` with `channel = "stable"` so local and CI builds match. | repo root |
 | 3.8 | Stop the self-hosted runner on the Mac mini after the first public release succeeds on `macos-15`. | `~/actions-runner` (local machine) |
@@ -174,7 +174,7 @@ Do these on GitHub after Phase 7 is pushed.
 5. Settings → Environments → `Release`: add yourself as a required reviewer. This blocks anyone else from running the signing workflow.
 6. Add the license, description, topics, and website in the repository "About" box.
 7. Run the `CI` workflow once on `macos-15`. Confirm it passes.
-8. Push a test tag (`v0.9.8-rc.1`) and confirm the release workflow signs and publishes on the hosted runner.
+8. Run `bun run bump` to a test version, dispatch `Release Desktop App` with `runner=macos-15`, and confirm it signs, publishes, and tags on the hosted runner.
 9. Delete this plan (5.4).
 
 ## Checklist summary
