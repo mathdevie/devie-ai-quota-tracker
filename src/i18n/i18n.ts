@@ -20,10 +20,12 @@ import esES from "./messages/es-ES.json";
 import fiFI from "./messages/fi-FI.json";
 import frFR from "./messages/fr-FR.json";
 import itIT from "./messages/it-IT.json";
+import jaJP from "./messages/ja-JP.json";
 import nbNO from "./messages/nb-NO.json";
 import nlNL from "./messages/nl-NL.json";
 import ptBR from "./messages/pt-BR.json";
 import svSE from "./messages/sv-SE.json";
+import zhCN from "./messages/zh-CN.json";
 
 const resources = {
   "en-US": { translation: enUS },
@@ -39,6 +41,8 @@ const resources = {
   "nl-NL": { translation: nlNL },
   "nb-NO": { translation: nbNO },
   "sv-SE": { translation: svSE },
+  "ja-JP": { translation: jaJP },
+  "zh-CN": { translation: zhCN },
 } satisfies Record<SupportedLocale, { translation: typeof enUS }>;
 
 /** The saved language, else the closest supported system language. */

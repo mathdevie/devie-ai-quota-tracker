@@ -7,10 +7,12 @@ import "dayjs/locale/es-mx";
 import "dayjs/locale/fi";
 import "dayjs/locale/fr";
 import "dayjs/locale/it";
+import "dayjs/locale/ja";
 import "dayjs/locale/nb";
 import "dayjs/locale/nl";
 import "dayjs/locale/pt-br";
 import "dayjs/locale/sv";
+import "dayjs/locale/zh-cn";
 import type { SupportedLocale } from "./locales";
 
 const DAYJS_LOCALE: Record<SupportedLocale, string> = {
@@ -23,10 +25,12 @@ const DAYJS_LOCALE: Record<SupportedLocale, string> = {
   "fi-FI": "fi",
   "fr-FR": "fr",
   "it-IT": "it",
+  "ja-JP": "ja",
   "nb-NO": "nb",
   "nl-NL": "nl",
   "pt-BR": "pt-br",
   "sv-SE": "sv",
+  "zh-CN": "zh-cn",
 };
 
 const DAYJS_LOCALE_BY_LANGUAGE: Record<string, string> = Object.fromEntries(
