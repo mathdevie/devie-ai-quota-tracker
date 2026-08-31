@@ -16,7 +16,7 @@
     "Theme": "Thema"
   },
   "Nav": {
-    "Quota": "Quota",
+    "Quota": "AI-quotatracker",
     "Providers": "Providers",
     "Settings": "Instellingen",
     "Back": "Terug",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Een {{name}}-account toevoegen",
     "NoAccountsYet": "Nog geen {{name}}-accounts.",
     "EnableAccount": "{{name}} inschakelen",
-    "DisableAccount": "{{name}} uitschakelen"
+    "DisableAccount": "{{name}} uitschakelen",
+    "BackToSettings": "Terug naar de instellingen"
   },
   "Login": {
     "Title": "Een {{name}}-account toevoegen",
@@ -196,7 +197,8 @@
         "Stable": "Stabiel",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Terug naar het dashboard"
   },
   "Tray": {
     "Open": "Devie Quota openen",

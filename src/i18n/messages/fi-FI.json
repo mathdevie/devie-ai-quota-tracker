@@ -16,7 +16,7 @@
     "Theme": "Teema"
   },
   "Nav": {
-    "Quota": "Kiintiö",
+    "Quota": "Tekoälykiintiöiden seuranta",
     "Providers": "Palveluntarjoajat",
     "Settings": "Asetukset",
     "Back": "Takaisin",
@@ -109,7 +109,8 @@
     "AddProviderAccount": "Lisää {{name}}-tili",
     "NoAccountsYet": "Ei vielä {{name}}-tilejä.",
     "EnableAccount": "Ota käyttöön {{name}}",
-    "DisableAccount": "Poista käytöstä {{name}}"
+    "DisableAccount": "Poista käytöstä {{name}}",
+    "BackToSettings": "Takaisin asetuksiin"
   },
   "Login": {
     "Title": "Lisää {{name}}-tili",
@@ -196,7 +197,8 @@
         "Stable": "Vakaa",
         "Nightly": "Nightly"
       }
-    }
+    },
+    "BackToDashboard": "Takaisin hallintapaneeliin"
   },
   "Tray": {
     "Open": "Avaa Devie Quota",

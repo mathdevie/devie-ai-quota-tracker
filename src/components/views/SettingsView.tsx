@@ -1,7 +1,7 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ArrowLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState, Provider, UpdateChannel } from "@/lib/contracts";
@@ -294,6 +294,7 @@ function ChannelRow({
 export default function SettingsView({
   state,
   busy,
+  onClose,
   onMenuBarItemChange,
   onOpenProvider,
   onUpdateChannelChange,
@@ -301,6 +302,7 @@ export default function SettingsView({
 }: {
   state: DashboardState;
   busy?: boolean;
+  onClose: () => void;
   onMenuBarItemChange: (visible: boolean) => void;
   onOpenProvider: (provider: Provider) => void;
   onUpdateChannelChange: (channel: UpdateChannel) => Promise<boolean>;
@@ -309,6 +311,15 @@ export default function SettingsView({
   const { t } = useTranslation();
   return (
     <section className={styles.page} data-settings>
+      <Button
+        className={styles.pageBack}
+        onClick={onClose}
+        size="sm"
+        variant="naked"
+      >
+        <ArrowLeft size={14} />
+        {t("Settings.BackToDashboard")}
+      </Button>
       <ProvidersGroup onOpen={onOpenProvider} state={state} />
       <SettingRow.Group title={t("Settings.General")}>
         <LaunchAtLoginRow />
