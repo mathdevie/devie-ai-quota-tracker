@@ -3,10 +3,8 @@
 #
 # Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
 #   must match the tag, because the updater endpoint reads that version.
-# Runner: every job runs on a self-hosted Mac (Settings → Actions → Runners)
-#   with Bun, rustup, jq, and the Xcode command line tools installed, so no
-#   GitHub minutes are billed. A manual dispatch with runner=macos-15 uses
-#   the GitHub-hosted macos-15 and ubuntu-24.04 runners instead.
+# Runner: GitHub-hosted. The macOS build runs on macos-15; the CrabNebula
+#   draft and publish steps run on ubuntu-24.04.
 #
 # Required secrets (Release environment):
 #   - CN_API_KEY: CrabNebula Cloud API key
@@ -22,14 +20,6 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
-    inputs:
-      runner:
-        description: "Runner for the macOS build"
-        type: choice
-        default: self-hosted
-        options:
-          - self-hosted
-          - macos-15
 
 permissions:
   contents: read
@@ -43,7 +33,7 @@ env:
 
 jobs:
   draft:
-    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: ubuntu-24.04
     environment: Release
     steps:
       - uses: actions/checkout@v7
@@ -72,9 +62,7 @@ jobs:
           - name: Apple silicon
             target: aarch64-apple-darwin
     name: Build ${{ matrix.name }}
-    # The self-hosted runner is a Mac registered to this repo: no macOS
-    # minutes are billed. Dispatch with runner=macos-15 to build on GitHub.
-    runs-on: ${{ inputs.runner == 'macos-15' && 'macos-15' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: macos-15
     environment: Release
     timeout-minutes: 60
     steps:
@@ -151,7 +139,7 @@ jobs:
 
   publish:
     needs: build
-    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: ubuntu-24.04
     environment: Release
     steps:
       - uses: actions/checkout@v7
