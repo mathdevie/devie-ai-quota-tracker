@@ -28,7 +28,7 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 - Manual refresh and an automatic five-minute refresh loop.
 - Local SQLite storage for connections, identities, snapshots, and failures.
 - Ten bundled Devie UI themes.
-- Thirteen interface languages, with the same i18next setup as Mana.
+- Fifteen interface languages, with the same i18next setup as Mana.
 - Signed and notarized Apple silicon builds through GitHub Actions.
 
 ## Provider support

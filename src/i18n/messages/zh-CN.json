@@ -1,0 +1,219 @@
+{
+  "_Meta": {
+    "IsoCode": "zh-CN",
+    "EndonymName": "简体中文"
+  },
+  "Metadata": {
+    "Description": "本地运行的 AI 订阅额度追踪器"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "取消",
+    "Save": "保存",
+    "Close": "关闭",
+    "Refresh": "刷新",
+    "TryAgain": "重试",
+    "Theme": "主题"
+  },
+  "Nav": {
+    "Quota": "AI 额度",
+    "Providers": "服务商",
+    "Settings": "设置",
+    "Back": "返回",
+    "Close": "关闭"
+  },
+  "Connection": {
+    "ActionsFor": "{{name}} 的操作",
+    "NoQuotaData": "暂无额度数据",
+    "Status": {
+      "Ready": "就绪",
+      "Stale": "数据已过期",
+      "Login": "登录",
+      "SignInNeeded": "需要登录",
+      "Error": "错误"
+    },
+    "Menu": {
+      "Rename": "重命名",
+      "Bars": "额度条",
+      "Alerts": "提醒",
+      "AutoPing": "额度优化器",
+      "Refresh": "刷新",
+      "Enable": "启用",
+      "Disable": "停用",
+      "Remove": "移除",
+      "On": "开",
+      "Off": "关"
+    },
+    "MoreActions": "更多操作",
+    "AllBarsHidden": "所有额度条都已隐藏。"
+  },
+  "Quota": {
+    "FilterProvider": "服务商",
+    "FilterSort": "排序",
+    "AllProviders": "所有服务商",
+    "Sort": {
+      "Expiring": "即将重置",
+      "LeastLeft": "剩余最少",
+      "MostLeft": "剩余最多",
+      "Name": "名称"
+    },
+    "NoMatch": "没有已启用的账号符合这些筛选条件。",
+    "NoAccounts": "还没有账号。连接一个服务商即可查看额度。",
+    "OpenProviders": "打开服务商",
+    "RefreshQuotas": "刷新额度",
+    "Reset": {
+      "Now": "即将",
+      "InDaysHours": "{{days}} 天 {{hours}} 小时",
+      "InHoursMinutes": "{{hours}} 小时 {{minutes}} 分",
+      "InMinutes": "{{minutes}} 分",
+      "On": "在 {{date}} 重置"
+    },
+    "ResetCredits": {
+      "Title": "重置额度券",
+      "Description": "一张重置额度券会一次性重置该账号的所有额度周期。",
+      "DefaultTitle": "限额重置",
+      "Expires": "在 {{date}} 到期",
+      "NoExpiry": "永不过期",
+      "Use": "使用",
+      "Available_one": "可用重置 {{count}} 次",
+      "Available_other": "可用重置 {{count}} 次",
+      "ConfirmTitle": "要重置 Codex 限额吗？",
+      "ConfirmDescription": "为 {{account}} 使用 1 张重置额度券。所有额度周期会立即重置。此操作无法撤销。使用后剩余：{{remaining}}。",
+      "Confirm": "重置限额"
+    },
+    "Pin": {
+      "Shown": "已固定到菜单栏",
+      "Show": "固定到菜单栏"
+    },
+    "Unlimited": "无限制",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "超出 +{{overage}}",
+    "Balance": "剩余 {{balance}}",
+    "News": {
+      "Watch": "Codex 重置概率 {{percent}}%",
+      "WatchNoPercent": "Codex 可能即将重置",
+      "Reset": "Codex 限额已重置（{{ago}}）",
+      "Banked": "Codex 发放了一张重置额度券（{{ago}}）",
+      "Open": "打开来源",
+      "Dismiss": "忽略"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "打开仪表板",
+    "NoProviders": "没有服务商"
+  },
+  "Providers": {
+    "Connected": "已连接 {{total}} 个",
+    "Attention": "需要处理 {{total}} 个",
+    "AddAccount": "添加账号",
+    "AddProviderAccount": "添加 {{name}} 账号",
+    "NoAccountsYet": "还没有 {{name}} 账号。",
+    "EnableAccount": "启用 {{name}}",
+    "DisableAccount": "停用 {{name}}",
+    "BackToSettings": "返回设置"
+  },
+  "Login": {
+    "Title": "添加 {{name}} 账号",
+    "OpeningBrowser": "正在打开浏览器…",
+    "WaitingFor": "正在等待 {{name}}…",
+    "OpenPageAgain": "重新打开页面",
+    "PasteCode": "或粘贴页面上的代码",
+    "CodePlaceholder": "code#state",
+    "UseCode": "使用代码",
+    "Connected": "已连接",
+    "Hint": {
+      "claude": "在浏览器中登录 Claude。这台 Mac 上的应用会收到结果。",
+      "codex": "在浏览器中用你的 ChatGPT 账号登录。这台 Mac 上的应用会收到结果。",
+      "gemini-cli": "在浏览器中用 Google 账号登录。这台 Mac 上的应用会收到结果。",
+      "copilot": "在浏览器的 GitHub 页面输入此代码，然后批准该请求。",
+      "cursor": "在浏览器的 Cursor 页面确认登录。这台 Mac 上的应用会收到结果。"
+    }
+  },
+  "Rename": {
+    "Title": "重命名账号",
+    "Label": "标签",
+    "Description": "留空即可重新显示账号 ID。"
+  },
+  "Bars": {
+    "Title": "额度条",
+    "Shown": "显示",
+    "Hidden": "隐藏",
+    "Left": "剩余 {{percent}}%",
+    "Resets": "重置：{{time}}"
+  },
+  "Alerts": {
+    "Title": "提醒",
+    "LowQuota": "额度不足",
+    "LowQuotaDescription": "额度剩余 20% 时提醒我。",
+    "ResetSoon": "即将重置",
+    "ResetSoonDescription": "额度重置前 30 分钟提醒我。",
+    "ResetComplete": "重置完成",
+    "ResetCompleteDescription": "额度重置后提醒我。",
+    "PermissionRequired": "请在 macOS 设置中允许通知，才能使用额度提醒。",
+    "SendTest": "发送测试",
+    "TestSent": "已发送测试通知。"
+  },
+  "AutoPing": {
+    "Title": "额度优化器",
+    "StartNextSession": "自动开始会话计时",
+    "SupportedDescription": "默认情况下，重置计时只在你首次使用时开始。启用此选项后，应用会在每次重置之后自动发送一个很小的请求，立即开始计时。这样下一次重置会更早到来。",
+    "UnsupportedDescription": "额度优化器仅支持 Claude 和 Codex 账号。",
+    "LastRequest": "上次请求：{{date}}"
+  },
+  "Settings": {
+    "General": "通用",
+    "Appearance": "外观",
+    "About": "关于",
+    "Privacy": "隐私",
+    "Theme": "主题",
+    "Language": "语言",
+    "LaunchAtLogin": "登录时启动",
+    "LaunchAtLoginDescription": "登录 Mac 时自动打开应用",
+    "EnableLaunchAtLogin": "登录时启动应用",
+    "MenuBarItem": "菜单栏图标",
+    "MenuBarItemDescription": "在 macOS 菜单栏中显示额度",
+    "ShowMenuBarItem": "显示菜单栏图标",
+    "Telemetry": "使用数据",
+    "TelemetryDescription": "发送匿名的使用事件和崩溃报告。不含账号名称、令牌或额度数值。",
+    "EnableTelemetry": "发送匿名使用数据",
+    "Updates": {
+      "Title": "版本",
+      "RestartToUpdate": "重启以更新",
+      "CheckForUpdates": "检查更新",
+      "UpdateReady": "更新已就绪",
+      "RestartToApply": "重启以应用此更新",
+      "Status": {
+        "PackagedOnly": "更新仅在打包后的应用中可用。",
+        "Downloading": "正在下载 {{progress}}%",
+        "Ready": "版本 {{version}} 已就绪。",
+        "Installing": "正在安装…",
+        "Failed": "更新失败。"
+      },
+      "Version": "版本：{{version}}",
+      "UpToDateToast": "你使用的已是最新版本。",
+      "Channel": "更新渠道",
+      "ChannelDescription": "每夜构建版可以最先体验新功能，但可能不稳定。",
+      "Channels": {
+        "Stable": "稳定版",
+        "Nightly": "每夜构建版"
+      }
+    },
+    "BackToDashboard": "返回仪表板"
+  },
+  "Tray": {
+    "Open": "打开 Devie Quota",
+    "RefreshAll": "全部刷新",
+    "Quit": "退出 Devie Quota",
+    "Tooltip": "Devie Quota 订阅额度"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}} 额度不足",
+    "LowQuotaBody": "{{account}} 的 {{window}} 剩余 {{percent}}%。",
+    "ResetSoonTitle": "{{provider}} 额度即将重置",
+    "ResetSoonBody": "{{account}} 的 {{window}} 将在 {{minutes}} 分钟后重置。",
+    "ResetHappenedTitle": "{{provider}} 额度已重置",
+    "ResetHappenedBody": "{{account}} 的 {{window}} 又可以使用了。",
+    "TestTitle": "{{provider}} 提醒已开启",
+    "TestBody": "Devie Quota 会在这里通知你 {{account}} 的情况。"
+  }
+}

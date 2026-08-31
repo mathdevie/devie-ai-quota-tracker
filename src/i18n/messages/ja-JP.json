@@ -1,0 +1,219 @@
+{
+  "_Meta": {
+    "IsoCode": "ja-JP",
+    "EndonymName": "日本語"
+  },
+  "Metadata": {
+    "Description": "ローカルで動作する AI サブスクリプションのクォータトラッカー"
+  },
+  "Common": {
+    "AppName": "Devie Quota",
+    "Cancel": "キャンセル",
+    "Save": "保存",
+    "Close": "閉じる",
+    "Refresh": "更新",
+    "TryAgain": "再試行",
+    "Theme": "テーマ"
+  },
+  "Nav": {
+    "Quota": "AI クォータ",
+    "Providers": "プロバイダー",
+    "Settings": "設定",
+    "Back": "戻る",
+    "Close": "閉じる"
+  },
+  "Connection": {
+    "ActionsFor": "{{name}} の操作",
+    "NoQuotaData": "クォータのデータがありません",
+    "Status": {
+      "Ready": "準備完了",
+      "Stale": "古い情報",
+      "Login": "ログイン",
+      "SignInNeeded": "サインインが必要",
+      "Error": "エラー"
+    },
+    "Menu": {
+      "Rename": "名前を変更",
+      "Bars": "クォータバー",
+      "Alerts": "アラート",
+      "AutoPing": "クォータオプティマイザー",
+      "Refresh": "更新",
+      "Enable": "有効にする",
+      "Disable": "無効にする",
+      "Remove": "削除",
+      "On": "オン",
+      "Off": "オフ"
+    },
+    "MoreActions": "その他の操作",
+    "AllBarsHidden": "クォータバーはすべて非表示です。"
+  },
+  "Quota": {
+    "FilterProvider": "プロバイダー",
+    "FilterSort": "並び替え",
+    "AllProviders": "すべてのプロバイダー",
+    "Sort": {
+      "Expiring": "リセットが近い順",
+      "LeastLeft": "残りが少ない順",
+      "MostLeft": "残りが多い順",
+      "Name": "名前順"
+    },
+    "NoMatch": "この絞り込みに一致する有効なアカウントはありません。",
+    "NoAccounts": "アカウントがまだありません。プロバイダーを接続するとクォータが表示されます。",
+    "OpenProviders": "プロバイダーを開く",
+    "RefreshQuotas": "クォータを更新",
+    "Reset": {
+      "Now": "まもなく",
+      "InDaysHours": "{{days}}日 {{hours}}時間",
+      "InHoursMinutes": "{{hours}}時間 {{minutes}}分",
+      "InMinutes": "{{minutes}}分",
+      "On": "{{date}} にリセット"
+    },
+    "ResetCredits": {
+      "Title": "リセットクレジット",
+      "Description": "リセットクレジットを 1 件使うと、このアカウントのすべてのクォータ枠を一度にリセットできます。",
+      "DefaultTitle": "レート制限のリセット",
+      "Expires": "{{date}} に期限切れ",
+      "NoExpiry": "期限なし",
+      "Use": "使用",
+      "Available_one": "使用できるリセット: {{count}} 件",
+      "Available_other": "使用できるリセット: {{count}} 件",
+      "ConfirmTitle": "Codex の制限をリセットしますか？",
+      "ConfirmDescription": "{{account}} のリセットクレジットを 1 件使用します。すべてのクォータ枠が今すぐリセットされます。この操作は取り消せません。使用後の残り: {{remaining}} 件。",
+      "Confirm": "制限をリセット"
+    },
+    "Pin": {
+      "Shown": "メニューバーに固定済み",
+      "Show": "メニューバーに固定"
+    },
+    "Unlimited": "無制限",
+    "Amount": "{{used}} / {{total}} {{unit}}",
+    "Overage": "+{{overage}} 超過",
+    "Balance": "残り {{balance}}",
+    "News": {
+      "Watch": "Codex のリセット確率 {{percent}}%",
+      "WatchNoPercent": "Codex のリセットが近そうです",
+      "Reset": "Codex の制限がリセットされました（{{ago}}）",
+      "Banked": "Codex がリセットクレジットを付与しました（{{ago}}）",
+      "Open": "情報元を開く",
+      "Dismiss": "閉じる"
+    }
+  },
+  "Popover": {
+    "OpenDashboard": "ダッシュボードを開く",
+    "NoProviders": "プロバイダーがありません"
+  },
+  "Providers": {
+    "Connected": "{{total}} 件接続中",
+    "Attention": "要対応 {{total}} 件",
+    "AddAccount": "アカウントを追加",
+    "AddProviderAccount": "{{name}} のアカウントを追加",
+    "NoAccountsYet": "{{name}} のアカウントはまだありません。",
+    "EnableAccount": "{{name}} を有効にする",
+    "DisableAccount": "{{name}} を無効にする",
+    "BackToSettings": "設定に戻る"
+  },
+  "Login": {
+    "Title": "{{name}} のアカウントを追加",
+    "OpeningBrowser": "ブラウザーを開いています…",
+    "WaitingFor": "{{name}} を待っています…",
+    "OpenPageAgain": "ページをもう一度開く",
+    "PasteCode": "またはページに表示されたコードを貼り付けてください",
+    "CodePlaceholder": "code#state",
+    "UseCode": "コードを使用",
+    "Connected": "接続しました",
+    "Hint": {
+      "claude": "ブラウザーで Claude にサインインしてください。結果はこの Mac のアプリが受け取ります。",
+      "codex": "ブラウザーで ChatGPT アカウントにサインインしてください。結果はこの Mac のアプリが受け取ります。",
+      "gemini-cli": "ブラウザーで Google にサインインしてください。結果はこの Mac のアプリが受け取ります。",
+      "copilot": "ブラウザーの GitHub ページでこのコードを入力し、リクエストを承認してください。",
+      "cursor": "ブラウザーの Cursor ページでサインインを確認してください。結果はこの Mac のアプリが受け取ります。"
+    }
+  },
+  "Rename": {
+    "Title": "アカウント名を変更",
+    "Label": "ラベル",
+    "Description": "空欄にすると、アカウント ID を再び表示します。"
+  },
+  "Bars": {
+    "Title": "クォータバー",
+    "Shown": "表示",
+    "Hidden": "非表示",
+    "Left": "残り {{percent}}%",
+    "Resets": "リセット: {{time}}"
+  },
+  "Alerts": {
+    "Title": "アラート",
+    "LowQuota": "クォータの残りが少ない",
+    "LowQuotaDescription": "クォータの残りが 20% になったら知らせます。",
+    "ResetSoon": "リセットが近い",
+    "ResetSoonDescription": "クォータのリセットの 30 分前に知らせます。",
+    "ResetComplete": "リセット完了",
+    "ResetCompleteDescription": "クォータのリセット後に知らせます。",
+    "PermissionRequired": "クォータのアラートを使うには、macOS の設定で通知を許可してください。",
+    "SendTest": "テストを送信",
+    "TestSent": "テスト通知を送信しました。"
+  },
+  "AutoPing": {
+    "Title": "クォータオプティマイザー",
+    "StartNextSession": "セッションタイマーを自動で開始",
+    "SupportedDescription": "既定では、リセットのタイマーは最初の利用時にだけ動き始めます。このオプションを有効にすると、リセットのたびに小さなリクエストを自動で送り、タイマーをすぐに開始します。その結果、次のリセットが早く来ます。",
+    "UnsupportedDescription": "クォータオプティマイザーは Claude と Codex のアカウントだけで動作します。",
+    "LastRequest": "最後のリクエスト: {{date}}"
+  },
+  "Settings": {
+    "General": "一般",
+    "Appearance": "外観",
+    "About": "このアプリについて",
+    "Privacy": "プライバシー",
+    "Theme": "テーマ",
+    "Language": "言語",
+    "LaunchAtLogin": "ログイン時に起動",
+    "LaunchAtLoginDescription": "Mac にログインしたときにアプリを自動で開きます",
+    "EnableLaunchAtLogin": "ログイン時にアプリを起動する",
+    "MenuBarItem": "メニューバー項目",
+    "MenuBarItemDescription": "macOS のメニューバーにクォータを表示します",
+    "ShowMenuBarItem": "メニューバー項目を表示する",
+    "Telemetry": "利用データ",
+    "TelemetryDescription": "匿名の利用イベントとクラッシュレポートを送信します。アカウント名、トークン、クォータの数値は含みません。",
+    "EnableTelemetry": "匿名の利用データを送信する",
+    "Updates": {
+      "Title": "バージョン",
+      "RestartToUpdate": "再起動して更新",
+      "CheckForUpdates": "更新を確認",
+      "UpdateReady": "更新の準備ができました",
+      "RestartToApply": "再起動して更新を適用してください",
+      "Status": {
+        "PackagedOnly": "更新はパッケージ版のアプリでのみ動作します。",
+        "Downloading": "ダウンロード中 {{progress}}%",
+        "Ready": "バージョン {{version}} の準備ができました。",
+        "Installing": "インストール中…",
+        "Failed": "更新に失敗しました。"
+      },
+      "Version": "バージョン: {{version}}",
+      "UpToDateToast": "最新バージョンを使用しています。",
+      "Channel": "更新の種類",
+      "ChannelDescription": "ナイトリービルドは新機能を先に使えますが、不安定な場合があります。",
+      "Channels": {
+        "Stable": "安定版",
+        "Nightly": "ナイトリー"
+      }
+    },
+    "BackToDashboard": "ダッシュボードに戻る"
+  },
+  "Tray": {
+    "Open": "Devie Quota を開く",
+    "RefreshAll": "すべて更新",
+    "Quit": "Devie Quota を終了",
+    "Tooltip": "Devie Quota のサブスクリプションクォータ"
+  },
+  "Notifications": {
+    "LowQuotaTitle": "{{provider}} のクォータの残りが少ないです",
+    "LowQuotaBody": "{{account}} の {{window}} は残り {{percent}}% です。",
+    "ResetSoonTitle": "{{provider}} のクォータがまもなくリセットされます",
+    "ResetSoonBody": "{{account}} の {{window}} は {{minutes}} 分後にリセットされます。",
+    "ResetHappenedTitle": "{{provider}} のクォータをリセットしました",
+    "ResetHappenedBody": "{{account}} の {{window}} が再び使えます。",
+    "TestTitle": "{{provider}} のアラートは有効です",
+    "TestBody": "Devie Quota は {{account}} についてここで知らせます。"
+  }
+}
