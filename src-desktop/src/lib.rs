@@ -24,6 +24,7 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager, State, WebviewUrl, WebviewWindowBuilder,
 };
+use tauri_plugin_autostart::ManagerExt as AutostartManagerExt;
 use tauri_plugin_positioner::{Position, WindowExt};
 
 #[derive(Clone)]
@@ -320,6 +321,36 @@ fn set_telemetry_enabled(
         );
     }
     publish_state(&app, &core)
+}
+
+/// Whether the app is registered to start when the user logs in. The OS is
+/// the source of truth, so the value is read fresh instead of being stored.
+#[tauri::command]
+fn launch_at_login_enabled(app: AppHandle) -> Result<bool, String> {
+    app.autolaunch()
+        .is_enabled()
+        .map_err(|error| error.to_string())
+}
+
+/// Registers or removes the app as a login item.
+#[tauri::command]
+fn set_launch_at_login(
+    app: AppHandle,
+    core: State<'_, Core>,
+    enabled: bool,
+) -> Result<bool, String> {
+    let autolaunch = app.autolaunch();
+    if enabled {
+        autolaunch.enable()
+    } else {
+        autolaunch.disable()
+    }
+    .map_err(|error| error.to_string())?;
+    core.telemetry.capture(
+        "setting_changed",
+        serde_json::json!({ "setting": "launch_at_login", "value": enabled }),
+    );
+    autolaunch.is_enabled().map_err(|error| error.to_string())
 }
 
 /// Stores the interface language and relabels the tray menu.
@@ -847,6 +878,10 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
         .setup(|app| {
             let app_data_dir = app.path().app_data_dir()?;
             let database = Database::open(app_data_dir.join("devie-quota.sqlite3"))
@@ -953,6 +988,8 @@ pub fn run() {
             use_reset_credit,
             set_tray_summary,
             set_menu_bar_item_visible,
+            launch_at_login_enabled,
+            set_launch_at_login,
             set_language,
             set_update_channel,
             set_telemetry_enabled,

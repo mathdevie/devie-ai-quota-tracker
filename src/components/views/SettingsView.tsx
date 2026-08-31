@@ -2,8 +2,10 @@
 
 import { Toast } from "@base-ui/react/toast";
 import { ChevronRight, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState, Provider, UpdateChannel } from "@/lib/contracts";
+import { getLaunchAtLogin, setLaunchAtLogin } from "@/lib/desktop";
 import { PROVIDER_NAMES, PROVIDERS } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
@@ -182,6 +184,51 @@ function UpdateRow() {
   );
 }
 
+// The OS keeps the login item state, so the row loads and saves it itself
+// instead of going through the dashboard state.
+function LaunchAtLoginRow() {
+  const { t } = useTranslation();
+  const [enabled, setEnabled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getLaunchAtLogin()
+      .catch(() => false)
+      .then((value) => {
+        if (!cancelled) setEnabled(value);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // The switch flips right away; a failure puts back the real OS state.
+  async function change(checked: boolean) {
+    setEnabled(checked);
+    try {
+      setEnabled(await setLaunchAtLogin(checked));
+    } catch {
+      setEnabled(await getLaunchAtLogin().catch(() => !checked));
+    }
+  }
+
+  return (
+    <SettingRow.Row
+      subtitle={t("Settings.LaunchAtLoginDescription")}
+      title={t("Settings.LaunchAtLogin")}
+    >
+      <Switch.Root
+        aria-label={t("Settings.EnableLaunchAtLogin")}
+        checked={enabled ?? false}
+        disabled={enabled === null}
+        onCheckedChange={(checked) => void change(checked)}
+      >
+        <Switch.Thumb />
+      </Switch.Root>
+    </SettingRow.Row>
+  );
+}
+
 const CHANNELS: UpdateChannel[] = ["stable", "nightly"];
 
 function ChannelRow({
@@ -264,6 +311,7 @@ export default function SettingsView({
     <section className={styles.page} data-settings>
       <ProvidersGroup onOpen={onOpenProvider} state={state} />
       <SettingRow.Group title={t("Settings.General")}>
+        <LaunchAtLoginRow />
         <SettingRow.Row
           subtitle={t("Settings.MenuBarItemDescription")}
           title={t("Settings.MenuBarItem")}
