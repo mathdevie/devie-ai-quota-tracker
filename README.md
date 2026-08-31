@@ -2,34 +2,35 @@
 
 Devie Quota is a local macOS menu bar app for AI subscription quotas.
 
-It keeps separate Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor accounts in one place.
-The product has no Devie account, cloud database, proxy, or hosted backend.
+It keeps separate Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor
+accounts in one place: sign in once per account, see every quota window and
+its reset time from the menu bar, and get notified before a limit hits.
+There is no Devie account, cloud database, proxy, or hosted backend — all
+data stays on the Mac.
 
-> [!NOTE]
-> This repository contains an early proof of concept. Provider behavior and the
-> interface will change as the product is tested with more subscriptions.
+## Install
 
-## Product principles
+1. Download the latest DMG from the
+   [Releases page](https://github.com/mathdevie/devie-quota/releases).
+2. Open the DMG and drag **Devie Quota** to Applications.
+3. Launch it and add an account under **Providers**.
 
-- Keep the interface minimal and useful.
-- Keep product data on the Mac.
-- Sign in with the same public OAuth clients the provider CLIs use.
-- Treat every account or configuration directory as a separate connection.
-- Keep provider-specific quota logic behind a common Rust model.
-- Preserve the last good quota snapshot when a refresh fails.
+Builds are signed and notarized for Apple silicon. The app updates itself;
+see [docs/updates.md](docs/updates.md).
 
-## Current features
+## Features
 
-- A Tauri 2 app with a Next.js static frontend.
-- A macOS menu bar item with one provider logo and percent left (pin a quota window in the popover), plus a popover.
+- A macOS menu bar item with the provider logo and percent left, plus a
+  popover; pin any quota window to the menu bar.
 - A native-style window with a sidebar: Quota, Providers, Settings.
-- In-app OAuth sign-in for Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor accounts.
-- Any number of accounts per provider.
-- Manual refresh and an automatic five-minute refresh loop.
-- Local SQLite storage for connections, identities, snapshots, and failures.
-- Ten bundled Devie UI themes.
-- Fifteen interface languages through i18next.
-- Signed and notarized Apple silicon builds through GitHub Actions.
+- In-app OAuth sign-in for Claude, Codex, Gemini CLI, GitHub Copilot, and
+  Cursor — any number of accounts per provider.
+- Manual refresh and an automatic five-minute refresh loop; a failed
+  refresh keeps the last good snapshot and shows it as "Stale".
+- Quota alerts: low quota, reset soon, and reset happened.
+- Local SQLite storage for connections, identities, and snapshots.
+- Three native appearances (Light, Dark, System) and eight custom themes.
+- Fifteen interface languages.
 
 ## Provider support
 
@@ -41,22 +42,30 @@ The product has no Devie account, cloud database, proxy, or hosted backend.
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 | Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
 
-Claude usage reads share one cache, in the same way as 9router: a read stays
-fresh for five minutes on the timer (a refresh button always fetches), one
-request per token runs at a time, a `429` pauses the endpoint for three
-minutes, and a failed read shows the last good data as "Stale".
+Claude usage reads share one cache: a read stays fresh for five minutes on
+the timer (a refresh button always fetches), one request per token runs at
+a time, a `429` pauses the endpoint for three minutes, and a failed read
+shows the last good data as "Stale".
 
-## Accounts and tokens
+## Privacy and security
 
-Each OAuth account is a separate connection. Tokens live in one private file
-per connection with `0600` permissions:
+- Devie Quota has no product login or remote application database.
+- Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
+- Each OAuth account is a separate connection. Tokens live in one private
+  file per connection with `0600` permissions, under
+  `~/Library/Application Support/com.devie.quota/credentials/`. Removing
+  an account deletes its token file.
+- Provider tokens never enter the React webview. SQLite stores neither
+  tokens nor complete provider responses.
+- The app owns the tokens for every sign-in and never reads or changes the
+  CLI logins on this Mac.
+- Anonymous usage events and crash reports go to PostHog (EU). They carry
+  a random id, the app version, the OS, and the locale. They never include
+  account names, tokens, quota numbers, or labels. Turn this off in
+  Settings → Privacy. Builds without `POSTHOG_API_KEY` send nothing.
 
-```text
-~/Library/Application Support/com.devie.quota/credentials/<connection-id>.json
-```
-
-The app renews Claude, Codex, and Gemini tokens before they expire. Removing an
-account deletes its token file.
+The local database is stored at
+`~/Library/Application Support/com.devie.quota/devie-quota.sqlite3`.
 
 ## Architecture
 
@@ -73,8 +82,8 @@ Tauri and Rust core
   `-- macOS menu bar and windows
 ```
 
-Rust owns network requests, SQLite, and the menu bar. The
-webview receives normalized connection and quota values only.
+Rust owns network requests, SQLite, and the menu bar. The webview receives
+normalized connection and quota values only.
 
 The main folders are:
 
@@ -83,108 +92,20 @@ src/                    Next.js interface and application components
 src/ui/                 Byte-identical mirror of the Devie UI src/ui folder
 src/theme/              App theme registry, native appearances, custom themes
 src-desktop/            Tauri application and Rust core
-src-desktop/src/oauth/  Claude, Codex, Gemini, and Copilot sign-in and quota adapters
-docs/                   Build, signing, and update documentation
-plans/                  Product research and feasibility analysis
+src-desktop/src/oauth/  Provider sign-in and quota adapters
+docs/                   Build, signing, update, and history documentation
 ```
 
 `src/ui` is a byte-identical copy of the `src/ui` folder from
 [Devie UI](https://www.devie-ui.com/), and a sync is a plain rsync. Do not
 edit or delete files inside it. Every customization lives outside the
 mirror: application components in `src/components`, the theme registry and
-native appearances in `src/theme`, and global styles in `src/app`. The
-theme context uses the versioned `devie-quota-theme:v1` storage key.
-
-## Privacy and security
-
-- Devie Quota has no product login or remote application database.
-- Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
-- Provider tokens never enter the React webview.
-- SQLite does not store provider tokens or complete provider responses.
-- The app owns the tokens for every Claude, Codex, Gemini, and Copilot sign-in.
-- Devie Quota never reads or changes the CLI logins on this Mac.
-- Anonymous usage events and crash reports go to PostHog (EU). They carry
-  a random id, the app version, the OS, and the locale. They never include
-  account names, tokens, quota numbers, or labels. Turn this off in
-  Settings → Privacy. Builds without `POSTHOG_API_KEY` send nothing.
-
-The local database is stored at:
-
-```text
-~/Library/Application Support/com.devie.quota/devie-quota.sqlite3
-```
-
-## Requirements
-
-- macOS 12 or newer.
-- An Apple silicon Mac for the current signed build.
-- [Bun](https://bun.sh/).
-- A stable Rust toolchain.
-- The [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
+native appearances in `src/theme`, and global styles in `src/app`.
 
 ## Development
 
-Install the dependencies:
-
-```sh
-bun install
-```
-
-Start the complete desktop app:
-
-```sh
-bun run dev:desktop
-```
-
-Start the browser preview with local fixtures:
-
-```sh
-bun run dev
-```
-
-The browser preview runs on `http://localhost:3002`. It cannot complete a real
-provider login or use native provider data.
-
-Run the frontend checks and Rust tests:
-
-```sh
-bun run check
-bun run build
-cd src-desktop
-cargo fmt --check
-cargo test --locked
-```
-
-Build a local debug app bundle:
-
-```sh
-bunx tauri build --debug --bundles app
-```
-
-The bundle is written under `src-desktop/target/debug/bundle/macos/`.
-
-## CI and signed builds
-
-The `CI` workflow runs manually. It checks the frontend, builds the static
-export, and runs the Rust tests.
-
-The `Build signed macOS app` workflow runs manually or for a `v*` tag. It builds,
-signs, notarizes, and checks an Apple silicon app and DMG.
-
-To download a build:
-
-1. Open the repository **Actions** page.
-2. Open a successful **Build signed macOS app** run.
-3. Find the **Artifacts** section on the run summary.
-4. Download `Devie-Quota-arm64`.
-5. Extract the ZIP and open the DMG or app bundle.
-
-GitHub keeps the current build artifacts for 14 days. The release workflow also
-publishes signed updater artifacts through CrabNebula Cloud.
-
-The signed workflow uses the GitHub `Release` environment. Read
-[the macOS signing guide](docs/macos-signing.md) for the required secrets and
-setup steps.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the prerequisites, the
+development commands, the project rules, and the pull request checklist.
 
 ## Forking
 
@@ -201,51 +122,15 @@ A fork that ships its own builds must replace these project-specific values:
 Without these changes a fork would collide with the upstream bundle id and
 query an updater feed it cannot publish to.
 
-## Known limits
+## Credits and license
 
-- The app supports macOS only.
-- The signed workflow builds Apple silicon only.
-- GitHub Copilot uses an internal endpoint instead of a public quota API.
-- Cursor has no public OAuth client. The sign-in copies the desktop app flow, tokens do not renew, and the dashboard endpoints are undocumented.
-- Gemini CLI uses internal Code Assist endpoints exposed by the official CLI.
-- The app does not yet remove managed profiles.
-- The app does not yet show full history charts, costs, or local token totals.
-- Auto-ping supports Claude and Codex accounts.
-- Real multi-account testing still needs more plan and organization types.
+Devie Quota is released under the [MIT License](LICENSE). See
+[NOTICE.md](NOTICE.md) for third-party attribution.
 
-## Next areas
-
-- Refine the minimal usage and provider interface.
-- Complete provider lifecycle controls.
-- Improve login progress and error handling.
-- Test multiple Claude, Codex, and Gemini subscription combinations.
-- Expand the quota history and usage charts.
-- Add more providers through the shared adapter model.
-
-## Research and references
-
-The initial design combines useful ideas from these projects:
+The design combines useful ideas from these projects:
 
 - [Devie UI](https://www.devie-ui.com/) for components, tokens, and themes.
 - [AIUsage](https://github.com/sylearn/AIUsage) for the quota dashboard scope.
 - [CodexBar](https://github.com/steipete/CodexBar) for menu bar and provider-source patterns.
 - [usage4claude](https://github.com/f-is-h/usage4claude) for a compact menu bar presentation.
 - [9router](https://github.com/decolua/9router) for multi-account provider concepts.
-
-Read the full [feasibility analysis](plans/feasibility-analysis.md) for the source
-assessment, security boundaries, and initial product decisions.
-
-## Languages
-
-The interface uses i18next. Messages live in `src/i18n/messages/<locale>.json`;
-`en-US` is the source. The app picks the saved language, else the closest
-system language. The main window and the menu bar popover share the setting.
-
-- `bun run i18n:verify` checks lint, missing, undefined, and unused keys.
-- `bun run i18n:untranslated` lists values still identical to English.
-- `bun run i18n:extract` previews new keys found in the code.
-
-The Rust side reads the same JSON files at compile time
-(`src-desktop/src/messages.rs`) for the tray menu and the alert notifications.
-The frontend sends each language change through the `set_language` command,
-and the app stores it in SQLite so alerts use it after a restart.

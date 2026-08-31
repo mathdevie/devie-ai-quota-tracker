@@ -7,7 +7,6 @@
     "Description": "ローカルで動作する AI サブスクリプションのクォータトラッカー"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "キャンセル",
     "Save": "保存",
     "Close": "閉じる",

@@ -1,12 +1,9 @@
 # macOS signing
 
-The `Build signed macOS app` workflow creates these artifacts:
-
-- An Apple silicon app ZIP and DMG.
-
-The workflow signs each app with a Developer ID Application certificate.
-Tauri submits each app to Apple for notarization.
-The workflow then checks the code signature and notarization ticket.
+The `Release Desktop App` workflow (`release-desktop.yml`) builds an Apple
+silicon app and DMG, signs them with a Developer ID Application
+certificate, and submits them to Apple for notarization. The nightly
+workflow (`nightly-desktop.yml`) uses the same signing setup.
 
 ## GitHub environment
 
@@ -34,10 +31,9 @@ Do not commit the certificate, its password, or any Apple credentials.
 
 ## Run a signed build
 
-Open the repository Actions page.
-Select `Build signed macOS app`.
-Select `Run workflow`.
+Push a tag that starts with `v` and matches the version in
+`src-desktop/tauri.conf.json`, or dispatch `Release Desktop App` from the
+repository Actions page.
 
-The workflow also runs for tags that start with `v`.
-It uploads the signed artifacts to the completed workflow run.
-It does not create a GitHub release or upload to CrabNebula.
+The workflow signs and notarizes the build, then publishes it to
+CrabNebula Cloud, where the in-app updater picks it up.
