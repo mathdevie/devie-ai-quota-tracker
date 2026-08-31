@@ -2,32 +2,46 @@ import clsx from "clsx";
 import { ChevronLeft, Settings, X } from "lucide-react";
 import styles from "./TitleBar.module.scss";
 
-/** The leading action: a cross closes Settings, an arrow goes up a level. */
-export interface TitleBarLeading {
-  icon: "close" | "back";
+export interface TitleBarAction {
+  icon: "back" | "close" | "settings";
   label: string;
   onClick: () => void;
+}
+
+const ICONS = { back: ChevronLeft, close: X, settings: Settings };
+
+function IconButton({ action }: { action: TitleBarAction }) {
+  const Icon = ICONS[action.icon];
+  return (
+    <button
+      aria-label={action.label}
+      className={styles.iconButton}
+      onClick={action.onClick}
+      title={action.label}
+      type="button"
+    >
+      <Icon aria-hidden size={16} strokeWidth={2} />
+    </button>
+  );
 }
 
 export default function TitleBar({
   title,
   leading,
-  onOpenSettings,
-  settingsLabel,
+  trailing,
   actions,
   windowControlsInset = false,
 }: {
   title: string;
-  leading?: TitleBarLeading;
-  /** The gear button; leave undefined inside Settings to hide it. */
-  onOpenSettings?: () => void;
-  settingsLabel: string;
-  /** Sits before the settings button, for example an update button. */
+  /** Before the title: the back arrow of a provider page. */
+  leading?: TitleBarAction;
+  /** At the far right: the settings gear, or a cross inside Settings. */
+  trailing?: TitleBarAction;
+  /** Sits before the trailing button, for example an update button. */
   actions?: React.ReactNode;
   /** Clears the native macOS traffic lights, which overlay the window. */
   windowControlsInset?: boolean;
 }) {
-  const LeadingIcon = leading?.icon === "close" ? X : ChevronLeft;
   return (
     <header
       className={clsx(
@@ -36,31 +50,11 @@ export default function TitleBar({
       )}
       data-tauri-drag-region
     >
-      {leading && (
-        <button
-          aria-label={leading.label}
-          className={styles.iconButton}
-          onClick={leading.onClick}
-          title={leading.label}
-          type="button"
-        >
-          <LeadingIcon aria-hidden size={16} strokeWidth={2} />
-        </button>
-      )}
+      {leading && <IconButton action={leading} />}
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.end}>
         {actions}
-        {onOpenSettings && (
-          <button
-            aria-label={settingsLabel}
-            className={styles.iconButton}
-            onClick={onOpenSettings}
-            title={settingsLabel}
-            type="button"
-          >
-            <Settings aria-hidden size={16} strokeWidth={2} />
-          </button>
-        )}
+        {trailing && <IconButton action={trailing} />}
       </div>
     </header>
   );
