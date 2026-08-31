@@ -26,4 +26,5 @@ Devie Quota handles OAuth tokens for provider accounts. The model:
 ## Supported versions
 
 Only the latest release receives security fixes. Update through the in-app
-updater or the [Releases page](https://github.com/mathdevie/devie-quota/releases).
+updater or the
+[CrabNebula Cloud releases page](https://web.crabnebula.cloud/mathdev/devie-quota/releases).
