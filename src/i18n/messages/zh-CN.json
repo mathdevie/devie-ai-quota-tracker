@@ -51,6 +51,7 @@
     "FilterProvider": "服务商",
     "FilterSort": "排序",
     "AllProviders": "所有服务商",
+    "All": "全部",
     "Sort": {
       "Expiring": "即将重置",
       "LeastLeft": "剩余最少",
