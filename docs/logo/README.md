@@ -1,40 +1,27 @@
 # App icon
 
-The mark is a pointy-top hexagon shell with a chevron-topped fill. The fill
-level reads as a quota gauge, and its peak echoes the shell's peak.
+![The app icon at 460px, 128px, 64px, 32px and 22px](preview.png)
 
-`generate.py` is the single source of truth for the geometry and for the four
-depth treatments. It also renders the preview sheets below.
+The mark is a pointy-top hexagon shell with a chevron-topped fill. The fill
+level reads as a quota gauge, and its peak echoes the shell's peak. It sits on
+the geometric centre of the 512px canvas.
+
+The plate is top-lit (`#2e2e35` → `#07070a`), vignetted at the corners, and
+carries a 3px rim highlight along the top edge, so the icon reads with depth
+rather than as flat black.
+
+`generate.py` is the single source of truth for the geometry and the plate
+treatment. It also renders `preview.png`, which shows the icon down to 22px —
+the menu-bar size, and the one that decides whether a treatment survives.
+
+## Regenerating
 
 ```sh
 python3 docs/logo/generate.py
-```
-
-## Variants
-
-![Variants](preview-variants.png)
-
-| Variant | Plate | Depth cue | Mark |
-| --- | --- | --- | --- |
-| **A · slate lift** (live) | `#2e2e35` → `#07070a`, vertical | top-lit gradient, corner vignette, 3px top rim | pure white |
-| **B · mana light** | `#ffffff` → `#cfcfd6`, diagonal | soft cast shadow under the mark | `#202025` → `#51515a` |
-| **C · deep well** | radial, lit at the centre | the light reads as coming from behind the mark | `#ffffff` → `#e5e5ed` |
-| **D · spotlight** | `#1a1a1f` → `#050507` | spotlight from the top, plus a drop shadow under the mark | pure white |
-
-Each cell also shows the icon at 64px, 32px and 22px, which is the size that
-decides whether a treatment survives in the menu bar and the Dock.
-
-## Centring
-
-The first pass placed the mark 16px high: a 65px gap above against a 97px gap
-below. It now sits on the geometric centre and is 2% larger.
-
-![Centring](preview-centering.png)
-
-## Switching variant
-
-```sh
-cp docs/logo/variant-d-spotlight.svg src-desktop/icons/app-icon.svg
-cp docs/logo/variant-d-spotlight.svg src/app/icon.svg
+cp docs/logo/app-icon.svg src-desktop/icons/app-icon.svg
+cp docs/logo/app-icon.svg src/app/icon.svg
 bun tauri icon src-desktop/icons/app-icon.svg
 ```
+
+`tauri icon` rewrites the macOS `.icns`, the Windows `.ico`, and the PNG, iOS
+and Android sets under `src-desktop/icons/`.
