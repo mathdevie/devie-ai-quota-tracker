@@ -9,8 +9,13 @@ export interface Filters {
   sort: Sort;
 }
 
-/** Shared by the main window and the menu bar popover (same origin). */
-const STORAGE_KEY = "devie-quota-filters:v1";
+/** The main window and the menu bar popover each keep their own filters. */
+export type FilterScope = "main" | "popover";
+
+const STORAGE_KEYS: Record<FilterScope, string> = {
+  main: "devie-quota-filters:v1",
+  popover: "devie-quota-popover-filters:v1",
+};
 
 export const DEFAULT_FILTERS: Filters = { provider: "all", sort: "expiring" };
 
@@ -26,10 +31,13 @@ export const PROVIDER_FILTERS: ProviderFilter[] = [
 
 export const SORTS: Sort[] = ["expiring", "least-left", "most-left", "name"];
 
-export function readFilters(): Filters {
+export function readFilters(scope: FilterScope): Filters {
   if (typeof window === "undefined") return DEFAULT_FILTERS;
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    // The popover starts from the main filters: both shared one key before.
+    const saved =
+      localStorage.getItem(STORAGE_KEYS[scope]) ??
+      localStorage.getItem(STORAGE_KEYS.main);
     return saved
       ? { ...DEFAULT_FILTERS, ...JSON.parse(saved) }
       : DEFAULT_FILTERS;
@@ -38,9 +46,9 @@ export function readFilters(): Filters {
   }
 }
 
-export function writeFilters(filters: Filters): void {
+export function writeFilters(scope: FilterScope, filters: Filters): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
+    localStorage.setItem(STORAGE_KEYS[scope], JSON.stringify(filters));
   } catch {
     // Storage unavailable
   }

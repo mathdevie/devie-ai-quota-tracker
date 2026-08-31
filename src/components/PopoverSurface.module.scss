@@ -30,6 +30,13 @@
   border-bottom: 1px solid $devie__color__line;
 }
 
+// The dashboard button and the filters, left of the refresh button.
+.headerGroup {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x05;
+}
+
 // Flat rows with a line between them, no card frames.
 .list {
   flex: 1;

@@ -8,7 +8,6 @@ import type {
   TraySummary,
   UpdateChannel,
 } from "./contracts";
-import type { Filters } from "./filters";
 import { previewCodexResets, previewState } from "./fixtures";
 
 declare global {
@@ -324,21 +323,6 @@ export async function openMainWindow(): Promise<void> {
 export async function hidePopover(): Promise<void> {
   if (!isDesktop()) return;
   await call("hide_popover");
-}
-
-/** Tells the other window (main or popover) that the filters changed. */
-export async function broadcastFilters(filters: Filters): Promise<void> {
-  if (!isDesktop()) return;
-  const { emit } = await import("@tauri-apps/api/event");
-  await emit("quota:filters", filters);
-}
-
-export async function listenFilters(
-  onChange: (filters: Filters) => void,
-): Promise<() => void> {
-  if (!isDesktop()) return () => {};
-  const { listen } = await import("@tauri-apps/api/event");
-  return listen<Filters>("quota:filters", (event) => onChange(event.payload));
 }
 
 /** Fits the popover window to its content. The width stays as it is. */

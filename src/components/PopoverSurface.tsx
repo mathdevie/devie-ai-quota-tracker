@@ -7,7 +7,6 @@ import type { DashboardState, TraySummary } from "@/lib/contracts";
 import {
   hidePopover,
   isDesktop,
-  listenFilters,
   openMainWindow,
   resizePopover,
   setTraySummary,
@@ -17,6 +16,7 @@ import {
   DEFAULT_FILTERS,
   type Filters,
   readFilters,
+  writeFilters,
 } from "@/lib/filters";
 import Button from "@/ui/Button";
 import ScrollArea from "@/ui/ScrollArea";
@@ -24,6 +24,7 @@ import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
 import PopoverRow from "./PopoverRow";
 import styles from "./PopoverSurface.module.scss";
+import QuotaFilters from "./QuotaFilters";
 
 /** The Tauri window caps the height at this value; the list scrolls past it. */
 const MAX_HEIGHT = 760;
@@ -43,16 +44,17 @@ export default function PopoverSurface({
   onStateChange: (next: DashboardState) => void;
 }) {
   const { t } = useTranslation();
-  // The Quota page owns the filters and broadcasts every change.
+  // The popover keeps its own filters, apart from the main window.
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   useEffect(() => {
-    setFilters(readFilters());
-    let stop: (() => void) | undefined;
-    void listenFilters(setFilters).then((unlisten) => {
-      stop = unlisten;
-    });
-    return () => stop?.();
+    setFilters(readFilters("popover"));
   }, []);
+
+  function updateFilters(patch: Partial<Filters>) {
+    const next = { ...filters, ...patch };
+    setFilters(next);
+    writeFilters("popover", next);
+  }
 
   // The window is transparent; the surface draws its own rounded frame.
   useEffect(() => {
@@ -108,16 +110,19 @@ export default function PopoverSurface({
         data-native-material={isDesktop() || undefined}
       >
         <header className={styles.header} ref={headerRef}>
-          <IconTip label={t("Popover.OpenDashboard")}>
-            <Button
-              aria-label={t("Popover.OpenDashboard")}
-              onClick={() => void openDashboard()}
-              size="sm"
-              variant="icon-naked"
-            >
-              <Settings size={14} />
-            </Button>
-          </IconTip>
+          <div className={styles.headerGroup}>
+            <IconTip label={t("Popover.OpenDashboard")}>
+              <Button
+                aria-label={t("Popover.OpenDashboard")}
+                onClick={() => void openDashboard()}
+                size="sm"
+                variant="icon-naked"
+              >
+                <Settings size={14} />
+              </Button>
+            </IconTip>
+            <QuotaFilters compact filters={filters} onChange={updateFilters} />
+          </div>
           <IconTip label={t("Quota.RefreshQuotas")}>
             <Button
               aria-label={t("Quota.RefreshQuotas")}
