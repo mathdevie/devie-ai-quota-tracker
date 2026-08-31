@@ -8,6 +8,7 @@ mod model;
 mod notify;
 mod oauth;
 mod parse;
+mod telemetry;
 mod tray_icons;
 mod updater;
 
@@ -34,6 +35,7 @@ struct Core {
     refresh_gate: Arc<tokio::sync::Mutex<()>>,
     /// The cached codex-resets.com news, shared by every window.
     codex_resets: codex_resets::Cache,
+    telemetry: telemetry::Telemetry,
 }
 
 #[tauri::command]
@@ -70,6 +72,10 @@ async fn finish_login(
     core.database.upsert_connections(&[connection.clone()])?;
     core.database.set_enabled(&connection.id, true)?;
     credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
+    core.telemetry.capture(
+        "provider_connected",
+        serde_json::json!({ "provider": provider.as_str() }),
+    );
     if let Some(connection) = core.database.connection_by_id(&connection.id)? {
         refresh_one(&app, &core, &connection, true).await;
     }
@@ -87,8 +93,16 @@ fn remove_connection(
     core: State<'_, Core>,
     connection_id: String,
 ) -> Result<DashboardState, String> {
+    let provider = core
+        .database
+        .connection_by_id(&connection_id)?
+        .map(|connection| connection.provider.as_str());
     core.database.delete_connection(&connection_id)?;
     credentials::remove(&core.app_data_dir, &connection_id);
+    core.telemetry.capture(
+        "provider_removed",
+        serde_json::json!({ "provider": provider }),
+    );
     publish_state(&app, &core)
 }
 
@@ -244,6 +258,10 @@ fn set_tray_summary(
     summary: Option<TraySummary>,
 ) -> Result<DashboardState, String> {
     core.database.set_tray_summary(summary.as_ref())?;
+    core.telemetry.capture(
+        "setting_changed",
+        serde_json::json!({ "setting": "tray_summary", "custom": summary.is_some() }),
+    );
     publish_state(&app, &core)
 }
 
@@ -254,6 +272,10 @@ fn set_menu_bar_item_visible(
     visible: bool,
 ) -> Result<DashboardState, String> {
     core.database.set_show_menu_bar_item(visible)?;
+    core.telemetry.capture(
+        "setting_changed",
+        serde_json::json!({ "setting": "show_menu_bar_item", "value": visible }),
+    );
     apply_tray_visibility(&app, visible);
     publish_state(&app, &core)
 }
@@ -267,8 +289,36 @@ fn set_update_channel(
     channel: UpdateChannel,
 ) -> Result<DashboardState, String> {
     core.database.set_update_channel(channel)?;
+    core.telemetry.capture(
+        "setting_changed",
+        serde_json::json!({ "setting": "update_channel", "value": channel.as_str() }),
+    );
     // An update found on the old channel must not install any more.
     pending.clear();
+    publish_state(&app, &core)
+}
+
+/// Turns anonymous usage events and crash reports on or off.
+#[tauri::command]
+fn set_telemetry_enabled(
+    app: AppHandle,
+    core: State<'_, Core>,
+    enabled: bool,
+) -> Result<DashboardState, String> {
+    if !enabled {
+        // The last event goes out while the setting still allows it.
+        core.telemetry.capture(
+            "setting_changed",
+            serde_json::json!({ "setting": "telemetry_enabled", "value": false }),
+        );
+    }
+    core.database.set_telemetry_enabled(enabled)?;
+    if enabled {
+        core.telemetry.capture(
+            "setting_changed",
+            serde_json::json!({ "setting": "telemetry_enabled", "value": true }),
+        );
+    }
     publish_state(&app, &core)
 }
 
@@ -279,6 +329,10 @@ fn set_language(app: AppHandle, core: State<'_, Core>, locale: String) -> Result
         return Err("This language is not supported.".to_string());
     }
     core.database.set_language(&locale)?;
+    core.telemetry.capture(
+        "setting_changed",
+        serde_json::json!({ "setting": "language", "value": locale }),
+    );
     apply_tray_language(&app, &locale).map_err(|error| error.to_string())
 }
 
@@ -428,6 +482,14 @@ async fn refresh_one(
             } else {
                 ConnectionStatus::Error
             };
+            core.telemetry.capture(
+                "quota_refresh_failed",
+                serde_json::json!({
+                    "provider": current.provider.as_str(),
+                    "status": status.as_str(),
+                    "error_kind": telemetry_error_kind(&message),
+                }),
+            );
             let _ = core.database.save_failure(&current.id, status, &message);
         }
     }
@@ -450,6 +512,27 @@ async fn auto_ping_tick(app: &AppHandle) {
     }
     if refreshed {
         let _ = publish_state(app, &core);
+    }
+}
+
+/// A coarse class for a refresh error. The message itself may name an
+/// account, so it never leaves the machine.
+fn telemetry_error_kind(message: &str) -> &'static str {
+    let lower = message.to_lowercase();
+    if lower.contains("sign in") || lower.contains("login") || lower.contains("expired") {
+        "auth"
+    } else if lower.contains("timed out") || lower.contains("timeout") {
+        "timeout"
+    } else if lower.contains("connect") || lower.contains("dns") || lower.contains("network") {
+        "network"
+    } else if lower.contains("429") || lower.contains("rate limit") {
+        "rate_limited"
+    } else if lower.contains("500") || lower.contains("502") || lower.contains("503") {
+        "server"
+    } else if lower.contains("parse") || lower.contains("json") || lower.contains("unexpected") {
+        "parse"
+    } else {
+        "other"
     }
 }
 
@@ -771,6 +854,10 @@ pub fn run() {
             let client = reqwest::Client::builder()
                 .timeout(Duration::from_secs(20))
                 .build()?;
+            let version = app.package_info().version.to_string();
+            let telemetry = telemetry::Telemetry::new(database.clone(), version.clone());
+            telemetry.install_panic_hook();
+            let previous_version = database.record_run_version(&version).unwrap_or_default();
             app.manage(Core {
                 database,
                 app_data_dir,
@@ -778,6 +865,7 @@ pub fn run() {
                 logins: LoginSessions::default(),
                 refresh_gate: Arc::new(tokio::sync::Mutex::new(())),
                 codex_resets: codex_resets::Cache::default(),
+                telemetry: telemetry.clone(),
             });
             app.manage(updater::PendingUpdate::default());
             build_windows(app)?;
@@ -787,6 +875,30 @@ pub fn run() {
             build_tray(app, &locale)?;
             let settings = app.state::<Core>().database.settings().unwrap_or_default();
             apply_tray_visibility(app.handle(), settings.show_menu_bar_item);
+            let connections = app
+                .state::<Core>()
+                .database
+                .dashboard_state()
+                .map(|state| state.connections)
+                .unwrap_or_default();
+            telemetry.capture(
+                "app_opened",
+                serde_json::json!({
+                    "connections": connections.len(),
+                    "providers": connections
+                        .iter()
+                        .map(|connection| connection.provider.as_str())
+                        .collect::<std::collections::BTreeSet<_>>(),
+                    "update_channel": settings.update_channel.as_str(),
+                    "show_menu_bar_item": settings.show_menu_bar_item,
+                }),
+            );
+            if let Some(previous_version) = previous_version {
+                telemetry.capture(
+                    "app_updated",
+                    serde_json::json!({ "previous_version": previous_version }),
+                );
+            }
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -838,6 +950,7 @@ pub fn run() {
             set_menu_bar_item_visible,
             set_language,
             set_update_channel,
+            set_telemetry_enabled,
             updater::fetch_update,
             updater::download_update,
             updater::install_update,

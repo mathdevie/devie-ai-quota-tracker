@@ -261,6 +261,19 @@ export async function setUpdateChannel(
   return call("set_update_channel", { channel });
 }
 
+/** Turns anonymous usage events and crash reports on or off. */
+export async function setTelemetryEnabled(
+  enabled: boolean,
+): Promise<DashboardState> {
+  if (!isDesktop()) {
+    return {
+      ...previewState,
+      settings: { ...previewState.settings, telemetryEnabled: enabled },
+    };
+  }
+  return call("set_telemetry_enabled", { enabled });
+}
+
 /** Tells the Rust side which language to use for the tray menu and alerts. */
 export async function setLanguage(locale: string): Promise<void> {
   if (!isDesktop()) return;
