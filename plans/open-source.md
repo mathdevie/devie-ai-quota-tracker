@@ -158,6 +158,12 @@ Option B loses the change log and breaks the existing releases. Prefer Option A.
 
 Do these on GitHub after Phase 7 is pushed.
 
+0. Remove the temporary self-hosted runner fallback from the three
+   workflows (`ci.yml`, `release-desktop.yml`, `nightly-desktop.yml`):
+   set `runs-on: macos-15` (build/check) and `ubuntu-24.04` (CrabNebula
+   steps), and drop the `runner` dispatch input. A public repository must
+   never run workflows on the personal Mac. Then unregister the runner
+   (3.8) once the first hosted release succeeds.
 1. Settings → General → Change visibility → Public.
 2. Settings → Actions → General:
    - "Allow all actions" or restrict to the actions used.
