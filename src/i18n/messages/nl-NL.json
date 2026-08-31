@@ -20,7 +20,7 @@
     "Providers": "Providers",
     "Settings": "Instellingen",
     "Back": "Terug",
-    "Forward": "Vooruit"
+    "Close": "Sluiten"
   },
   "Connection": {
     "ActionsFor": "Acties voor {{name}}",

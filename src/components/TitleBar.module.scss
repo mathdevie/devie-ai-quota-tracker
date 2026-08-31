@@ -17,14 +17,7 @@
   padding-left: 84px;
 }
 
-.navigation {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 2px;
-}
-
-// A flat toolbar button: back, forward, and settings share it.
+// A flat toolbar button: the leading action and settings share it.
 .iconButton {
   position: relative;
   display: grid;
@@ -63,7 +56,7 @@
 
 .title {
   min-width: 0;
-  margin: 0 0 0 $devie__spacing__x05;
+  margin: 0;
   overflow: hidden;
   font-size: 15px;
   font-weight: 600;

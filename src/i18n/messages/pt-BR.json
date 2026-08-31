@@ -20,7 +20,7 @@
     "Providers": "Provedores",
     "Settings": "Configurações",
     "Back": "Voltar",
-    "Forward": "Avançar"
+    "Close": "Fechar"
   },
   "Connection": {
     "ActionsFor": "Ações para {{name}}",

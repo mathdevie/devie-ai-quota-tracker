@@ -20,7 +20,7 @@
     "Providers": "Leverandører",
     "Settings": "Innstillinger",
     "Back": "Tilbake",
-    "Forward": "Frem"
+    "Close": "Lukk"
   },
   "Connection": {
     "ActionsFor": "Handlinger for {{name}}",

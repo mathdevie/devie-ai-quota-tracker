@@ -20,7 +20,7 @@
     "Providers": "Fournisseurs",
     "Settings": "Réglages",
     "Back": "Retour",
-    "Forward": "Suivant"
+    "Close": "Fermer"
   },
   "Connection": {
     "ActionsFor": "Actions pour {{name}}",
