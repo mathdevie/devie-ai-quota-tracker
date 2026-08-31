@@ -22,7 +22,7 @@ Add these secrets to the `Release` environment:
 | `APPLE_TEAM_ID` | The Apple Developer team identifier. |
 
 Repository secrets cannot be read or copied through the GitHub API.
-Copy the values from the Mana repository or add them from the local source.
+Add the values from your own Apple Developer account.
 
 Create the certificate value with this command:
 
