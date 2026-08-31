@@ -88,6 +88,7 @@ function Shell() {
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
   const [autoPingFor, setAutoPingFor] = useState<ProviderConnection>();
   const [surface, setSurface] = useState<"main" | "popover">("main");
+  const [desktop, setDesktop] = useState(false);
   const view = page.view;
   const providerPage = page.provider;
 
@@ -108,6 +109,7 @@ function Shell() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setSurface(params.get("surface") === "popover" ? "popover" : "main");
+    setDesktop(isDesktop());
 
     let cleanup: (() => void) | undefined;
     let cancelled = false;
@@ -260,6 +262,7 @@ function Shell() {
           onOpenSettings={() => changeView("settings")}
           settingsLabel={t("Nav.Settings")}
           title={title}
+          windowControlsInset={desktop}
         />
 
         <ScrollArea.Root className={styles.main} render={<main />}>

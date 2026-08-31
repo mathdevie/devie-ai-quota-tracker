@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
 import styles from "./TitleBar.module.scss";
 
@@ -12,6 +13,7 @@ export default function TitleBar({
   forwardLabel,
   settingsLabel,
   actions,
+  windowControlsInset = false,
 }: {
   title: string;
   canGoBack: boolean;
@@ -24,9 +26,17 @@ export default function TitleBar({
   settingsLabel: string;
   /** Sits before the settings button, for example an update button. */
   actions?: React.ReactNode;
+  /** Clears the native macOS traffic lights, which overlay the window. */
+  windowControlsInset?: boolean;
 }) {
   return (
-    <header className={styles.titleBar} data-tauri-drag-region>
+    <header
+      className={clsx(
+        styles.titleBar,
+        windowControlsInset && styles.windowControlsInset,
+      )}
+      data-tauri-drag-region
+    >
       <div className={styles.navigation}>
         <button
           aria-label={backLabel}

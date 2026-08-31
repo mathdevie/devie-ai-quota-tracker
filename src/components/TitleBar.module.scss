@@ -12,6 +12,11 @@
   user-select: none;
 }
 
+// The native macOS traffic lights overlay the window at x 20–72.
+.windowControlsInset {
+  padding-left: 60px;
+}
+
 .navigation {
   display: flex;
   height: 32px;
