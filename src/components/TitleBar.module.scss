@@ -5,37 +5,34 @@
   height: 52px;
   flex-shrink: 0;
   align-items: center;
-  gap: 12px;
-  margin: 0 $devie__spacing__x3;
-  padding-top: 2px;
+  gap: $devie__spacing__x1;
+  padding: 0 $devie__spacing__x2;
   box-sizing: border-box;
+  border-bottom: 1px solid $devie__color__line;
   user-select: none;
 }
 
 // The native macOS traffic lights overlay the window at x 20–72.
 .windowControlsInset {
-  padding-left: 60px;
+  padding-left: 84px;
 }
 
 .navigation {
   display: flex;
-  height: 32px;
   flex-shrink: 0;
   align-items: center;
-  overflow: hidden;
-  border: 1px solid var(--macos__toolbar-control-border);
-  border-radius: 16px;
-  background: var(--macos__toolbar-control-background);
-  box-shadow: 0 1px 1px color-mix(in srgb, black 4%, transparent);
+  gap: 2px;
 }
 
-.navigationButton {
+// A flat toolbar button: back, forward, and settings share it.
+.iconButton {
   position: relative;
   display: grid;
-  width: 32px;
-  height: 100%;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 0;
+  border-radius: 7px;
   background: transparent;
   color: $devie__color__text;
   place-items: center;
@@ -44,16 +41,6 @@
   svg {
     width: 18px;
     height: 18px;
-  }
-
-  & + &::before {
-    position: absolute;
-    top: 6px;
-    bottom: 6px;
-    left: 0;
-    width: 1px;
-    background: var(--macos__toolbar-control-divider);
-    content: "";
   }
 
   &:hover:not(:disabled) {
@@ -76,11 +63,11 @@
 
 .title {
   min-width: 0;
-  margin: 0;
+  margin: 0 0 0 $devie__spacing__x05;
   overflow: hidden;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.009em;
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
@@ -90,46 +77,6 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: $devie__spacing__x1;
+  gap: $devie__spacing__x05;
   margin-left: auto;
-}
-
-.settingsButton {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 1px solid var(--macos__toolbar-control-border);
-  border-radius: 16px;
-  background: var(--macos__toolbar-control-background);
-  box-shadow: 0 1px 1px color-mix(in srgb, black 4%, transparent);
-  color: $devie__color__text;
-  place-items: center;
-  cursor: default;
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  &:hover {
-    background: color-mix(
-      in srgb,
-      $devie__color__text 8%,
-      var(--macos__toolbar-control-background)
-    );
-  }
-
-  &:active {
-    background: color-mix(
-      in srgb,
-      $devie__color__text 13%,
-      var(--macos__toolbar-control-background)
-    );
-  }
-
-  &:focus-visible {
-    outline: 2px solid $devie__color__primary;
-    outline-offset: -2px;
-  }
 }
