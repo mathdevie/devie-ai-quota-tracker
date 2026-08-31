@@ -29,6 +29,7 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Système",
       "de-DE": "System",
       "it-IT": "Sistema",
+      "ja-JP": "システム",
       "es-ES": "Sistema",
       "es-419": "Sistema",
       "pt-BR": "Sistema",
@@ -37,6 +38,7 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Systeem",
       "nb-NO": "System",
       "sv-SE": "System",
+      "zh-CN": "系统",
     },
   },
   {
@@ -49,6 +51,7 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Clair",
       "de-DE": "Hell",
       "it-IT": "Chiaro",
+      "ja-JP": "ライト",
       "es-ES": "Claro",
       "es-419": "Claro",
       "pt-BR": "Claro",
@@ -57,6 +60,7 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Licht",
       "nb-NO": "Lys",
       "sv-SE": "Ljus",
+      "zh-CN": "浅色",
     },
   },
   {
@@ -69,6 +73,7 @@ export const THEMES: ThemeOption[] = [
       "fr-FR": "Sombre",
       "de-DE": "Dunkel",
       "it-IT": "Scuro",
+      "ja-JP": "ダーク",
       "es-ES": "Oscuro",
       "es-419": "Oscuro",
       "pt-BR": "Escuro",
@@ -77,6 +82,7 @@ export const THEMES: ThemeOption[] = [
       "nl-NL": "Donker",
       "nb-NO": "Mørk",
       "sv-SE": "Mörk",
+      "zh-CN": "深色",
     },
   },
 ];

@@ -25,6 +25,8 @@ const FILES: &[(&str, &str)] = &[
     ("nl-NL", include_str!("../../src/i18n/messages/nl-NL.json")),
     ("nb-NO", include_str!("../../src/i18n/messages/nb-NO.json")),
     ("sv-SE", include_str!("../../src/i18n/messages/sv-SE.json")),
+    ("ja-JP", include_str!("../../src/i18n/messages/ja-JP.json")),
+    ("zh-CN", include_str!("../../src/i18n/messages/zh-CN.json")),
 ];
 
 fn catalog() -> &'static HashMap<&'static str, Value> {
@@ -116,6 +118,8 @@ mod tests {
         assert_eq!(closest("fr"), Some("fr-FR"));
         assert_eq!(closest("pt_BR"), Some("pt-BR"));
         assert_eq!(closest("es-MX"), Some("es-ES"));
-        assert_eq!(closest("ja-JP"), None);
+        assert_eq!(closest("ja"), Some("ja-JP"));
+        assert_eq!(closest("zh-Hans"), Some("zh-CN"));
+        assert_eq!(closest("xx-XX"), None);
     }
 }
