@@ -16,7 +16,6 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Sections": "Seksjoner",
     "Quota": "Kvote",
     "Providers": "Leverandører",
     "Settings": "Innstillinger",
@@ -104,9 +103,6 @@
     "NoProviders": "Ingen leverandører"
   },
   "Providers": {
-    "Active": "Aktive",
-    "Available": "Tilgjengelige",
-    "NotSupportedYet": "Støttes ikke ennå",
     "Connected": "{{total}} tilkoblet",
     "Attention": "Merk {{total}}",
     "AddAccount": "Legg til konto",
@@ -180,7 +176,8 @@
       "Title": "Versjon",
       "RestartToUpdate": "Start på nytt for å oppdatere",
       "CheckForUpdates": "Se etter oppdateringer",
-      "UpdateAvailable": "Oppdatering tilgjengelig",
+      "UpdateReady": "Oppdatering klar",
+      "RestartToApply": "Start på nytt for å ta i bruk oppdateringen",
       "Status": {
         "PackagedOnly": "Oppdateringer fungerer bare i den pakkede appen.",
         "Downloading": "Laster ned {{progress}} %",

@@ -1,13 +1,16 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { RefreshCw } from "lucide-react";
+import { ChevronRight, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { DashboardState, UpdateChannel } from "@/lib/contracts";
+import type { DashboardState, Provider, UpdateChannel } from "@/lib/contracts";
+import { PROVIDER_NAMES, PROVIDERS } from "@/lib/labels";
+import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Select from "@/ui/Select";
 import Switch from "@/ui/Switch";
 import LanguagePicker from "../LanguagePicker";
+import ProviderIcon from "../ProviderIcon";
 import SettingRow from "../SettingRow";
 import ThemePicker from "../ThemePicker";
 import pickerStyles from "../ThemePicker.module.scss";
@@ -15,6 +18,89 @@ import { useAppUpdater } from "../updater/AppUpdater";
 import styles from "./views.module.scss";
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
+
+function ProviderCard({
+  provider,
+  state,
+  onOpen,
+}: {
+  provider: Provider;
+  state: DashboardState;
+  onOpen: (provider: Provider) => void;
+}) {
+  const { t } = useTranslation();
+  const connections = state.connections.filter(
+    (connection) => connection.provider === provider,
+  );
+  const connected = connections.filter(
+    (connection) => connection.enabled && connection.status !== "error",
+  ).length;
+  const attention = connections.filter(
+    (connection) =>
+      connection.enabled &&
+      (connection.status === "needs_login" || connection.status === "error"),
+  ).length;
+  return (
+    <button
+      className={styles.providerCard}
+      onClick={() => onOpen(provider)}
+      type="button"
+    >
+      <span className={styles.providerCardHeader}>
+        <ProviderIcon provider={provider} size={28} />
+        <span className={styles.providerCardTitle}>
+          <strong>{PROVIDER_NAMES[provider]}</strong>
+        </span>
+        <ChevronRight className={styles.chevron} size={16} />
+      </span>
+      {(connected > 0 || attention > 0) && (
+        <span className={styles.providerBadges}>
+          {connected > 0 && (
+            <Badge variant="success">
+              {t("Providers.Connected", { total: connected })}
+            </Badge>
+          )}
+          {attention > 0 && (
+            <Badge variant="warning">
+              {t("Providers.Attention", { total: attention })}
+            </Badge>
+          )}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function ProvidersGroup({
+  state,
+  onOpen,
+}: {
+  state: DashboardState;
+  onOpen: (provider: Provider) => void;
+}) {
+  const { t } = useTranslation();
+  const active = PROVIDERS.filter((provider) =>
+    state.connections.some((connection) => connection.provider === provider),
+  );
+  const ordered = [
+    ...active,
+    ...PROVIDERS.filter((provider) => !active.includes(provider)),
+  ];
+  return (
+    <SettingRow.Group plain title={t("Nav.Providers")}>
+      <div className={styles.providerGrid}>
+        {ordered.map((provider) => (
+          <ProviderCard
+            key={provider}
+            onOpen={onOpen}
+            provider={provider}
+            state={state}
+          />
+        ))}
+      </div>
+    </SettingRow.Group>
+  );
+}
 
 function UpdateRow() {
   const { t } = useTranslation();
@@ -162,18 +248,21 @@ export default function SettingsView({
   state,
   busy,
   onMenuBarItemChange,
+  onOpenProvider,
   onUpdateChannelChange,
   onTelemetryChange,
 }: {
   state: DashboardState;
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
+  onOpenProvider: (provider: Provider) => void;
   onUpdateChannelChange: (channel: UpdateChannel) => Promise<boolean>;
   onTelemetryChange: (enabled: boolean) => void;
 }) {
   const { t } = useTranslation();
   return (
     <section className={styles.page} data-settings>
+      <ProvidersGroup onOpen={onOpenProvider} state={state} />
       <SettingRow.Group title={t("Settings.General")}>
         <SettingRow.Row
           subtitle={t("Settings.MenuBarItemDescription")}
