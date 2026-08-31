@@ -16,7 +16,6 @@
     "Theme": "Thema"
   },
   "Nav": {
-    "Sections": "Secties",
     "Quota": "Quota",
     "Providers": "Providers",
     "Settings": "Instellingen",
@@ -104,9 +103,6 @@
     "NoProviders": "Geen providers"
   },
   "Providers": {
-    "Active": "Actief",
-    "Available": "Beschikbaar",
-    "NotSupportedYet": "Nog niet ondersteund",
     "Connected": "{{total}} verbonden",
     "Attention": "Aandacht {{total}}",
     "AddAccount": "Account toevoegen",
@@ -176,7 +172,8 @@
       "Title": "Versie",
       "RestartToUpdate": "Herstarten om bij te werken",
       "CheckForUpdates": "Op updates controleren",
-      "UpdateAvailable": "Update beschikbaar",
+      "UpdateReady": "Update gereed",
+      "RestartToApply": "Herstart om de update toe te passen",
       "Status": {
         "PackagedOnly": "Updates werken alleen in de verpakte app.",
         "Downloading": "Downloaden {{progress}}%",

@@ -16,7 +16,6 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Sections": "Sektioner",
     "Quota": "Kvot",
     "Providers": "Leverantörer",
     "Settings": "Inställningar",
@@ -104,9 +103,6 @@
     "NoProviders": "Inga leverantörer"
   },
   "Providers": {
-    "Active": "Aktiva",
-    "Available": "Tillgängliga",
-    "NotSupportedYet": "Stöds inte ännu",
     "Connected": "{{total}} anslutna",
     "Attention": "Observera {{total}}",
     "AddAccount": "Lägg till konto",
@@ -176,7 +172,8 @@
       "Title": "Version",
       "RestartToUpdate": "Starta om för att uppdatera",
       "CheckForUpdates": "Sök efter uppdateringar",
-      "UpdateAvailable": "Uppdatering tillgänglig",
+      "UpdateReady": "Uppdatering klar",
+      "RestartToApply": "Starta om för att tillämpa uppdateringen",
       "Status": {
         "PackagedOnly": "Uppdateringar fungerar bara i den paketerade appen.",
         "Downloading": "Laddar ner {{progress}} %",

@@ -16,7 +16,6 @@
     "Theme": "Design"
   },
   "Nav": {
-    "Sections": "Bereiche",
     "Quota": "Kontingent",
     "Providers": "Anbieter",
     "Settings": "Einstellungen",
@@ -104,9 +103,6 @@
     "NoProviders": "Keine Anbieter"
   },
   "Providers": {
-    "Active": "Aktiv",
-    "Available": "Verfügbar",
-    "NotSupportedYet": "Noch nicht unterstützt",
     "Connected": "{{total}} verbunden",
     "Attention": "Achtung {{total}}",
     "AddAccount": "Konto hinzufügen",
@@ -176,7 +172,8 @@
       "Title": "Version",
       "RestartToUpdate": "Zum Aktualisieren neu starten",
       "CheckForUpdates": "Nach Updates suchen",
-      "UpdateAvailable": "Update verfügbar",
+      "UpdateReady": "Update bereit",
+      "RestartToApply": "Neu starten, um das Upgrade anzuwenden",
       "Status": {
         "PackagedOnly": "Updates funktionieren nur in der paketierten App.",
         "Downloading": "Wird geladen {{progress}} %",

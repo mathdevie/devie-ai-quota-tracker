@@ -16,7 +16,6 @@
     "Theme": "Tema"
   },
   "Nav": {
-    "Sections": "Secciones",
     "Quota": "Cuota",
     "Providers": "Proveedores",
     "Settings": "Ajustes",
@@ -104,9 +103,6 @@
     "NoProviders": "Sin proveedores"
   },
   "Providers": {
-    "Active": "Activos",
-    "Available": "Disponibles",
-    "NotSupportedYet": "Aún no compatibles",
     "Connected": "{{total}} conectadas",
     "Attention": "Atención {{total}}",
     "AddAccount": "Añadir cuenta",
@@ -176,7 +172,8 @@
       "Title": "Versión",
       "RestartToUpdate": "Reiniciar para actualizar",
       "CheckForUpdates": "Buscar actualizaciones",
-      "UpdateAvailable": "Actualización disponible",
+      "UpdateReady": "Actualización lista",
+      "RestartToApply": "Reiniciar para aplicar la actualización",
       "Status": {
         "PackagedOnly": "Las actualizaciones solo funcionan en la app empaquetada.",
         "Downloading": "Descargando {{progress}} %",

@@ -105,21 +105,6 @@
   user-select: text;
 }
 
-.group {
-  display: grid;
-  gap: $devie__spacing__x1;
-}
-
-.groupTitle {
-  margin: 0;
-  padding: 0 $devie__spacing__x05;
-  color: $devie__color__text-sub;
-  font-size: $devie__font-size__small;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
 .empty {
   margin: 0;
   padding: $devie__spacing__x3;
@@ -174,10 +159,6 @@
   &:focus-visible {
     outline: 2px solid $devie__color__primary;
     outline-offset: -2px;
-  }
-
-  &[data-muted] strong {
-    color: $devie__color__text-sub;
   }
 }
 

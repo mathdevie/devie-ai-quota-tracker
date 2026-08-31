@@ -62,9 +62,10 @@ function message(reason: unknown): string {
 }
 
 /**
- * Mirrors the Mana desktop app: the app checks at start and installs a
- * found update right away. Later checks download in the background and
- * show an "Update available" button, which installs on click.
+ * Checks at start and every 15 minutes, and downloads a found update in
+ * the background. A ready update never installs by itself: the title bar
+ * shows an "Update ready" badge, which restarts into the new version on
+ * click.
  *
  * The checks run on the Rust side (`src-desktop/src/updater.rs`), which
  * builds the update endpoint from the release channel setting.
@@ -163,15 +164,13 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!UPDATER_ENABLED || startedRef.current) return;
     startedRef.current = true;
-    void checkForUpdates().then((result) => {
-      if (result === "ready") void installUpdate();
-    });
+    void checkForUpdates();
     const timer = window.setInterval(
       () => void checkForUpdates(),
       BACKGROUND_INTERVAL,
     );
     return () => window.clearInterval(timer);
-  }, [checkForUpdates, installUpdate]);
+  }, [checkForUpdates]);
 
   const value = useMemo(
     () => ({
