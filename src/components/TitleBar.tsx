@@ -40,7 +40,7 @@ export default function TitleBar({
       <div className={styles.navigation}>
         <button
           aria-label={backLabel}
-          className={styles.navigationButton}
+          className={styles.iconButton}
           disabled={!canGoBack}
           onClick={onBack}
           title={backLabel}
@@ -50,7 +50,7 @@ export default function TitleBar({
         </button>
         <button
           aria-label={forwardLabel}
-          className={styles.navigationButton}
+          className={styles.iconButton}
           disabled={!canGoForward}
           onClick={onForward}
           title={forwardLabel}
@@ -64,7 +64,7 @@ export default function TitleBar({
         {actions}
         <button
           aria-label={settingsLabel}
-          className={styles.settingsButton}
+          className={styles.iconButton}
           onClick={onOpenSettings}
           title={settingsLabel}
           type="button"
