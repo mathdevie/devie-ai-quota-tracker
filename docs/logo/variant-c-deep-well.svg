@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Devie Quota</title>
+  <defs>
+    <radialGradient id="plate" cx="256" cy="215" r="345" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33333b"/><stop offset="0.45" stop-color="#16161b"/><stop offset="1" stop-color="#040406"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="256" y1="0" x2="256" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.30"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="256" y1="78" x2="256" y2="434" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e5e5ed"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="115" fill="url(#plate)"/>
+  <rect width="512" height="512" rx="115" fill="none" stroke="url(#rim)" stroke-width="3"/>
+  <g>
+    <path d="M103.0 266.7 L256.0 190.1 L409.0 266.7 L409.0 358.0 L256.0 434.0 L103.0 358.0Z" fill="url(#mark)" stroke="url(#mark)" stroke-width="18" stroke-linejoin="round"/>
+    <path d="M256.0 78.0 L409.0 154.0 L409.0 358.0 L256.0 434.0 L103.0 358.0 L103.0 154.0Z" fill="none" stroke="url(#mark)" stroke-width="18" stroke-linejoin="round"/>
+  </g>
+</svg>
