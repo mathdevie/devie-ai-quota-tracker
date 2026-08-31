@@ -51,6 +51,7 @@
     "FilterProvider": "Provider",
     "FilterSort": "Sort",
     "AllProviders": "All providers",
+    "All": "All",
     "Sort": {
       "Expiring": "Expiring first",
       "LeastLeft": "Least left",

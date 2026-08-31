@@ -51,6 +51,7 @@
     "FilterProvider": "Proveedor",
     "FilterSort": "Orden",
     "AllProviders": "Todos los proveedores",
+    "All": "Todos",
     "Sort": {
       "Expiring": "Próximos a caducar primero",
       "LeastLeft": "Menos restante",

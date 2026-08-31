@@ -51,6 +51,7 @@
     "FilterProvider": "Fournisseur",
     "FilterSort": "Tri",
     "AllProviders": "Tous les fournisseurs",
+    "All": "Tous",
     "Sort": {
       "Expiring": "Expiration proche",
       "LeastLeft": "Moins de restant",

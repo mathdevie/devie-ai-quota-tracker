@@ -51,6 +51,7 @@
     "FilterProvider": "Provider",
     "FilterSort": "Sorteren",
     "AllProviders": "Alle providers",
+    "All": "Alle",
     "Sort": {
       "Expiring": "Verloopt eerst",
       "LeastLeft": "Minste over",

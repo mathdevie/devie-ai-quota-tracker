@@ -51,6 +51,7 @@
     "FilterProvider": "Leverandør",
     "FilterSort": "Sortering",
     "AllProviders": "Alle leverandører",
+    "All": "Alle",
     "Sort": {
       "Expiring": "Utløper snart først",
       "LeastLeft": "Minst igjen",
