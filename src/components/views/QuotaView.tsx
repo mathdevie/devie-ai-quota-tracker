@@ -1,7 +1,7 @@
 "use client";
 
 import { Plug, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { DashboardState } from "@/lib/contracts";
 import { broadcastFilters } from "@/lib/desktop";
@@ -19,6 +19,7 @@ import { PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Select from "@/ui/Select";
 import ConnectionCard, { type ConnectionActions } from "../ConnectionCard";
+import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
 const SORT_LABELS: Record<Sort, string> = {
@@ -36,9 +37,10 @@ function FilterSelect<T extends string>({
 }: {
   label: string;
   value: T;
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; icon?: ReactNode }[];
   onChange: (value: T) => void;
 }) {
+  const selected = options.find((option) => option.value === value);
   return (
     <Select.Root
       items={options}
@@ -46,6 +48,7 @@ function FilterSelect<T extends string>({
       value={value}
     >
       <Select.Trigger aria-label={label} className={styles.filterTrigger}>
+        {selected?.icon}
         <Select.Value />
         <Select.Icon />
       </Select.Trigger>
@@ -56,6 +59,7 @@ function FilterSelect<T extends string>({
               {options.map((option) => (
                 <Select.Item key={option.value} value={option.value}>
                   <Select.ItemIndicator />
+                  {option.icon}
                   <Select.ItemText>{option.label}</Select.ItemText>
                 </Select.Item>
               ))}
@@ -87,6 +91,12 @@ export default function QuotaView({
   const providerOptions = PROVIDER_FILTERS.map((value) => ({
     value,
     label: value === "all" ? t("Quota.AllProviders") : PROVIDER_NAMES[value],
+    icon:
+      value === "all" ? (
+        <Plug className={styles.filterAllMark} size={16} />
+      ) : (
+        <ProviderIcon provider={value} size={16} />
+      ),
   }));
   const sortOptions = SORTS.map((value) => ({
     value,

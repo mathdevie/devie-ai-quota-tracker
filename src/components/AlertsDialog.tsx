@@ -104,6 +104,7 @@ export default function AlertsDialog({
                     setTesting(false);
                   }
                 }}
+                size="sm"
                 type="button"
                 variant="secondary"
               >
