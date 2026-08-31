@@ -16,6 +16,7 @@ use crate::{
     parse::{number, reset_time},
 };
 
+/// Public OAuth client ID of OpenAI's Codex CLI.
 pub const CLIENT_ID: &str = "app_EMoamEEZ73f0CkXaXp7hrann";
 pub const AUTHORIZE_URL: &str = "https://auth.openai.com/oauth/authorize";
 pub const TOKEN_URL: &str = "https://auth.openai.com/oauth/token";

@@ -2,6 +2,7 @@
   "name": "devie-quota",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev --port 3002",
     "build": "next build",
