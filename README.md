@@ -1,3 +1,5 @@
+<img src="docs/logo/app-icon.svg" alt="The Devie Quota app icon" width="96" />
+
 # Devie Quota
 
 Devie Quota is a local macOS menu bar app for AI subscription quotas.
@@ -8,13 +10,24 @@ its reset time from the menu bar, and get notified before a limit hits.
 There is no Devie account, cloud database, proxy, or hosted backend — all
 data stays on the Mac.
 
+<!--
+Screenshots: put the images in docs/screenshots/ and uncomment.
+Suggested shots: the menu bar popover and the main Quota window,
+each in light and dark.
+
+| Menu bar popover | Main window |
+| --- | --- |
+| ![The menu bar popover](docs/screenshots/popover.png) | ![The main Quota window](docs/screenshots/window.png) |
+-->
+
 ## Install
 
-1. Download the latest DMG from the
-   [Releases page](https://github.com/mathdevie/devie-quota/releases).
+1. [**Download Devie Quota for Apple silicon (DMG)**](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
 2. Open the DMG and drag **Devie Quota** to Applications.
 3. Launch it and add an account under **Providers**.
 
+All versions are listed on the
+[CrabNebula Cloud releases page](https://web.crabnebula.cloud/mathdev/devie-quota/releases).
 Builds are signed and notarized for Apple silicon. The app updates itself;
 see [docs/updates.md](docs/updates.md).
 
