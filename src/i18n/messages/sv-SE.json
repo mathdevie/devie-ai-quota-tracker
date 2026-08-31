@@ -20,7 +20,7 @@
     "Providers": "Leverantörer",
     "Settings": "Inställningar",
     "Back": "Bakåt",
-    "Forward": "Framåt"
+    "Close": "Stäng"
   },
   "Connection": {
     "ActionsFor": "Åtgärder för {{name}}",

@@ -1,34 +1,33 @@
 import clsx from "clsx";
-import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
+import { ChevronLeft, Settings, X } from "lucide-react";
 import styles from "./TitleBar.module.scss";
+
+/** The leading action: a cross closes Settings, an arrow goes up a level. */
+export interface TitleBarLeading {
+  icon: "close" | "back";
+  label: string;
+  onClick: () => void;
+}
 
 export default function TitleBar({
   title,
-  canGoBack,
-  canGoForward,
-  onBack,
-  onForward,
+  leading,
   onOpenSettings,
-  backLabel,
-  forwardLabel,
   settingsLabel,
   actions,
   windowControlsInset = false,
 }: {
   title: string;
-  canGoBack: boolean;
-  canGoForward: boolean;
-  onBack: () => void;
-  onForward: () => void;
-  onOpenSettings: () => void;
-  backLabel: string;
-  forwardLabel: string;
+  leading?: TitleBarLeading;
+  /** The gear button; leave undefined inside Settings to hide it. */
+  onOpenSettings?: () => void;
   settingsLabel: string;
   /** Sits before the settings button, for example an update button. */
   actions?: React.ReactNode;
   /** Clears the native macOS traffic lights, which overlay the window. */
   windowControlsInset?: boolean;
 }) {
+  const LeadingIcon = leading?.icon === "close" ? X : ChevronLeft;
   return (
     <header
       className={clsx(
@@ -37,40 +36,31 @@ export default function TitleBar({
       )}
       data-tauri-drag-region
     >
-      <div className={styles.navigation}>
+      {leading && (
         <button
-          aria-label={backLabel}
+          aria-label={leading.label}
           className={styles.iconButton}
-          disabled={!canGoBack}
-          onClick={onBack}
-          title={backLabel}
+          onClick={leading.onClick}
+          title={leading.label}
           type="button"
         >
-          <ChevronLeft aria-hidden size={16} strokeWidth={2} />
+          <LeadingIcon aria-hidden size={16} strokeWidth={2} />
         </button>
-        <button
-          aria-label={forwardLabel}
-          className={styles.iconButton}
-          disabled={!canGoForward}
-          onClick={onForward}
-          title={forwardLabel}
-          type="button"
-        >
-          <ChevronRight aria-hidden size={16} strokeWidth={2} />
-        </button>
-      </div>
+      )}
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.end}>
         {actions}
-        <button
-          aria-label={settingsLabel}
-          className={styles.iconButton}
-          onClick={onOpenSettings}
-          title={settingsLabel}
-          type="button"
-        >
-          <Settings aria-hidden size={16} strokeWidth={2} />
-        </button>
+        {onOpenSettings && (
+          <button
+            aria-label={settingsLabel}
+            className={styles.iconButton}
+            onClick={onOpenSettings}
+            title={settingsLabel}
+            type="button"
+          >
+            <Settings aria-hidden size={16} strokeWidth={2} />
+          </button>
+        )}
       </div>
     </header>
   );

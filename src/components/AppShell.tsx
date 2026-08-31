@@ -57,10 +57,6 @@ function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
 }
 
-function isSamePage(first: AppPage, second: AppPage): boolean {
-  return first.view === second.view && first.provider === second.provider;
-}
-
 export default function AppShell() {
   return (
     <Toast.Provider timeout={6000}>
@@ -77,8 +73,6 @@ function Shell() {
   const toasts = Toast.useToastManager();
   const [state, setState] = useState<DashboardState | null>(null);
   const [page, setPage] = useState<AppPage>({ view: "quota" });
-  const [backStack, setBackStack] = useState<AppPage[]>([]);
-  const [forwardStack, setForwardStack] = useState<AppPage[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [settingsBusy, setSettingsBusy] = useState(false);
@@ -197,33 +191,6 @@ function Shell() {
     }
   }
 
-  function navigate(next: AppPage) {
-    if (isSamePage(page, next)) return;
-    setBackStack((history) => [...history, page]);
-    setForwardStack([]);
-    setPage(next);
-  }
-
-  function changeView(next: View) {
-    navigate({ view: next });
-  }
-
-  function goBack() {
-    const previous = backStack.at(-1);
-    if (!previous) return;
-    setBackStack((history) => history.slice(0, -1));
-    setForwardStack((history) => [...history, page]);
-    setPage(previous);
-  }
-
-  function goForward() {
-    const next = forwardStack.at(-1);
-    if (!next) return;
-    setForwardStack((history) => history.slice(0, -1));
-    setBackStack((history) => [...history, page]);
-    setPage(next);
-  }
-
   if (!state) {
     return (
       <main className={styles.loading}>
@@ -247,19 +214,30 @@ function Shell() {
   const title = onProviderPage
     ? PROVIDER_NAMES[providerPage]
     : t(view === "settings" ? "Nav.Settings" : "Nav.Quota");
+  // A provider page goes up to Settings; Settings closes back to Quota.
+  const leading = onProviderPage
+    ? {
+        icon: "back" as const,
+        label: t("Nav.Back"),
+        onClick: () => setPage({ view: "settings" }),
+      }
+    : view === "settings"
+      ? {
+          icon: "close" as const,
+          label: t("Nav.Close"),
+          onClick: () => setPage({ view: "quota" }),
+        }
+      : undefined;
 
   return (
     <AppUpdaterProvider>
       <div className={styles.shell}>
         <TitleBar
           actions={<UpdateBadge />}
-          backLabel={t("Nav.Back")}
-          canGoBack={backStack.length > 0}
-          canGoForward={forwardStack.length > 0}
-          forwardLabel={t("Nav.Forward")}
-          onBack={goBack}
-          onForward={goForward}
-          onOpenSettings={() => changeView("settings")}
+          leading={leading}
+          onOpenSettings={
+            view === "quota" ? () => setPage({ view: "settings" }) : undefined
+          }
           settingsLabel={t("Nav.Settings")}
           title={title}
           windowControlsInset={desktop}
@@ -270,7 +248,7 @@ function Shell() {
             {view === "quota" && (
               <QuotaView
                 busyId={busyId}
-                onOpenProviders={() => changeView("settings")}
+                onOpenProviders={() => setPage({ view: "settings" })}
                 onRefreshAll={() => void handleRefresh()}
                 refreshing={refreshing}
                 state={state}
@@ -296,7 +274,7 @@ function Shell() {
                   )
                 }
                 onOpenProvider={(provider) =>
-                  navigate({ view: "settings", provider })
+                  setPage({ view: "settings", provider })
                 }
                 onUpdateChannelChange={(channel) =>
                   run(() => setUpdateChannel(channel), setSettingsBusy)
