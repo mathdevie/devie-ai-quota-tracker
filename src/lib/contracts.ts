@@ -87,6 +87,8 @@ export interface AppSettings {
   /** Absent: the menu bar shows the window with the least quota left. */
   traySummary?: TraySummary;
   updateChannel: UpdateChannel;
+  /** Anonymous usage events and crash reports go to PostHog (EU). */
+  telemetryEnabled: boolean;
 }
 
 export interface DashboardState {

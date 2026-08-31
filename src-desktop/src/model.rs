@@ -221,6 +221,13 @@ pub struct AppSettings {
     pub tray_summary: Option<TraySummary>,
     #[serde(default)]
     pub update_channel: UpdateChannel,
+    /// Whether anonymous usage events and crash reports go to PostHog.
+    #[serde(default = "default_true")]
+    pub telemetry_enabled: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 impl Default for AppSettings {
@@ -229,6 +236,7 @@ impl Default for AppSettings {
             show_menu_bar_item: true,
             tray_summary: None,
             update_channel: UpdateChannel::Stable,
+            telemetry_enabled: true,
         }
     }
 }

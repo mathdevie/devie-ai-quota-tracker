@@ -6,6 +6,7 @@ export const previewState: DashboardState = {
   settings: {
     showMenuBarItem: true,
     updateChannel: "stable",
+    telemetryEnabled: true,
     traySummary: { connectionId: "claude-work", windowKey: "five_hour" },
   },
   connections: [

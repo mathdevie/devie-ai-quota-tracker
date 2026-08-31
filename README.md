@@ -99,6 +99,10 @@ theme context uses the versioned `devie-quota-theme:v1` storage key.
 - SQLite does not store provider tokens or complete provider responses.
 - The app owns the tokens for every Claude, Codex, Gemini, and Copilot sign-in.
 - Devie Quota never reads or changes the CLI logins on this Mac.
+- Anonymous usage events and crash reports go to PostHog (EU). They carry
+  a random id, the app version, the OS, and the locale. They never include
+  account names, tokens, quota numbers, or labels. Turn this off in
+  Settings → Privacy. Builds without `POSTHOG_API_KEY` send nothing.
 
 The local database is stored at:
 

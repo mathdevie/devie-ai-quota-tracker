@@ -24,6 +24,7 @@ import {
   setConnectionEnabled,
   setHiddenWindows,
   setMenuBarItemVisible,
+  setTelemetryEnabled,
   setUpdateChannel,
   spendResetCredit,
 } from "@/lib/desktop";
@@ -309,6 +310,12 @@ function Shell() {
                   onMenuBarItemChange={(visible) =>
                     void run(
                       () => setMenuBarItemVisible(visible),
+                      setSettingsBusy,
+                    )
+                  }
+                  onTelemetryChange={(enabled) =>
+                    void run(
+                      () => setTelemetryEnabled(enabled),
                       setSettingsBusy,
                     )
                   }

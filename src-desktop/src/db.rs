@@ -11,6 +11,9 @@ use crate::model::{
 
 const SHOW_MENU_BAR_ITEM: &str = "show_menu_bar_item";
 const UPDATE_CHANNEL: &str = "update_channel";
+const TELEMETRY_ENABLED: &str = "telemetry_enabled";
+const TELEMETRY_ID: &str = "telemetry_id";
+const LAST_RUN_VERSION: &str = "last_run_version";
 const TRAY_SUMMARY: &str = "tray_summary";
 const LANGUAGE: &str = "language";
 
@@ -219,11 +222,45 @@ impl Database {
             .map_or(defaults.update_channel, |value| {
                 UpdateChannel::from_db(&value)
             });
+        let telemetry_enabled = Self::setting(&connection, TELEMETRY_ENABLED)?
+            .map_or(defaults.telemetry_enabled, |value| value == "1");
         Ok(AppSettings {
             show_menu_bar_item,
             tray_summary,
             update_channel,
+            telemetry_enabled,
         })
+    }
+
+    /// Turning telemetry off also forgets the anonymous id, so a later
+    /// opt-in starts a new, unlinked identity.
+    pub fn set_telemetry_enabled(&self, enabled: bool) -> Result<(), String> {
+        self.put_setting(TELEMETRY_ENABLED, Some(if enabled { "1" } else { "0" }))?;
+        if !enabled {
+            self.put_setting(TELEMETRY_ID, None)?;
+        }
+        Ok(())
+    }
+
+    /// The random id telemetry events carry. It is created on first use and
+    /// never derived from an account or the machine.
+    pub fn telemetry_id(&self) -> Result<String, String> {
+        if let Some(id) = Self::setting(&self.connection()?, TELEMETRY_ID)? {
+            return Ok(id);
+        }
+        let id = uuid::Uuid::new_v4().to_string();
+        self.put_setting(TELEMETRY_ID, Some(&id))?;
+        Ok(id)
+    }
+
+    /// Records the running version and returns the one that ran before,
+    /// when it differs. `None` on a fresh install or an unchanged version.
+    pub fn record_run_version(&self, version: &str) -> Result<Option<String>, String> {
+        let previous = Self::setting(&self.connection()?, LAST_RUN_VERSION)?;
+        if previous.as_deref() != Some(version) {
+            self.put_setting(LAST_RUN_VERSION, Some(version))?;
+        }
+        Ok(previous.filter(|value| value != version))
     }
 
     pub fn set_update_channel(&self, channel: UpdateChannel) -> Result<(), String> {
@@ -894,6 +931,21 @@ mod tests {
         assert_eq!(
             database.settings().expect("settings").update_channel,
             UpdateChannel::Nightly
+        );
+
+        assert!(state.settings.telemetry_enabled);
+        let id = database.telemetry_id().expect("telemetry id");
+        assert_eq!(database.telemetry_id().expect("telemetry id"), id);
+        database.set_telemetry_enabled(false).expect("telemetry off");
+        assert!(!database.settings().expect("settings").telemetry_enabled);
+        database.set_telemetry_enabled(true).expect("telemetry on");
+        assert_ne!(database.telemetry_id().expect("new telemetry id"), id);
+
+        assert_eq!(database.record_run_version("1.0.0").expect("first run"), None);
+        assert_eq!(database.record_run_version("1.0.0").expect("same run"), None);
+        assert_eq!(
+            database.record_run_version("1.1.0").expect("upgrade"),
+            Some("1.0.0".to_string())
         );
     }
 }

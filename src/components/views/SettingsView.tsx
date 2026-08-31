@@ -163,11 +163,13 @@ export default function SettingsView({
   busy,
   onMenuBarItemChange,
   onUpdateChannelChange,
+  onTelemetryChange,
 }: {
   state: DashboardState;
   busy?: boolean;
   onMenuBarItemChange: (visible: boolean) => void;
   onUpdateChannelChange: (channel: UpdateChannel) => Promise<boolean>;
+  onTelemetryChange: (enabled: boolean) => void;
 }) {
   const { t } = useTranslation();
   return (
@@ -193,6 +195,21 @@ export default function SettingsView({
         </SettingRow.Row>
         <SettingRow.Row title={t("Settings.Language")}>
           <LanguagePicker />
+        </SettingRow.Row>
+      </SettingRow.Group>
+      <SettingRow.Group title={t("Settings.Privacy")}>
+        <SettingRow.Row
+          subtitle={t("Settings.TelemetryDescription")}
+          title={t("Settings.Telemetry")}
+        >
+          <Switch.Root
+            aria-label={t("Settings.EnableTelemetry")}
+            checked={state.settings.telemetryEnabled}
+            disabled={busy}
+            onCheckedChange={(checked) => onTelemetryChange(checked)}
+          >
+            <Switch.Thumb />
+          </Switch.Root>
         </SettingRow.Row>
       </SettingRow.Group>
       <SettingRow.Group title={t("Settings.About")}>
