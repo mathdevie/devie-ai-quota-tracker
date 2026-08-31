@@ -1,0 +1,21 @@
+@use "../ui/_devie.scss" as *;
+
+.trigger {
+  min-height: 28px;
+  font-size: $devie__font-size__small;
+}
+
+// An icon-only trigger that sits beside the popover header icon buttons.
+.compact {
+  min-height: 24px;
+  padding: $devie__spacing__x05;
+  border-color: transparent;
+  background: transparent;
+}
+
+// Stands in for a brand logo on the "all providers" row, so every row aligns.
+// Also colors the sort mark on the compact trigger.
+.allMark {
+  flex-shrink: 0;
+  color: $devie__color__text-sub;
+}
