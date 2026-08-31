@@ -13,7 +13,8 @@
     "Close": "关闭",
     "Refresh": "刷新",
     "TryAgain": "重试",
-    "Theme": "主题"
+    "Theme": "主题",
+    "CustomThemes": "自定义"
   },
   "Nav": {
     "Quota": "AI 额度",

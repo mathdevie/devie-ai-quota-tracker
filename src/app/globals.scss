@@ -1,8 +1,11 @@
 @use "../ui/_devie.scss" as *;
 
-// The type scale of a native macOS window. Not in the layer, so it wins
+// The typography of a native macOS window. Not in the layer, so it wins
 // over every theme.
 :root {
+  --devie__font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", Helvetica, Arial, "Apple Color Emoji", sans-serif;
   --devie__font-size__title1: 26px;
   --devie__font-size__title2: 20px;
   --devie__font-size__title3: 16px;

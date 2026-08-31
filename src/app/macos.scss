@@ -1,14 +1,19 @@
 // App-level macOS styling. The Devie UI source stays unchanged under `src/ui`.
 :root {
+  --devie__radius: 8px;
+  --devie__radius-strong: 14px;
+  --macos__radius__group: 11px;
+  --macos__radius__sidebar: 16px;
+}
+
+// The native macOS palette covers the Light and Dark appearances only. The
+// custom Devie themes derive the same surfaces in `theme/custom-themes.css`.
+[data-devie-theme="theme-light"] {
   --devie__color__primary-label: #ffffff;
   --devie__color__success: #34c759;
   --devie__color__warning: #ff8d28;
   --devie__color__literal-green: #34c759;
   --devie__color__literal-orange: #ff8d28;
-  --devie__radius: 8px;
-  --devie__radius-strong: 14px;
-  --macos__radius__group: 11px;
-  --macos__radius__sidebar: 16px;
   --macos__container-border: rgba(0, 0, 0, 0.14);
   --macos__content-background: #ffffff;
   --macos__dialog-background: #ffffff;
@@ -22,6 +27,7 @@
 }
 
 [data-devie-theme="theme-dark"] {
+  --devie__color__primary-label: #ffffff;
   --devie__color__success: #30d158;
   --devie__color__warning: #ff9f0a;
   --devie__color__literal-green: #30d158;

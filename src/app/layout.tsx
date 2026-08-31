@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import I18nProvider from "@/i18n/I18nProvider";
+import { THEMES } from "@/theme/registry";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import "@/ui/themes/default.css";
-import "@/ui/themes/light/theme.css";
-import "@/ui/themes/dark/theme.css";
+import "@/theme/light/theme.css";
+import "@/theme/dark/theme.css";
+import "@/ui/themes/midnight-ink/theme.css";
+import "@/ui/themes/copper-sunset/theme.css";
+import "@/ui/themes/aurora-green/theme.css";
+import "@/ui/themes/sharingan/theme.css";
+import "@/ui/themes/alpine-snow/theme.css";
+import "@/ui/themes/command-prompt/theme.css";
+import "@/ui/themes/totoro/theme.css";
+import "@/ui/themes/catpuccin-latte/theme.css";
 import "./globals.scss";
 import "./macos.scss";
+import "@/theme/custom-themes.css";
 
 export const metadata: Metadata = {
   title: "Devie Quota",
@@ -16,7 +26,7 @@ export const metadata: Metadata = {
 const themeBootScript = `(() => {
   try {
     const key = "devie-quota-theme:v1";
-    const allowed = new Set(["system", "theme-light", "theme-dark"]);
+    const allowed = new Set(${JSON.stringify(THEMES.map((theme) => theme.className))});
     const system = () => matchMedia("(prefers-color-scheme: dark)").matches
       ? "theme-dark"
       : "theme-light";
