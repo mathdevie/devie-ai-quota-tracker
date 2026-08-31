@@ -12,16 +12,17 @@ use crate::{
 const CLAUDE_PING_URL: &str = "https://api.anthropic.com/v1/messages?beta=true";
 const CODEX_PING_URL: &str = "https://chatgpt.com/backend-api/codex/responses";
 const FAILURE_COOLDOWN_MINUTES: i64 = 15;
-const CODEX_MINIMUM_INTERVAL_MINUTES: i64 = 10;
+const MINIMUM_INTERVAL_MINUTES: i64 = 10;
 const RESET_DRIFT_SECONDS: i64 = 30;
-const CLAUDE_CATCH_UP_MINUTES: i64 = 15;
 
 pub fn supported(connection: &ProviderConnection) -> bool {
     matches!(connection.provider, Provider::Claude | Provider::Codex)
 }
 
-/// Claude only needs a forced quota read near its fixed reset. Codex needs one
-/// each minute because an inactive session reports a reset time that slides.
+/// Claude needs a forced quota read near its fixed reset and while the
+/// session is idle, so the ping can restart the timer quickly. Codex needs
+/// one each minute because an inactive session reports a reset time that
+/// slides.
 pub fn refresh_due(connection: &ProviderConnection, now: DateTime<Utc>) -> bool {
     if !connection.enabled || !connection.auto_ping.enabled || !supported(connection) {
         return false;
@@ -29,8 +30,13 @@ pub fn refresh_due(connection: &ProviderConnection, now: DateTime<Utc>) -> bool 
     if connection.provider == Provider::Codex {
         return true;
     }
-    let Some(reset) = session_window(&connection.windows).and_then(reset_time) else {
+    let Some(session) = session_window(&connection.windows) else {
         return false;
+    };
+    let Some(reset) = reset_time(session) else {
+        // An idle session reports no reset time; keep reading so the next
+        // `after_reading` can start the timer.
+        return true;
     };
     reset - now <= Duration::minutes(5) && now - reset <= Duration::minutes(15)
 }
@@ -48,19 +54,39 @@ pub async fn after_reading(
     let Some(session) = session_window(&reading.windows) else {
         return;
     };
+    let now = Utc::now();
+    // An idle Claude session reports no reset time: the timer is stopped,
+    // which is the exact state the optimizer exists to fix.
     let Some(current_reset) = session.resets_at.as_deref() else {
+        if connection.provider == Provider::Claude {
+            start_claude_session(
+                database,
+                app_data_dir,
+                client,
+                connection,
+                reading,
+                session,
+                now,
+            )
+            .await;
+        }
         return;
     };
+    if connection.provider == Provider::Claude {
+        // A reported reset time means the timer already runs.
+        let _ = database.set_auto_ping_observation(&connection.id, current_reset);
+        return;
+    }
+    // Codex: ping when the reported reset slid forward between readings,
+    // because an inactive session keeps pushing its reset into the future.
     let Some(observed_reset) = connection.auto_ping.observed_reset_at.as_deref() else {
         let _ = database.set_auto_ping_observation(&connection.id, current_reset);
         return;
     };
-
-    let now = Utc::now();
     if in_failure_cooldown(connection, now) {
         return;
     }
-    let Some(reset_key) = ping_reset_key(connection, observed_reset, current_reset, now) else {
+    let Some(reset_key) = ping_reset_key(observed_reset, current_reset) else {
         let _ = database.set_auto_ping_observation(&connection.id, current_reset);
         return;
     };
@@ -83,37 +109,55 @@ pub async fn after_reading(
     }
 }
 
-fn ping_reset_key(
+/// Sends the ping that starts an idle Claude session timer.
+async fn start_claude_session(
+    database: &Database,
+    app_data_dir: &Path,
+    client: &reqwest::Client,
     connection: &ProviderConnection,
-    observed_reset: &str,
-    current_reset: &str,
+    reading: &QuotaReading,
+    session: &QuotaWindow,
     now: DateTime<Utc>,
-) -> Option<String> {
+) {
+    if claude_ping_blocked(connection, reading, session, now) {
+        return;
+    }
+    match send(connection, app_data_dir, client).await {
+        Ok(()) => {
+            let key = minute_key(now);
+            let _ = database.save_auto_ping_success(&connection.id, &key, &key);
+        }
+        Err(message) => {
+            let _ = database.save_auto_ping_failure(&connection.id, &message);
+        }
+    }
+}
+
+/// The interval guard also covers the readings right after a successful ping,
+/// which can still report an idle session until the API catches up.
+fn claude_ping_blocked(
+    connection: &ProviderConnection,
+    reading: &QuotaReading,
+    session: &QuotaWindow,
+    now: DateTime<Utc>,
+) -> bool {
+    in_failure_cooldown(connection, now)
+        || pinged_too_recently(connection, now)
+        || session.used_percent >= 100.0
+        || has_exhausted_blocking_window(&reading.windows, &session.key)
+}
+
+fn ping_reset_key(observed_reset: &str, current_reset: &str) -> Option<String> {
     let observed = parse_time(observed_reset)?;
     let current = parse_time(current_reset)?;
-    let should_ping = match connection.provider {
-        Provider::Claude => {
-            now >= observed - Duration::seconds(5)
-                && now - observed <= Duration::minutes(CLAUDE_CATCH_UP_MINUTES)
-                && current - observed >= Duration::seconds(RESET_DRIFT_SECONDS)
-        }
-        Provider::Codex => current - observed >= Duration::seconds(RESET_DRIFT_SECONDS),
-        Provider::Gemini => false,
-        Provider::Copilot => false,
-        Provider::Cursor => false,
-    };
-    should_ping.then(|| {
-        let key_time = if connection.provider == Provider::Claude {
-            observed
-        } else {
-            current
-        };
-        key_time
-            .with_second(0)
-            .and_then(|value| value.with_nanosecond(0))
-            .unwrap_or(key_time)
-            .to_rfc3339()
-    })
+    (current - observed >= Duration::seconds(RESET_DRIFT_SECONDS)).then(|| minute_key(current))
+}
+
+fn minute_key(time: DateTime<Utc>) -> String {
+    time.with_second(0)
+        .and_then(|value| value.with_nanosecond(0))
+        .unwrap_or(time)
+        .to_rfc3339()
 }
 
 fn in_failure_cooldown(connection: &ProviderConnection, now: DateTime<Utc>) -> bool {
@@ -127,13 +171,12 @@ fn in_failure_cooldown(connection: &ProviderConnection, now: DateTime<Utc>) -> b
 }
 
 fn pinged_too_recently(connection: &ProviderConnection, now: DateTime<Utc>) -> bool {
-    connection.provider == Provider::Codex
-        && connection
-            .auto_ping
-            .last_ping_at
-            .as_deref()
-            .and_then(parse_time)
-            .is_some_and(|ping| now - ping < Duration::minutes(CODEX_MINIMUM_INTERVAL_MINUTES))
+    connection
+        .auto_ping
+        .last_ping_at
+        .as_deref()
+        .and_then(parse_time)
+        .is_some_and(|ping| now - ping < Duration::minutes(MINIMUM_INTERVAL_MINUTES))
 }
 
 fn has_exhausted_blocking_window(windows: &[QuotaWindow], session_key: &str) -> bool {
@@ -272,42 +315,77 @@ mod tests {
         }
     }
 
+    fn session(resets_at: Option<&str>, used_percent: f64) -> QuotaWindow {
+        QuotaWindow {
+            key: "five_hour".into(),
+            label: "Session (5h)".into(),
+            used_percent,
+            resets_at: resets_at.map(str::to_string),
+            unlimited: false,
+            amount: None,
+            paid: false,
+        }
+    }
+
     #[test]
-    fn claude_pings_after_a_confirmed_reset() {
-        let connection = connection(Provider::Claude);
-        let now = DateTime::parse_from_rfc3339("2026-08-26T12:00:10Z")
+    fn an_idle_claude_session_is_due_for_a_refresh() {
+        let mut idle = connection(Provider::Claude);
+        idle.windows = vec![session(None, 0.0)];
+        assert!(refresh_due(&idle, Utc::now()));
+    }
+
+    #[test]
+    fn a_running_claude_session_is_due_only_near_its_reset() {
+        let now = DateTime::parse_from_rfc3339("2026-08-26T12:00:00Z")
             .unwrap()
             .with_timezone(&Utc);
-        assert_eq!(
-            ping_reset_key(
-                &connection,
-                "2026-08-26T12:00:00Z",
-                "2026-08-26T17:00:00Z",
-                now
-            )
-            .as_deref(),
-            Some("2026-08-26T12:00:00+00:00")
-        );
+        let mut running = connection(Provider::Claude);
+        running.windows = vec![session(Some("2026-08-26T16:00:00Z"), 40.0)];
+        assert!(!refresh_due(&running, now));
+        running.windows = vec![session(Some("2026-08-26T12:03:00Z"), 40.0)];
+        assert!(refresh_due(&running, now));
+    }
+
+    #[test]
+    fn an_idle_claude_session_gets_a_ping() {
+        let connection = connection(Provider::Claude);
+        let reading = QuotaReading {
+            source: "test".into(),
+            identity: None,
+            windows: vec![session(None, 0.0)],
+            reset_credits: None,
+        };
+        assert!(!claude_ping_blocked(
+            &connection,
+            &reading,
+            &reading.windows[0],
+            Utc::now()
+        ));
+    }
+
+    #[test]
+    fn a_recent_ping_blocks_the_next_claude_ping() {
+        let now = Utc::now();
+        let mut connection = connection(Provider::Claude);
+        connection.auto_ping.last_ping_at = Some((now - Duration::minutes(5)).to_rfc3339());
+        let reading = QuotaReading {
+            source: "test".into(),
+            identity: None,
+            windows: vec![session(None, 0.0)],
+            reset_credits: None,
+        };
+        assert!(claude_ping_blocked(
+            &connection,
+            &reading,
+            &reading.windows[0],
+            now
+        ));
     }
 
     #[test]
     fn codex_requires_a_sliding_reset() {
-        let connection = connection(Provider::Codex);
-        let now = Utc::now();
-        assert!(ping_reset_key(
-            &connection,
-            "2026-08-26T17:00:00Z",
-            "2026-08-26T17:00:20Z",
-            now
-        )
-        .is_none());
-        assert!(ping_reset_key(
-            &connection,
-            "2026-08-26T17:00:00Z",
-            "2026-08-26T17:01:00Z",
-            now
-        )
-        .is_some());
+        assert!(ping_reset_key("2026-08-26T17:00:00Z", "2026-08-26T17:00:20Z").is_none());
+        assert!(ping_reset_key("2026-08-26T17:00:00Z", "2026-08-26T17:01:00Z").is_some());
     }
 
     #[test]
