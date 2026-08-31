@@ -36,6 +36,12 @@
   font-size: $devie__font-size__small;
 }
 
+// Stands in for a brand logo on the "all providers" row, so every row aligns.
+.filterAllMark {
+  flex-shrink: 0;
+  color: $devie__color__text-sub;
+}
+
 .cardGrid {
   display: grid;
   align-items: start;
