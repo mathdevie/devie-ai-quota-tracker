@@ -80,15 +80,19 @@ The main folders are:
 
 ```text
 src/                    Next.js interface and application components
-src/ui/                 Complete Devie UI component and theme folder
+src/ui/                 Byte-identical mirror of the Devie UI src/ui folder
+src/theme/              App theme registry, native appearances, custom themes
 src-desktop/            Tauri application and Rust core
 src-desktop/src/oauth/  Claude, Codex, Gemini, and Copilot sign-in and quota adapters
 docs/                   Build, signing, and update documentation
 plans/                  Product research and feasibility analysis
 ```
 
-`src/ui` mirrors the `src/ui` folder from
-[Devie UI](https://www.devie-ui.com/). The local
+`src/ui` is a byte-identical copy of the `src/ui` folder from
+[Devie UI](https://www.devie-ui.com/), and a sync is a plain rsync. Do not
+edit or delete files inside it. Every customization lives outside the
+mirror: application components in `src/components`, the theme registry and
+native appearances in `src/theme`, and global styles in `src/app`. The
 theme context uses the versioned `devie-quota-theme:v1` storage key.
 
 ## Privacy and security

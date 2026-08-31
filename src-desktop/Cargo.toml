@@ -1,6 +1,6 @@
 [package]
 name = "devie-quota"
-version = "0.1.0"
+version = "0.10.0"
 description = "A local AI subscription quota tracker"
 authors = ["Devie"]
 edition = "2021"
