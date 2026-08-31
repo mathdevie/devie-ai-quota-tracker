@@ -248,6 +248,24 @@ export async function setMenuBarItemVisible(
   return call("set_menu_bar_item_visible", { visible });
 }
 
+// The browser preview has no login item; a variable stands in for the OS.
+let previewLaunchAtLogin = false;
+
+/** Whether the app is registered to start when the user logs in. */
+export async function getLaunchAtLogin(): Promise<boolean> {
+  if (!isDesktop()) return previewLaunchAtLogin;
+  return call("launch_at_login_enabled");
+}
+
+/** Registers or removes the app as a login item and returns the new state. */
+export async function setLaunchAtLogin(enabled: boolean): Promise<boolean> {
+  if (!isDesktop()) {
+    previewLaunchAtLogin = enabled;
+    return enabled;
+  }
+  return call("set_launch_at_login", { enabled });
+}
+
 /** Picks which release channel updates come from. */
 export async function setUpdateChannel(
   channel: UpdateChannel,
