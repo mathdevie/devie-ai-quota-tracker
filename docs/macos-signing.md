@@ -31,9 +31,10 @@ Do not commit the certificate, its password, or any Apple credentials.
 
 ## Run a signed build
 
-Push a tag that starts with `v` and matches the version in
-`src-desktop/tauri.conf.json`, or dispatch `Release Desktop App` from the
-repository Actions page.
+Bump the version first with `bun run bump X.Y.Z` and merge it. Then
+dispatch `Release Desktop App` from the repository Actions page.
 
-The workflow signs and notarizes the build, then publishes it to
-CrabNebula Cloud, where the in-app updater picks it up.
+The workflow reads the version from `src-desktop/tauri.conf.json` and
+refuses to run when the `v<version>` tag already exists. It signs and
+notarizes the build, publishes it to CrabNebula Cloud (where the in-app
+updater picks it up), and tags the released commit.

@@ -1,8 +1,10 @@
 # Desktop release pipeline: builds, signs, and publishes Devie Quota to
 # CrabNebula Cloud.
 #
-# Trigger: a push of a `v*` tag. The version in src-desktop/tauri.conf.json
-#   must match the tag, because the updater endpoint reads that version.
+# Trigger: manual dispatch only. The workflow reads the version from
+#   src-desktop/tauri.conf.json (bump it first with `bun run bump X.Y.Z`),
+#   refuses to run when the `v<version>` tag already exists, and tags the
+#   released commit after a successful publish.
 # Runner: self-hosted by default while the repository is private (hosted
 #   macOS runners are not available here). A dispatch with runner=macos-15
 #   uses the GitHub-hosted macos-15 and ubuntu-24.04 runners. Before the
@@ -18,9 +20,6 @@
 name: Release Desktop App
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       runner:
@@ -31,8 +30,9 @@ on:
           - self-hosted
           - macos-15
 
+# contents: write lets the publish job push the release tag.
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}
@@ -45,17 +45,20 @@ jobs:
   draft:
     runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     environment: Release
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
 
-      - name: Check that the tag matches the app version
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Read the app version and check that it is unreleased
+        id: version
         run: |
           version="$(jq -er '.version' src-desktop/tauri.conf.json)"
-          if [[ "v${version}" != "${GITHUB_REF_NAME}" ]]; then
-            echo "::error::Tag ${GITHUB_REF_NAME} does not match version ${version}."
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            echo "::error::Tag v${version} already exists. Run 'bun run bump' first."
             exit 1
           fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Create the draft release
         uses: crabnebula-dev/cloud-release@v0
@@ -148,7 +151,7 @@ jobs:
           api-key: ${{ secrets.CN_API_KEY }}
 
   publish:
-    needs: build
+    needs: [draft, build]
     runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
     environment: Release
     steps:
@@ -159,3 +162,10 @@ jobs:
         with:
           command: release publish ${{ env.CN_APPLICATION }} --framework tauri
           api-key: ${{ secrets.CN_API_KEY }}
+
+      # The tag records what shipped; it is not a trigger. A tag pushed with
+      # the workflow token starts no other workflow, which is intended.
+      - name: Tag the released commit
+        run: |
+          git tag "v${{ needs.draft.outputs.version }}"
+          git push origin "v${{ needs.draft.outputs.version }}"

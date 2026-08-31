@@ -18,6 +18,7 @@
     "build:desktop-frontend": "NEXT_PUBLIC_IS_DESKTOP_BUILD=true next build",
     "check": "biome check . && tsc --noEmit",
     "format": "biome check --write .",
+    "bump": "bun scripts/bump.js",
     "tauri": "tauri",
     "dev:desktop": "tauri dev",
     "build:desktop": "tauri build",
