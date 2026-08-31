@@ -62,13 +62,6 @@ export default function PopoverSurface({
     };
   }, []);
 
-  // A click outside the popover closes it, like a native menu bar popover.
-  useEffect(() => {
-    const onBlur = () => void hidePopover();
-    window.addEventListener("blur", onBlur);
-    return () => window.removeEventListener("blur", onBlur);
-  }, []);
-
   // The window follows the content height.
   const headerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
