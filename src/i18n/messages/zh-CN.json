@@ -7,7 +7,6 @@
     "Description": "本地运行的 AI 订阅额度追踪器"
   },
   "Common": {
-    "AppName": "Devie Quota",
     "Cancel": "取消",
     "Save": "保存",
     "Close": "关闭",
