@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-midnight-ink"] {
     --devie__theme-name: Midnight Ink;
-    color-scheme: dark;
     --devie__color__text: #e6e8f0;
     --devie__color__text-sub: #9ca3af;
     --devie__color__line: #9c9c9c;

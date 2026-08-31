@@ -1,8 +1,16 @@
 import type { FC, SVGProps } from "react";
 
-import DarkThumbnail from "@/ui/themes/dark/thumbnail.svg";
-import LightThumbnail from "@/ui/themes/light/thumbnail.svg";
-import SystemThumbnail from "@/ui/themes/system/thumbnail.svg";
+import DarkThumbnail from "@/theme/dark/thumbnail.svg";
+import LightThumbnail from "@/theme/light/thumbnail.svg";
+import SystemThumbnail from "@/theme/system/thumbnail.svg";
+import AlpineSnowThumbnail from "@/ui/themes/alpine-snow/thumbnail.svg";
+import AuroraGreenThumbnail from "@/ui/themes/aurora-green/thumbnail.svg";
+import CatpuccinLatteThumbnail from "@/ui/themes/catpuccin-latte/thumbnail.svg";
+import CommandPromptThumbnail from "@/ui/themes/command-prompt/thumbnail.svg";
+import CopperSunsetThumbnail from "@/ui/themes/copper-sunset/thumbnail.svg";
+import MidnightInkThumbnail from "@/ui/themes/midnight-ink/thumbnail.svg";
+import SharinganThumbnail from "@/ui/themes/sharingan/thumbnail.svg";
+import TotoroThumbnail from "@/ui/themes/totoro/thumbnail.svg";
 
 type ExtendedSVGProps = SVGProps<SVGSVGElement> & { title?: string };
 
@@ -11,18 +19,23 @@ export interface ThemeOption {
   nameKey: string;
   thumbnailSrc: FC<ExtendedSVGProps>;
   displayName: Record<string, string>;
+  /** The appearance the native window chrome takes with this theme. */
+  appearance: "light" | "dark";
 }
 
 export const SYSTEM_THEME = "system";
 export const LIGHT_THEME = "theme-light";
 export const DARK_THEME = "theme-dark";
 
-/** The app offers only the three appearances supplied by macOS. */
-export const THEMES: ThemeOption[] = [
+/** The three appearances supplied by macOS. */
+export const APPEARANCE_THEMES: ThemeOption[] = [
   {
     nameKey: "system",
     className: SYSTEM_THEME,
     thumbnailSrc: SystemThumbnail,
+    // The system theme resolves to Light or Dark before the appearance is
+    // read, so this value never reaches the window chrome.
+    appearance: "light",
     displayName: {
       "en-US": "System",
       "en-GB": "System",
@@ -45,6 +58,7 @@ export const THEMES: ThemeOption[] = [
     nameKey: "light",
     className: LIGHT_THEME,
     thumbnailSrc: LightThumbnail,
+    appearance: "light",
     displayName: {
       "en-US": "Light",
       "en-GB": "Light",
@@ -67,6 +81,7 @@ export const THEMES: ThemeOption[] = [
     nameKey: "dark",
     className: DARK_THEME,
     thumbnailSrc: DarkThumbnail,
+    appearance: "dark",
     displayName: {
       "en-US": "Dark",
       "en-GB": "Dark",
@@ -86,5 +101,195 @@ export const THEMES: ThemeOption[] = [
     },
   },
 ];
+
+/** The extra Devie UI themes. The picker lists them under "Custom". */
+export const CUSTOM_THEMES: ThemeOption[] = [
+  {
+    nameKey: "midnight-ink",
+    className: "theme-midnight-ink",
+    thumbnailSrc: MidnightInkThumbnail,
+    appearance: "dark",
+    displayName: {
+      "en-US": "Midnight Ink",
+      "en-GB": "Midnight Ink",
+      "fr-FR": "Encre de Minuit",
+      "de-DE": "Mitternacht Tinte",
+      "it-IT": "Inchiostro di Mezzanotte",
+      "ja-JP": "ミッドナイトインク",
+      "es-ES": "Tinta de Medianoche",
+      "es-419": "Tinta de Medianoche",
+      "pt-BR": "Tinta da Meia-Noite",
+      "fi-FI": "Keskiyön Muste",
+      "da-DK": "Midnat Blæk",
+      "nl-NL": "Middernacht Inkt",
+      "nb-NO": "Midnattsblekk",
+      "sv-SE": "Midnattsbläck",
+      "zh-CN": "午夜墨色",
+    },
+  },
+  {
+    nameKey: "copper-sunset",
+    className: "theme-copper-sunset",
+    thumbnailSrc: CopperSunsetThumbnail,
+    appearance: "light",
+    displayName: {
+      "en-US": "Copper Sunset",
+      "en-GB": "Copper Sunset",
+      "fr-FR": "Coucher de Soleil Cuivré",
+      "de-DE": "Kupfer Sonnenuntergang",
+      "it-IT": "Tramonto di Rame",
+      "ja-JP": "カッパーサンセット",
+      "es-ES": "Atardecer de Cobre",
+      "es-419": "Atardecer de Cobre",
+      "pt-BR": "Pôr do Sol de Cobre",
+      "fi-FI": "Kupari Auringonlasku",
+      "da-DK": "Kobber Solnedgang",
+      "nl-NL": "Koperen Zonsondergang",
+      "nb-NO": "Kobber Solnedgang",
+      "sv-SE": "Koppar Solnedgång",
+      "zh-CN": "赤铜夕照",
+    },
+  },
+  {
+    nameKey: "aurora-green",
+    className: "theme-aurora-green",
+    thumbnailSrc: AuroraGreenThumbnail,
+    appearance: "dark",
+    displayName: {
+      "en-US": "Aurora Green",
+      "en-GB": "Aurora Green",
+      "fr-FR": "Aurora Vert",
+      "de-DE": "Aurora Grün",
+      "it-IT": "Aurora Verde",
+      "ja-JP": "オーロラグリーン",
+      "es-ES": "Aurora Verde",
+      "es-419": "Aurora Verde",
+      "pt-BR": "Aurora Verde",
+      "fi-FI": "Aurora Vihreä",
+      "da-DK": "Aurora Grøn",
+      "nl-NL": "Aurora Groen",
+      "nb-NO": "Aurora Grønn",
+      "sv-SE": "Aurora Grön",
+      "zh-CN": "极光绿",
+    },
+  },
+  {
+    nameKey: "sharingan",
+    className: "theme-sharingan",
+    thumbnailSrc: SharinganThumbnail,
+    appearance: "dark",
+    displayName: {
+      "en-US": "Sharingan",
+      "en-GB": "Sharingan",
+      "fr-FR": "Sharingan",
+      "de-DE": "Sharingan",
+      "it-IT": "Sharingan",
+      "ja-JP": "写輪眼",
+      "es-ES": "Sharingan",
+      "es-419": "Sharingan",
+      "pt-BR": "Sharingan",
+      "fi-FI": "Sharingan",
+      "da-DK": "Sharingan",
+      "nl-NL": "Sharingan",
+      "nb-NO": "Sharingan",
+      "sv-SE": "Sharingan",
+      "zh-CN": "写轮眼",
+    },
+  },
+  {
+    nameKey: "alpine-snow",
+    className: "theme-alpine-snow",
+    thumbnailSrc: AlpineSnowThumbnail,
+    appearance: "light",
+    displayName: {
+      "en-US": "Alpine Snow",
+      "en-GB": "Alpine Snow",
+      "fr-FR": "Neige Alpine",
+      "de-DE": "Alpiner Schnee",
+      "it-IT": "Neve Alpina",
+      "ja-JP": "アルパインスノー",
+      "es-ES": "Nieve Alpina",
+      "es-419": "Nieve Alpina",
+      "pt-BR": "Neve Alpina",
+      "fi-FI": "Alppilumi",
+      "da-DK": "Alpin Sne",
+      "nl-NL": "Alpijnse Sneeuw",
+      "nb-NO": "Alpin Snø",
+      "sv-SE": "Alpin Snö",
+      "zh-CN": "高山白雪",
+    },
+  },
+  {
+    nameKey: "command-prompt",
+    className: "theme-command-prompt",
+    thumbnailSrc: CommandPromptThumbnail,
+    appearance: "dark",
+    displayName: {
+      "en-US": "Command Prompt",
+      "en-GB": "Command Prompt",
+      "fr-FR": "Command Prompt",
+      "de-DE": "Command Prompt",
+      "it-IT": "Command Prompt",
+      "ja-JP": "Command Prompt",
+      "es-ES": "Command Prompt",
+      "es-419": "Command Prompt",
+      "pt-BR": "Command Prompt",
+      "fi-FI": "Command Prompt",
+      "da-DK": "Command Prompt",
+      "nl-NL": "Command Prompt",
+      "nb-NO": "Command Prompt",
+      "sv-SE": "Command Prompt",
+      "zh-CN": "Command Prompt",
+    },
+  },
+  {
+    nameKey: "totoro",
+    className: "theme-totoro",
+    thumbnailSrc: TotoroThumbnail,
+    appearance: "light",
+    displayName: {
+      "en-US": "Totoro",
+      "en-GB": "Totoro",
+      "fr-FR": "Totoro",
+      "de-DE": "Totoro",
+      "it-IT": "Totoro",
+      "ja-JP": "トトロ",
+      "es-ES": "Totoro",
+      "es-419": "Totoro",
+      "pt-BR": "Totoro",
+      "fi-FI": "Totoro",
+      "da-DK": "Totoro",
+      "nl-NL": "Totoro",
+      "nb-NO": "Totoro",
+      "sv-SE": "Totoro",
+      "zh-CN": "龙猫",
+    },
+  },
+  {
+    nameKey: "catpuccin-latte",
+    className: "theme-catpuccin-latte",
+    thumbnailSrc: CatpuccinLatteThumbnail,
+    appearance: "light",
+    displayName: {
+      "en-US": "Catpuccin Latte",
+      "en-GB": "Catpuccin Latte",
+      "fr-FR": "Catpuccin Latte",
+      "de-DE": "Catpuccin Latte",
+      "it-IT": "Catpuccin Latte",
+      "ja-JP": "Catpuccin Latte",
+      "es-ES": "Catpuccin Latte",
+      "es-419": "Catpuccin Latte",
+      "pt-BR": "Catpuccin Latte",
+      "fi-FI": "Catpuccin Latte",
+      "da-DK": "Catpuccin Latte",
+      "nl-NL": "Catpuccin Latte",
+      "nb-NO": "Catpuccin Latte",
+      "sv-SE": "Catpuccin Latte",
+      "zh-CN": "Catpuccin Latte",
+    },
+  },
+];
+
+export const THEMES: ThemeOption[] = [...APPEARANCE_THEMES, ...CUSTOM_THEMES];
 
 export type ThemeClassName = (typeof THEMES)[number]["className"];

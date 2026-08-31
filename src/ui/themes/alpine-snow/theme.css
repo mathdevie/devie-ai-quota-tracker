@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-alpine-snow"] {
     --devie__theme-name: Alpine Snow;
-    color-scheme: light;
     --devie__color__text: #0f172a;
     --devie__color__text-sub: #475569;
     --devie__color__line: #cbd5e1;

@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-copper-sunset"] {
     --devie__theme-name: Copper Sunset;
-    color-scheme: light;
     --devie__color__text: #412a21;
     --devie__color__text-sub: #8a7162;
     --devie__color__line: #d0b191;

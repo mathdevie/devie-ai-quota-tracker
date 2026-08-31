@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-catpuccin-latte"] {
     --devie__theme-name: Catpuccin Latte;
-    color-scheme: light;
     --devie__color__text: #4c4f69;
     --devie__color__text-sub: #5c5f77;
     --devie__color__line: #acb0be;

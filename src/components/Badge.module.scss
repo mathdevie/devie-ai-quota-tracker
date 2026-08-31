@@ -1,0 +1,68 @@
+@use '../ui/_devie.scss' as *;
+
+$badge-literal-colors: (
+    literalGray: $devie__color__literal-gray,
+    literalBrown: $devie__color__literal-brown,
+    literalOrange: $devie__color__literal-orange,
+    literalYellow: $devie__color__literal-yellow,
+    literalGreen: $devie__color__literal-green,
+    literalBlue: $devie__color__literal-blue,
+    literalPurple: $devie__color__literal-purple,
+    literalPink: $devie__color__literal-pink,
+    literalRed: $devie__color__literal-red,
+);
+
+@layer devie {
+    .badge {
+        border-radius: calc($devie__radius / 2);
+        padding: 2px 6px;
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        width: fit-content;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 16px;
+        letter-spacing: 0.01em;
+        cursor: default;
+        font-family: $devie__font-family;
+        transition: none;
+        background: color-mix(in srgb, var(--badge-tone) 13%, $devie__color__background);
+        color: var(--badge-tone);
+        border: 1px solid color-mix(in srgb, var(--badge-tone) 22%, $devie__color__background);
+
+        a &,
+        &[type="button"] {
+            &:hover {
+                background: color-mix(in srgb, var(--badge-tone) 18%, $devie__color__background);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .primary {
+        --badge-tone: #{$devie__color__primary};
+    }
+
+    .outline {
+        --badge-tone: #{$devie__color__text-sub};
+    }
+
+    .danger {
+        --badge-tone: #{$devie__color__danger};
+    }
+
+    .success {
+        --badge-tone: #{$devie__color__success};
+    }
+
+    .warning {
+        --badge-tone: #{$devie__color__warning};
+    }
+
+    @each $name, $color in $badge-literal-colors {
+        .#{$name} {
+            --badge-tone: #{$color};
+        }
+    }
+}

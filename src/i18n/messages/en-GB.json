@@ -13,7 +13,8 @@
     "Close": "Close",
     "Refresh": "Refresh",
     "TryAgain": "Try again",
-    "Theme": "Theme"
+    "Theme": "Theme",
+    "CustomThemes": "Custom"
   },
   "Nav": {
     "Quota": "AI Quota",
