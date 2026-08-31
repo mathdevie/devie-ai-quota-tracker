@@ -925,6 +925,11 @@ pub fn run() {
                 let _ = window.app_handle().set_dock_visibility(false);
             }
             tauri::WindowEvent::Focused(false) if window.label() == "popover" => {
+                // On macOS the mouse monitors hide the popover on an outside
+                // click instead. Focus loss alone is not a dismissal there: a
+                // full screen Space takes key focus back when its auto-hidden
+                // menu bar slides away, while the popover should stay open.
+                #[cfg(not(target_os = "macos"))]
                 let _ = window.hide();
             }
             _ => {}
