@@ -1,12 +1,12 @@
 import { ArrowLeft, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Badge from "@/components/Badge";
 import type {
   DashboardState,
   Provider,
   ProviderConnection,
 } from "@/lib/contracts";
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
-import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
 import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";

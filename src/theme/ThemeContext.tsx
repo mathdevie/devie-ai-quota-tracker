@@ -99,9 +99,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const nativeTheme =
       activeTheme === SYSTEM_THEME
         ? null
-        : resolvedTheme === DARK_THEME
-          ? "dark"
-          : "light";
+        : (THEMES.find((theme) => theme.className === resolvedTheme)
+            ?.appearance ?? "light");
     void import("@tauri-apps/api/window")
       .then(({ getCurrentWindow }) => getCurrentWindow().setTheme(nativeTheme))
       .catch(() => {

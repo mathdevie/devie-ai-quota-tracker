@@ -2,12 +2,17 @@
 
 import { useTranslation } from "react-i18next";
 import { DEFAULT_LOCALE } from "@/i18n/locales";
-import { THEMES } from "@/theme/registry";
+import {
+  APPEARANCE_THEMES,
+  CUSTOM_THEMES,
+  THEMES,
+  type ThemeOption,
+} from "@/theme/registry";
 import { useTheme } from "@/theme/ThemeContext";
 import Select from "@/ui/Select";
 import styles from "./ThemePicker.module.scss";
 
-function displayName(theme: (typeof THEMES)[number], language: string): string {
+function displayName(theme: ThemeOption, language: string): string {
   return (
     theme.displayName[language] ??
     theme.displayName[DEFAULT_LOCALE] ??
@@ -22,6 +27,30 @@ export default function ThemePicker() {
     useTheme();
   const current = THEMES.find((theme) => theme.className === selectedTheme);
   const CurrentThumbnail = current?.thumbnailSrc;
+
+  const renderTheme = (theme: ThemeOption) => {
+    const Thumbnail = theme.thumbnailSrc;
+    return (
+      <Select.Item
+        key={theme.className}
+        onMouseEnter={() => previewTheme(theme.className)}
+        value={theme.className}
+      >
+        <Select.ItemText>
+          <span className={styles.item}>
+            <Thumbnail
+              aria-hidden
+              className={styles.thumbnail}
+              height={20}
+              width={20}
+            />
+            <span>{displayName(theme, i18n.language)}</span>
+          </span>
+        </Select.ItemText>
+        <Select.ItemIndicator />
+      </Select.Item>
+    );
+  };
 
   return (
     <Select.Root
@@ -55,29 +84,13 @@ export default function ThemePicker() {
             onMouseLeave={clearPreviewTheme}
           >
             <Select.List>
-              {THEMES.map((theme) => {
-                const Thumbnail = theme.thumbnailSrc;
-                return (
-                  <Select.Item
-                    key={theme.className}
-                    onMouseEnter={() => previewTheme(theme.className)}
-                    value={theme.className}
-                  >
-                    <Select.ItemText>
-                      <span className={styles.item}>
-                        <Thumbnail
-                          aria-hidden
-                          className={styles.thumbnail}
-                          height={20}
-                          width={20}
-                        />
-                        <span>{displayName(theme, i18n.language)}</span>
-                      </span>
-                    </Select.ItemText>
-                    <Select.ItemIndicator />
-                  </Select.Item>
-                );
-              })}
+              <Select.Group>{APPEARANCE_THEMES.map(renderTheme)}</Select.Group>
+              <Select.Group>
+                <Select.GroupLabel>
+                  {t("Common.CustomThemes")}
+                </Select.GroupLabel>
+                {CUSTOM_THEMES.map(renderTheme)}
+              </Select.Group>
             </Select.List>
           </Select.Popup>
         </Select.Positioner>
