@@ -48,21 +48,23 @@ Decisions already made:
 
 ## Phase 4 — Consolidate and remove dead weight
 
+Revised after PR #34: `src/ui` is a byte-identical mirror of the Devie UI
+`src/ui` folder, and every customization lives outside it. Nothing inside
+`src/ui` gets deleted or edited, so a future sync stays a plain rsync.
+The old tasks 4.1–4.4 (delete markdown, theme duplicates, unused themes
+and components) are dropped for that reason.
+
 Run `bun run check` and `bun run build` after each row.
 
 | # | Task | Files |
 |---|---|---|
-| 4.1 | Delete `src/ui/markdown/` (49 files, 492 KB). Nothing imports it. | `src/ui/markdown/` |
-| 4.2 | Delete the dead theme duplicates. | `src/ui/themes/ThemeContext.tsx`, `src/ui/themes/registry.ts`, `src/ui/_themes.scss` |
-| 4.3 | Delete the 8 unused theme folders: `alpine-snow`, `aurora-green`, `catpuccin-latte`, `command-prompt`, `copper-sunset`, `midnight-ink`, `sharingan`, `totoro`. Keep `default.css`, `light`, `dark`, `system`. | `src/ui/themes/` |
-| 4.4 | Delete the 24 unused components and their `.module.scss` files: Accordion, Autocomplete, Avatar, Breadcrumb, Checkbox, CheckboxGroup, Combobox, Command, ContextMenu, Drawer, Form, Kbd, LayerCard, NavigationMenu, NumberField, Progress, Radio, RadioGroup, Separator, Slider, Tabs, Toggle, Toolbar, TreeLine. | `src/ui/` |
-| 4.5 | Add `src/ui/README.md`: state that the folder is a vendored subset of Devie UI, give the upstream version, and list the kept components. | `src/ui/README.md` |
+| 4.5 | Document the mirror outside `src/ui`: state in the README architecture section that `src/ui` is a byte-identical copy of Devie UI `src/ui`, synced by rsync, with all customizations in `src/components`, `src/theme`, and `src/app`. | `README.md` |
 | 4.6 | Delete unused code. | `src/components/BrandMark.tsx`, `src/lib/clipboard.ts` |
 | 4.7 | Delete unused icons: `android/`, `ios/`, `Square*.png`, `StoreLogo.png`, `icon.ico`, `64x64.png`. Keep the four files listed in `tauri.conf.json` plus `app-icon.svg` and `icon.png`. | `src-desktop/icons/` |
-| 4.8 | Remove the stale `provider-icons` exclusion. | `biome.json:11` |
-| 4.9 | Turn the remote-dashboard `DELETE` into a one-shot migration guarded by a schema version. | `src-desktop/src/db.rs:176-184` |
-| 4.10 | Set `version` to `0.9.7` in `package.json` and `Cargo.toml` to match `tauri.conf.json`. | `package.json:3`, `src-desktop/Cargo.toml:3` |
-| 4.11 | Move `PROVIDER_NAMES` re-export out of `ProviderIcon.tsx`. Import it from `@/lib/labels` at the call sites. | `src/components/ProviderIcon.tsx:21` |
+| 4.8 | Remove the stale `provider-icons` exclusion (`src/components/provider-icons/` no longer exists). | `biome.json` |
+| 4.9 | Turn the remote-dashboard `DELETE` into a one-shot migration guarded by a schema version. | `src-desktop/src/db.rs` |
+| 4.10 | Set `version` to `0.10.0` in `package.json` and `Cargo.toml` to match `tauri.conf.json`. | `package.json:3`, `src-desktop/Cargo.toml:3` |
+| 4.11 | Move the `PROVIDER_NAMES` re-export out of `ProviderIcon.tsx`. Import it from `@/lib/labels` at the call site (`LoginDialog.tsx`). | `src/components/ProviderIcon.tsx:21` |
 
 ## Phase 5 — Docs cleanup
 
@@ -73,7 +75,7 @@ Run `bun run check` and `bun run build` after each row.
 | 5.3 | Move or delete `plans/quota-auto-ping.md` and `plans/usage-news-notifications.md`. Keep them under `docs/history/` if they still explain shipped behavior. | `plans/` |
 | 5.4 | Delete this file after the repository is public, or move it to `docs/history/`. | `plans/open-source.md` |
 | 5.5 | Remove the `plans/` folder and its README mention. | `README.md:87` |
-| 5.6 | Fix the README: "Ten bundled Devie UI themes" → three appearances; remove the "Build signed macOS app" workflow section (lines 158-179) and describe the current `release-desktop.yml`; decide whether to keep the "proof of concept" note. | `README.md:9-10,30,158-179` |
+| 5.6 | Fix the README: "Ten bundled Devie UI themes" → three native appearances plus eight custom themes; remove the "Build signed macOS app" workflow section and describe the current `release-desktop.yml`; decide whether to keep the "proof of concept" note. | `README.md` |
 | 5.7 | Fix `docs/macos-signing.md` to reference `release-desktop.yml` instead of the deleted workflow. | `docs/macos-signing.md:3,38` |
 | 5.8 | Move the development commands from the README into `CONTRIBUTING.md`. Keep a short pointer in the README. | `README.md:117-156`, `CONTRIBUTING.md` |
 | 5.9 | Rewrite the README for a public audience. Sections: pitch and screenshots, install from Releases, features, provider table, privacy, development pointer, forking, credits and license. Drop "Product principles", "Next areas", "Known limits", "Research and references", and the CI download steps. Do this last in Phase 5 so it matches the final code. | `README.md` |
