@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Devie Quota",
-  "version": "0.9.7",
+  "version": "0.10.0",
   "identifier": "com.devie.quota",
   "build": {
     "frontendDist": "../out",
