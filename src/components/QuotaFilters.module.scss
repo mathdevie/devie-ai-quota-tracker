@@ -13,6 +13,10 @@
   background: transparent;
 }
 
+.compactChevron {
+  transition: none;
+}
+
 // Colors the sort mark on the compact trigger.
 .sortMark {
   flex-shrink: 0;

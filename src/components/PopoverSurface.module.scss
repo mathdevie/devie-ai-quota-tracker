@@ -30,11 +30,19 @@
   border-bottom: 1px solid $devie__color__line;
 }
 
-// The dashboard button and the filters, left of the refresh button.
+// The filters sit on the left when more than one provider is enabled.
 .headerGroup {
   display: flex;
   align-items: center;
   gap: $devie__spacing__x05;
+}
+
+// The refresh button and dashboard gear stay at the right edge.
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $devie__spacing__x05;
+  margin-left: auto;
 }
 
 // Flat rows with a line between them, no card frames.
