@@ -571,7 +571,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
-        .traffic_light_position(tauri::LogicalPosition::new(20.0, 19.0));
+        .traffic_light_position(tauri::LogicalPosition::new(20.0, 27.0));
     main.build()?;
 
     let popover =

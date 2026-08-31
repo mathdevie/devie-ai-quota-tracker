@@ -20,7 +20,7 @@
     "Providers": "Udbydere",
     "Settings": "Indstillinger",
     "Back": "Tilbage",
-    "Forward": "Frem"
+    "Close": "Luk"
   },
   "Connection": {
     "ActionsFor": "Handlinger for {{name}}",
