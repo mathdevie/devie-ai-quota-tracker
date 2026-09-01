@@ -159,6 +159,25 @@ include account names, tokens, quota numbers, or labels. Turn this off in
 
 Issues and pull requests are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Sponsors
+
+The development of this project is supported by:
+
+<table>
+<tr>
+<td align="center" width="200">
+<a href="https://sign.plus">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/signplus-dark.svg" />
+<img src="docs/sponsors/signplus-light.svg" alt="The Sign.Plus logo" width="48" />
+</picture>
+<br />
+<b>Sign.Plus</b>
+</a>
+</td>
+</tr>
+</table>
+
 ## License
 
 [MIT](LICENSE). Third-party notices are in [docs/notices.md](docs/notices.md).
