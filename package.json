@@ -51,7 +51,7 @@
     "@lingual/i18n-check": "^0.9.5",
     "@svgr/webpack": "^8.1.0",
     "@tauri-apps/cli": "2.11.4",
-    "@types/node": "26.2.0",
+    "@types/node": "26.4.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
     "i18next-cli": "1.65.0",
