@@ -18,7 +18,7 @@ Decisions already made:
 |---|---|---|
 | 1.1 | Add `LICENSE` (MIT or Apache-2.0; pick one). | repo root |
 | 1.2 | Add `"license"` to `package.json` and `license`, `repository`, `homepage` to `src-desktop/Cargo.toml`. | `package.json`, `src-desktop/Cargo.toml` |
-| 1.3 | Add `NOTICE.md` with third-party attribution: Devie UI (`src/ui`), 9router provider icons (`public/providers`), Claude Code / Codex CLI / Gemini CLI / Copilot OAuth client identifiers, and a trademark note for provider logos. | repo root |
+| 1.3 | Add `docs/notices.md` (formerly `NOTICE.md`) with third-party attribution: Devie UI (`src/ui`), 9router provider icons (`public/providers`), Claude Code / Codex CLI / Gemini CLI / Copilot OAuth client identifiers, and a trademark note for provider logos. | repo root |
 | 1.4 | Document the Gemini client secret. Add a comment above `CLIENT_SECRET` that names the upstream Gemini CLI file and its Apache-2.0 license. Add `.github/secret_scanning.yml` to allow-list the path, or move the value to a build-time env var. | `src-desktop/src/oauth/gemini.rs:17-19` |
 | 1.5 | Add provenance comments to the other client identifiers. | `oauth/claude.rs:25`, `oauth/codex.rs:19`, `oauth/copilot.rs:18` |
 | 1.6 | Rewrite the signing doc line "Copy the values from the Mana repository". Say: add them from your own Apple Developer account. | `docs/macos-signing.md:25` |
@@ -85,8 +85,8 @@ Run `bun run check` and `bun run build` after each row.
 | # | Task | Files |
 |---|---|---|
 | 6.1 | `CONTRIBUTING.md`: prerequisites (macOS, Apple silicon, Bun, Rust, Tauri), commands, PR rules, the note that `src/lib/contracts.ts` mirrors `src-desktop/src/model.rs` by hand. | repo root |
-| 6.2 | `SECURITY.md`: a disclosure email, the token storage model (per-connection `0600` files, tokens never enter the webview), and the supported version policy. Reuse `README.md:94-107` and `credentials.rs:1-5`. | repo root |
-| 6.3 | `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1). | repo root |
+| 6.2 | ~~`SECURITY.md`~~ Folded into `CONTRIBUTING.md` as a short "Security" section (private disclosure, supported version policy). | `CONTRIBUTING.md` |
+| 6.3 | ~~`CODE_OF_CONDUCT.md`~~ Dropped on purpose: too much ceremony for the project size. | — |
 | 6.4 | `CHANGELOG.md` seeded from the `v0.9.x` tags. Use Keep a Changelog format. | repo root |
 | 6.5 | `.github/ISSUE_TEMPLATE/bug_report.yml`, `feature_request.yml`, `config.yml`. | `.github/` |
 | 6.6 | `.github/PULL_REQUEST_TEMPLATE.md`. | `.github/` |
