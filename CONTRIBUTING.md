@@ -77,6 +77,42 @@ for the tray menu and the alert notifications.
 Add every new user-facing string to `en-US` and run `bun run i18n:verify`
 before you open a pull request.
 
+## Provider integrations
+
+| Provider | Sign-in | Quota source |
+| --- | --- | --- |
+| Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
+| Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
+| Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
+| GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
+| Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
+
+Claude usage reads share one cache: a read stays fresh for five minutes on
+the timer (a refresh button always fetches), one request per token runs at
+a time, a `429` pauses the endpoint for three minutes, and a failed read
+shows the last good data as "Stale".
+
+## Security
+
+Report vulnerabilities in private: use **Security → Report a
+vulnerability** on GitHub, or email `hi@math.dev`. You will get an answer
+within a week. Only the latest release receives security fixes.
+
+## Forking
+
+A fork that ships its own builds must replace these project-specific values:
+
+- The bundle identifier `com.devie.quota` in `src-desktop/tauri.conf.json`.
+- The CrabNebula Cloud slug `mathdev/devie-quota` in the updater endpoint
+  (`src-desktop/src/updater.rs`) and in the release workflow.
+- The updater `pubkey` in `src-desktop/tauri.conf.json`, together with the
+  matching private signing key.
+- The Apple signing and notarization secrets in the GitHub `Release`
+  environment (see [the macOS signing guide](docs/macos-signing.md)).
+
+Without these changes a fork would collide with the upstream bundle id and
+query an updater feed it cannot publish to.
+
 ## Pull requests
 
 - Open an issue first for large changes, so the direction is agreed before
