@@ -22,8 +22,8 @@
 ## Overview
 
 - 📊 [Dashboard](#features): one dashboard for all subscriptions, including Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor
-- 📌 [Menu Bar](#menu-bar-and-popover): a native macOS menu bar integration that shows your remaining quota
-- 👥 [Multi-Account](#providers-and-accounts): support for multiple instances of the same provider (e.g. Work and Personal subscriptions)
+- 📌 [Menu Bar](#menu-bar-and-quick-view): a native macOS menu bar integration that shows your remaining quota
+- 👥 [Multi-Account](#supported-providers): support for multiple instances of the same provider (e.g. Work and Personal subscriptions)
 - 🔔 [Alerts](#alerts): notifications about low quota or an imminent reset
 - ⚡ [Quota Optimizer](#quota-optimizer): auto-start of your session timer, so you have to wait less between resets
 - 📰 [Codex Resets](#codex-resets): live news from the [codex-resets.com](https://codex-resets.com) API about a possible Codex quota reset
@@ -58,7 +58,7 @@ The bundle is written under `src-desktop/target/release/bundle/macos/`.
 </details>
 
 ## Features
- 
+
 ### Menu Bar and Quick View
 
 The menu bar shows the quota of the provider you selected: you can pin the quota that you want to track, or sort automatically by which one expires first.
@@ -69,7 +69,7 @@ One click opens a quick view popover with all quota details, percentage and rese
 
 ### Supported Providers
 
-Currently supported AI providers include Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor. 
+Currently supported AI providers include Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor.
 
 Authentication requires OAuth sign-in for each provider that you want to add. Note that unlike other existing solutions, we do not automatically reuse the CLI accounts you are already logged in to on your machine.
 
@@ -87,7 +87,7 @@ Make sure you authorize the notifications for this app in your macOS notificatio
 
 A reset timer normally starts on first use. By activating the optimizer, the application will send a small
 request right after each reset, so the timer starts immediately and the
-next reset comes sooner. 
+next reset comes sooner.
 
 <img src="docs/screenshots/quota-optimizer.png" alt="The Quota Optimizer dialog with the auto-start session timers option" width="760" />
 
@@ -127,7 +127,7 @@ English (US, UK), Chinese (Simplified), Danish, Dutch, Finnish, French,
 German, Italian, Japanese, Norwegian (Bokmål), Portuguese (Brazil),
 Spanish (Spain, Latin America), and Swedish.
 
-Translations are generated, so any contributions from native speakers is greatly appreciated.
+Translations are generated, so any contributions from native speakers are greatly appreciated.
 
 </details>
 
