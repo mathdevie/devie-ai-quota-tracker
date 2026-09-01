@@ -202,10 +202,10 @@
     "BackToDashboard": "Terug naar het dashboard"
   },
   "Tray": {
-    "Open": "Devie Quota openen",
+    "Open": "Devie AI Quota Tracker openen",
     "RefreshAll": "Alles vernieuwen",
-    "Quit": "Devie Quota afsluiten",
-    "Tooltip": "Devie Quota abonnementsquota"
+    "Quit": "Devie AI Quota Tracker afsluiten",
+    "Tooltip": "Devie AI Quota Tracker abonnementsquota"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}}-quota is laag",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}}-quota gereset",
     "ResetHappenedBody": "{{window}} voor {{account}} is weer beschikbaar.",
     "TestTitle": "{{provider}}-meldingen staan aan",
-    "TestBody": "Devie Quota waarschuwt je hier over {{account}}."
+    "TestBody": "Devie AI Quota Tracker waarschuwt je hier over {{account}}."
   }
 }

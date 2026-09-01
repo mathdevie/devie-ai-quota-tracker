@@ -202,10 +202,10 @@
     "BackToDashboard": "Zurück zum Dashboard"
   },
   "Tray": {
-    "Open": "Devie Quota öffnen",
+    "Open": "Devie AI Quota Tracker öffnen",
     "RefreshAll": "Alle aktualisieren",
-    "Quit": "Devie Quota beenden",
-    "Tooltip": "Devie Quota Abonnement-Kontingente"
+    "Quit": "Devie AI Quota Tracker beenden",
+    "Tooltip": "Devie AI Quota Tracker Abonnement-Kontingente"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}}-Kontingent ist niedrig",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}}-Kontingent zurückgesetzt",
     "ResetHappenedBody": "{{window}} für {{account}} ist wieder verfügbar.",
     "TestTitle": "{{provider}}-Warnungen sind aktiv",
-    "TestBody": "Devie Quota benachrichtigt Sie hier zu {{account}}."
+    "TestBody": "Devie AI Quota Tracker benachrichtigt Sie hier zu {{account}}."
   }
 }

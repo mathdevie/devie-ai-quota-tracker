@@ -144,7 +144,7 @@ fn serve(
                 &mut stream,
                 404,
                 "Not found",
-                "This address is not used by Devie Quota.",
+                "This address is not used by Devie AI Quota Tracker.",
             );
             continue;
         }
@@ -161,7 +161,7 @@ fn serve(
                 &mut stream,
                 200,
                 "Signed in",
-                "You can close this tab and return to Devie Quota.",
+                "You can close this tab and return to Devie AI Quota Tracker.",
             );
         }
         let _ = sender.send(params);

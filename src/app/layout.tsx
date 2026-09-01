@@ -19,7 +19,7 @@ import "./macos.scss";
 import "@/theme/custom-themes.css";
 
 export const metadata: Metadata = {
-  title: "Devie Quota",
+  title: "Devie AI Quota Tracker",
   description: "A local AI subscription quota tracker",
 };
 

@@ -60,7 +60,7 @@ AIUsage provides a much deeper view. It combines proxy archives, Codex session
 logs, and the OpenCode database. It shows cost, input and output tokens, cache
 tokens, model distribution, time trends, source filters, and model details.
 
-Devie Quota can add similar data, but quota snapshots cannot provide it. The
+Devie AI Quota Tracker can add similar data, but quota snapshots cannot provide it. The
 second version needs local readers for Claude Code and Codex session logs.
 
 The readers should store only daily aggregates by default:
@@ -160,7 +160,7 @@ These sources cover incidents. They do not reliably cover promotions.
 ### Promotions and temporary boosts
 
 There is no stable first-party promotion feed. Use a small curated JSON file in
-the Devie Quota repository. Each entry must contain:
+the Devie AI Quota Tracker repository. Each entry must contain:
 
 - A stable ID and provider.
 - A type: reset, promotion, incident, or product change.
@@ -227,7 +227,7 @@ The active Claude, Codex, and Copilot providers already have local SVG marks.
 The redesigned provider cards now use these marks at a larger size.
 
 9router contains 128-pixel assets for every provider currently listed on the
-Devie Quota provider page:
+Devie AI Quota Tracker provider page:
 
 - `antigravity.png`
 - `cursor.png`

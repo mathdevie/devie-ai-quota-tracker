@@ -109,7 +109,7 @@ mod tests {
             ),
             "Quota Claude réinitialisé"
         );
-        assert_eq!(t("xx-XX", "Tray.Quit", &[]), "Quit Devie Quota");
+        assert_eq!(t("xx-XX", "Tray.Quit", &[]), "Quit Devie AI Quota Tracker");
         assert_eq!(t("en-US", "Missing.Key", &[]), "Missing.Key");
     }
 

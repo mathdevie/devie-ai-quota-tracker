@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Devie Quota app icon and its size preview.
+"""Generate the Devie AI Quota Tracker app icon and its size preview.
 
 Run from the repository root:
 
@@ -84,7 +84,7 @@ BODY = f'''  {PLATE} fill="url(#plate)"/>
 
 def render():
     svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">\n'
-           '  <title>Devie Quota</title>\n'
+           '  <title>Devie AI Quota Tracker</title>\n'
            f'  <defs>\n{DEFS}  </defs>\n{BODY}</svg>\n')
     with open(os.path.join(HERE, "app-icon.svg"), "w") as handle:
         handle.write(svg)
