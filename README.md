@@ -7,9 +7,9 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/mathdevie/devie-ai-quota-tracker?style=flat&color=yellow)](https://github.com/mathdevie/devie-ai-quota-tracker/stargazers)
 
-**Track all your AI subscription quotas in the macOS menu bar.**
+**Track all your AI subscription quotas in the macOS menu bar**
 
-[Overview](#overview) · [Download](#download) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
+[Overview](#overview) | [Download](#download) | [Features](#features) | [Themes](#themes) | [FAQ](#faq) | [Contributing](#contributing)
 
 
 <table>
@@ -59,17 +59,19 @@ The bundle is written under `src-desktop/target/release/bundle/macos/`.
 
 ## Features
  
-### Menu bar and popover
+### Menu Bar and Quick View
 
-The menu bar always shows the quota of the provider you selected. You can pin the quota that you want to track, or sort automatically by which one expires first.
+The menu bar shows the quota of the provider you selected: you can pin the quota that you want to track, or sort automatically by which one expires first.
 
-One click opens a popover with every account, without having to launch the app.
+One click opens a quick view popover with all quota details, percentage and reset dates.
 
 <img src="docs/screenshots/menu-bar.jpg" alt="The menu bar popover over the desktop, with quotas for every account" width="760" />
 
-### Providers and accounts
+### Supported Providers
 
-The current major AI providers are supported. Authentication requires OAuth sign-in for each provider that you want to add. Unlike other solutions, we do not automatically reuse the accounts you are already logged in to on your machine, as this showed unreliable results.
+Currently supported AI providers include Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor. 
+
+Authentication requires OAuth sign-in for each provider that you want to add. Note that unlike other existing solutions, we do not automatically reuse the CLI accounts you are already logged in to on your machine.
 
 <img src="docs/screenshots/providers.png" alt="The Settings window with provider cards and connection counts" width="760" />
 
@@ -83,15 +85,15 @@ Make sure you authorize the notifications for this app in your macOS notificatio
 
 ### Quota Optimizer
 
-A reset timer normally starts on first use. The optimizer sends a small
+A reset timer normally starts on first use. By activating the optimizer, the application will send a small
 request right after each reset, so the timer starts immediately and the
-next reset comes sooner.
+next reset comes sooner. 
 
 <img src="docs/screenshots/quota-optimizer.png" alt="The Quota Optimizer dialog with the auto-start session timers option" width="760" />
 
 ### Codex Resets
 
-Codex quotas sometimes reset early.
+Codex quotas sometimes (often) reset early.
 
 We fetch the latest announcements from [codex-resets.com](https://codex-resets.com), a community
 site that tracks the reset announcements of OpenAI staff. The app reads
@@ -125,6 +127,8 @@ English (US, UK), Chinese (Simplified), Danish, Dutch, Finnish, French,
 German, Italian, Japanese, Norwegian (Bokmål), Portuguese (Brazil),
 Spanish (Spain, Latin America), and Swedish.
 
+Translations are generated, so any contributions from native speakers is greatly appreciated.
+
 </details>
 
 <details>
@@ -145,7 +149,7 @@ snapshots. Removing an account deletes its token file.
 No account is required to use the tracker. You only need to authenticate your AI providers.
 Quota checks contact the providers directly.
 
-Anonymous usage events and crash reports go to PostHog (EU); they never
+Anonymous usage events and crash reports go to PostHog. They never
 include account names, tokens, quota numbers, or labels. Turn this off in
 **Settings → Privacy** if you prefer.
 
