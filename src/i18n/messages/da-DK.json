@@ -202,10 +202,10 @@
     "BackToDashboard": "Tilbage til dashboardet"
   },
   "Tray": {
-    "Open": "Åbn Devie Quota",
+    "Open": "Åbn Devie AI Quota Tracker",
     "RefreshAll": "Opdater alle",
-    "Quit": "Afslut Devie Quota",
-    "Tooltip": "Devie Quota abonnementskvoter"
+    "Quit": "Afslut Devie AI Quota Tracker",
+    "Tooltip": "Devie AI Quota Tracker abonnementskvoter"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}}-kvoten er lav",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}}-kvoten er nulstillet",
     "ResetHappenedBody": "{{window}} for {{account}} er tilgængelig igen.",
     "TestTitle": "{{provider}}-advarsler er slået til",
-    "TestBody": "Devie Quota giver dig besked her om {{account}}."
+    "TestBody": "Devie AI Quota Tracker giver dig besked her om {{account}}."
   }
 }

@@ -1,13 +1,13 @@
 # Notices
 
-Devie Quota is released under the MIT License (see [LICENSE](LICENSE)).
+Devie AI Quota Tracker is released under the MIT License (see [LICENSE](LICENSE)).
 This file lists third-party material bundled in the repository and the
 terms that apply to it.
 
 ## Devie UI (`src/ui`)
 
 `src/ui` is a vendored subset of [Devie UI](https://www.devie-ui.com/)
-(components, tokens, and themes), copyright the Devie Quota author, and
+(components, tokens, and themes), copyright the Devie AI Quota Tracker author, and
 is covered by this repository's MIT license.
 
 ## Provider icons (`public/providers`)
@@ -42,5 +42,5 @@ or are otherwise public. They are not credentials of this project.
 "Claude" and "Anthropic" (Anthropic PBC), "Codex", "ChatGPT", and
 "OpenAI" (OpenAI), "Gemini" and "Google" (Google LLC), and "GitHub
 Copilot" (GitHub, Inc.) are trademarks of their respective owners.
-Devie Quota is an independent project and is not affiliated with or
+Devie AI Quota Tracker is an independent project and is not affiliated with or
 endorsed by any of them.

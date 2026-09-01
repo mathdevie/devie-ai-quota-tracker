@@ -2,7 +2,7 @@
 
 ## Decision
 
-The feature is feasible for Devie Quota. It is a medium-sized change because it
+The feature is feasible for Devie AI Quota Tracker. It is a medium-sized change because it
 must send provider requests, not only watch reset timestamps.
 
 The first implementation should support app-owned Claude and Codex OAuth
@@ -34,9 +34,9 @@ Reference implementation:
 - https://github.com/decolua/9router/blob/699edac3273e13d4744bc46f6082618f08560702/src/shared/constants/config.js
 - https://github.com/decolua/9router/blob/699edac3273e13d4744bc46f6082618f08560702/tests/unit/quota-auto-ping.test.js
 
-## Existing Devie Quota support
+## Existing Devie AI Quota Tracker support
 
-Devie Quota already has most supporting parts:
+Devie AI Quota Tracker already has most supporting parts:
 
 - Stable connection IDs and separate OAuth credentials.
 - OAuth token renewal for Claude and Codex.
@@ -45,7 +45,7 @@ Devie Quota already has most supporting parts:
 - A background refresh task.
 - Per-connection controls and a Tauri command layer.
 
-The missing part is a provider request sender. Devie Quota currently reads quota
+The missing part is a provider request sender. Devie AI Quota Tracker currently reads quota
 data but never submits a model request.
 
 ## Recommended design

@@ -1,4 +1,4 @@
-# Desktop release pipeline: builds, signs, and publishes Devie Quota to
+# Desktop release pipeline: builds, signs, and publishes Devie AI Quota Tracker to
 # CrabNebula Cloud.
 #
 # Trigger: manual dispatch only. The workflow reads the version from

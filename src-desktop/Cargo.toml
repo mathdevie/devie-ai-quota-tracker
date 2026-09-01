@@ -6,8 +6,8 @@ authors = ["Devie"]
 edition = "2021"
 rust-version = "1.77.2"
 license = "MIT"
-repository = "https://github.com/mathdevie/devie-quota"
-homepage = "https://github.com/mathdevie/devie-quota"
+repository = "https://github.com/mathdevie/devie-ai-quota-tracker"
+homepage = "https://github.com/mathdevie/devie-ai-quota-tracker"
 
 [lib]
 name = "devie_quota_lib"

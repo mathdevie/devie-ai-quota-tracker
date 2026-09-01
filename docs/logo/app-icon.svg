@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <title>Devie Quota</title>
+  <title>Devie AI Quota Tracker</title>
   <defs>
     <linearGradient id="plate" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#2e2e35"/><stop offset="0.48" stop-color="#15151a"/><stop offset="1" stop-color="#07070a"/>
