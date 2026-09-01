@@ -12,10 +12,12 @@
 [Overview](#overview) · [Download](#download) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
 
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
-  <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="51%" />
-</picture> <img src="docs/screenshots/popover.png" alt="The menu bar popover with quotas for every account" width="47%" />
+<table>
+<tr>
+<td width="52%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" /><img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" /></picture></td>
+<td width="48%"><img src="docs/screenshots/popover.png" alt="The menu bar popover with quotas for every account" /></td>
+</tr>
+</table>
 
 ## Overview
 
