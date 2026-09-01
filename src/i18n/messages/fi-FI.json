@@ -202,10 +202,10 @@
     "BackToDashboard": "Takaisin hallintapaneeliin"
   },
   "Tray": {
-    "Open": "Avaa Devie Quota",
+    "Open": "Avaa Devie AI Quota Tracker",
     "RefreshAll": "Päivitä kaikki",
-    "Quit": "Lopeta Devie Quota",
-    "Tooltip": "Devie Quota -tilauskiintiöt"
+    "Quit": "Lopeta Devie AI Quota Tracker",
+    "Tooltip": "Devie AI Quota Tracker -tilauskiintiöt"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}}-kiintiö on vähissä",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}}-kiintiö nollattu",
     "ResetHappenedBody": "{{window}} ({{account}}) on taas käytettävissä.",
     "TestTitle": "{{provider}}-hälytykset ovat päällä",
-    "TestBody": "Devie Quota ilmoittaa sinulle täällä tilistä {{account}}."
+    "TestBody": "Devie AI Quota Tracker ilmoittaa sinulle täällä tilistä {{account}}."
   }
 }

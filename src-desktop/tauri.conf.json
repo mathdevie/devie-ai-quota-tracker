@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Devie Quota",
+  "productName": "Devie AI Quota Tracker",
   "version": "0.11.0",
   "identifier": "com.devie.quota",
   "build": {

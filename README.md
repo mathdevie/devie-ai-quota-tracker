@@ -1,8 +1,8 @@
-<img src="docs/logo/app-icon.svg" alt="The Devie Quota app icon" width="96" />
+<img src="docs/logo/app-icon.svg" alt="The Devie AI Quota Tracker app icon" width="96" />
 
-# Devie Quota
+# Devie AI Quota Tracker
 
-Devie Quota is a local macOS menu bar app for AI subscription quotas.
+Devie AI Quota Tracker is a local macOS menu bar app for AI subscription quotas.
 
 It keeps separate Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor
 accounts in one place: sign in once per account, see every quota window and
@@ -22,8 +22,8 @@ each in light and dark.
 
 ## Install
 
-1. [**Download Devie Quota for Apple silicon (DMG)**](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
-2. Open the DMG and drag **Devie Quota** to Applications.
+1. [**Download Devie AI Quota Tracker for Apple silicon (DMG)**](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
+2. Open the DMG and drag **Devie AI Quota Tracker** to Applications.
 3. Launch it and add an account under **Providers**.
 
 All versions are listed on the
@@ -62,7 +62,7 @@ shows the last good data as "Stale".
 
 ## Privacy and security
 
-- Devie Quota has no product login or remote application database.
+- Devie AI Quota Tracker has no product login or remote application database.
 - Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
 - Each OAuth account is a separate connection. Tokens live in one private
   file per connection with `0600` permissions, under
@@ -137,7 +137,7 @@ query an updater feed it cannot publish to.
 
 ## Credits and license
 
-Devie Quota is released under the [MIT License](LICENSE). See
+Devie AI Quota Tracker is released under the [MIT License](LICENSE). See
 [NOTICE.md](NOTICE.md) for third-party attribution.
 
 The design combines useful ideas from these projects:

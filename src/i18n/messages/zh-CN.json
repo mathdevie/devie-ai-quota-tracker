@@ -202,10 +202,10 @@
     "BackToDashboard": "返回仪表板"
   },
   "Tray": {
-    "Open": "打开 Devie Quota",
+    "Open": "打开 Devie AI Quota Tracker",
     "RefreshAll": "全部刷新",
-    "Quit": "退出 Devie Quota",
-    "Tooltip": "Devie Quota 订阅额度"
+    "Quit": "退出 Devie AI Quota Tracker",
+    "Tooltip": "Devie AI Quota Tracker 订阅额度"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}} 额度不足",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}} 额度已重置",
     "ResetHappenedBody": "{{account}} 的 {{window}} 又可以使用了。",
     "TestTitle": "{{provider}} 提醒已开启",
-    "TestBody": "Devie Quota 会在这里通知你 {{account}} 的情况。"
+    "TestBody": "Devie AI Quota Tracker 会在这里通知你 {{account}} 的情况。"
   }
 }

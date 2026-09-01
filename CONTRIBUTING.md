@@ -1,4 +1,4 @@
-# Contributing to Devie Quota
+# Contributing to Devie AI Quota Tracker
 
 Thanks for your interest in the project. Issues and pull requests are
 welcome.

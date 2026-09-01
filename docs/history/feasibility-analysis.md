@@ -436,7 +436,7 @@ Recommended defaults appear in the second column.
 | Popover technology | Standard Tauri window | Native macOS `NSPanel` bridge |
 | History | SQLite from the first POC | Settings store only |
 | Token and cost statistics | Phase 2 | Include local JSONL analysis in the POC |
-| Product identity | Name `Devie Quota`, bundle `com.devie.quota` | A different name and bundle identifier |
+| Product identity | Name `Devie AI Quota Tracker`, bundle `com.devie.quota` | A different name and bundle identifier |
 
 The POC should not start until the Claude source policy, scope, platform, and
 connection behavior are approved.

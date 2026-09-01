@@ -1,6 +1,6 @@
 # Auto-updates
 
-Devie Quota updates itself through CrabNebula Cloud. The app checks at
+Devie AI Quota Tracker updates itself through CrabNebula Cloud. The app checks at
 start and installs a found update right
 away. Later checks run every 15 minutes; a downloaded update shows an
 **Update available** button in the sidebar.
