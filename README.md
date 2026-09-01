@@ -112,6 +112,12 @@ Light, Dark, System, and eight custom themes.
 The official build is Apple silicon only. An Intel build is untested; you
 can try a build from source.
 
+**Which languages does the interface support?**
+
+English (US, UK), Chinese (Simplified), Danish, Dutch, Finnish, French,
+German, Italian, Japanese, Norwegian (Bokmål), Portuguese (Brazil),
+Spanish (Spain, Latin America), and Swedish.
+
 **Does the app change my CLI logins?**
 
 No. The app owns the tokens for every sign-in and never reads or changes
