@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/mathdevie/devie-ai-quota-tracker?style=flat&color=yellow)](https://github.com/mathdevie/devie-ai-quota-tracker/stargazers)
 
-**Track all your AI subscription quota in the macOS menu bar.**
+**Track all your AI subscription quotas in the macOS menu bar.**
 
 [Overview](#overview) · [Download](#download) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
 
@@ -27,8 +27,8 @@
 - 🔔 [Alerts](#alerts): notifications about low quota or an imminent reset
 - ⚡ [Quota Optimizer](#quota-optimizer): auto-start of your session timer, so you have to wait less between resets
 - 📰 [Codex Resets](#codex-resets): live news from the [codex-resets.com](https://codex-resets.com) API about a possible Codex quota reset
-- 🎨 [Themes](#themes): 10+ available color schemes
-- 🌍 [Languages](#faq): translations for 15+ languages  
+- 🎨 [Themes](#themes): 11 available color schemes
+- 🌍 [Languages](#faq): translations for 15 languages
 
 ## Download
 
@@ -41,7 +41,7 @@
 <details>
 <summary><b>Alternative: Build from source</b></summary>
 
-If you prefer to run from the source code instead of downloading the package, you can follow the instructions.
+If you prefer to run from the source code instead of downloading the package, follow these instructions.
 
 You need [Bun](https://bun.sh/), a stable Rust toolchain, and the
 [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
@@ -61,7 +61,7 @@ The bundle is written under `src-desktop/target/release/bundle/macos/`.
  
 ### Menu bar and popover
 
-The menu bar always shows the quota of the provider you selected. You can pin the quota that you want to track, or automatically sort based on which ones will expire first. 
+The menu bar always shows the quota of the provider you selected. You can pin the quota that you want to track, or sort automatically by which one expires first.
 
 One click opens a popover with every account, without having to launch the app.
 
@@ -69,7 +69,7 @@ One click opens a popover with every account, without having to launch the app.
 
 ### Providers and accounts
 
-The current major AI providers are supported. Authentication requires OAuth sign-in for each provider that you want to add. Unlike other solutions, we do not automatically infer from the accounts you are already logged in on your machine, as this showed unreliable results.
+The current major AI providers are supported. Authentication requires OAuth sign-in for each provider that you want to add. Unlike other solutions, we do not automatically reuse the accounts you are already logged in to on your machine, as this showed unreliable results.
 
 <img src="docs/screenshots/providers.png" alt="The Settings window with provider cards and connection counts" width="760" />
 
@@ -77,7 +77,7 @@ The current major AI providers are supported. Authentication requires OAuth sign
 
 You can set up alerts (macOS notifications) for each account: low quota, reset soon, and reset happened.
 
-Make sure you auhtorize the notifications for this app in your macOS notifications settings.
+Make sure you authorize the notifications for this app in your macOS notification settings.
 
 <img src="docs/screenshots/alerts.png" alt="The Alerts dialog with low quota, reset soon, and reset complete toggles" width="760" />
 
@@ -91,10 +91,11 @@ next reset comes sooner.
 
 ### Codex Resets
 
-Codex quotas sometimes reset early. 
+Codex quotas sometimes reset early.
 
 We fetch the latest announcements from [codex-resets.com](https://codex-resets.com), a community
-site that tracks the reset announcements of OpenAI staff.
+site that tracks the reset announcements of OpenAI staff. The app reads
+the public status feed only and never sends account data to it.
 
 <img src="docs/screenshots/codex-resets.png" alt="The popover with a Codex reset forecast banner" width="620" />
 
@@ -116,7 +117,6 @@ This app is implemented using [Devie UI](https://devie-ui.com), a design system 
 
 ## FAQ
 
-
 <details>
 <summary><b>Which languages does the interface support?</b></summary>
 <br />
@@ -126,7 +126,6 @@ German, Italian, Japanese, Norwegian (Bokmål), Portuguese (Brazil),
 Spanish (Spain, Latin America), and Swedish.
 
 </details>
-
 
 <details>
 <summary><b>Where is my data stored?</b></summary>
@@ -151,7 +150,6 @@ include account names, tokens, quota numbers, or labels. Turn this off in
 **Settings → Privacy** if you prefer.
 
 </details>
-
 
 ## Contributing
 
