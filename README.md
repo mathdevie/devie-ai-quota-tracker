@@ -14,6 +14,11 @@ Claude Code · Codex · Gemini CLI · GitHub Copilot · Cursor
 Sign in once per account. See every quota window and its reset time. Get a
 notification before a limit hits.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
+  <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="51%" />
+</picture> <img src="docs/screenshots/popover.png" alt="The menu bar popover with quotas for every account" width="47%" />
+
 ## Summary
 
 - 📊 One dashboard for Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor quotas.
@@ -53,16 +58,6 @@ The bundle is written under `src-desktop/target/release/bundle/macos/`.
 </details>
 
 ## Features
-
-### Quota dashboard
-
-All accounts on one screen: every quota window, the percent left, and the
-time to the next reset.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
-  <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="760" />
-</picture>
 
 ### Menu bar and popover
 
