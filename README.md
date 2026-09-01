@@ -14,6 +14,8 @@ Claude Code · Codex · Gemini CLI · GitHub Copilot · Cursor
 Sign in once per account. See every quota window and its reset time. Get a
 notification before a limit hits.
 
+[Summary](#summary) · [Installation](#installation) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
   <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="51%" />
@@ -31,7 +33,7 @@ notification before a limit hits.
 
 ## Installation
 
-[![Download for macOS (Apple silicon)](https://img.shields.io/badge/Download_for_macOS-Apple_silicon-0D96F6?style=for-the-badge&logo=apple&logoColor=white)](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
+**[⬇ Download (macOS)](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)**
 
 1. Download the DMG (signed and notarized, Apple silicon).
 2. Drag **Devie AI Quota Tracker** to Applications.
