@@ -7,43 +7,43 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/mathdevie/devie-ai-quota-tracker?style=flat&color=yellow)](https://github.com/mathdevie/devie-ai-quota-tracker/stargazers)
 
-**Every AI subscription quota, in the macOS menu bar.**
+**Track all your AI subscription quota in the macOS menu bar.**
 
-Claude Code · Codex · Gemini CLI · GitHub Copilot · Cursor
+[Overview](#overview) · [Download](#download) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
 
-Sign in once per account. See every quota window and its reset time. Get a
-notification before a limit hits.
-
-[Summary](#summary) · [Installation](#installation) · [Features](#features) · [Themes](#themes) · [FAQ](#faq) · [Contributing](#contributing)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
   <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="51%" />
 </picture> <img src="docs/screenshots/popover.png" alt="The menu bar popover with quotas for every account" width="47%" />
 
-## Summary
+## Overview
 
-- 📊 One dashboard for Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor quotas.
-- 📌 A menu bar item with the percent left; one click opens the popover.
-- 👥 Any number of accounts per provider — work and personal side by side.
-- 🔔 Alerts per account: low quota, reset soon, and reset happened.
-- ⚡ Quota Optimizer: start a session timer right after each reset.
-- 🎨 Eleven themes and fifteen languages.
-- 🔒 Local only: no account, no backend — all data stays on the Mac.
+- 📊 [Dashboard](#): One dashboard for all subscriptions, e.g. Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor...
+- 📌 Menu Bar: A native macOS menu bar item that shows your remaining quota
+- 👥 Multi-Account Support: Add multiple instances of the same provider (e.g. a Work subscription and a Personal subscription)
+- 🔔 Alerts: set up notifications for low quota, or imminent reset.
+- ⚡ Quota Optimizer: auto-start your session timer, so you have to wait less between resets
+- Codex Resets: fetches news from codex-resets.com API to inform you about possible Codex quote reset
+- 🎨 Themes: pick a color scheme that you like
+- 15 Languages support: English....
 
-## Installation
+No account creation is required.
 
-**[⬇ Download (macOS)](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)**
+## Download
 
-1. Download the DMG (signed and notarized, Apple silicon).
-2. Drag **Devie AI Quota Tracker** to Applications.
-3. Launch it and add an account under **Providers**.
+**[Download latest (macOS)](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)**
 
-The app updates itself. All versions are on the
-[releases page](https://web.crabnebula.cloud/mathdev/devie-quota/releases).
+1. Download the DMG
+2. Drag **Devie AI Quota Tracker** to Applications
+3. Launch it, then add your account under **Providers** to start tracking quota
+
+The app updates itself.
 
 <details>
-<summary><b>Build from source</b></summary>
+<summary><b>Alternative: Build from source</b></summary>
+
+If you prefer to run from the source code instead of downloading the package, you can follow the instructions.
 
 You need [Bun](https://bun.sh/), a stable Rust toolchain, and the
 [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
@@ -60,7 +60,7 @@ The bundle is written under `src-desktop/target/release/bundle/macos/`.
 </details>
 
 ## Features
-
+ 
 ### Menu bar and popover
 
 The menu bar shows the provider logo and the percent left of a pinned
