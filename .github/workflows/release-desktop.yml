@@ -140,6 +140,13 @@ jobs:
           command: release upload ${{ env.CN_APPLICATION }} --framework tauri
           api-key: ${{ secrets.CN_API_KEY }}
 
+      - name: Keep the DMG for the GitHub release
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg-${{ matrix.target }}
+          path: src-desktop/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+
   publish:
     needs: [draft, build]
     runs-on: ubuntu-24.04
@@ -159,3 +166,25 @@ jobs:
         run: |
           git tag "v${{ needs.draft.outputs.version }}"
           git push origin "v${{ needs.draft.outputs.version }}"
+
+  github-release:
+    needs: [draft, publish]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the DMG
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dmg-*
+          merge-multiple: true
+          path: dist
+
+      # The release notes are the CHANGELOG section of this version.
+      - name: Create the GitHub release with the DMG
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ needs.draft.outputs.version }}"
+          awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {flag=1; next} /^## \[/ {flag=0} flag' CHANGELOG.md > notes.md
+          gh release create "v${version}" dist/*.dmg --title "v${version}" --notes-file notes.md
