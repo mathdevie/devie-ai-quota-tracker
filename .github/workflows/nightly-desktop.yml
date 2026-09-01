@@ -15,14 +15,6 @@ name: Nightly Desktop App
 
 on:
   workflow_dispatch:
-    inputs:
-      runner:
-        description: "Runner for the macOS build"
-        type: choice
-        default: self-hosted
-        options:
-          - self-hosted
-          - macos-15
 
 permissions:
   contents: read
@@ -36,7 +28,7 @@ env:
 
 jobs:
   draft:
-    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: ubuntu-24.04
     environment: Release
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -69,7 +61,7 @@ jobs:
           - name: Apple silicon
             target: aarch64-apple-darwin
     name: Build ${{ matrix.name }}
-    runs-on: ${{ inputs.runner == 'macos-15' && 'macos-15' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: macos-15
     environment: Release
     timeout-minutes: 60
     steps:
@@ -154,7 +146,7 @@ jobs:
 
   publish:
     needs: [draft, build]
-    runs-on: ${{ inputs.runner == 'macos-15' && 'ubuntu-24.04' || fromJSON('["self-hosted", "macOS", "ARM64"]') }}
+    runs-on: ubuntu-24.04
     environment: Release
     steps:
       - name: Publish the release
