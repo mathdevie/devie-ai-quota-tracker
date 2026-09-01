@@ -178,12 +178,17 @@ The development of this project is supported by:
 </tr>
 </table>
 
-## License
-
-[MIT](LICENSE). Third-party notices are in [docs/notices.md](docs/notices.md).
+## Thanks
 
 This application was inspired by other awesome open-source projects:
 - [AIUsage](https://github.com/sylearn/AIUsage)
 - [CodexBar](https://github.com/steipete/CodexBar)
 - [usage4claude](https://github.com/f-is-h/usage4claude)
 - [9router](https://github.com/decolua/9router)
+- 
+## License
+
+[MIT](LICENSE). 
+Third-party notices are in [NOTICES](docs/notices.md).
+
+
