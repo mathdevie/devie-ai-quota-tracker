@@ -6,11 +6,11 @@
   "description": "A local macOS menu bar app for AI subscription quotas",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mathdevie/devie-quota.git"
+    "url": "git+https://github.com/mathdevie/devie-ai-quota-tracker.git"
   },
-  "homepage": "https://github.com/mathdevie/devie-quota",
+  "homepage": "https://github.com/mathdevie/devie-ai-quota-tracker",
   "bugs": {
-    "url": "https://github.com/mathdevie/devie-quota/issues"
+    "url": "https://github.com/mathdevie/devie-ai-quota-tracker/issues"
   },
   "scripts": {
     "dev": "next dev --port 3002",

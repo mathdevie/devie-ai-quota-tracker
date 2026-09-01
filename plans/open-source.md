@@ -1,6 +1,6 @@
 # Open-source release plan
 
-This plan lists every change needed before the `devie-quota` repository
+This plan lists every change needed before the `devie-ai-quota-tracker` repository
 becomes public. Work through the phases in order. Each phase is one branch
 and one PR into `main`. Run `bun run check`, `bun run build`, and
 `cargo test --locked` (in `src-desktop/`) before each merge.
@@ -132,7 +132,7 @@ The history is clean and readable. The tags and releases stay valid.
    `filter-repo` moves the tags to the new commits.
 5. Re-add the remote (filter-repo removes it) and force-push:
    ```sh
-   git remote add origin git@github.com:mathdevie/devie-quota.git
+   git remote add origin git@github.com:mathdevie/devie-ai-quota-tracker.git
    git push --force --tags origin main
    ```
 6. Check the GitHub Releases page. Releases follow tag names, so they stay attached. Confirm each release still shows its assets.

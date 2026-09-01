@@ -202,10 +202,10 @@
     "BackToDashboard": "Back to dashboard"
   },
   "Tray": {
-    "Open": "Open Devie Quota",
+    "Open": "Open Devie AI Quota Tracker",
     "RefreshAll": "Refresh All",
-    "Quit": "Quit Devie Quota",
-    "Tooltip": "Devie Quota subscription quotas"
+    "Quit": "Quit Devie AI Quota Tracker",
+    "Tooltip": "Devie AI Quota Tracker subscription quotas"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}} quota is low",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}} quota reset",
     "ResetHappenedBody": "{{window}} for {{account}} is available again.",
     "TestTitle": "{{provider}} alerts are on",
-    "TestBody": "Devie Quota will notify you here about {{account}}."
+    "TestBody": "Devie AI Quota Tracker will notify you here about {{account}}."
   }
 }

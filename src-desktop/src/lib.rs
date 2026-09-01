@@ -674,7 +674,7 @@ fn toggle_popover(app: &AppHandle) {
 
 fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-        .title("Devie Quota")
+        .title("Devie AI Quota Tracker")
         .inner_size(1120.0, 760.0)
         .min_inner_size(780.0, 560.0)
         .center();
@@ -690,7 +690,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
     let popover =
         WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
-            .title("Devie Quota Quotas")
+            .title("Devie AI Quota Tracker — Quotas")
             .inner_size(POPOVER_WIDTH, 480.0)
             // The popover resizes itself to its content, down to one short
             // list. The user cannot resize or move it.
@@ -1003,7 +1003,7 @@ pub fn run() {
             hide_popover,
         ])
         .build(tauri::generate_context!())
-        .expect("Devie Quota failed to start")
+        .expect("Devie AI Quota Tracker failed to start")
         .run(|app, event| {
             // A click on the Dock icon with no visible window reopens the
             // main window (Cmd+H or a click on the tray hides it).

@@ -202,10 +202,10 @@
     "BackToDashboard": "Voltar ao painel"
   },
   "Tray": {
-    "Open": "Abrir o Devie Quota",
+    "Open": "Abrir o Devie AI Quota Tracker",
     "RefreshAll": "Atualizar tudo",
-    "Quit": "Sair do Devie Quota",
-    "Tooltip": "Cotas de assinaturas do Devie Quota"
+    "Quit": "Sair do Devie AI Quota Tracker",
+    "Tooltip": "Cotas de assinaturas do Devie AI Quota Tracker"
   },
   "Notifications": {
     "LowQuotaTitle": "A cota do {{provider}} está baixa",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "Cota do {{provider}} redefinida",
     "ResetHappenedBody": "{{window}} de {{account}} está disponível novamente.",
     "TestTitle": "Alertas do {{provider}} ativados",
-    "TestBody": "O Devie Quota vai avisar você aqui sobre {{account}}."
+    "TestBody": "O Devie AI Quota Tracker vai avisar você aqui sobre {{account}}."
   }
 }

@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/mathdevie/devie-quota/security/advisories/new
+    url: https://github.com/mathdevie/devie-ai-quota-tracker/security/advisories/new
     about: Report vulnerabilities in private, never in a public issue.

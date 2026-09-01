@@ -202,10 +202,10 @@
     "BackToDashboard": "ダッシュボードに戻る"
   },
   "Tray": {
-    "Open": "Devie Quota を開く",
+    "Open": "Devie AI Quota Tracker を開く",
     "RefreshAll": "すべて更新",
-    "Quit": "Devie Quota を終了",
-    "Tooltip": "Devie Quota のサブスクリプションクォータ"
+    "Quit": "Devie AI Quota Tracker を終了",
+    "Tooltip": "Devie AI Quota Tracker のサブスクリプションクォータ"
   },
   "Notifications": {
     "LowQuotaTitle": "{{provider}} のクォータの残りが少ないです",
@@ -215,6 +215,6 @@
     "ResetHappenedTitle": "{{provider}} のクォータをリセットしました",
     "ResetHappenedBody": "{{account}} の {{window}} が再び使えます。",
     "TestTitle": "{{provider}} のアラートは有効です",
-    "TestBody": "Devie Quota は {{account}} についてここで知らせます。"
+    "TestBody": "Devie AI Quota Tracker は {{account}} についてここで知らせます。"
   }
 }

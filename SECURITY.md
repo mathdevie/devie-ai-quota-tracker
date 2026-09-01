@@ -12,7 +12,7 @@ You will get an answer within a week.
 
 ## Token storage model
 
-Devie Quota handles OAuth tokens for provider accounts. The model:
+Devie AI Quota Tracker handles OAuth tokens for provider accounts. The model:
 
 - Tokens live in one private JSON file per connection, with `0600`
   permissions, under
