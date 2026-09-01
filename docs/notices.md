@@ -1,6 +1,6 @@
 # Notices
 
-Devie AI Quota Tracker is released under the MIT License (see [LICENSE](LICENSE)).
+Devie AI Quota Tracker is released under the MIT License (see [LICENSE](../LICENSE)).
 This file lists third-party material bundled in the repository and the
 terms that apply to it.
 
