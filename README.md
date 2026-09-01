@@ -19,14 +19,14 @@
 
 ## Overview
 
-- 📊 [Dashboard](#): One dashboard for all subscriptions, e.g. Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor...
-- 📌 Menu Bar: A native macOS menu bar item that shows your remaining quota
-- 👥 Multi-Account Support: Add multiple instances of the same provider (e.g. a Work subscription and a Personal subscription)
-- 🔔 Alerts: set up notifications for low quota, or imminent reset.
-- ⚡ Quota Optimizer: auto-start your session timer, so you have to wait less between resets
-- Codex Resets: fetches news from codex-resets.com API to inform you about possible Codex quote reset
-- 🎨 Themes: pick a color scheme that you like
-- 15 Languages support: English....
+- 📊 [Dashboard](#features): one dashboard for all subscriptions — Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor
+- 📌 [Menu bar](#menu-bar-and-popover): a native macOS menu bar item that shows your remaining quota
+- 👥 [Multi-account support](#providers-and-accounts): add multiple instances of the same provider (e.g. a Work subscription and a Personal subscription)
+- 🔔 [Alerts](#alerts): set up notifications for a low quota or an imminent reset
+- ⚡ [Quota Optimizer](#quota-optimizer): auto-start your session timer, so you have to wait less between resets
+- 📰 [Codex Resets](#codex-resets): news from the codex-resets.com API about a possible Codex quota reset
+- 🎨 [Themes](#themes): Light, Dark, System, and eight custom themes
+- 🌍 [Languages](#faq): fifteen interface locales
 
 No account creation is required.
 
@@ -89,6 +89,15 @@ next reset comes sooner.
 
 <img src="docs/screenshots/quota-optimizer.png" alt="The Quota Optimizer dialog with the auto-start session timers option" width="760" />
 
+### Codex Resets
+
+Codex quotas sometimes reset early. The popover shows the reset news and
+forecasts from [codex-resets.com](https://codex-resets.com), a community
+site that tracks the reset announcements of OpenAI staff. The app reads
+the public status feed only and never sends account data to it.
+
+<img src="docs/screenshots/codex-resets.png" alt="The popover with a Codex reset forecast banner" width="620" />
+
 ## Themes
 
 Light, Dark, System, and eight custom themes.
@@ -107,45 +116,73 @@ Light, Dark, System, and eight custom themes.
 
 ## FAQ
 
-**Does it run on Intel Macs?**
+<details>
+<summary><b>Does it run on Intel Macs?</b></summary>
+<br />
 
 The official build is Apple silicon only. An Intel build is untested; you
 can try a build from source.
 
-**Which languages does the interface support?**
+</details>
+
+<details>
+<summary><b>Which languages does the interface support?</b></summary>
+<br />
 
 English (US, UK), Chinese (Simplified), Danish, Dutch, Finnish, French,
 German, Italian, Japanese, Norwegian (Bokmål), Portuguese (Brazil),
 Spanish (Spain, Latin America), and Swedish.
 
-**Does the app change my CLI logins?**
+</details>
+
+<details>
+<summary><b>Does the app change my CLI logins?</b></summary>
+<br />
 
 No. The app owns the tokens for every sign-in and never reads or changes
 the CLI logins on this Mac.
 
-**Where is my data stored?**
+</details>
+
+<details>
+<summary><b>Where is my data stored?</b></summary>
+<br />
 
 Everything is local, under
 `~/Library/Application Support/com.devie.quota/`: one private token file
 per account (`0600` permissions) and one SQLite database for quota
 snapshots. Removing an account deletes its token file.
 
-**Does the app send anything anywhere?**
+</details>
+
+<details>
+<summary><b>Does the app send anything anywhere?</b></summary>
+<br />
 
 Quota checks contact the providers directly — there is no other backend.
 Anonymous usage events and crash reports go to PostHog (EU); they never
 include account names, tokens, quota numbers, or labels. Turn this off in
 **Settings → Privacy**.
 
-**Why is a quota sometimes marked "Stale"?**
+</details>
+
+<details>
+<summary><b>Why is a quota sometimes marked "Stale"?</b></summary>
+<br />
 
 A failed refresh keeps the last good snapshot and marks it "Stale". The
 next successful refresh clears it.
 
-**How does the app update itself?**
+</details>
+
+<details>
+<summary><b>How does the app update itself?</b></summary>
+<br />
 
 Through CrabNebula Cloud: the app checks for a signed update at start and
 in the background.
+
+</details>
 
 ## Contributing
 
