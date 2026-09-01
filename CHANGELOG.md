@@ -5,7 +5,7 @@ All notable changes to Devie AI Quota Tracker are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.11.0] - 2026-09-02
+## [0.12.0] - 2026-09-02
 
 ### Added
 
@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Renamed the app from "Devie Quota" to "Devie AI Quota Tracker". The bundle
   identifier, the update endpoint, and local data locations are unchanged.
+
+## [0.11.0] - 2026-09-01
+
+### Added
+
+- The menu bar popover has its own quota filters.
+
+### Fixed
+
+- The menu bar header shows the active filter values.
 
 ## [0.10.0] - 2026-08-31
 
