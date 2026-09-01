@@ -1,51 +1,93 @@
-<img src="docs/logo/app-icon.svg" alt="The Devie AI Quota Tracker app icon" width="96" />
+<div align="center">
+
+<img src="docs/logo/app-icon.svg" alt="The Devie AI Quota Tracker app icon" width="110" />
 
 # Devie AI Quota Tracker
 
-Devie AI Quota Tracker is a local macOS menu bar app for AI subscription quotas.
+**Every AI subscription quota, in the macOS menu bar.**
 
-It keeps separate Claude, Codex, Gemini CLI, GitHub Copilot, and Cursor
-accounts in one place: sign in once per account, see every quota window and
-its reset time from the menu bar, and get notified before a limit hits.
-There is no Devie account, cloud database, proxy, or hosted backend — all
-data stays on the Mac.
+Claude Code · Codex · Gemini CLI · GitHub Copilot · Cursor
 
-<!--
-Screenshots: put the images in docs/screenshots/ and uncomment.
-Suggested shots: the menu bar popover and the main Quota window,
-each in light and dark.
+<br />
 
-| Menu bar popover | Main window |
-| --- | --- |
-| ![The menu bar popover](docs/screenshots/popover.png) | ![The main Quota window](docs/screenshots/window.png) |
--->
+[![Download for macOS (Apple silicon)](https://img.shields.io/badge/Download_for_macOS-Apple_silicon-0D96F6?style=for-the-badge&logo=apple&logoColor=white)](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
+
+[![Version](https://img.shields.io/github/v/tag/mathdevie/devie-ai-quota-tracker?label=version&color=4c1)](https://web.crabnebula.cloud/mathdev/devie-quota/releases)
+![Platform](https://img.shields.io/badge/macOS-12%2B-black?logo=apple)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+<br />
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" />
+  <img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" width="760" />
+</picture>
+
+</div>
+
+Sign in once per account. See every quota window and its reset time. Get a
+notification before a limit hits. There is no Devie account, cloud database,
+proxy, or hosted backend — all data stays on the Mac.
+
+<div align="center">
+  <img src="docs/screenshots/menu-bar.jpg" alt="The menu bar popover over the desktop, with quotas for every account" width="760" />
+</div>
 
 ## Install
 
-1. [**Download Devie AI Quota Tracker for Apple silicon (DMG)**](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64)
-2. Open the DMG and drag **Devie AI Quota Tracker** to Applications.
+1. [**Download the DMG**](https://cdn.crabnebula.app/download/mathdev/devie-quota/latest/platform/dmg-aarch64) (Apple silicon, signed and notarized).
+2. Drag **Devie AI Quota Tracker** to Applications.
 3. Launch it and add an account under **Providers**.
 
-All versions are listed on the
-[CrabNebula Cloud releases page](https://web.crabnebula.cloud/mathdev/devie-quota/releases).
-Builds are signed and notarized for Apple silicon. The app updates itself;
-see [docs/updates.md](docs/updates.md).
+The app updates itself. All versions are on the
+[releases page](https://web.crabnebula.cloud/mathdev/devie-quota/releases).
 
-## Features
+## Highlights
 
-- A macOS menu bar item with the provider logo and percent left, plus a
-  popover; pin any quota window to the menu bar.
-- A native-style window with a sidebar: Quota, Providers, Settings.
-- In-app OAuth sign-in for Claude, Codex, Gemini CLI, GitHub Copilot, and
-  Cursor — any number of accounts per provider.
-- Manual refresh and an automatic five-minute refresh loop; a failed
-  refresh keeps the last good snapshot and shows it as "Stale".
-- Quota alerts: low quota, reset soon, and reset happened.
-- Local SQLite storage for connections, identities, and snapshots.
-- Three native appearances (Light, Dark, System) and eight custom themes.
-- Fifteen interface languages.
+- **Menu bar first.** The provider logo and the percent left, always visible.
+  Pin any quota to the menu bar. One click opens the popover.
+- **Any number of accounts.** In-app OAuth sign-in for Claude, Codex,
+  Gemini CLI, GitHub Copilot, and Cursor — work and personal side by side.
+- **Alerts.** Low quota, reset soon, and reset happened. Per account.
+- **Quota Optimizer.** Start a session timer right after each reset, so the
+  next reset comes sooner.
+- **Always fresh.** A five-minute refresh loop; a failed refresh keeps the
+  last good snapshot and marks it "Stale".
+- **Yours.** Eleven themes, fifteen languages, and local SQLite storage.
 
-## Provider support
+<div align="center">
+  <img src="docs/screenshots/providers.png" width="49%" alt="The Settings window with provider cards and connection counts" />
+  <img src="docs/screenshots/alerts.png" width="49%" alt="The Alerts dialog with low quota, reset soon, and reset complete toggles" />
+</div>
+
+<div align="center">
+  <img src="docs/screenshots/quota-optimizer.png" width="49%" alt="The Quota Optimizer dialog with the auto-start session timers option" />
+  <img src="docs/screenshots/theme-dark.png" width="49%" alt="The quota dashboard in the Dark theme" />
+</div>
+
+## Themes
+
+Light, Dark, System, and eight custom themes.
+
+<details>
+<summary><b>See all themes</b></summary>
+<br />
+<div align="center">
+  <img src="docs/screenshots/theme-midnight.png" width="49%" alt="The Midnight Ink theme" />
+  <img src="docs/screenshots/theme-copper.png" width="49%" alt="The Copper Sunset theme" />
+  <img src="docs/screenshots/theme-aurora.png" width="49%" alt="The Aurora Green theme" />
+  <img src="docs/screenshots/theme-sharingan.png" width="49%" alt="The Sharingan theme" />
+  <img src="docs/screenshots/theme-alpine-snow.png" width="49%" alt="The Alpine Snow theme" />
+  <img src="docs/screenshots/theme-command.png" width="49%" alt="The Command Prompt theme" />
+  <img src="docs/screenshots/theme-totoro.png" width="49%" alt="The Totoro theme" />
+  <img src="docs/screenshots/theme-catpuccin.png" width="49%" alt="The Catpuccin Latte theme" />
+</div>
+</details>
+
+## Details
+
+<details>
+<summary><b>Provider support</b></summary>
 
 | Provider | Sign-in | Quota source |
 | --- | --- | --- |
@@ -60,7 +102,10 @@ the timer (a refresh button always fetches), one request per token runs at
 a time, a `429` pauses the endpoint for three minutes, and a failed read
 shows the last good data as "Stale".
 
-## Privacy and security
+</details>
+
+<details>
+<summary><b>Privacy and security</b></summary>
 
 - Devie AI Quota Tracker has no product login or remote application database.
 - Provider quota checks can contact Anthropic, Google, OpenAI, or GitHub.
@@ -80,7 +125,10 @@ shows the last good data as "Stale".
 The local database is stored at
 `~/Library/Application Support/com.devie.quota/devie-quota.sqlite3`.
 
-## Architecture
+</details>
+
+<details>
+<summary><b>Architecture</b></summary>
 
 ```text
 Next.js static interface
@@ -115,12 +163,10 @@ edit or delete files inside it. Every customization lives outside the
 mirror: application components in `src/components`, the theme registry and
 native appearances in `src/theme`, and global styles in `src/app`.
 
-## Development
+</details>
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for the prerequisites, the
-development commands, the project rules, and the pull request checklist.
-
-## Forking
+<details>
+<summary><b>Forking</b></summary>
 
 A fork that ships its own builds must replace these project-specific values:
 
@@ -134,6 +180,13 @@ A fork that ships its own builds must replace these project-specific values:
 
 Without these changes a fork would collide with the upstream bundle id and
 query an updater feed it cannot publish to.
+
+</details>
+
+## Development
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the prerequisites, the
+development commands, the project rules, and the pull request checklist.
 
 ## Credits and license
 
