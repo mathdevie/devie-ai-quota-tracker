@@ -503,6 +503,20 @@ mod tests {
             .all(|w| w.key != "credits"));
     }
 
+    #[tokio::test]
+    async fn exchange_rejects_a_wrong_state() {
+        let pkce = Pkce {
+            verifier: "v".into(),
+            challenge: "c".into(),
+            state: "expected".into(),
+        };
+        let client = reqwest::Client::new();
+        let err = exchange(&client, &pkce, &redirect_uri(), "code", Some("wrong"))
+            .await
+            .expect_err("mismatched state must fail");
+        assert!(err.contains("does not match"));
+    }
+
     #[test]
     fn maps_plan_types() {
         assert_eq!(plan_label("prolite"), "Pro Lite");

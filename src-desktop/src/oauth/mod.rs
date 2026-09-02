@@ -300,7 +300,12 @@ pub async fn finish(
                     let code = params
                         .code
                         .ok_or_else(|| "The provider returned no code.".to_string())?;
-                    (code, params.state)
+                    // A browser callback must always echo the state; only a
+                    // manually pasted code may omit it.
+                    let state = params.state.ok_or_else(|| {
+                        "The sign-in response does not match this session. Start again.".to_string()
+                    })?;
+                    (code, Some(state))
                 }
             };
             match login.provider {
