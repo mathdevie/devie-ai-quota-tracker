@@ -637,6 +637,24 @@ mod tests {
         assert!(url.contains("scope=org%3Acreate_api_key%20user%3Aprofile%20user%3Ainference"));
     }
 
+    #[tokio::test]
+    async fn exchange_rejects_a_wrong_state() {
+        let pkce = Pkce {
+            verifier: "v".into(),
+            challenge: "c".into(),
+            state: "expected".into(),
+        };
+        let client = reqwest::Client::new();
+        let err = exchange(&client, &pkce, &redirect_uri(), "code", Some("wrong"))
+            .await
+            .expect_err("mismatched state must fail");
+        assert!(err.contains("does not match"));
+        let err = exchange(&client, &pkce, &redirect_uri(), "code#wrong", None)
+            .await
+            .expect_err("mismatched embedded state must fail");
+        assert!(err.contains("does not match"));
+    }
+
     #[test]
     fn parses_usage_windows_with_model_limits() {
         let json: Value = serde_json::from_str(
