@@ -13,42 +13,18 @@ body:
     id: steps
     attributes:
       label: Steps to reproduce
-      placeholder: |
-        1. Open the Providers view.
-        2. …
     validations:
       required: true
   - type: input
-    id: app-version
+    id: versions
     attributes:
-      label: App version
-      description: Settings → About, or the menu bar item.
-      placeholder: 0.10.0
+      label: App and macOS version
+      description: The app version is in Settings → About.
     validations:
       required: true
-  - type: input
-    id: macos-version
-    attributes:
-      label: macOS version
-      placeholder: macOS 15.6
-    validations:
-      required: true
-  - type: dropdown
-    id: provider
-    attributes:
-      label: Affected provider
-      multiple: true
-      options:
-        - Claude
-        - Codex
-        - Gemini CLI
-        - GitHub Copilot
-        - Cursor
-        - None / app-wide
   - type: textarea
     id: logs
     attributes:
       label: Logs or screenshots
       description: >
-        Attach screenshots or error text. Never include tokens or the
-        contents of the credentials folder.
+        Never include tokens or the contents of the credentials folder.
