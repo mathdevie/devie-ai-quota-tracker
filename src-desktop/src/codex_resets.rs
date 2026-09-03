@@ -82,11 +82,16 @@ pub struct CodexResetsStatus {
 #[derive(Clone, Default)]
 pub struct Cache(Arc<tokio::sync::Mutex<Option<(Instant, CodexResetsStatus)>>>);
 
-/// Reads the status, from the cache when it is fresh.
-pub async fn status(client: &reqwest::Client, cache: &Cache) -> Result<CodexResetsStatus, String> {
+/// Reads the status, from the cache when it is fresh. `force` skips the
+/// cache, which the user expects from a refresh button but not from a timer.
+pub async fn status(
+    client: &reqwest::Client,
+    cache: &Cache,
+    force: bool,
+) -> Result<CodexResetsStatus, String> {
     let mut slot = cache.0.lock().await;
     if let Some((at, value)) = slot.as_ref() {
-        if at.elapsed() < CACHE_FOR {
+        if !force && at.elapsed() < CACHE_FOR {
             return Ok(value.clone());
         }
     }

@@ -5,7 +5,11 @@ import { ExternalLink, Newspaper, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CodexResetsStatus } from "@/lib/contracts";
-import { getCodexResetsStatus, openExternalUrl } from "@/lib/desktop";
+import {
+  getCodexResetsStatus,
+  onCodexResetsStatus,
+  openExternalUrl,
+} from "@/lib/desktop";
 import Callout from "@/ui/Callout";
 import styles from "./CodexResetsNews.module.scss";
 import IconTip from "./IconTip";
@@ -16,7 +20,10 @@ const CACHE_FOR = 10 * 60_000;
 const MAX_AGE = 3 * 86_400_000;
 /** The time of the last dismissed item. Everything up to it stays hidden. */
 const DISMISSED_KEY = "codexResetsNews.dismissedAt";
-/** How often the banner re-checks the clock and the cached status. */
+/**
+ * How often the banner re-checks the clock and the status. The cache serves
+ * most ticks; a request goes out when it expires, and a failure is retried.
+ */
 const TICK = 60_000;
 
 const cache: {
@@ -39,6 +46,12 @@ function loadStatus(): Promise<CodexResetsStatus> {
       cache.pending = undefined;
     });
   return cache.pending;
+}
+
+/** Takes the news the core fetched on a manual refresh as the newest answer. */
+function storeStatus(value: CodexResetsStatus) {
+  cache.value = value;
+  cache.at = Date.now();
 }
 
 /** The one piece of news the banner shows. */
@@ -130,15 +143,25 @@ export default function CodexResetsNews({ className }: { className?: string }) {
   useEffect(() => {
     let live = true;
     setDismissedAt(readDismissedAt());
-    loadStatus()
-      .then((value) => live && setStatus(value))
-      .catch(() => {
-        // No news is not an error worth a message in the card.
-      });
-    const timer = window.setInterval(() => setNow(Date.now()), TICK);
+    const reload = () =>
+      loadStatus()
+        .then((value) => live && setStatus(value))
+        .catch(() => {
+          // No news is not an error worth a message in the card.
+        });
+    void reload();
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+      void reload();
+    }, TICK);
+    const stop = onCodexResetsStatus((value) => {
+      storeStatus(value);
+      if (live) setStatus(value);
+    });
     return () => {
       live = false;
       window.clearInterval(timer);
+      stop();
     };
   }, []);
 
