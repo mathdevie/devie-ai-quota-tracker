@@ -185,7 +185,7 @@ This application was inspired by other awesome open-source projects:
 - [CodexBar](https://github.com/steipete/CodexBar)
 - [usage4claude](https://github.com/f-is-h/usage4claude)
 - [9router](https://github.com/decolua/9router)
-- 
+ 
 ## License
 
 [MIT](LICENSE). 
