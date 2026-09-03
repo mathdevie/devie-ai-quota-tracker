@@ -301,9 +301,33 @@ export async function setLanguage(locale: string): Promise<void> {
 export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
   if (!isDesktop()) {
     await delay(300);
-    return previewCodexResets;
+    return { ...previewCodexResets, fetchedAt: new Date().toISOString() };
   }
   return call("get_codex_resets_status");
+}
+
+/**
+ * Calls `handler` with the reset news the core fetched after a manual
+ * refresh, in every window. Returns a function that stops listening.
+ */
+export function onCodexResetsStatus(
+  handler: (status: CodexResetsStatus) => void,
+): () => void {
+  if (!isDesktop()) return () => {};
+  let cancelled = false;
+  let stop: (() => void) | undefined;
+  void import("@tauri-apps/api/event").then(({ listen }) =>
+    listen<CodexResetsStatus>("codex-resets:updated", (event) =>
+      handler(event.payload),
+    ).then((unlisten) => {
+      if (cancelled) void unlisten();
+      else stop = unlisten;
+    }),
+  );
+  return () => {
+    cancelled = true;
+    stop?.();
+  };
 }
 
 /** Opens a web link in the default browser. */

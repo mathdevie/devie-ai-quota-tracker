@@ -5,7 +5,11 @@ import { ExternalLink, Newspaper, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CodexResetsStatus } from "@/lib/contracts";
-import { getCodexResetsStatus, openExternalUrl } from "@/lib/desktop";
+import {
+  getCodexResetsStatus,
+  onCodexResetsStatus,
+  openExternalUrl,
+} from "@/lib/desktop";
 import Callout from "@/ui/Callout";
 import styles from "./CodexResetsNews.module.scss";
 import IconTip from "./IconTip";
@@ -16,7 +20,10 @@ const CACHE_FOR = 10 * 60_000;
 const MAX_AGE = 3 * 86_400_000;
 /** The time of the last dismissed item. Everything up to it stays hidden. */
 const DISMISSED_KEY = "codexResetsNews.dismissedAt";
-/** How often the banner re-checks the clock and the cached status. */
+/**
+ * How often the banner re-checks the clock and the status. The cache serves
+ * most ticks; a request goes out when it expires, and a failure is retried.
+ */
 const TICK = 60_000;
 
 const cache: {
@@ -31,14 +38,26 @@ function loadStatus(): Promise<CodexResetsStatus> {
   }
   cache.pending ??= getCodexResetsStatus()
     .then((value) => {
-      cache.value = value;
-      cache.at = Date.now();
+      storeStatus(value);
       return value;
     })
     .finally(() => {
       cache.pending = undefined;
     });
   return cache.pending;
+}
+
+/**
+ * Keeps an answer, aged by its fetch time. When codex-resets.com fails, the
+ * core hands back its last good answer with the old time, so the next tick
+ * asks again instead of waiting another ten minutes.
+ */
+function storeStatus(value: CodexResetsStatus) {
+  const fetchedAt = new Date(value.fetchedAt).getTime();
+  cache.value = value;
+  cache.at = Number.isFinite(fetchedAt)
+    ? Math.min(fetchedAt, Date.now())
+    : Date.now();
 }
 
 /** The one piece of news the banner shows. */
@@ -130,15 +149,25 @@ export default function CodexResetsNews({ className }: { className?: string }) {
   useEffect(() => {
     let live = true;
     setDismissedAt(readDismissedAt());
-    loadStatus()
-      .then((value) => live && setStatus(value))
-      .catch(() => {
-        // No news is not an error worth a message in the card.
-      });
-    const timer = window.setInterval(() => setNow(Date.now()), TICK);
+    const reload = () =>
+      loadStatus()
+        .then((value) => live && setStatus(value))
+        .catch(() => {
+          // No news is not an error worth a message in the card.
+        });
+    void reload();
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+      void reload();
+    }, TICK);
+    const stop = onCodexResetsStatus((value) => {
+      storeStatus(value);
+      if (live) setStatus(value);
+    });
     return () => {
       live = false;
       window.clearInterval(timer);
+      stop();
     };
   }, []);
 

@@ -425,7 +425,22 @@ async fn get_codex_resets_status(
     app: AppHandle,
 ) -> Result<codex_resets::CodexResetsStatus, String> {
     let core = app.state::<Core>().inner().clone();
-    codex_resets::status(&core.client, &core.codex_resets).await
+    codex_resets::status(&core.client, &core.codex_resets, false).await
+}
+
+/// Event with the reset news after a forced refresh, for every window.
+const CODEX_RESETS_UPDATED: &str = "codex-resets:updated";
+
+/// Fetches the reset news again and tells every window. The fetch runs on
+/// its own so a slow codex-resets.com does not hold up the quota refresh.
+fn refresh_codex_resets(app: &AppHandle, core: &Core) {
+    let app = app.clone();
+    let core = core.clone();
+    tauri::async_runtime::spawn(async move {
+        if let Ok(status) = codex_resets::status(&core.client, &core.codex_resets, true).await {
+            let _ = app.emit(CODEX_RESETS_UPDATED, &status);
+        }
+    });
 }
 
 /// The sites the reset news links to. Nothing else opens from the app.
@@ -468,9 +483,23 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
 /// which the user expects from a refresh button but not from the timer.
 async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
-    let connections = core.database.dashboard_state()?.connections;
-    for connection in connections.into_iter().filter(|item| item.enabled) {
-        refresh_one(app, &core, &connection, force).await;
+    let connections: Vec<_> = core
+        .database
+        .dashboard_state()?
+        .connections
+        .into_iter()
+        .filter(|item| item.enabled)
+        .collect();
+    // The news only shows in Codex cards; other users never contact the site.
+    if force
+        && connections
+            .iter()
+            .any(|item| item.provider == model::Provider::Codex)
+    {
+        refresh_codex_resets(app, &core);
+    }
+    for connection in &connections {
+        refresh_one(app, &core, connection, force).await;
     }
     publish_state(app, &core)
 }
