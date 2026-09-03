@@ -38,8 +38,7 @@ function loadStatus(): Promise<CodexResetsStatus> {
   }
   cache.pending ??= getCodexResetsStatus()
     .then((value) => {
-      cache.value = value;
-      cache.at = Date.now();
+      storeStatus(value);
       return value;
     })
     .finally(() => {
@@ -48,10 +47,17 @@ function loadStatus(): Promise<CodexResetsStatus> {
   return cache.pending;
 }
 
-/** Takes the news the core fetched on a manual refresh as the newest answer. */
+/**
+ * Keeps an answer, aged by its fetch time. When codex-resets.com fails, the
+ * core hands back its last good answer with the old time, so the next tick
+ * asks again instead of waiting another ten minutes.
+ */
 function storeStatus(value: CodexResetsStatus) {
+  const fetchedAt = new Date(value.fetchedAt).getTime();
   cache.value = value;
-  cache.at = Date.now();
+  cache.at = Number.isFinite(fetchedAt)
+    ? Math.min(fetchedAt, Date.now())
+    : Date.now();
 }
 
 /** The one piece of news the banner shows. */

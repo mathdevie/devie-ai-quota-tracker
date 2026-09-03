@@ -483,12 +483,23 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
 /// which the user expects from a refresh button but not from the timer.
 async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
-    if force {
+    let connections: Vec<_> = core
+        .database
+        .dashboard_state()?
+        .connections
+        .into_iter()
+        .filter(|item| item.enabled)
+        .collect();
+    // The news only shows in Codex cards; other users never contact the site.
+    if force
+        && connections
+            .iter()
+            .any(|item| item.provider == model::Provider::Codex)
+    {
         refresh_codex_resets(app, &core);
     }
-    let connections = core.database.dashboard_state()?.connections;
-    for connection in connections.into_iter().filter(|item| item.enabled) {
-        refresh_one(app, &core, &connection, force).await;
+    for connection in &connections {
+        refresh_one(app, &core, connection, force).await;
     }
     publish_state(app, &core)
 }

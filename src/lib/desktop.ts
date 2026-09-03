@@ -301,7 +301,7 @@ export async function setLanguage(locale: string): Promise<void> {
 export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
   if (!isDesktop()) {
     await delay(300);
-    return previewCodexResets;
+    return { ...previewCodexResets, fetchedAt: new Date().toISOString() };
   }
   return call("get_codex_resets_status");
 }
