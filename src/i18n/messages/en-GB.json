@@ -45,7 +45,8 @@
       "Off": "Off"
     },
     "MoreActions": "More actions",
-    "AllBarsHidden": "All quota bars are hidden."
+    "AllBarsHidden": "All quota bars are hidden.",
+    "StaleTip": "Last updated {{ago}}. The last refresh failed: the provider may have a temporary problem."
   },
   "Quota": {
     "FilterProvider": "Provider",

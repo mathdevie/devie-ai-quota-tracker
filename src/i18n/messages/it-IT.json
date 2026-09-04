@@ -45,7 +45,8 @@
       "Off": "Disattivo"
     },
     "MoreActions": "Altre azioni",
-    "AllBarsHidden": "Tutte le barre di quota sono nascoste."
+    "AllBarsHidden": "Tutte le barre di quota sono nascoste.",
+    "StaleTip": "Ultimo aggiornamento {{ago}}. L’ultimo aggiornamento non è riuscito: il fornitore potrebbe avere un problema temporaneo."
   },
   "Quota": {
     "FilterProvider": "Provider",

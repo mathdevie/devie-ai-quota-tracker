@@ -45,7 +45,8 @@
       "Off": "Fra"
     },
     "MoreActions": "Flere handlinger",
-    "AllBarsHidden": "Alle kvotebjælker er skjult."
+    "AllBarsHidden": "Alle kvotebjælker er skjult.",
+    "StaleTip": "Sidst opdateret {{ago}}. Den seneste opdatering mislykkedes: udbyderen har muligvis et midlertidigt problem."
   },
   "Quota": {
     "FilterProvider": "Udbyder",

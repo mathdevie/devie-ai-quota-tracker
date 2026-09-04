@@ -45,7 +45,8 @@
       "Off": "Av"
     },
     "MoreActions": "Fler åtgärder",
-    "AllBarsHidden": "Alla kvotstaplar är dolda."
+    "AllBarsHidden": "Alla kvotstaplar är dolda.",
+    "StaleTip": "Senast uppdaterad {{ago}}. Den senaste uppdateringen misslyckades: leverantören kan ha ett tillfälligt problem."
   },
   "Quota": {
     "FilterProvider": "Leverantör",

@@ -45,7 +45,8 @@
       "Off": "オフ"
     },
     "MoreActions": "その他の操作",
-    "AllBarsHidden": "クォータバーはすべて非表示です。"
+    "AllBarsHidden": "クォータバーはすべて非表示です。",
+    "StaleTip": "最終更新: {{ago}}。前回の更新に失敗しました。プロバイダー側で一時的な問題が発生している可能性があります。"
   },
   "Quota": {
     "FilterProvider": "プロバイダー",

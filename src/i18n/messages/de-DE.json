@@ -45,7 +45,8 @@
       "Off": "Aus"
     },
     "MoreActions": "Weitere Aktionen",
-    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet."
+    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet.",
+    "StaleTip": "Zuletzt aktualisiert {{ago}}. Die letzte Aktualisierung ist fehlgeschlagen: Der Anbieter hat möglicherweise ein vorübergehendes Problem."
   },
   "Quota": {
     "FilterProvider": "Anbieter",

@@ -9,7 +9,11 @@ import type {
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Switch from "@/ui/Switch";
-import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";
+import {
+  type ConnectionActions,
+  ConnectionMenu,
+  StaleBadge,
+} from "../ConnectionCard";
 import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
@@ -19,7 +23,7 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
     return <Badge variant="success">{t("Connection.Status.Ready")}</Badge>;
   }
   if (connection.status === "stale") {
-    return <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
+    return <StaleBadge connection={connection} />;
   }
   if (connection.status === "needs_login") {
     return (

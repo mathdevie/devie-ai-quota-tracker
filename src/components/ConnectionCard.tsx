@@ -8,9 +8,11 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Badge from "@/components/Badge";
 import type { ProviderConnection } from "@/lib/contracts";
+import { formatAgo } from "@/lib/date";
 import {
   accountLabel,
   fullName,
@@ -26,6 +28,33 @@ import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
 import ResetCredits from "./ResetCredits";
 
+/**
+ * The text of the tooltip on a "Stale" badge. It mounts when the tooltip
+ * opens, so the "ago" part counts from that moment.
+ */
+function StaleTip({ updatedAt }: { updatedAt: string }) {
+  const { t, i18n } = useTranslation();
+  const [now] = useState(() => Date.now());
+  return t("Connection.StaleTip", {
+    ago: formatAgo(updatedAt, i18n.language, now),
+  });
+}
+
+/**
+ * The warning badge of an account with old bars. The last refresh failed,
+ * and the tooltip says when the bars were last updated.
+ */
+export function StaleBadge({ connection }: { connection: ProviderConnection }) {
+  const { t } = useTranslation();
+  const badge = <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
+  if (!connection.lastUpdatedAt) return badge;
+  return (
+    <IconTip label={<StaleTip updatedAt={connection.lastUpdatedAt} />}>
+      {badge}
+    </IconTip>
+  );
+}
+
 export function StatusBadge({
   connection,
 }: {
@@ -34,7 +63,7 @@ export function StatusBadge({
   const { t } = useTranslation();
   if (connection.status === "ready") return null;
   if (connection.status === "stale") {
-    return <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
+    return <StaleBadge connection={connection} />;
   }
   if (connection.status === "needs_login") {
     return <Badge variant="warning">{t("Connection.Status.Login")}</Badge>;
