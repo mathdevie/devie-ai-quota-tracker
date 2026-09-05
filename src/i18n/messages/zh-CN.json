@@ -70,8 +70,7 @@
       "On": "在 {{date}} 重置"
     },
     "ResetCredits": {
-      "Title": "重置额度券",
-      "Description": "一张重置额度券会一次性重置该账号的所有额度周期。",
+      "Title": "可用重置次数",
       "DefaultTitle": "限额重置",
       "Expires": "在 {{date}} 到期",
       "NoExpiry": "永不过期",

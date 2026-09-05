@@ -70,8 +70,7 @@
       "On": "Si azzera il {{date}}"
     },
     "ResetCredits": {
-      "Title": "Crediti di azzeramento",
-      "Description": "Un credito azzera tutte le finestre di quota di questo account in una volta.",
+      "Title": "Reimpostazioni disponibili",
       "DefaultTitle": "Azzeramento del limite",
       "Expires": "Scade il {{date}}",
       "NoExpiry": "Nessuna scadenza",

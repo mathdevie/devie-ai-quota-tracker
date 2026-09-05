@@ -12,29 +12,35 @@ import Popover from "@/ui/Popover";
 import styles from "./ResetCredits.module.scss";
 
 /**
- * The banked Codex reset credits of one account: a count under the quota
- * bars, the list in a popover, and a confirmation before one is spent.
+ * Banked Codex reset credits: a count, a list, and confirmation before spending.
  */
 export default function ResetCredits({
-  connection,
+  connections,
+  compact = false,
   onUseReset,
 }: {
-  connection: ProviderConnection;
+  connections: ProviderConnection[];
+  compact?: boolean;
   /** Resolves to true when the credit was spent. */
   onUseReset: (id: string, creditId: string) => Promise<boolean>;
 }) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState<ResetCredit>();
+  const [pending, setPending] = useState<{
+    connection: ProviderConnection;
+    credit: ResetCredit;
+  }>();
   const [busy, setBusy] = useState(false);
-  const credits = connection.resetCredits ?? [];
+  const credits = connections.flatMap((connection) =>
+    (connection.resetCredits ?? []).map((credit) => ({ connection, credit })),
+  );
   if (credits.length === 0) return null;
 
   async function confirm() {
     if (!pending) return;
     setBusy(true);
     try {
-      if (await onUseReset(connection.id, pending.id)) {
+      if (await onUseReset(pending.connection.id, pending.credit.id)) {
         setPending(undefined);
         setOpen(false);
       }
@@ -49,26 +55,41 @@ export default function ResetCredits({
         <Popover.Trigger
           render={<Button size="sm" variant="naked" />}
           className={styles.trigger}
+          aria-label={t("Quota.ResetCredits.Available", {
+            count: credits.length,
+          })}
+          title={t("Quota.ResetCredits.Available", { count: credits.length })}
         >
           <RotateCcw size={12} />
-          {t("Quota.ResetCredits.Available", { count: credits.length })}
+          {compact
+            ? credits.length
+            : t("Quota.ResetCredits.Available", { count: credits.length })}
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Positioner align="start" side="bottom" sideOffset={6}>
+          <Popover.Positioner
+            align={compact ? "end" : "start"}
+            side="bottom"
+            sideOffset={6}
+          >
             <Popover.Popup className={styles.popup}>
               <Popover.Title className={styles.title}>
                 {t("Quota.ResetCredits.Title")}
               </Popover.Title>
-              <Popover.Description className={styles.description}>
-                {t("Quota.ResetCredits.Description")}
-              </Popover.Description>
               <ul className={styles.list}>
-                {credits.map((credit) => (
-                  <li className={styles.credit} key={credit.id}>
+                {credits.map(({ connection, credit }) => (
+                  <li
+                    className={styles.credit}
+                    key={`${connection.id}:${credit.id}`}
+                  >
                     <div className={styles.creditText}>
                       <span className={styles.creditTitle}>
                         {credit.title || t("Quota.ResetCredits.DefaultTitle")}
                       </span>
+                      {compact && (
+                        <span className={styles.creditExpiry}>
+                          {accountLabel(connection)}
+                        </span>
+                      )}
                       <span className={styles.creditExpiry}>
                         {credit.expiresAt
                           ? t("Quota.ResetCredits.Expires", {
@@ -81,7 +102,7 @@ export default function ResetCredits({
                       </span>
                     </div>
                     <Button
-                      onClick={() => setPending(credit)}
+                      onClick={() => setPending({ connection, credit })}
                       size="sm"
                       variant="secondary"
                     >
@@ -112,8 +133,9 @@ export default function ResetCredits({
             <AlertDialog.Body>
               <AlertDialog.Description>
                 {t("Quota.ResetCredits.ConfirmDescription", {
-                  account: accountLabel(connection),
-                  remaining: credits.length - 1,
+                  account: pending ? accountLabel(pending.connection) : "",
+                  remaining:
+                    (pending?.connection.resetCredits?.length ?? 1) - 1,
                 })}
               </AlertDialog.Description>
             </AlertDialog.Body>

@@ -70,8 +70,7 @@
       "On": "Redefine em {{date}}"
     },
     "ResetCredits": {
-      "Title": "Créditos de redefinição",
-      "Description": "Um crédito redefine de uma vez todas as janelas de cota desta conta.",
+      "Title": "Redefinições disponíveis",
       "DefaultTitle": "Redefinição de limite",
       "Expires": "Expira em {{date}}",
       "NoExpiry": "Sem expiração",

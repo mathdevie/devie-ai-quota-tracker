@@ -70,8 +70,7 @@
       "On": "{{date}} にリセット"
     },
     "ResetCredits": {
-      "Title": "リセットクレジット",
-      "Description": "リセットクレジットを 1 件使うと、このアカウントのすべてのクォータ枠を一度にリセットできます。",
+      "Title": "利用可能なリセット",
       "DefaultTitle": "レート制限のリセット",
       "Expires": "{{date}} に期限切れ",
       "NoExpiry": "期限なし",

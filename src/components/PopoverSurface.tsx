@@ -25,6 +25,7 @@ import IconTip from "./IconTip";
 import PopoverRow from "./PopoverRow";
 import styles from "./PopoverSurface.module.scss";
 import QuotaFilters from "./QuotaFilters";
+import ResetCredits from "./ResetCredits";
 
 /** The Tauri window caps the height at this value; the list scrolls past it. */
 const MAX_HEIGHT = 760;
@@ -36,11 +37,13 @@ export default function PopoverSurface({
   state,
   refreshing,
   onRefresh,
+  onUseReset,
   onStateChange,
 }: {
   state: DashboardState;
   refreshing: boolean;
   onRefresh: () => void;
+  onUseReset: (id: string, creditId: string) => Promise<boolean>;
   onStateChange: (next: DashboardState) => void;
 }) {
   const { t } = useTranslation();
@@ -129,6 +132,13 @@ export default function PopoverSurface({
             </div>
           )}
           <div className={styles.headerActions}>
+            <ResetCredits
+              compact
+              connections={state.connections.filter(
+                (connection) => connection.enabled,
+              )}
+              onUseReset={onUseReset}
+            />
             <IconTip label={t("Quota.RefreshQuotas")}>
               <Button
                 aria-label={t("Quota.RefreshQuotas")}

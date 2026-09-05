@@ -70,8 +70,7 @@
       "On": "Tilbakestilles {{date}}"
     },
     "ResetCredits": {
-      "Title": "Tilbakestillingskreditter",
-      "Description": "En kreditt tilbakestiller alle kvotevinduer for denne kontoen på én gang.",
+      "Title": "Tilgjengelige nullstillinger",
       "DefaultTitle": "Tilbakestilling av grense",
       "Expires": "Utløper {{date}}",
       "NoExpiry": "Ingen utløp",

@@ -19,7 +19,9 @@
 
 .popup {
   display: grid;
-  width: 320px;
+  width: min(320px, calc(100vw - 24px));
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
   gap: $devie__spacing__x05;
   padding: $devie__spacing__x2;
 }
@@ -27,10 +29,6 @@
 .title {
   font-size: $devie__font-size__small;
   font-weight: 600;
-}
-
-.description {
-  font-size: 11px;
 }
 
 .list {

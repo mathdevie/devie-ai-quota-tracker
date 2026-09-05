@@ -70,8 +70,7 @@
       "On": "Reset op {{date}}"
     },
     "ResetCredits": {
-      "Title": "Resettegoeden",
-      "Description": "Een resettegoed reset alle quotavensters van dit account tegelijk.",
+      "Title": "Beschikbare resets",
       "DefaultTitle": "Limietreset",
       "Expires": "Verloopt op {{date}}",
       "NoExpiry": "Geen vervaldatum",
