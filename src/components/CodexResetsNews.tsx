@@ -5,6 +5,7 @@ import { ExternalLink, Newspaper, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CodexResetsStatus } from "@/lib/contracts";
+import { formatAgo } from "@/lib/date";
 import {
   getCodexResetsStatus,
   onCodexResetsStatus,
@@ -124,17 +125,6 @@ function writeDismissedAt(at: string) {
   }
 }
 
-/** "2 days ago", "5 hours ago", or "yesterday", in the interface language. */
-function agoText(value: string, locale: string, now: number): string {
-  const hours = (now - new Date(value).getTime()) / 3_600_000;
-  if (hours < 24) {
-    const format = new Intl.RelativeTimeFormat(locale, { numeric: "always" });
-    return format.format(-Math.max(0, Math.round(hours)), "hour");
-  }
-  const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-  return format.format(-Math.round(hours / 24), "day");
-}
-
 /**
  * A warning banner in the Codex card with the latest reset news from
  * codex-resets.com: one line of text, a link to the source, and a cross.
@@ -176,7 +166,7 @@ export default function CodexResetsNews({ className }: { className?: string }) {
 
   // The forecast window is English text from the site. It follows the
   // translated sentence instead of being inlined.
-  const ago = agoText(item.at, i18n.language, now);
+  const ago = formatAgo(item.at, i18n.language, now);
   const text =
     item.kind === "reset"
       ? t("Quota.News.Reset", { ago })

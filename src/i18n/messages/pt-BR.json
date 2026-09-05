@@ -45,7 +45,8 @@
       "Off": "Desativado"
     },
     "MoreActions": "Mais ações",
-    "AllBarsHidden": "Todas as barras de cota estão ocultas."
+    "AllBarsHidden": "Todas as barras de cota estão ocultas.",
+    "StaleTip": "Última atualização {{ago}}. A última atualização falhou: o provedor pode estar com um problema temporário."
   },
   "Quota": {
     "FilterProvider": "Provedor",

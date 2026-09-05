@@ -45,7 +45,8 @@
       "Off": "Pois"
     },
     "MoreActions": "Lisää toimintoja",
-    "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu."
+    "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu.",
+    "StaleTip": "Päivitetty viimeksi {{ago}}. Viimeisin päivitys epäonnistui: palveluntarjoajalla voi olla tilapäinen ongelma."
   },
   "Quota": {
     "FilterProvider": "Palveluntarjoaja",

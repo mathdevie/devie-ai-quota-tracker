@@ -1,13 +1,13 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import Tooltip from "@/ui/Tooltip";
 
-/** A tooltip for an icon-only control. Wrap the app in `Tooltip.Provider`. */
+/** A tooltip for an icon-only control or a badge. Needs `Tooltip.Provider`. */
 export default function IconTip({
   label,
   side = "bottom",
   children,
 }: {
-  label: string;
+  label: ReactNode;
   side?: "top" | "bottom" | "left" | "right";
   children: ReactElement;
 }) {

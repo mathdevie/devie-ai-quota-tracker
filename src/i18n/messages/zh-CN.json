@@ -45,7 +45,8 @@
       "Off": "关"
     },
     "MoreActions": "更多操作",
-    "AllBarsHidden": "所有额度条都已隐藏。"
+    "AllBarsHidden": "所有额度条都已隐藏。",
+    "StaleTip": "最后更新于{{ago}}。上次刷新失败：提供商可能出现了临时问题。"
   },
   "Quota": {
     "FilterProvider": "服务商",

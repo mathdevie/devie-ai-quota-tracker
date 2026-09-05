@@ -45,7 +45,8 @@
       "Off": "Uit"
     },
     "MoreActions": "Meer acties",
-    "AllBarsHidden": "Alle quotabalken zijn verborgen."
+    "AllBarsHidden": "Alle quotabalken zijn verborgen.",
+    "StaleTip": "Laatst bijgewerkt {{ago}}. De laatste update is mislukt: de provider heeft mogelijk een tijdelijk probleem."
   },
   "Quota": {
     "FilterProvider": "Provider",

@@ -45,7 +45,8 @@
       "Off": "Désactivé"
     },
     "MoreActions": "Plus d’actions",
-    "AllBarsHidden": "Toutes les barres de quota sont masquées."
+    "AllBarsHidden": "Toutes les barres de quota sont masquées.",
+    "StaleTip": "Dernière mise à jour {{ago}}. La dernière actualisation a échoué : le fournisseur a peut-être un problème temporaire."
   },
   "Quota": {
     "FilterProvider": "Fournisseur",
