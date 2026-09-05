@@ -414,9 +414,7 @@ impl Database {
         let rows = statement
             .query_map([], |row| {
                 let provider_text: String = row.get(1)?;
-                // A newer app version may have written a provider this build
-                // does not know. Skip the row instead of showing it as Claude.
-                // Builds before 0.13.0 still show such rows as Claude.
+                // Skip rows of a provider this build does not know.
                 let Some(provider) = Provider::from_db(&provider_text) else {
                     return Ok(None);
                 };

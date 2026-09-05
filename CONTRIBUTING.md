@@ -88,22 +88,13 @@ before you open a pull request.
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 | Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
 
-Antigravity is unofficial. It does not officially support or document a quota
-API: the integration reproduces how the closed-source Antigravity IDE reads
-the quota, with the IDE's OAuth client id, secret, and user agent. Google may
-restrict or change this behavior without notice, and 9router marks its own
-Antigravity provider with the same risk notice. The provider page shows the
-warning; keep it whenever you touch this flow.
-
-Antigravity reads the quota summary that the IDE's Model Quota panel shows:
-two groups (Gemini; Claude and GPT), each with a weekly and a five-hour limit.
-When the summary is unavailable the app falls back to the model catalog, whose
-per-model rows repeat the same pooled limits; catalog entries without a display
-name are internal aliases and are skipped. It does not require an installed
-CLI. Google may omit quotas or deny access. Missing or invalid fractions are
-unavailable, never treated as zero or full quota. No request counts are
-inferred from percentages. Validate the integration against a signed-in
-account before claiming complete subscription coverage.
+Antigravity is unofficial: it has no documented quota API, so the app
+reproduces how the closed-source IDE reads the quota, with the IDE's OAuth
+client and user agent. Google may restrict or change this without notice;
+keep the warning on the provider page. The quota summary has two groups
+(Gemini; Claude and GPT), each with a five-hour and a weekly limit. The model
+catalog is the fallback; entries without a display name are skipped. Missing
+or invalid fractions are unavailable, never zero or full quota.
 
 Claude usage reads share one cache: a read stays fresh for five minutes on
 the timer (a refresh button always fetches), one request per token runs at

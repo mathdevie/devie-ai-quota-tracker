@@ -9,10 +9,7 @@ export const PROVIDER_NAMES: Record<Provider, string> = {
   cursor: "Cursor",
 };
 
-/**
- * Providers without a documented quota API. The integration reproduces how
- * the vendor tool reads the quota, so the provider page shows a warning.
- */
+/** Providers without a documented quota API; their page shows a warning. */
 const UNOFFICIAL_PROVIDERS: Provider[] = ["antigravity"];
 
 export function isUnofficial(provider: Provider): boolean {

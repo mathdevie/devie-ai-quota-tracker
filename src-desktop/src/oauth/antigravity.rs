@@ -1,18 +1,9 @@
-//! Unofficial Antigravity integration: browser OAuth and remote per-model
-//! quotas.
+//! Unofficial Antigravity integration: browser OAuth and the quota summary
+//! of the IDE's Model Quota panel (two pools, each with a five-hour and a
+//! weekly window). The model catalog is the fallback.
 //!
-//! Antigravity has no documented quota API and no published OAuth client.
-//! The integration reproduces how the IDE reads the quota, and the provider
-//! page shows a risk notice: Google may restrict or change this without
-//! notice.
-//!
-//! Protocol reference: decolua/9router at 4eda76e2, OAuth provider and
-//! open-sse/services/usage/google.js, plus the quota summary endpoint used by
-//! CodexBar and Antigravity Manager. These are internal Google endpoints.
-//!
-//! The quota summary is what the IDE's Model Quota panel shows: two groups
-//! (Gemini; Claude and GPT), each with a weekly and a five-hour limit. The
-//! model catalog is the fallback; its per-model rows repeat the pooled limits.
+//! Antigravity has no documented quota API and no published OAuth client;
+//! these are internal Google endpoints, reproduced from the IDE and 9router.
 
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};
@@ -24,13 +15,9 @@ use crate::{
     parse::{number, reset_time},
 };
 
-// Google's own installed-application client, embedded in the closed-source
-// Antigravity IDE and its CLI. Google did not publish it for reuse; the
-// community extracted it and 9router and others copied it. Google treats the
-// client secret of an installed application as non-confidential:
-// <https://developers.google.com/identity/protocols/oauth2#installed>
-// This is distinct from Gemini CLI's client: their refresh tokens must never
-// be interchanged.
+// The installed-application client of the closed-source IDE; its secret is
+// non-confidential by Google's rules. Not the Gemini CLI client: their
+// refresh tokens must never be interchanged.
 const CLIENT_ID: &str = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com";
 const CLIENT_SECRET: &str = "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";
 const SCOPES: &str = "https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/cclog https://www.googleapis.com/auth/experimentsandconfigs";
@@ -38,8 +25,7 @@ const LOAD_URL: &str = "https://cloudcode-pa.googleapis.com/v1internal:loadCodeA
 const SUMMARY_URL: &str =
     "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary";
 const QUOTA_URL: &str = "https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels";
-// Protocol compatibility headers used by the reference client. The quota
-// endpoint answers only requests that look like the IDE.
+// The quota endpoints answer only requests that look like the IDE.
 const CLIENT_VERSION: &str = "2.11.0";
 
 fn user_agent() -> String {
@@ -86,8 +72,8 @@ pub async fn exchange(
     .await?;
     let mut credentials = credentials_from(&tokens, None)?;
     let (mut identity, account_key) = gemini::profile(client, &credentials.access_token).await?;
-    // Account identity is valid even when Google's internal quota service is
-    // unavailable. Save the login; the first refresh will show the quota error.
+    // Save the login even when the quota service is down; the first read
+    // shows the error.
     if let Ok(info) = subscription(client, &credentials.access_token).await {
         credentials.project_id = gemini::project_id(info.get("cloudaicompanionProject"));
         identity.plan = gemini::plan_name(&info);
@@ -126,8 +112,7 @@ async fn token_request(client: &reqwest::Client, fields: &[(&str, &str)]) -> Res
         .map_err(|_| "Google could not be reached.".to_string())?;
     let status = response.status();
     if !status.is_success() {
-        // Do not include token response bodies in UI errors or diagnostics.
-        // The caller adds the "sign in again" advice.
+        // Token response bodies stay out of errors.
         return Err(format!(
             "Antigravity token exchange failed (HTTP {}).",
             status.as_u16()
@@ -168,9 +153,7 @@ fn credentials_from(tokens: &Value, current: Option<&Credentials>) -> Result<Cre
     })
 }
 
-/// A failed Code Assist request. The status lets the caller tell a denied
-/// or missing endpoint (worth a fallback) from a rate limit or an expired
-/// login (not worth a second request).
+/// A failed Code Assist request, with the status for the fallback decision.
 #[derive(Debug)]
 struct ApiError {
     status: Option<u16>,
@@ -215,9 +198,7 @@ async fn api_post(
     })
 }
 
-/// A denied, missing, or broken summary is worth one try of the model
-/// catalog. A rate limit or an expired login is not: the catalog shares
-/// both, and the message must reach the caller as is.
+/// A rate limit or an expired login also applies to the catalog: no retry.
 fn try_catalog(error: &ApiError) -> bool {
     !matches!(error.status, Some(401 | 429))
 }
@@ -251,8 +232,7 @@ pub async fn usage(
     credentials: &Credentials,
 ) -> Result<QuotaReading, String> {
     let token = &credentials.access_token;
-    // The login saves the project id and the plan. Ask loadCodeAssist only
-    // when the login could not, so a read is normally one request.
+    // The login saved the project id; ask loadCodeAssist only when it could not.
     let project = match &credentials.project_id {
         Some(id) => Some(id.clone()),
         None => subscription(client, token)
@@ -263,8 +243,6 @@ pub async fn usage(
     let body = project
         .map(|id| json!({ "project": id }))
         .unwrap_or_else(|| json!({}));
-    // The summary is the grouped view the IDE shows. The model catalog is the
-    // fallback when Google denies or empties the summary for this account.
     match api_post(client, token, SUMMARY_URL, &body).await {
         Ok(json) => {
             if let Ok(reading) = parse_summary(&json) {
@@ -278,15 +256,13 @@ pub async fn usage(
     parse_usage(&json)
 }
 
-/// `parse::reset_time` passes unknown text through. A window needs a real
-/// timestamp or none.
+/// `parse::reset_time` passes unknown text through; keep real timestamps only.
 fn strict_reset_time(value: Option<&Value>) -> Option<String> {
     reset_time(value).filter(|time| chrono::DateTime::parse_from_rfc3339(time).is_ok())
 }
 
-/// Reads `retrieveUserQuotaSummary`: groups of buckets, one bucket per
-/// window. Keys are the bucket ids (`gemini-5h`, `3p-weekly`). Labels follow
-/// the Claude card and fit the popover: "Gemini (5h)", "Other (Weekly)".
+/// Reads `retrieveUserQuotaSummary`: one window per bucket, keyed by the
+/// bucket id (`gemini-5h`, `3p-weekly`), labelled "Gemini (5h)".
 pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
     let groups = json
         .get("groups")
@@ -347,9 +323,8 @@ pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
     })
 }
 
-/// The pool a bucket belongs to. The bucket id is stable across display
-/// text changes: `gemini-*` is the Gemini pool, `3p-*` (third party) holds
-/// Claude and GPT. An unknown pool keeps its shortened group name.
+/// `gemini-*` is the Gemini pool, `3p-*` (third party) holds Claude and GPT;
+/// an unknown pool uses its group name.
 fn pool_label(key: &str, group_name: Option<&str>) -> String {
     let key = key.to_lowercase();
     if key.starts_with("gemini") {
@@ -379,7 +354,6 @@ fn group_label(name: &str) -> Option<String> {
 }
 
 /// The window of a bucket, with a sort rank: the five-hour session first.
-/// Read with the pool: "Gemini (5h)", "Gemini (Weekly)".
 fn window_label(bucket: &Value, key: &str) -> (u8, String) {
     let window = bucket
         .get("window")
@@ -401,9 +375,8 @@ fn window_label(bucket: &Value, key: &str) -> (u8, String) {
     (2, label.to_string())
 }
 
-/// Reads `fetchAvailableModels`, the model catalog. Every model repeats the
-/// pooled limits of its group; entries without a display name are internal
-/// routing aliases (tiered, tab) and are skipped.
+/// Reads `fetchAvailableModels`, the model catalog. Entries without a
+/// display name are internal aliases and are skipped.
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     let models = json
         .get("models")
@@ -425,8 +398,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         else {
             continue;
         };
-        // Missing, malformed, or out-of-range values are unknown, never 0% or
-        // 100%. Do not fabricate request counts from a normalized percentage.
+        // An invalid fraction is unknown, never 0% or 100%.
         let Some(remaining) = number(quota.get("remainingFraction"))
             .filter(|value| value.is_finite() && (0.0..=1.0).contains(value))
         else {
@@ -598,7 +570,7 @@ mod tests {
 
     #[test]
     fn reads_the_grouped_summary_as_four_windows() {
-        // Shape observed on 2026-09-05 for a Google AI Pro account.
+        // Shape of a Google AI Pro account on 2026-09-05.
         let reading = parse_summary(&json!({
             "groups": [
                 {
@@ -705,7 +677,6 @@ mod tests {
 
     #[test]
     fn names_pools_from_bucket_ids_before_group_text() {
-        // The bucket id wins over a renamed group; unknown ids use the group.
         assert_eq!(pool_label("gemini-5h", Some("Google Models")), "Gemini");
         assert_eq!(
             pool_label("3p-weekly", Some("Claude and GPT models")),

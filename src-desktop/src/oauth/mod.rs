@@ -190,7 +190,6 @@ pub async fn start(
         }
         Provider::Gemini | Provider::Antigravity => {
             let pair = pkce();
-            // The redirect needs the port, so the server starts first.
             let (path, redirect, authorize): (&str, fn(u16) -> String, fn(&Pkce, &str) -> String) =
                 if provider == Provider::Antigravity {
                     (
