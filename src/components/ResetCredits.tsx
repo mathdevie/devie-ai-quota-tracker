@@ -1,7 +1,7 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection, ResetCredit } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/date";
@@ -11,18 +11,19 @@ import Button from "@/ui/Button";
 import Popover from "@/ui/Popover";
 import styles from "./ResetCredits.module.scss";
 
-/**
- * Banked Codex reset credits: a count, a list, and confirmation before spending.
- */
+/** Banked Codex reset credits: a count, a list, and a confirmation. */
 export default function ResetCredits({
   connections,
   compact = false,
   onUseReset,
+  onOverlayChange,
 }: {
   connections: ProviderConnection[];
   compact?: boolean;
   /** Resolves to true when the credit was spent. */
   onUseReset: (id: string, creditId: string) => Promise<boolean>;
+  /** Reports when the list or the confirmation is open. */
+  onOverlayChange?: (open: boolean) => void;
 }) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -31,6 +32,11 @@ export default function ResetCredits({
     credit: ResetCredit;
   }>();
   const [busy, setBusy] = useState(false);
+  const overlay = open || pending !== undefined;
+  useEffect(() => {
+    onOverlayChange?.(overlay);
+    return () => onOverlayChange?.(false);
+  }, [overlay, onOverlayChange]);
   const credits = connections.flatMap((connection) =>
     (connection.resetCredits ?? []).map((credit) => ({ connection, credit })),
   );
