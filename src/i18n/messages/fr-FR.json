@@ -45,7 +45,8 @@
       "Off": "Désactivé"
     },
     "MoreActions": "Plus d’actions",
-    "AllBarsHidden": "Toutes les barres de quota sont masquées."
+    "AllBarsHidden": "Toutes les barres de quota sont masquées.",
+    "StaleTip": "Dernière mise à jour {{ago}}. La dernière actualisation a échoué : le fournisseur a peut-être un problème temporaire."
   },
   "Quota": {
     "FilterProvider": "Fournisseur",
@@ -70,8 +71,7 @@
       "On": "Réinitialisation le {{date}}"
     },
     "ResetCredits": {
-      "Title": "Crédits de réinitialisation",
-      "Description": "Un crédit réinitialise d’un coup toutes les fenêtres de quota de ce compte.",
+      "Title": "Réinitialisations disponibles",
       "DefaultTitle": "Réinitialisation de limite",
       "Expires": "Expire le {{date}}",
       "NoExpiry": "Sans expiration",

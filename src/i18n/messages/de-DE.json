@@ -45,7 +45,8 @@
       "Off": "Aus"
     },
     "MoreActions": "Weitere Aktionen",
-    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet."
+    "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet.",
+    "StaleTip": "Zuletzt aktualisiert {{ago}}. Die letzte Aktualisierung ist fehlgeschlagen: Der Anbieter hat möglicherweise ein vorübergehendes Problem."
   },
   "Quota": {
     "FilterProvider": "Anbieter",
@@ -70,8 +71,7 @@
       "On": "Zurücksetzung am {{date}}"
     },
     "ResetCredits": {
-      "Title": "Reset-Guthaben",
-      "Description": "Ein Reset-Guthaben setzt alle Kontingentfenster dieses Kontos auf einmal zurück.",
+      "Title": "Verfügbare Resets",
       "DefaultTitle": "Limit-Zurücksetzung",
       "Expires": "Läuft ab am {{date}}",
       "NoExpiry": "Kein Ablaufdatum",

@@ -45,7 +45,8 @@
       "Off": "Off"
     },
     "MoreActions": "More actions",
-    "AllBarsHidden": "All quota bars are hidden."
+    "AllBarsHidden": "All quota bars are hidden.",
+    "StaleTip": "Last updated {{ago}}. The last refresh failed: the provider may have a temporary problem."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -70,8 +71,7 @@
       "On": "Resets on {{date}}"
     },
     "ResetCredits": {
-      "Title": "Reset credits",
-      "Description": "A reset credit resets every quota window of this account at once.",
+      "Title": "Available Resets",
       "DefaultTitle": "Rate limit reset",
       "Expires": "Expires on {{date}}",
       "NoExpiry": "No expiration",

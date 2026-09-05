@@ -45,7 +45,8 @@
       "Off": "オフ"
     },
     "MoreActions": "その他の操作",
-    "AllBarsHidden": "クォータバーはすべて非表示です。"
+    "AllBarsHidden": "クォータバーはすべて非表示です。",
+    "StaleTip": "最終更新: {{ago}}。前回の更新に失敗しました。プロバイダー側で一時的な問題が発生している可能性があります。"
   },
   "Quota": {
     "FilterProvider": "プロバイダー",
@@ -70,8 +71,7 @@
       "On": "{{date}} にリセット"
     },
     "ResetCredits": {
-      "Title": "リセットクレジット",
-      "Description": "リセットクレジットを 1 件使うと、このアカウントのすべてのクォータ枠を一度にリセットできます。",
+      "Title": "利用可能なリセット",
       "DefaultTitle": "レート制限のリセット",
       "Expires": "{{date}} に期限切れ",
       "NoExpiry": "期限なし",

@@ -45,7 +45,8 @@
       "Off": "Pois"
     },
     "MoreActions": "Lisää toimintoja",
-    "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu."
+    "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu.",
+    "StaleTip": "Päivitetty viimeksi {{ago}}. Viimeisin päivitys epäonnistui: palveluntarjoajalla voi olla tilapäinen ongelma."
   },
   "Quota": {
     "FilterProvider": "Palveluntarjoaja",
@@ -70,8 +71,7 @@
       "On": "Nollautuu {{date}}"
     },
     "ResetCredits": {
-      "Title": "Nollaushyvitykset",
-      "Description": "Nollaushyvitys nollaa kerralla kaikki tämän tilin kiintiöikkunat.",
+      "Title": "Käytettävissä olevat nollaukset",
       "DefaultTitle": "Rajan nollaus",
       "Expires": "Vanhenee {{date}}",
       "NoExpiry": "Ei vanhenemista",

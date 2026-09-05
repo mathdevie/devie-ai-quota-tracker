@@ -45,7 +45,8 @@
       "Off": "Fra"
     },
     "MoreActions": "Flere handlinger",
-    "AllBarsHidden": "Alle kvotebjælker er skjult."
+    "AllBarsHidden": "Alle kvotebjælker er skjult.",
+    "StaleTip": "Sidst opdateret {{ago}}. Den seneste opdatering mislykkedes: udbyderen har muligvis et midlertidigt problem."
   },
   "Quota": {
     "FilterProvider": "Udbyder",
@@ -70,8 +71,7 @@
       "On": "Nulstilles den {{date}}"
     },
     "ResetCredits": {
-      "Title": "Nulstillingskreditter",
-      "Description": "En kredit nulstiller alle kvotevinduer for denne konto på én gang.",
+      "Title": "Tilgængelige nulstillinger",
       "DefaultTitle": "Nulstilling af grænse",
       "Expires": "Udløber den {{date}}",
       "NoExpiry": "Ingen udløb",

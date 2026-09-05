@@ -45,7 +45,8 @@
       "Off": "Desativado"
     },
     "MoreActions": "Mais ações",
-    "AllBarsHidden": "Todas as barras de cota estão ocultas."
+    "AllBarsHidden": "Todas as barras de cota estão ocultas.",
+    "StaleTip": "Última atualização {{ago}}. A última atualização falhou: o provedor pode estar com um problema temporário."
   },
   "Quota": {
     "FilterProvider": "Provedor",
@@ -70,8 +71,7 @@
       "On": "Redefine em {{date}}"
     },
     "ResetCredits": {
-      "Title": "Créditos de redefinição",
-      "Description": "Um crédito redefine de uma vez todas as janelas de cota desta conta.",
+      "Title": "Redefinições disponíveis",
       "DefaultTitle": "Redefinição de limite",
       "Expires": "Expira em {{date}}",
       "NoExpiry": "Sem expiração",

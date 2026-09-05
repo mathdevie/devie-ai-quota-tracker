@@ -45,7 +45,8 @@
       "Off": "Disattivo"
     },
     "MoreActions": "Altre azioni",
-    "AllBarsHidden": "Tutte le barre di quota sono nascoste."
+    "AllBarsHidden": "Tutte le barre di quota sono nascoste.",
+    "StaleTip": "Ultimo aggiornamento {{ago}}. L’ultimo aggiornamento non è riuscito: il fornitore potrebbe avere un problema temporaneo."
   },
   "Quota": {
     "FilterProvider": "Provider",
@@ -70,8 +71,7 @@
       "On": "Si azzera il {{date}}"
     },
     "ResetCredits": {
-      "Title": "Crediti di azzeramento",
-      "Description": "Un credito azzera tutte le finestre di quota di questo account in una volta.",
+      "Title": "Reimpostazioni disponibili",
       "DefaultTitle": "Azzeramento del limite",
       "Expires": "Scade il {{date}}",
       "NoExpiry": "Nessuna scadenza",

@@ -45,7 +45,8 @@
       "Off": "Av"
     },
     "MoreActions": "Flere handlinger",
-    "AllBarsHidden": "Alle kvotelinjer er skjult."
+    "AllBarsHidden": "Alle kvotelinjer er skjult.",
+    "StaleTip": "Sist oppdatert {{ago}}. Den siste oppdateringen mislyktes: leverandøren kan ha et midlertidig problem."
   },
   "Quota": {
     "FilterProvider": "Leverandør",
@@ -70,8 +71,7 @@
       "On": "Tilbakestilles {{date}}"
     },
     "ResetCredits": {
-      "Title": "Tilbakestillingskreditter",
-      "Description": "En kreditt tilbakestiller alle kvotevinduer for denne kontoen på én gang.",
+      "Title": "Tilgjengelige nullstillinger",
       "DefaultTitle": "Tilbakestilling av grense",
       "Expires": "Utløper {{date}}",
       "NoExpiry": "Ingen utløp",

@@ -45,7 +45,8 @@
       "Off": "Desactivado"
     },
     "MoreActions": "Más acciones",
-    "AllBarsHidden": "Todas las barras de cuota están ocultas."
+    "AllBarsHidden": "Todas las barras de cuota están ocultas.",
+    "StaleTip": "Última actualización {{ago}}. La última actualización ha fallado: el proveedor puede tener un problema temporal."
   },
   "Quota": {
     "FilterProvider": "Proveedor",
@@ -70,8 +71,7 @@
       "On": "Se restablece el {{date}}"
     },
     "ResetCredits": {
-      "Title": "Créditos de restablecimiento",
-      "Description": "Un crédito restablece a la vez todas las ventanas de cuota de esta cuenta.",
+      "Title": "Reinicios disponibles",
       "DefaultTitle": "Restablecimiento de límite",
       "Expires": "Caduca el {{date}}",
       "NoExpiry": "Sin caducidad",

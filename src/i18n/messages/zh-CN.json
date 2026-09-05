@@ -45,7 +45,8 @@
       "Off": "关"
     },
     "MoreActions": "更多操作",
-    "AllBarsHidden": "所有额度条都已隐藏。"
+    "AllBarsHidden": "所有额度条都已隐藏。",
+    "StaleTip": "最后更新于{{ago}}。上次刷新失败：提供商可能出现了临时问题。"
   },
   "Quota": {
     "FilterProvider": "服务商",
@@ -70,8 +71,7 @@
       "On": "在 {{date}} 重置"
     },
     "ResetCredits": {
-      "Title": "重置额度券",
-      "Description": "一张重置额度券会一次性重置该账号的所有额度周期。",
+      "Title": "可用重置次数",
       "DefaultTitle": "限额重置",
       "Expires": "在 {{date}} 到期",
       "NoExpiry": "永不过期",
