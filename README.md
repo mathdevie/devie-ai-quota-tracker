@@ -21,7 +21,7 @@
 
 ## Overview
 
-- 📊 [Dashboard](#features): one dashboard for all subscriptions, including Claude Code, Codex, Gemini CLI, Antigravity (Unofficial), GitHub Copilot, and Cursor
+- 📊 [Dashboard](#features): one dashboard for all subscriptions, including Claude Code, Codex, Gemini CLI, Antigravity, GitHub Copilot, and Cursor
 - 📌 [Menu Bar](#menu-bar-and-quick-view): a native macOS menu bar integration that shows your remaining quota
 - 👥 [Multi-Account](#supported-providers): support for multiple instances of the same provider (e.g. Work and Personal subscriptions)
 - 🔔 [Alerts](#alerts): notifications about low quota or an imminent reset
@@ -69,12 +69,9 @@ One click opens a quick view popover with all quota details, percentage and rese
 
 ### Supported Providers
 
-Currently supported AI providers include Claude Code, Codex, Gemini CLI, Antigravity (Unofficial), GitHub Copilot, and Cursor.
+Currently supported AI providers include Claude Code, Codex, Gemini CLI, Antigravity, GitHub Copilot, and Cursor.
 
 Authentication requires OAuth sign-in for each provider that you want to add. Note that unlike other existing solutions, we do not automatically reuse the CLI accounts you are already logged in to on your machine.
-
-> [!WARNING]
-> **Antigravity is an unofficial integration.** Antigravity does not officially support or document a quota API. This integration reproduces how the Antigravity IDE retrieves the quota information. Google may restrict or change this behavior without notice. Use it at your own risk.
 
 <img src="docs/screenshots/providers.png" alt="The Settings window with provider cards and connection counts" width="760" />
 
