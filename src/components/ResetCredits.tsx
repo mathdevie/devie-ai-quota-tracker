@@ -13,12 +13,13 @@ import styles from "./ResetCredits.module.scss";
 
 /** Banked Codex reset credits: a count, a list, and a confirmation. */
 export default function ResetCredits({
-  connections,
+  connection,
   compact = false,
   onUseReset,
   onOverlayChange,
 }: {
-  connections: ProviderConnection[];
+  connection: ProviderConnection;
+  /** A count-only trigger, for a row header. */
   compact?: boolean;
   /** Resolves to true when the credit was spent. */
   onUseReset: (id: string, creditId: string) => Promise<boolean>;
@@ -27,26 +28,21 @@ export default function ResetCredits({
 }) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState<{
-    connection: ProviderConnection;
-    credit: ResetCredit;
-  }>();
+  const [pending, setPending] = useState<ResetCredit>();
   const [busy, setBusy] = useState(false);
   const overlay = open || pending !== undefined;
   useEffect(() => {
     onOverlayChange?.(overlay);
     return () => onOverlayChange?.(false);
   }, [overlay, onOverlayChange]);
-  const credits = connections.flatMap((connection) =>
-    (connection.resetCredits ?? []).map((credit) => ({ connection, credit })),
-  );
+  const credits = connection.resetCredits ?? [];
   if (credits.length === 0) return null;
 
   async function confirm() {
     if (!pending) return;
     setBusy(true);
     try {
-      if (await onUseReset(pending.connection.id, pending.credit.id)) {
+      if (await onUseReset(connection.id, pending.id)) {
         setPending(undefined);
         setOpen(false);
       }
@@ -82,20 +78,12 @@ export default function ResetCredits({
                 {t("Quota.ResetCredits.Title")}
               </Popover.Title>
               <ul className={styles.list}>
-                {credits.map(({ connection, credit }) => (
-                  <li
-                    className={styles.credit}
-                    key={`${connection.id}:${credit.id}`}
-                  >
+                {credits.map((credit) => (
+                  <li className={styles.credit} key={credit.id}>
                     <div className={styles.creditText}>
                       <span className={styles.creditTitle}>
                         {credit.title || t("Quota.ResetCredits.DefaultTitle")}
                       </span>
-                      {compact && (
-                        <span className={styles.creditExpiry}>
-                          {accountLabel(connection)}
-                        </span>
-                      )}
                       <span className={styles.creditExpiry}>
                         {credit.expiresAt
                           ? t("Quota.ResetCredits.Expires", {
@@ -108,7 +96,7 @@ export default function ResetCredits({
                       </span>
                     </div>
                     <Button
-                      onClick={() => setPending({ connection, credit })}
+                      onClick={() => setPending(credit)}
                       size="sm"
                       variant="secondary"
                     >
@@ -139,9 +127,8 @@ export default function ResetCredits({
             <AlertDialog.Body>
               <AlertDialog.Description>
                 {t("Quota.ResetCredits.ConfirmDescription", {
-                  account: pending ? accountLabel(pending.connection) : "",
-                  remaining:
-                    (pending?.connection.resetCredits?.length ?? 1) - 1,
+                  account: accountLabel(connection),
+                  remaining: credits.length - 1,
                 })}
               </AlertDialog.Description>
             </AlertDialog.Body>

@@ -285,7 +285,7 @@ export default function ConnectionCard({
       {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
         <div className={styles.credits}>
           <ResetCredits
-            connections={[connection]}
+            connection={connection}
             onUseReset={actions.onUseReset}
           />
         </div>

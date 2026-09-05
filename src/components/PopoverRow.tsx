@@ -6,17 +6,23 @@ import { StatusBadge } from "./ConnectionCard";
 import styles from "./PopoverRow.module.scss";
 import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
+import ResetCredits from "./ResetCredits";
 
 /** One account in the menu bar popover: a flat row, no card frame. */
 export default function PopoverRow({
   connection,
   pinnedKey,
   onPin,
+  onUseReset,
+  onOverlayChange,
 }: {
   connection: ProviderConnection;
   /** The quota window the menu bar shows, when it belongs to this account. */
   pinnedKey?: string;
   onPin: (windowKey: string) => void;
+  onUseReset: (id: string, creditId: string) => Promise<boolean>;
+  /** Reports when the reset list or its confirmation is open. */
+  onOverlayChange: (open: boolean) => void;
 }) {
   const { t } = useTranslation();
   const plan = connection.identity?.plan;
@@ -33,6 +39,12 @@ export default function PopoverRow({
             {plan && ` (${plan})`}
           </span>
         </p>
+        <ResetCredits
+          compact
+          connection={connection}
+          onOverlayChange={onOverlayChange}
+          onUseReset={onUseReset}
+        />
         <StatusBadge connection={connection} />
       </header>
       {connection.provider === "codex" && (
