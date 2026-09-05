@@ -4,14 +4,23 @@ export const PROVIDER_NAMES: Record<Provider, string> = {
   claude: "Claude Code",
   codex: "Codex",
   "gemini-cli": "Gemini CLI",
+  antigravity: "Antigravity",
   copilot: "GitHub Copilot",
   cursor: "Cursor",
 };
+
+/** Providers without a documented quota API; their page shows a warning. */
+const UNOFFICIAL_PROVIDERS: Provider[] = ["antigravity"];
+
+export function isUnofficial(provider: Provider): boolean {
+  return UNOFFICIAL_PROVIDERS.includes(provider);
+}
 
 export const PROVIDERS: Provider[] = [
   "claude",
   "codex",
   "gemini-cli",
+  "antigravity",
   "copilot",
   "cursor",
 ];

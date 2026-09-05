@@ -111,7 +111,9 @@
     "NoAccountsYet": "Ancora nessun account {{name}}.",
     "EnableAccount": "Attiva {{name}}",
     "DisableAccount": "Disattiva {{name}}",
-    "BackToSettings": "Torna alle impostazioni"
+    "BackToSettings": "Torna alle impostazioni",
+    "UnofficialTitle": "Non ufficiale",
+    "UnofficialWarning": "Antigravity non supporta né documenta ufficialmente un'API per le quote. Questa integrazione riproduce il modo in cui l'IDE Antigravity recupera le informazioni sulle quote. Google può limitare o modificare questo comportamento senza preavviso. Usala a tuo rischio."
   },
   "Login": {
     "Title": "Aggiungi un account {{name}}",
@@ -127,7 +129,8 @@
       "codex": "Accedi con il tuo account ChatGPT nel browser. L'app riceve il risultato su questo Mac.",
       "gemini-cli": "Accedi con Google nel browser. L'app riceve il risultato su questo Mac.",
       "copilot": "Inserisci questo codice nella pagina GitHub nel browser, poi approva la richiesta.",
-      "cursor": "Conferma l'accesso nella pagina di Cursor nel browser. L'app riceve il risultato su questo Mac."
+      "cursor": "Conferma l'accesso nella pagina di Cursor nel browser. L'app riceve il risultato su questo Mac.",
+      "antigravity": "Accedi con Google nel browser. L'app riceve il risultato su questo Mac."
     }
   },
   "Rename": {

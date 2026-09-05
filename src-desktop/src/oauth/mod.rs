@@ -4,10 +4,12 @@
 //! also what 9router does:
 //! - Claude: authorization code with PKCE, callback on `localhost:54545`.
 //! - Codex: authorization code with PKCE, callback on `localhost:1455`.
+//! - Antigravity: authorization code with a dynamic loopback callback.
 //! - Gemini CLI: authorization code with a dynamic loopback callback.
 //! - GitHub Copilot: device code flow.
 //! - Cursor: PKCE deep link, polled on `api2.cursor.sh` (no callback port).
 
+pub mod antigravity;
 pub mod callback;
 pub mod claude;
 pub mod codex;
@@ -186,11 +188,25 @@ pub async fn start(
                 },
             ))
         }
-        Provider::Gemini => {
+        Provider::Gemini | Provider::Antigravity => {
             let pair = pkce();
-            let server = callback::CallbackServer::start(0, gemini::CALLBACK_PATH)?;
-            let redirect_uri = gemini::redirect_uri(server.port());
-            let url = gemini::authorize_url(&pair, &redirect_uri);
+            let (path, redirect, authorize): (&str, fn(u16) -> String, fn(&Pkce, &str) -> String) =
+                if provider == Provider::Antigravity {
+                    (
+                        antigravity::CALLBACK_PATH,
+                        antigravity::redirect_uri,
+                        antigravity::authorize_url,
+                    )
+                } else {
+                    (
+                        gemini::CALLBACK_PATH,
+                        gemini::redirect_uri,
+                        gemini::authorize_url,
+                    )
+                };
+            let server = callback::CallbackServer::start(0, path)?;
+            let redirect_uri = redirect(server.port());
+            let url = authorize(&pair, &redirect_uri);
             open_browser(&url)?;
             Ok((
                 LoginStart {
@@ -276,7 +292,7 @@ pub async fn finish(
                 .ok_or_else(|| "The Cursor sign-in session is invalid.".to_string())?;
             cursor::wait_for_login(client, &login).await
         }
-        Provider::Claude | Provider::Codex | Provider::Gemini => {
+        Provider::Claude | Provider::Codex | Provider::Gemini | Provider::Antigravity => {
             let pair = login
                 .pkce
                 .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
@@ -321,6 +337,16 @@ pub async fn finish(
                     gemini::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
                         .await
                 }
+                Provider::Antigravity => {
+                    antigravity::exchange(
+                        client,
+                        &pair,
+                        &login.redirect_uri,
+                        &code,
+                        state.as_deref(),
+                    )
+                    .await
+                }
                 Provider::Copilot | Provider::Cursor => unreachable!(),
             }
         }
@@ -342,6 +368,7 @@ pub fn connection_for(provider: &Provider, outcome: &LoginOutcome) -> NewConnect
         Provider::Claude => "Claude",
         Provider::Codex => "Codex",
         Provider::Gemini => "Gemini CLI",
+        Provider::Antigravity => "Antigravity",
         Provider::Copilot => "Copilot",
         Provider::Cursor => "Cursor",
     };
@@ -389,6 +416,7 @@ pub async fn credentials_for_request(
         Provider::Claude => claude::REFRESH_LEAD,
         Provider::Codex => codex::REFRESH_LEAD,
         Provider::Gemini => gemini::REFRESH_LEAD,
+        Provider::Antigravity => antigravity::REFRESH_LEAD,
         Provider::Copilot => chrono::Duration::zero(),
         Provider::Cursor => cursor::REFRESH_LEAD,
     };
@@ -408,6 +436,7 @@ async fn renew(
         Provider::Claude => claude::refresh_tokens(client, current).await,
         Provider::Codex => codex::refresh_tokens(client, current).await,
         Provider::Gemini => gemini::refresh_tokens(client, current).await,
+        Provider::Antigravity => antigravity::refresh_tokens(client, current).await,
         Provider::Copilot => Err("GitHub tokens do not renew. Sign in again.".to_string()),
         Provider::Cursor => Err("Cursor tokens do not renew. Sign in again.".to_string()),
     }
@@ -426,6 +455,7 @@ async fn read_quota(
         Provider::Claude => claude::cached_usage(client, &current.access_token, force).await,
         Provider::Codex => codex::usage(client, current).await,
         Provider::Gemini => gemini::usage(client, current).await,
+        Provider::Antigravity => antigravity::usage(client, current).await,
         Provider::Copilot => {
             let login = connection
                 .identity

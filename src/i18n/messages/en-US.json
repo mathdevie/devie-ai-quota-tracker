@@ -107,14 +107,16 @@
     "Connected": "{{total}} connected",
     "Attention": "Attention {{total}}",
     "AddAccount": "Add account",
-    "AddProviderAccount": "Add a {{name}} account",
+    "AddProviderAccount": "Add an account for {{name}}",
     "NoAccountsYet": "No {{name}} accounts yet.",
     "EnableAccount": "Enable {{name}}",
     "DisableAccount": "Disable {{name}}",
-    "BackToSettings": "Back to settings"
+    "BackToSettings": "Back to settings",
+    "UnofficialTitle": "Unofficial",
+    "UnofficialWarning": "Antigravity does not officially support or document a quota API. This integration reproduces how the Antigravity IDE retrieves the quota information. Google may restrict or change this behavior without notice. Use it at your own risk."
   },
   "Login": {
-    "Title": "Add a {{name}} account",
+    "Title": "Add an account for {{name}}",
     "OpeningBrowser": "Opening the browser…",
     "WaitingFor": "Waiting for {{name}}…",
     "OpenPageAgain": "Open the page again",
@@ -127,7 +129,8 @@
       "codex": "Sign in with your ChatGPT account in the browser. The app receives the result on this Mac.",
       "gemini-cli": "Sign in with Google in the browser. The app receives the result on this Mac.",
       "copilot": "Enter this code on the GitHub page in the browser, then approve the request.",
-      "cursor": "Confirm the sign-in on the Cursor page in the browser. The app receives the result on this Mac."
+      "cursor": "Confirm the sign-in on the Cursor page in the browser. The app receives the result on this Mac.",
+      "antigravity": "Sign in with Google in the browser. The app receives the result on this Mac."
     }
   },
   "Rename": {

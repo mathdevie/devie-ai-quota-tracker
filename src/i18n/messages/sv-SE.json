@@ -111,7 +111,9 @@
     "NoAccountsYet": "Inga {{name}}-konton ännu.",
     "EnableAccount": "Aktivera {{name}}",
     "DisableAccount": "Inaktivera {{name}}",
-    "BackToSettings": "Tillbaka till inställningarna"
+    "BackToSettings": "Tillbaka till inställningarna",
+    "UnofficialTitle": "Inofficiell",
+    "UnofficialWarning": "Antigravity stöder eller dokumenterar inte officiellt något kvot-API. Den här integrationen återskapar hur Antigravity-IDE:n hämtar kvotinformationen. Google kan begränsa eller ändra det här beteendet utan förvarning. Använd på egen risk."
   },
   "Login": {
     "Title": "Lägg till ett {{name}}-konto",
@@ -127,7 +129,8 @@
       "codex": "Logga in med ditt ChatGPT-konto i webbläsaren. Appen tar emot resultatet på den här datorn.",
       "gemini-cli": "Logga in med Google i webbläsaren. Appen tar emot resultatet på den här datorn.",
       "copilot": "Ange den här koden på GitHub-sidan i webbläsaren och godkänn sedan begäran.",
-      "cursor": "Bekräfta inloggningen på Cursor-sidan i webbläsaren. Appen tar emot resultatet på den här datorn."
+      "cursor": "Bekräfta inloggningen på Cursor-sidan i webbläsaren. Appen tar emot resultatet på den här datorn.",
+      "antigravity": "Logga in med Google i webbläsaren. Appen tar emot resultatet på den här datorn."
     }
   },
   "Rename": {

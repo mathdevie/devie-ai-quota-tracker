@@ -152,7 +152,7 @@ fn credentials_from(
     })
 }
 
-async fn profile(
+pub(super) async fn profile(
     client: &reqwest::Client,
     access_token: &str,
 ) -> Result<(RemoteIdentity, String), String> {
@@ -383,7 +383,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     })
 }
 
-fn project_id(value: Option<&Value>) -> Option<String> {
+pub(super) fn project_id(value: Option<&Value>) -> Option<String> {
     match value? {
         Value::String(id) if !id.is_empty() => Some(id.clone()),
         Value::Object(project) => project
@@ -395,7 +395,7 @@ fn project_id(value: Option<&Value>) -> Option<String> {
     }
 }
 
-fn plan_name(json: &Value) -> Option<String> {
+pub(super) fn plan_name(json: &Value) -> Option<String> {
     ["paidTier", "currentTier"]
         .iter()
         .find_map(|key| {

@@ -84,8 +84,17 @@ before you open a pull request.
 | Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
 | Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
+| Antigravity (Unofficial) | OAuth client of the Antigravity IDE and a dynamic loopback callback; app-owned refresh tokens | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`, falling back to `fetchAvailableModels` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 | Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
+
+Antigravity is unofficial: it has no documented quota API, so the app
+reproduces how the closed-source IDE reads the quota, with the IDE's OAuth
+client and user agent. Google may restrict or change this without notice;
+keep the warning on the provider page. The quota summary has two groups
+(Gemini; Claude and GPT), each with a five-hour and a weekly limit. The model
+catalog is the fallback; entries without a display name are skipped. Missing
+or invalid fractions are unavailable, never zero or full quota.
 
 Claude usage reads share one cache: a read stays fresh for five minutes on
 the timer (a refresh button always fetches), one request per token runs at

@@ -111,7 +111,9 @@
     "NoAccountsYet": "Ei vielä {{name}}-tilejä.",
     "EnableAccount": "Ota käyttöön {{name}}",
     "DisableAccount": "Poista käytöstä {{name}}",
-    "BackToSettings": "Takaisin asetuksiin"
+    "BackToSettings": "Takaisin asetuksiin",
+    "UnofficialTitle": "Epävirallinen",
+    "UnofficialWarning": "Antigravity ei tue eikä dokumentoi virallisesti kiintiörajapintaa. Tämä integraatio jäljittelee tapaa, jolla Antigravity-IDE hakee kiintiötiedot. Google voi rajoittaa tai muuttaa tätä toimintaa ilman ennakkoilmoitusta. Käytä omalla vastuullasi."
   },
   "Login": {
     "Title": "Lisää {{name}}-tili",
@@ -127,7 +129,8 @@
       "codex": "Kirjaudu ChatGPT-tililläsi selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
       "gemini-cli": "Kirjaudu Googlella selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
       "copilot": "Syötä tämä koodi GitHub-sivulla selaimessa ja hyväksy sitten pyyntö.",
-      "cursor": "Vahvista kirjautuminen Cursor-sivulla selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla."
+      "cursor": "Vahvista kirjautuminen Cursor-sivulla selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla.",
+      "antigravity": "Kirjaudu Googlella selaimessa. Sovellus vastaanottaa tuloksen tällä Macilla."
     }
   },
   "Rename": {

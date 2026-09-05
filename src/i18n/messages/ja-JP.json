@@ -111,7 +111,9 @@
     "NoAccountsYet": "{{name}} のアカウントはまだありません。",
     "EnableAccount": "{{name}} を有効にする",
     "DisableAccount": "{{name}} を無効にする",
-    "BackToSettings": "設定に戻る"
+    "BackToSettings": "設定に戻る",
+    "UnofficialTitle": "非公式",
+    "UnofficialWarning": "Antigravity はクォータ API を公式にサポートおよび文書化していません。この連携は、Antigravity IDE がクォータ情報を取得する方法を再現しています。Google は予告なくこの動作を制限または変更する可能性があります。自己責任でご利用ください。"
   },
   "Login": {
     "Title": "{{name}} のアカウントを追加",
@@ -127,7 +129,8 @@
       "codex": "ブラウザーで ChatGPT アカウントにサインインしてください。結果はこの Mac のアプリが受け取ります。",
       "gemini-cli": "ブラウザーで Google にサインインしてください。結果はこの Mac のアプリが受け取ります。",
       "copilot": "ブラウザーの GitHub ページでこのコードを入力し、リクエストを承認してください。",
-      "cursor": "ブラウザーの Cursor ページでサインインを確認してください。結果はこの Mac のアプリが受け取ります。"
+      "cursor": "ブラウザーの Cursor ページでサインインを確認してください。結果はこの Mac のアプリが受け取ります。",
+      "antigravity": "ブラウザーで Google にサインインしてください。結果はこの Mac のアプリが受け取ります。"
     }
   },
   "Rename": {

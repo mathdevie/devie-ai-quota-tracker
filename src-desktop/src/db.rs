@@ -404,7 +404,8 @@ impl Database {
                    WHEN 'claude' THEN 0
                    WHEN 'codex' THEN 1
                    WHEN 'gemini-cli' THEN 2
-                   ELSE 3
+                   WHEN 'antigravity' THEN 3
+                   ELSE 4
                  END,
                           label",
             )
@@ -413,7 +414,10 @@ impl Database {
         let rows = statement
             .query_map([], |row| {
                 let provider_text: String = row.get(1)?;
-                let provider = Provider::from_db(&provider_text).unwrap_or(Provider::Claude);
+                // Skip rows of a provider this build does not know.
+                let Some(provider) = Provider::from_db(&provider_text) else {
+                    return Ok(None);
+                };
                 let user_id: Option<String> = row.get(9)?;
                 let display_name: Option<String> = row.get(10)?;
                 let plan: Option<String> = row.get(11)?;
@@ -427,7 +431,7 @@ impl Database {
                     None
                 };
 
-                Ok(ProviderConnection {
+                Ok(Some(ProviderConnection {
                     id: row.get(0)?,
                     provider,
                     label: row.get(2)?,
@@ -461,13 +465,15 @@ impl Database {
                         .get::<_, Option<String>>(23)?
                         .and_then(|json| serde_json::from_str(&json).ok())
                         .unwrap_or_default(),
-                })
+                }))
             })
             .map_err(|error| error.to_string())?;
 
         let mut connections = Vec::new();
         for row in rows {
-            let mut item = row.map_err(|error| error.to_string())?;
+            let Some(mut item) = row.map_err(|error| error.to_string())? else {
+                continue;
+            };
             item.windows = Self::latest_windows(&connection, &item.id)?;
             connections.push(item);
         }
@@ -775,6 +781,46 @@ mod tests {
     use super::*;
 
     #[test]
+    fn skips_connections_of_unknown_providers() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
+        database
+            .upsert_connections(&[
+                NewConnection {
+                    id: "known".into(),
+                    provider: Provider::Claude,
+                    label: "Claude".into(),
+                    source_locator: "oauth/claude/1".into(),
+                    identity: None,
+                },
+                NewConnection {
+                    id: "future".into(),
+                    provider: Provider::Claude,
+                    label: "Future".into(),
+                    source_locator: "oauth/future/1".into(),
+                    identity: None,
+                },
+            ])
+            .expect("upsert");
+        database
+            .connection()
+            .expect("connection")
+            .execute(
+                "UPDATE provider_connections SET provider = 'future-provider' WHERE id = 'future'",
+                [],
+            )
+            .expect("update");
+        let ids: Vec<String> = database
+            .dashboard_state()
+            .expect("dashboard state")
+            .connections
+            .into_iter()
+            .map(|item| item.id)
+            .collect();
+        assert_eq!(ids, vec!["known".to_string()]);
+    }
+
+    #[test]
     fn persists_separate_connections_and_history() {
         let directory = tempfile::tempdir().expect("temporary directory");
         let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
@@ -945,13 +991,21 @@ mod tests {
         assert!(state.settings.telemetry_enabled);
         let id = database.telemetry_id().expect("telemetry id");
         assert_eq!(database.telemetry_id().expect("telemetry id"), id);
-        database.set_telemetry_enabled(false).expect("telemetry off");
+        database
+            .set_telemetry_enabled(false)
+            .expect("telemetry off");
         assert!(!database.settings().expect("settings").telemetry_enabled);
         database.set_telemetry_enabled(true).expect("telemetry on");
         assert_ne!(database.telemetry_id().expect("new telemetry id"), id);
 
-        assert_eq!(database.record_run_version("1.0.0").expect("first run"), None);
-        assert_eq!(database.record_run_version("1.0.0").expect("same run"), None);
+        assert_eq!(
+            database.record_run_version("1.0.0").expect("first run"),
+            None
+        );
+        assert_eq!(
+            database.record_run_version("1.0.0").expect("same run"),
+            None
+        );
         assert_eq!(
             database.record_run_version("1.1.0").expect("upgrade"),
             Some("1.0.0".to_string())

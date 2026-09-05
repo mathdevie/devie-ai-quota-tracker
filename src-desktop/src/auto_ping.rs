@@ -212,6 +212,9 @@ async fn send(
         Provider::Claude => send_claude(client, &credentials.access_token).await,
         Provider::Codex => send_codex(client, connection, &credentials).await,
         Provider::Gemini => Err("The Quota Optimizer does not support Gemini CLI.".to_string()),
+        Provider::Antigravity => {
+            Err("The Quota Optimizer does not support Antigravity.".to_string())
+        }
         Provider::Copilot => Err("The Quota Optimizer does not support Copilot.".to_string()),
         Provider::Cursor => Err("The Quota Optimizer does not support Cursor.".to_string()),
     }
