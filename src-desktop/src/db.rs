@@ -404,7 +404,8 @@ impl Database {
                    WHEN 'claude' THEN 0
                    WHEN 'codex' THEN 1
                    WHEN 'gemini-cli' THEN 2
-                   ELSE 3
+                   WHEN 'antigravity' THEN 3
+                   ELSE 4
                  END,
                           label",
             )
@@ -945,13 +946,21 @@ mod tests {
         assert!(state.settings.telemetry_enabled);
         let id = database.telemetry_id().expect("telemetry id");
         assert_eq!(database.telemetry_id().expect("telemetry id"), id);
-        database.set_telemetry_enabled(false).expect("telemetry off");
+        database
+            .set_telemetry_enabled(false)
+            .expect("telemetry off");
         assert!(!database.settings().expect("settings").telemetry_enabled);
         database.set_telemetry_enabled(true).expect("telemetry on");
         assert_ne!(database.telemetry_id().expect("new telemetry id"), id);
 
-        assert_eq!(database.record_run_version("1.0.0").expect("first run"), None);
-        assert_eq!(database.record_run_version("1.0.0").expect("same run"), None);
+        assert_eq!(
+            database.record_run_version("1.0.0").expect("first run"),
+            None
+        );
+        assert_eq!(
+            database.record_run_version("1.0.0").expect("same run"),
+            None
+        );
         assert_eq!(
             database.record_run_version("1.1.0").expect("upgrade"),
             Some("1.0.0".to_string())

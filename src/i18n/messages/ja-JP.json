@@ -111,7 +111,8 @@
     "NoAccountsYet": "{{name}} のアカウントはまだありません。",
     "EnableAccount": "{{name}} を有効にする",
     "DisableAccount": "{{name}} を無効にする",
-    "BackToSettings": "設定に戻る"
+    "BackToSettings": "設定に戻る",
+    "Beta": "ベータ"
   },
   "Login": {
     "Title": "{{name}} のアカウントを追加",
@@ -127,7 +128,8 @@
       "codex": "ブラウザーで ChatGPT アカウントにサインインしてください。結果はこの Mac のアプリが受け取ります。",
       "gemini-cli": "ブラウザーで Google にサインインしてください。結果はこの Mac のアプリが受け取ります。",
       "copilot": "ブラウザーの GitHub ページでこのコードを入力し、リクエストを承認してください。",
-      "cursor": "ブラウザーの Cursor ページでサインインを確認してください。結果はこの Mac のアプリが受け取ります。"
+      "cursor": "ブラウザーの Cursor ページでサインインを確認してください。結果はこの Mac のアプリが受け取ります。",
+      "antigravity": "ブラウザーで Google にサインインしてください。結果はこの Mac のアプリが受け取ります。"
     }
   },
   "Rename": {

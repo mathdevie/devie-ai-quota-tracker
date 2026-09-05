@@ -111,7 +111,8 @@
     "NoAccountsYet": "Aún no hay cuentas de {{name}}.",
     "EnableAccount": "Activar {{name}}",
     "DisableAccount": "Desactivar {{name}}",
-    "BackToSettings": "Volver a los ajustes"
+    "BackToSettings": "Volver a los ajustes",
+    "Beta": "Beta"
   },
   "Login": {
     "Title": "Añadir una cuenta de {{name}}",
@@ -127,7 +128,8 @@
       "codex": "Inicia sesión con tu cuenta de ChatGPT en el navegador. La app recibe el resultado en este Mac.",
       "gemini-cli": "Inicia sesión con Google en el navegador. La app recibe el resultado en este Mac.",
       "copilot": "Introduce este código en la página de GitHub en el navegador y aprueba la solicitud.",
-      "cursor": "Confirma el inicio de sesión en la página de Cursor en el navegador. La app recibe el resultado en este Mac."
+      "cursor": "Confirma el inicio de sesión en la página de Cursor en el navegador. La app recibe el resultado en este Mac.",
+      "antigravity": "Inicia sesión con Google en el navegador. La app recibe el resultado en este Mac."
     }
   },
   "Rename": {

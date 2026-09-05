@@ -11,6 +11,7 @@ use crate::model::Provider;
 const CLAUDE: &[u8] = include_bytes!("../../public/providers/claude.png");
 const CODEX: &[u8] = include_bytes!("../../public/providers/codex.png");
 const GEMINI: &[u8] = include_bytes!("../../public/providers/gemini-cli.png");
+const ANTIGRAVITY: &[u8] = include_bytes!("../../public/providers/antigravity.png");
 const COPILOT: &[u8] = include_bytes!("../../public/providers/copilot.png");
 const CURSOR: &[u8] = include_bytes!("../../public/providers/cursor.png");
 
@@ -24,6 +25,7 @@ fn cache() -> &'static HashMap<&'static str, Image<'static>> {
             ("claude", CLAUDE),
             ("codex", CODEX),
             ("gemini-cli", GEMINI),
+            ("antigravity", ANTIGRAVITY),
             ("copilot", COPILOT),
             ("cursor", CURSOR),
         ]
@@ -80,6 +82,7 @@ mod tests {
             Provider::Claude,
             Provider::Codex,
             Provider::Gemini,
+            Provider::Antigravity,
             Provider::Copilot,
             Provider::Cursor,
         ] {

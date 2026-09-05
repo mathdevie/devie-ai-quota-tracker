@@ -111,7 +111,8 @@
     "NoAccountsYet": "Ingen {{name}}-kontoer ennå.",
     "EnableAccount": "Aktiver {{name}}",
     "DisableAccount": "Deaktiver {{name}}",
-    "BackToSettings": "Tilbake til innstillinger"
+    "BackToSettings": "Tilbake til innstillinger",
+    "Beta": "Beta"
   },
   "Login": {
     "Title": "Legg til en {{name}}-konto",
@@ -127,7 +128,8 @@
       "codex": "Logg inn med ChatGPT-kontoen din i nettleseren. Appen mottar resultatet på denne Macen.",
       "gemini-cli": "Logg inn med Google i nettleseren. Appen mottar resultatet på denne Macen.",
       "copilot": "Skriv inn denne koden på GitHub-siden i nettleseren, og godkjenn deretter forespørselen.",
-      "cursor": "Bekreft innloggingen på Cursor-siden i nettleseren. Appen mottar resultatet på denne Macen."
+      "cursor": "Bekreft innloggingen på Cursor-siden i nettleseren. Appen mottar resultatet på denne Macen.",
+      "antigravity": "Logg inn med Google i nettleseren. Appen mottar resultatet på denne Macen."
     }
   },
   "Rename": {

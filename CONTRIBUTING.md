@@ -84,8 +84,16 @@ before you open a pull request.
 | Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
 | Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
+| Antigravity (Beta) | Antigravity OAuth client and a dynamic loopback callback; app-owned refresh tokens | `daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 | Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
+
+Antigravity reads per-model remaining fractions and reset times through Google's
+internal API. It does not require an installed CLI. Google may omit quotas or
+deny access, and the remote API does not guarantee separate weekly and five-hour
+limits. Missing or invalid fractions are unavailable, never treated as zero or
+full quota. No request counts are inferred from percentages. Validate the beta
+against a signed-in account before claiming complete subscription coverage.
 
 Claude usage reads share one cache: a read stays fresh for five minutes on
 the timer (a refresh button always fetches), one request per token runs at

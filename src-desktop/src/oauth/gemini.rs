@@ -152,7 +152,7 @@ fn credentials_from(
     })
 }
 
-async fn profile(
+pub(super) async fn profile(
     client: &reqwest::Client,
     access_token: &str,
 ) -> Result<(RemoteIdentity, String), String> {

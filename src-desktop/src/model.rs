@@ -7,6 +7,7 @@ pub enum Provider {
     Codex,
     #[serde(rename = "gemini-cli")]
     Gemini,
+    Antigravity,
     Copilot,
     Cursor,
 }
@@ -17,6 +18,7 @@ impl Provider {
             Self::Claude => "claude",
             Self::Codex => "codex",
             Self::Gemini => "gemini-cli",
+            Self::Antigravity => "antigravity",
             Self::Copilot => "copilot",
             Self::Cursor => "cursor",
         }
@@ -27,6 +29,7 @@ impl Provider {
             "claude" => Some(Self::Claude),
             "codex" => Some(Self::Codex),
             "gemini-cli" => Some(Self::Gemini),
+            "antigravity" => Some(Self::Antigravity),
             "copilot" => Some(Self::Copilot),
             "cursor" => Some(Self::Cursor),
             _ => None,
@@ -272,6 +275,23 @@ pub struct QuotaReading {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn antigravity_round_trips_as_a_separate_provider() {
+        assert_eq!(Provider::Antigravity.as_str(), "antigravity");
+        assert_eq!(
+            serde_json::to_string(&Provider::Antigravity).unwrap(),
+            "\"antigravity\""
+        );
+        assert_eq!(
+            serde_json::from_str::<Provider>("\"antigravity\"").unwrap(),
+            Provider::Antigravity
+        );
+        assert_eq!(
+            Provider::from_db("antigravity"),
+            Some(Provider::Antigravity)
+        );
+    }
 
     #[test]
     fn gemini_uses_the_interface_provider_id() {

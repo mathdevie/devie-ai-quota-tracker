@@ -25,6 +25,7 @@ export const PROVIDER_FILTERS: ProviderFilter[] = [
   "claude",
   "codex",
   "gemini-cli",
+  "antigravity",
   "copilot",
   "cursor",
 ];
