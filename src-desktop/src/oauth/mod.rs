@@ -190,21 +190,24 @@ pub async fn start(
         }
         Provider::Gemini | Provider::Antigravity => {
             let pair = pkce();
-            let path = if provider == Provider::Antigravity {
-                antigravity::CALLBACK_PATH
-            } else {
-                gemini::CALLBACK_PATH
-            };
+            // The redirect needs the port, so the server starts first.
+            let (path, redirect, authorize): (&str, fn(u16) -> String, fn(&Pkce, &str) -> String) =
+                if provider == Provider::Antigravity {
+                    (
+                        antigravity::CALLBACK_PATH,
+                        antigravity::redirect_uri,
+                        antigravity::authorize_url,
+                    )
+                } else {
+                    (
+                        gemini::CALLBACK_PATH,
+                        gemini::redirect_uri,
+                        gemini::authorize_url,
+                    )
+                };
             let server = callback::CallbackServer::start(0, path)?;
-            let (redirect_uri, url) = if provider == Provider::Antigravity {
-                let redirect = antigravity::redirect_uri(server.port());
-                let url = antigravity::authorize_url(&pair, &redirect);
-                (redirect, url)
-            } else {
-                let redirect = gemini::redirect_uri(server.port());
-                let url = gemini::authorize_url(&pair, &redirect);
-                (redirect, url)
-            };
+            let redirect_uri = redirect(server.port());
+            let url = authorize(&pair, &redirect_uri);
             open_browser(&url)?;
             Ok((
                 LoginStart {

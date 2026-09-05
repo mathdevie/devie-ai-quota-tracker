@@ -53,11 +53,6 @@ function ProviderCard({
         <span className={styles.providerCardTitle}>
           <strong>{PROVIDER_NAMES[provider]}</strong>
         </span>
-        {provider === "antigravity" && (
-          <Badge as="span" variant="warning">
-            {t("Providers.Beta")}
-          </Badge>
-        )}
         <ChevronRight className={styles.chevron} size={16} />
       </span>
       {(connected > 0 || attention > 0) && (

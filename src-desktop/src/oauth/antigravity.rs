@@ -1,29 +1,50 @@
-//! Beta Antigravity integration: browser OAuth and remote per-model quotas.
+//! Unofficial Antigravity integration: browser OAuth and remote per-model
+//! quotas.
+//!
+//! Antigravity has no documented quota API and no published OAuth client.
+//! The integration reproduces how the IDE reads the quota, and the provider
+//! page shows a risk notice: Google may restrict or change this without
+//! notice.
 //!
 //! Protocol reference: decolua/9router at 4eda76e2, OAuth provider and
-//! open-sse/services/usage/google.js. These are internal Google endpoints;
-//! the response does not guarantee separate five-hour and weekly limits.
+//! open-sse/services/usage/google.js, plus the quota summary endpoint used by
+//! CodexBar and Antigravity Manager. These are internal Google endpoints.
+//!
+//! The quota summary is what the IDE's Model Quota panel shows: two groups
+//! (Gemini; Claude and GPT), each with a weekly and a five-hour limit. The
+//! model catalog is the fallback; its per-model rows repeat the pooled limits.
 
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};
 
 use crate::{
     credentials::Credentials,
-    model::{QuotaReading, QuotaWindow, RemoteIdentity},
+    model::{QuotaReading, QuotaWindow},
     oauth::{claude::encode_query, gemini, LoginOutcome, Pkce},
     parse::{number, reset_time},
 };
 
-// Installed-application client published by 9router. This is distinct from
-// Gemini CLI's client: their refresh tokens must never be interchanged.
+// Google's own installed-application client, embedded in the closed-source
+// Antigravity IDE and its CLI. Google did not publish it for reuse; the
+// community extracted it and 9router and others copied it. Google treats the
+// client secret of an installed application as non-confidential:
+// <https://developers.google.com/identity/protocols/oauth2#installed>
+// This is distinct from Gemini CLI's client: their refresh tokens must never
+// be interchanged.
 const CLIENT_ID: &str = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com";
 const CLIENT_SECRET: &str = "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";
 const SCOPES: &str = "https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/cclog https://www.googleapis.com/auth/experimentsandconfigs";
 const LOAD_URL: &str = "https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist";
+const SUMMARY_URL: &str =
+    "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary";
 const QUOTA_URL: &str = "https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels";
-// Protocol compatibility headers used by the reference client.
+// Protocol compatibility headers used by the reference client. The quota
+// endpoint answers only requests that look like the IDE.
 const CLIENT_VERSION: &str = "2.11.0";
-const CLIENT_USER_AGENT: &str = "antigravity/ide/2.11.0 darwin/arm64";
+
+fn user_agent() -> String {
+    format!("antigravity/ide/{CLIENT_VERSION} darwin/arm64")
+}
 pub const CALLBACK_PATH: &str = "/callback";
 pub const REFRESH_LEAD: Duration = Duration::minutes(5);
 
@@ -68,8 +89,8 @@ pub async fn exchange(
     // Account identity is valid even when Google's internal quota service is
     // unavailable. Save the login; the first refresh will show the quota error.
     if let Ok(info) = subscription(client, &credentials.access_token).await {
-        credentials.project_id = project_id(&info);
-        identity.plan = plan_name(&info);
+        credentials.project_id = gemini::project_id(info.get("cloudaicompanionProject"));
+        identity.plan = gemini::plan_name(&info);
     }
     Ok(LoginOutcome {
         credentials,
@@ -106,8 +127,9 @@ async fn token_request(client: &reqwest::Client, fields: &[(&str, &str)]) -> Res
     let status = response.status();
     if !status.is_success() {
         // Do not include token response bodies in UI errors or diagnostics.
+        // The caller adds the "sign in again" advice.
         return Err(format!(
-            "Antigravity token exchange failed (HTTP {}). Sign in again.",
+            "Antigravity token exchange failed (HTTP {}).",
             status.as_u16()
         ));
     }
@@ -146,36 +168,65 @@ fn credentials_from(tokens: &Value, current: Option<&Credentials>) -> Result<Cre
     })
 }
 
+/// A failed Code Assist request. The status lets the caller tell a denied
+/// or missing endpoint (worth a fallback) from a rate limit or an expired
+/// login (not worth a second request).
+#[derive(Debug)]
+struct ApiError {
+    status: Option<u16>,
+    message: String,
+}
+
+impl From<ApiError> for String {
+    fn from(error: ApiError) -> Self {
+        error.message
+    }
+}
+
 async fn api_post(
     client: &reqwest::Client,
     token: &str,
     url: &str,
-    body: Value,
-) -> Result<Value, String> {
+    body: &Value,
+) -> Result<Value, ApiError> {
     let response = client
         .post(url)
         .bearer_auth(token)
-        .header(reqwest::header::USER_AGENT, CLIENT_USER_AGENT)
+        .header(reqwest::header::USER_AGENT, user_agent())
         .header("X-Client-Name", "antigravity")
         .header("X-Client-Version", CLIENT_VERSION)
-        .json(&body)
+        .json(body)
         .send()
         .await
-        .map_err(|_| "Antigravity could not be reached.".to_string())?;
-    if let Some(error) = api_error(response.status()) {
-        return Err(error);
+        .map_err(|_| ApiError {
+            status: None,
+            message: "Antigravity could not be reached.".into(),
+        })?;
+    let status = response.status();
+    if let Some(message) = api_error(status) {
+        return Err(ApiError {
+            status: Some(status.as_u16()),
+            message,
+        });
     }
-    response
-        .json()
-        .await
-        .map_err(|_| "Antigravity returned invalid quota data.".into())
+    response.json().await.map_err(|_| ApiError {
+        status: Some(status.as_u16()),
+        message: "Antigravity returned invalid quota data.".into(),
+    })
+}
+
+/// A denied, missing, or broken summary is worth one try of the model
+/// catalog. A rate limit or an expired login is not: the catalog shares
+/// both, and the message must reach the caller as is.
+fn try_catalog(error: &ApiError) -> bool {
+    !matches!(error.status, Some(401 | 429))
 }
 
 fn api_error(status: reqwest::StatusCode) -> Option<String> {
     match status.as_u16() {
         200..=299 => None,
         401 => Some("The Antigravity login expired. Sign in again.".into()),
-        403 => Some("Antigravity quota access is unavailable for this account. The beta cannot read its limits.".into()),
+        403 => Some("Antigravity quota access is unavailable for this account. The unofficial integration cannot read its limits.".into()),
         429 => Some("Antigravity quota requests are rate limited. Try again later.".into()),
         code => Some(format!("Antigravity quota request failed (HTTP {code}).")),
     }
@@ -186,52 +237,173 @@ async fn subscription(client: &reqwest::Client, token: &str) -> Result<Value, St
         client,
         token,
         LOAD_URL,
-        json!({
+        &json!({
             "metadata": { "ideType": 9, "platform": 2, "pluginType": 2 },
             "mode": 1,
         }),
     )
     .await
-}
-
-fn project_id(info: &Value) -> Option<String> {
-    let project = info.get("cloudaicompanionProject")?;
-    project
-        .as_str()
-        .or_else(|| project.get("id")?.as_str())
-        .map(str::trim)
-        .filter(|id| !id.is_empty())
-        .map(str::to_string)
-}
-
-fn plan_name(info: &Value) -> Option<String> {
-    ["paidTier", "currentTier"].iter().find_map(|tier| {
-        info.get(*tier)?
-            .get("name")?
-            .as_str()
-            .filter(|name| !name.trim().is_empty())
-            .map(str::to_string)
-    })
+    .map_err(String::from)
 }
 
 pub async fn usage(
     client: &reqwest::Client,
     credentials: &Credentials,
 ) -> Result<QuotaReading, String> {
-    let info = subscription(client, &credentials.access_token).await?;
-    let project = project_id(&info).or_else(|| credentials.project_id.clone());
+    let token = &credentials.access_token;
+    // The login saves the project id and the plan. Ask loadCodeAssist only
+    // when the login could not, so a read is normally one request.
+    let project = match &credentials.project_id {
+        Some(id) => Some(id.clone()),
+        None => subscription(client, token)
+            .await
+            .ok()
+            .and_then(|info| gemini::project_id(info.get("cloudaicompanionProject"))),
+    };
     let body = project
         .map(|id| json!({ "project": id }))
         .unwrap_or_else(|| json!({}));
-    let json = api_post(client, &credentials.access_token, QUOTA_URL, body).await?;
-    let mut reading = parse_usage(&json)?;
-    reading.identity = plan_name(&info).map(|plan| RemoteIdentity {
-        plan: Some(plan),
-        ..Default::default()
-    });
-    Ok(reading)
+    // The summary is the grouped view the IDE shows. The model catalog is the
+    // fallback when Google denies or empties the summary for this account.
+    match api_post(client, token, SUMMARY_URL, &body).await {
+        Ok(json) => {
+            if let Ok(reading) = parse_summary(&json) {
+                return Ok(reading);
+            }
+        }
+        Err(error) if !try_catalog(&error) => return Err(error.message),
+        Err(_) => {}
+    }
+    let json = api_post(client, token, QUOTA_URL, &body).await?;
+    parse_usage(&json)
 }
 
+/// `parse::reset_time` passes unknown text through. A window needs a real
+/// timestamp or none.
+fn strict_reset_time(value: Option<&Value>) -> Option<String> {
+    reset_time(value).filter(|time| chrono::DateTime::parse_from_rfc3339(time).is_ok())
+}
+
+/// Reads `retrieveUserQuotaSummary`: groups of buckets, one bucket per
+/// window. Keys are the bucket ids (`gemini-5h`, `3p-weekly`). Labels follow
+/// the Claude card and fit the popover: "Gemini (5h)", "Other (Weekly)".
+pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
+    let groups = json
+        .get("groups")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "Antigravity returned no quota summary.".to_string())?;
+    let mut windows = Vec::new();
+    for group in groups {
+        let group_name = group.get("displayName").and_then(Value::as_str);
+        let Some(buckets) = group.get("buckets").and_then(Value::as_array) else {
+            continue;
+        };
+        let mut lanes = Vec::new();
+        for bucket in buckets {
+            if bucket.get("disabled").and_then(Value::as_bool) == Some(true) {
+                continue;
+            }
+            let Some(key) = bucket
+                .get("bucketId")
+                .and_then(Value::as_str)
+                .map(str::trim)
+                .filter(|key| !key.is_empty())
+            else {
+                continue;
+            };
+            let Some(remaining) = number(bucket.get("remainingFraction"))
+                .filter(|value| value.is_finite() && (0.0..=1.0).contains(value))
+            else {
+                continue;
+            };
+            let (rank, window) = window_label(bucket, key);
+            let label = format!("{} ({window})", pool_label(key, group_name));
+            lanes.push((
+                rank,
+                QuotaWindow {
+                    key: key.to_string(),
+                    label,
+                    used_percent: (1.0 - remaining) * 100.0,
+                    resets_at: strict_reset_time(bucket.get("resetTime")),
+                    ..Default::default()
+                },
+            ));
+        }
+        // Session first, then weekly, like the Claude card.
+        lanes.sort_by_key(|(rank, _)| *rank);
+        windows.extend(lanes.into_iter().map(|(_, window)| window));
+    }
+    if windows.is_empty() {
+        return Err(
+            "Antigravity quota is unavailable. Google returned no usable limits for this account."
+                .into(),
+        );
+    }
+    Ok(QuotaReading {
+        source: "Antigravity API (Unofficial)".into(),
+        windows,
+        identity: None,
+        reset_credits: None,
+    })
+}
+
+/// The pool a bucket belongs to. The bucket id is stable across display
+/// text changes: `gemini-*` is the Gemini pool, `3p-*` (third party) holds
+/// Claude and GPT. An unknown pool keeps its shortened group name.
+fn pool_label(key: &str, group_name: Option<&str>) -> String {
+    let key = key.to_lowercase();
+    if key.starts_with("gemini") {
+        return "Gemini".to_string();
+    }
+    if key.starts_with("3p") {
+        return "Other".to_string();
+    }
+    group_name
+        .and_then(group_label)
+        .unwrap_or_else(|| "Other".to_string())
+}
+
+/// "Gemini Models" -> "Gemini", "Claude and GPT models" -> "Claude & GPT".
+fn group_label(name: &str) -> Option<String> {
+    let name = name.trim();
+    let lower = name.to_lowercase();
+    let base = if lower == "models" {
+        ""
+    } else if lower.ends_with(" models") {
+        name[..name.len() - " models".len()].trim_end()
+    } else {
+        name
+    };
+    let base = base.replace(" and ", " & ");
+    (!base.is_empty()).then_some(base)
+}
+
+/// The window of a bucket, with a sort rank: the five-hour session first.
+/// Read with the pool: "Gemini (5h)", "Gemini (Weekly)".
+fn window_label(bucket: &Value, key: &str) -> (u8, String) {
+    let window = bucket
+        .get("window")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .unwrap_or("");
+    if window == "5h" || key.ends_with("-5h") {
+        return (0, "5h".to_string());
+    }
+    if window == "weekly" || key.ends_with("-weekly") {
+        return (1, "Weekly".to_string());
+    }
+    let label = bucket
+        .get("displayName")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|name| !name.is_empty())
+        .unwrap_or(if window.is_empty() { key } else { window });
+    (2, label.to_string())
+}
+
+/// Reads `fetchAvailableModels`, the model catalog. Every model repeats the
+/// pooled limits of its group; entries without a display name are internal
+/// routing aliases (tiered, tab) and are skipped.
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     let models = json
         .get("models")
@@ -245,6 +417,14 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         let Some(quota) = model.get("quotaInfo") else {
             continue;
         };
+        let Some(label) = model
+            .get("displayName")
+            .and_then(Value::as_str)
+            .map(str::trim)
+            .filter(|name| !name.is_empty())
+        else {
+            continue;
+        };
         // Missing, malformed, or out-of-range values are unknown, never 0% or
         // 100%. Do not fabricate request counts from a normalized percentage.
         let Some(remaining) = number(quota.get("remainingFraction"))
@@ -254,15 +434,9 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         };
         windows.push(QuotaWindow {
             key: id.clone(),
-            label: model
-                .get("displayName")
-                .and_then(Value::as_str)
-                .filter(|name| !name.trim().is_empty())
-                .unwrap_or(id)
-                .to_string(),
+            label: label.to_string(),
             used_percent: (1.0 - remaining) * 100.0,
-            resets_at: reset_time(quota.get("resetTime"))
-                .filter(|time| chrono::DateTime::parse_from_rfc3339(time).is_ok()),
+            resets_at: strict_reset_time(quota.get("resetTime")),
             ..Default::default()
         });
     }
@@ -273,7 +447,7 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         );
     }
     Ok(QuotaReading {
-        source: "Antigravity API (Beta)".into(),
+        source: "Antigravity API (Unofficial)".into(),
         windows,
         identity: None,
         reset_credits: None,
@@ -325,8 +499,10 @@ mod tests {
                 serde_json::from_slice::<Value>(&body).unwrap(),
                 json!({"project": "account-project"})
             );
-            let payload = json!({"models": {"gemini": {"quotaInfo": {"remainingFraction": 0.6}}}})
-                .to_string();
+            let payload = json!({"models": {"gemini": {
+                "displayName": "Gemini", "quotaInfo": {"remainingFraction": 0.6}
+            }}})
+            .to_string();
             write!(stream, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}", payload.len(), payload).unwrap();
         });
         let client = reqwest::Client::builder()
@@ -338,7 +514,7 @@ mod tests {
             &client,
             "account-token",
             &url,
-            json!({"project": "account-project"}),
+            &json!({"project": "account-project"}),
         )
         .await
         .unwrap();
@@ -352,8 +528,8 @@ mod tests {
             "gemini-pro-agent": { "displayName": "Gemini Pro", "quotaInfo": {
                 "remainingFraction": 0.75, "resetTime": "2026-09-06T12:00:00Z"
             }},
-            "future-model": { "quotaInfo": { "remainingFraction": "0" } },
-            "full-model": { "quotaInfo": { "remainingFraction": 1 } }
+            "future-model": { "displayName": "Future", "quotaInfo": { "remainingFraction": "0" } },
+            "full-model": { "displayName": "Full", "quotaInfo": { "remainingFraction": 1 } }
         }}))
         .unwrap();
         assert_eq!(reading.windows.len(), 3);
@@ -400,9 +576,9 @@ mod tests {
             json!(1.1),
             json!("bad"),
         ] {
-            assert!(parse_usage(
-                &json!({ "models": { "m": { "quotaInfo": { "remainingFraction": fraction } } } })
-            )
+            assert!(parse_usage(&json!({ "models": { "m": {
+                "displayName": "M", "quotaInfo": { "remainingFraction": fraction }
+            } } }))
             .is_err());
         }
         for payload in [
@@ -410,18 +586,153 @@ mod tests {
             json!({"models": []}),
             json!({"models": {}}),
             json!({"models": {"available": {}}}),
-            json!({"models": {"missing": {"quotaInfo": {}}}}),
-            json!({"models": {"internal": {"isInternal": true, "quotaInfo": {"remainingFraction": 0.5}}}}),
+            json!({"models": {"missing": {"displayName": "M", "quotaInfo": {}}}}),
+            json!({"models": {"internal": {"isInternal": true, "displayName": "I", "quotaInfo": {"remainingFraction": 0.5}}}}),
+            // Catalog aliases without a display name: tiered routers, tab models.
+            json!({"models": {"gemini-3.8-flash-tiered": {"quotaInfo": {"remainingFraction": 1, "resetTime": "2026-09-06T12:00:00Z"}}}}),
+            json!({"models": {"tab_flash_lite_preview": {"displayName": " ", "quotaInfo": {"remainingFraction": 1}}}}),
         ] {
             assert!(parse_usage(&payload).is_err());
         }
     }
 
     #[test]
+    fn reads_the_grouped_summary_as_four_windows() {
+        // Shape observed on 2026-09-05 for a Google AI Pro account.
+        let reading = parse_summary(&json!({
+            "groups": [
+                {
+                    "displayName": "Gemini Models",
+                    "description": "Models within this group: Gemini Flash, Gemini Pro",
+                    "buckets": [
+                        { "bucketId": "gemini-weekly", "displayName": "Weekly Limit Remaining",
+                          "window": "weekly", "resetTime": "2026-09-12T14:14:14Z", "remainingFraction": 1 },
+                        { "bucketId": "gemini-5h", "displayName": "Five Hour Limit Remaining",
+                          "window": "5h", "resetTime": "2026-09-05T19:14:14Z", "remainingFraction": 0.4 }
+                    ]
+                },
+                {
+                    "displayName": "Claude and GPT models",
+                    "buckets": [
+                        { "bucketId": "3p-weekly", "window": "weekly",
+                          "resetTime": "2026-09-12T14:14:14Z", "remainingFraction": 0.75 },
+                        { "bucketId": "3p-5h", "window": "5h",
+                          "resetTime": "2026-09-05T19:14:14Z", "remainingFraction": 1 }
+                    ]
+                }
+            ],
+            "description": "Within each group, models share a weekly limit and a 5-hour limit."
+        }))
+        .unwrap();
+        assert_eq!(reading.source, "Antigravity API (Unofficial)");
+        let rows: Vec<(&str, &str, f64, Option<&str>)> = reading
+            .windows
+            .iter()
+            .map(|w| {
+                (
+                    w.key.as_str(),
+                    w.label.as_str(),
+                    w.used_percent,
+                    w.resets_at.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            rows,
+            vec![
+                (
+                    "gemini-5h",
+                    "Gemini (5h)",
+                    60.0,
+                    Some("2026-09-05T19:14:14Z")
+                ),
+                (
+                    "gemini-weekly",
+                    "Gemini (Weekly)",
+                    0.0,
+                    Some("2026-09-12T14:14:14Z")
+                ),
+                ("3p-5h", "Other (5h)", 0.0, Some("2026-09-05T19:14:14Z")),
+                (
+                    "3p-weekly",
+                    "Other (Weekly)",
+                    25.0,
+                    Some("2026-09-12T14:14:14Z")
+                ),
+            ]
+        );
+        assert!(reading
+            .windows
+            .iter()
+            .all(|w| w.amount.is_none() && !w.unlimited && !w.paid));
+    }
+
+    #[test]
+    fn summary_skips_disabled_and_unknown_buckets_and_needs_one_window() {
+        let reading = parse_summary(&json!({ "groups": [ { "displayName": "Custom", "buckets": [
+            { "bucketId": "custom-5h", "remainingFraction": 0.5, "disabled": true },
+            { "bucketId": "custom-weekly", "remainingFraction": "NaN" },
+            { "bucketId": "", "remainingFraction": 0.5 },
+            { "remainingFraction": 0.5 },
+            { "bucketId": "custom-daily", "displayName": "Daily Limit Remaining",
+              "window": "daily", "remainingFraction": 0.9, "resetTime": "soon" },
+            { "bucketId": "custom-5h-b", "window": "5h", "remainingFraction": 0.2 }
+        ] } ] }))
+        .unwrap();
+        let rows: Vec<(&str, &str)> = reading
+            .windows
+            .iter()
+            .map(|w| (w.key.as_str(), w.label.as_str()))
+            .collect();
+        assert_eq!(
+            rows,
+            vec![
+                ("custom-5h-b", "Custom (5h)"),
+                ("custom-daily", "Custom (Daily Limit Remaining)"),
+            ]
+        );
+        assert!(reading.windows[1].resets_at.is_none());
+        for payload in [
+            json!({}),
+            json!({"groups": []}),
+            json!({"groups": [{"displayName": "Gemini Models"}]}),
+            json!({"groups": [{"displayName": "Gemini Models", "buckets": []}]}),
+            json!({"groups": [{"buckets": [{"bucketId": "gemini-5h", "remainingFraction": 1.5}]}]}),
+        ] {
+            assert!(parse_summary(&payload).is_err());
+        }
+    }
+
+    #[test]
+    fn names_pools_from_bucket_ids_before_group_text() {
+        // The bucket id wins over a renamed group; unknown ids use the group.
+        assert_eq!(pool_label("gemini-5h", Some("Google Models")), "Gemini");
+        assert_eq!(
+            pool_label("3p-weekly", Some("Claude and GPT models")),
+            "Other"
+        );
+        assert_eq!(pool_label("3p-weekly", None), "Other");
+        assert_eq!(pool_label("imagen-5h", Some("Imagen models")), "Imagen");
+        assert_eq!(pool_label("x-5h", None), "Other");
+        assert_eq!(group_label("Gemini Models").as_deref(), Some("Gemini"));
+        assert_eq!(
+            group_label("Claude and GPT models").as_deref(),
+            Some("Claude & GPT")
+        );
+        assert_eq!(group_label("Imagen").as_deref(), Some("Imagen"));
+        assert!(group_label(" models").is_none());
+        let reading = parse_summary(&json!({ "groups": [ { "buckets": [
+            { "bucketId": "3p-weekly", "remainingFraction": 1 }
+        ] } ] }))
+        .unwrap();
+        assert_eq!(reading.windows[0].label, "Other (Weekly)");
+    }
+
+    #[test]
     fn skips_unknown_rows_and_invalid_reset_times() {
         let reading = parse_usage(&json!({ "models": {
-            "known": { "quotaInfo": { "remainingFraction": 0.2, "resetTime": "tomorrow" } },
-            "unknown": { "quotaInfo": { "resetTime": "2026-09-06T12:00:00Z" } }
+            "known": { "displayName": "Known", "quotaInfo": { "remainingFraction": 0.2, "resetTime": "tomorrow" } },
+            "unknown": { "displayName": "Unknown", "quotaInfo": { "resetTime": "2026-09-06T12:00:00Z" } }
         }}))
         .unwrap();
         assert_eq!(reading.windows.len(), 1);
@@ -484,20 +795,20 @@ mod tests {
     }
 
     #[test]
-    fn reads_project_shapes_and_prefers_paid_plan() {
+    fn falls_back_to_the_catalog_only_when_it_can_help() {
+        let error = |status| ApiError {
+            status,
+            message: String::new(),
+        };
+        assert!(try_catalog(&error(Some(403))));
+        assert!(try_catalog(&error(Some(404))));
+        assert!(try_catalog(&error(Some(500))));
+        assert!(try_catalog(&error(None)));
+        assert!(!try_catalog(&error(Some(401))));
+        assert!(!try_catalog(&error(Some(429))));
         assert_eq!(
-            project_id(&json!({"cloudaicompanionProject": " project "})).as_deref(),
-            Some("project")
-        );
-        assert_eq!(
-            project_id(&json!({"cloudaicompanionProject": {"id": "project"}})).as_deref(),
-            Some("project")
-        );
-        assert!(project_id(&json!({"cloudaicompanionProject": {}})).is_none());
-        assert_eq!(
-            plan_name(&json!({"paidTier": {"name": "AI Ultra"}, "currentTier": {"name": "Free"}}))
-                .as_deref(),
-            Some("AI Ultra")
+            user_agent(),
+            format!("antigravity/ide/{CLIENT_VERSION} darwin/arm64")
         );
     }
 

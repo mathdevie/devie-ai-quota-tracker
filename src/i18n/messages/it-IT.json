@@ -112,7 +112,8 @@
     "EnableAccount": "Attiva {{name}}",
     "DisableAccount": "Disattiva {{name}}",
     "BackToSettings": "Torna alle impostazioni",
-    "Beta": "Beta"
+    "UnofficialTitle": "Non ufficiale",
+    "UnofficialWarning": "Antigravity non supporta né documenta ufficialmente un'API per le quote. Questa integrazione riproduce il modo in cui l'IDE Antigravity recupera le informazioni sulle quote. Google può limitare o modificare questo comportamento senza preavviso. Usala a tuo rischio."
   },
   "Login": {
     "Title": "Aggiungi un account {{name}}",

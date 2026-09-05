@@ -112,7 +112,8 @@
     "EnableAccount": "启用 {{name}}",
     "DisableAccount": "停用 {{name}}",
     "BackToSettings": "返回设置",
-    "Beta": "测试版"
+    "UnofficialTitle": "非官方",
+    "UnofficialWarning": "Antigravity 并未正式支持或记录配额 API。此集成复现了 Antigravity IDE 获取配额信息的方式。Google 可能会在不另行通知的情况下限制或更改此行为。使用风险自负。"
   },
   "Login": {
     "Title": "添加 {{name}} 账号",

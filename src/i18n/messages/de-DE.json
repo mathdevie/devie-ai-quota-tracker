@@ -112,7 +112,8 @@
     "EnableAccount": "{{name}} aktivieren",
     "DisableAccount": "{{name}} deaktivieren",
     "BackToSettings": "Zurück zu den Einstellungen",
-    "Beta": "Beta"
+    "UnofficialTitle": "Inoffiziell",
+    "UnofficialWarning": "Antigravity unterstützt und dokumentiert offiziell keine Kontingent-API. Diese Integration reproduziert, wie die Antigravity-IDE die Kontingentdaten abruft. Google kann dieses Verhalten ohne Ankündigung einschränken oder ändern. Nutzung auf eigenes Risiko."
   },
   "Login": {
     "Title": "{{name}}-Konto hinzufügen",

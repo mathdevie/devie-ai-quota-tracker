@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, TriangleAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Badge from "@/components/Badge";
 import type {
@@ -6,8 +6,9 @@ import type {
   Provider,
   ProviderConnection,
 } from "@/lib/contracts";
-import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
+import { accountLabel, isUnofficial, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
+import Callout from "@/ui/Callout";
 import Switch from "@/ui/Switch";
 import { type ConnectionActions, ConnectionMenu } from "../ConnectionCard";
 import ProviderIcon from "../ProviderIcon";
@@ -70,6 +71,16 @@ export default function ProviderDetailView({
         <ArrowLeft size={14} />
         {t("Providers.BackToSettings")}
       </Button>
+      {isUnofficial(provider) && (
+        <Callout.Root variant="warning">
+          <Callout.Icon>
+            <TriangleAlert size={16} />
+          </Callout.Icon>
+          <Callout.Content title={t("Providers.UnofficialTitle")}>
+            {t("Providers.UnofficialWarning")}
+          </Callout.Content>
+        </Callout.Root>
+      )}
       {connections.length > 0 && (
         <div className={styles.toolbar}>
           <Button

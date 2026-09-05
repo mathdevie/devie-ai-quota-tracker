@@ -112,7 +112,8 @@
     "EnableAccount": "Enable {{name}}",
     "DisableAccount": "Disable {{name}}",
     "BackToSettings": "Back to settings",
-    "Beta": "Beta"
+    "UnofficialTitle": "Unofficial",
+    "UnofficialWarning": "Antigravity does not officially support or document a quota API. This integration reproduces how the Antigravity IDE retrieves the quota information. Google may restrict or change this behavior without notice. Use it at your own risk."
   },
   "Login": {
     "Title": "Add an account for {{name}}",

@@ -112,7 +112,8 @@
     "EnableAccount": "{{name}} inschakelen",
     "DisableAccount": "{{name}} uitschakelen",
     "BackToSettings": "Terug naar de instellingen",
-    "Beta": "Beta"
+    "UnofficialTitle": "Onofficieel",
+    "UnofficialWarning": "Antigravity ondersteunt of documenteert officieel geen quota-API. Deze integratie reproduceert hoe de Antigravity-IDE de quotagegevens ophaalt. Google kan dit gedrag zonder kennisgeving beperken of wijzigen. Gebruik op eigen risico."
   },
   "Login": {
     "Title": "Een {{name}}-account toevoegen",

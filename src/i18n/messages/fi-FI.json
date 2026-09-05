@@ -112,7 +112,8 @@
     "EnableAccount": "Ota käyttöön {{name}}",
     "DisableAccount": "Poista käytöstä {{name}}",
     "BackToSettings": "Takaisin asetuksiin",
-    "Beta": "Beta"
+    "UnofficialTitle": "Epävirallinen",
+    "UnofficialWarning": "Antigravity ei tue eikä dokumentoi virallisesti kiintiörajapintaa. Tämä integraatio jäljittelee tapaa, jolla Antigravity-IDE hakee kiintiötiedot. Google voi rajoittaa tai muuttaa tätä toimintaa ilman ennakkoilmoitusta. Käytä omalla vastuullasi."
   },
   "Login": {
     "Title": "Lisää {{name}}-tili",

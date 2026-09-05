@@ -112,7 +112,8 @@
     "EnableAccount": "Activar {{name}}",
     "DisableAccount": "Desactivar {{name}}",
     "BackToSettings": "Volver a la configuración",
-    "Beta": "Beta"
+    "UnofficialTitle": "No oficial",
+    "UnofficialWarning": "Antigravity no admite ni documenta oficialmente una API de cuota. Esta integración reproduce la forma en que el IDE Antigravity obtiene la información de cuota. Google puede restringir o cambiar este comportamiento sin previo aviso. Úsala bajo tu propio riesgo."
   },
   "Login": {
     "Title": "Agregar una cuenta de {{name}}",

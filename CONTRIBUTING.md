@@ -84,16 +84,26 @@ before you open a pull request.
 | Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
 | Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
 | Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
-| Antigravity (Beta) | Antigravity OAuth client and a dynamic loopback callback; app-owned refresh tokens | `daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels` |
+| Antigravity (Unofficial) | OAuth client of the Antigravity IDE and a dynamic loopback callback; app-owned refresh tokens | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`, falling back to `fetchAvailableModels` |
 | GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
 | Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
 
-Antigravity reads per-model remaining fractions and reset times through Google's
-internal API. It does not require an installed CLI. Google may omit quotas or
-deny access, and the remote API does not guarantee separate weekly and five-hour
-limits. Missing or invalid fractions are unavailable, never treated as zero or
-full quota. No request counts are inferred from percentages. Validate the beta
-against a signed-in account before claiming complete subscription coverage.
+Antigravity is unofficial. It does not officially support or document a quota
+API: the integration reproduces how the closed-source Antigravity IDE reads
+the quota, with the IDE's OAuth client id, secret, and user agent. Google may
+restrict or change this behavior without notice, and 9router marks its own
+Antigravity provider with the same risk notice. The provider page shows the
+warning; keep it whenever you touch this flow.
+
+Antigravity reads the quota summary that the IDE's Model Quota panel shows:
+two groups (Gemini; Claude and GPT), each with a weekly and a five-hour limit.
+When the summary is unavailable the app falls back to the model catalog, whose
+per-model rows repeat the same pooled limits; catalog entries without a display
+name are internal aliases and are skipped. It does not require an installed
+CLI. Google may omit quotas or deny access. Missing or invalid fractions are
+unavailable, never treated as zero or full quota. No request counts are
+inferred from percentages. Validate the integration against a signed-in
+account before claiming complete subscription coverage.
 
 Claude usage reads share one cache: a read stays fresh for five minutes on
 the timer (a refresh button always fetches), one request per token runs at

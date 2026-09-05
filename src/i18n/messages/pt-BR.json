@@ -112,7 +112,8 @@
     "EnableAccount": "Ativar {{name}}",
     "DisableAccount": "Desativar {{name}}",
     "BackToSettings": "Voltar às configurações",
-    "Beta": "Beta"
+    "UnofficialTitle": "Não oficial",
+    "UnofficialWarning": "O Antigravity não oferece suporte oficial nem documenta uma API de cota. Esta integração reproduz a forma como o IDE Antigravity obtém as informações de cota. O Google pode restringir ou alterar esse comportamento sem aviso. Use por sua conta e risco."
   },
   "Login": {
     "Title": "Adicionar uma conta {{name}}",

@@ -414,7 +414,12 @@ impl Database {
         let rows = statement
             .query_map([], |row| {
                 let provider_text: String = row.get(1)?;
-                let provider = Provider::from_db(&provider_text).unwrap_or(Provider::Claude);
+                // A newer app version may have written a provider this build
+                // does not know. Skip the row instead of showing it as Claude.
+                // Builds before 0.13.0 still show such rows as Claude.
+                let Some(provider) = Provider::from_db(&provider_text) else {
+                    return Ok(None);
+                };
                 let user_id: Option<String> = row.get(9)?;
                 let display_name: Option<String> = row.get(10)?;
                 let plan: Option<String> = row.get(11)?;
@@ -428,7 +433,7 @@ impl Database {
                     None
                 };
 
-                Ok(ProviderConnection {
+                Ok(Some(ProviderConnection {
                     id: row.get(0)?,
                     provider,
                     label: row.get(2)?,
@@ -462,13 +467,15 @@ impl Database {
                         .get::<_, Option<String>>(23)?
                         .and_then(|json| serde_json::from_str(&json).ok())
                         .unwrap_or_default(),
-                })
+                }))
             })
             .map_err(|error| error.to_string())?;
 
         let mut connections = Vec::new();
         for row in rows {
-            let mut item = row.map_err(|error| error.to_string())?;
+            let Some(mut item) = row.map_err(|error| error.to_string())? else {
+                continue;
+            };
             item.windows = Self::latest_windows(&connection, &item.id)?;
             connections.push(item);
         }
@@ -774,6 +781,46 @@ impl Database {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn skips_connections_of_unknown_providers() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = Database::open(directory.path().join("test.sqlite3")).expect("database");
+        database
+            .upsert_connections(&[
+                NewConnection {
+                    id: "known".into(),
+                    provider: Provider::Claude,
+                    label: "Claude".into(),
+                    source_locator: "oauth/claude/1".into(),
+                    identity: None,
+                },
+                NewConnection {
+                    id: "future".into(),
+                    provider: Provider::Claude,
+                    label: "Future".into(),
+                    source_locator: "oauth/future/1".into(),
+                    identity: None,
+                },
+            ])
+            .expect("upsert");
+        database
+            .connection()
+            .expect("connection")
+            .execute(
+                "UPDATE provider_connections SET provider = 'future-provider' WHERE id = 'future'",
+                [],
+            )
+            .expect("update");
+        let ids: Vec<String> = database
+            .dashboard_state()
+            .expect("dashboard state")
+            .connections
+            .into_iter()
+            .map(|item| item.id)
+            .collect();
+        assert_eq!(ids, vec!["known".to_string()]);
+    }
 
     #[test]
     fn persists_separate_connections_and_history() {

@@ -112,7 +112,8 @@
     "EnableAccount": "Aktivér {{name}}",
     "DisableAccount": "Deaktivér {{name}}",
     "BackToSettings": "Tilbage til indstillinger",
-    "Beta": "Beta"
+    "UnofficialTitle": "Uofficiel",
+    "UnofficialWarning": "Antigravity understøtter eller dokumenterer ikke officielt en kvote-API. Denne integration genskaber, hvordan Antigravity-IDE'et henter kvoteoplysningerne. Google kan begrænse eller ændre denne adfærd uden varsel. Brug den på eget ansvar."
   },
   "Login": {
     "Title": "Tilføj en {{name}}-konto",
