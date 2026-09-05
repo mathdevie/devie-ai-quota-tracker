@@ -17,10 +17,7 @@ export function formatDate(value: string | Date, locale: string): string {
   return dayjs(value).locale(getDayjsLocale(locale)).format("LL");
 }
 
-/**
- * "45 minutes ago", "5 hours ago", or "yesterday", in the interface
- * language. Under an hour it counts minutes, under a day hours, then days.
- */
+/** "45 minutes ago", "5 hours ago", or "yesterday", in the interface language. */
 export function formatAgo(
   value: string | Date,
   locale: string,

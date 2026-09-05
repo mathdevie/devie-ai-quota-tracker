@@ -28,10 +28,7 @@ import ProviderIcon from "./ProviderIcon";
 import QuotaBars from "./QuotaBars";
 import ResetCredits from "./ResetCredits";
 
-/**
- * The text of the tooltip on a "Stale" badge. It mounts when the tooltip
- * opens, so the "ago" part counts from that moment.
- */
+/** Mounts when the tooltip opens, so "ago" counts from that moment. */
 function StaleTip({ updatedAt }: { updatedAt: string }) {
   const { t, i18n } = useTranslation();
   const [now] = useState(() => Date.now());
@@ -40,17 +37,17 @@ function StaleTip({ updatedAt }: { updatedAt: string }) {
   });
 }
 
-/**
- * The warning badge of an account with old bars. The last refresh failed,
- * and the tooltip says when the bars were last updated.
- */
+/** The "Stale" badge; its tooltip says when the bars were last updated. */
 export function StaleBadge({ connection }: { connection: ProviderConnection }) {
   const { t } = useTranslation();
-  const badge = <Badge variant="warning">{t("Connection.Status.Stale")}</Badge>;
-  if (!connection.lastUpdatedAt) return badge;
+  const label = t("Connection.Status.Stale");
+  if (!connection.lastUpdatedAt)
+    return <Badge variant="warning">{label}</Badge>;
   return (
     <IconTip label={<StaleTip updatedAt={connection.lastUpdatedAt} />}>
-      {badge}
+      <Badge tabIndex={0} variant="warning">
+        {label}
+      </Badge>
     </IconTip>
   );
 }
