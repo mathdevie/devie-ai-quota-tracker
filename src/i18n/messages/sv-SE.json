@@ -71,8 +71,7 @@
       "On": "Återställs {{date}}"
     },
     "ResetCredits": {
-      "Title": "Återställningskrediter",
-      "Description": "En kredit återställer alla kvotfönster för det här kontot på en gång.",
+      "Title": "Tillgängliga återställningar",
       "DefaultTitle": "Återställning av gräns",
       "Expires": "Går ut {{date}}",
       "NoExpiry": "Ingen utgång",

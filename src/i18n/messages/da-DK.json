@@ -71,8 +71,7 @@
       "On": "Nulstilles den {{date}}"
     },
     "ResetCredits": {
-      "Title": "Nulstillingskreditter",
-      "Description": "En kredit nulstiller alle kvotevinduer for denne konto på én gang.",
+      "Title": "Tilgængelige nulstillinger",
       "DefaultTitle": "Nulstilling af grænse",
       "Expires": "Udløber den {{date}}",
       "NoExpiry": "Ingen udløb",

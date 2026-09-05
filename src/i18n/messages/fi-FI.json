@@ -71,8 +71,7 @@
       "On": "Nollautuu {{date}}"
     },
     "ResetCredits": {
-      "Title": "Nollaushyvitykset",
-      "Description": "Nollaushyvitys nollaa kerralla kaikki tämän tilin kiintiöikkunat.",
+      "Title": "Käytettävissä olevat nollaukset",
       "DefaultTitle": "Rajan nollaus",
       "Expires": "Vanhenee {{date}}",
       "NoExpiry": "Ei vanhenemista",

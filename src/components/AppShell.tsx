@@ -205,6 +205,7 @@ function Shell() {
       <PopoverSurface
         onRefresh={() => void handleRefresh()}
         onStateChange={setState}
+        onUseReset={actions.onUseReset}
         refreshing={refreshing}
         state={state}
       />

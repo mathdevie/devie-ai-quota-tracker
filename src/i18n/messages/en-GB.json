@@ -71,8 +71,7 @@
       "On": "Resets on {{date}}"
     },
     "ResetCredits": {
-      "Title": "Reset credits",
-      "Description": "A reset credit resets every quota window of this account at once.",
+      "Title": "Available Resets",
       "DefaultTitle": "Rate limit reset",
       "Expires": "Expires on {{date}}",
       "NoExpiry": "No expiry",

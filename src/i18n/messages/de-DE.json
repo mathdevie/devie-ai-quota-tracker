@@ -71,8 +71,7 @@
       "On": "Zurücksetzung am {{date}}"
     },
     "ResetCredits": {
-      "Title": "Reset-Guthaben",
-      "Description": "Ein Reset-Guthaben setzt alle Kontingentfenster dieses Kontos auf einmal zurück.",
+      "Title": "Verfügbare Resets",
       "DefaultTitle": "Limit-Zurücksetzung",
       "Expires": "Läuft ab am {{date}}",
       "NoExpiry": "Kein Ablaufdatum",

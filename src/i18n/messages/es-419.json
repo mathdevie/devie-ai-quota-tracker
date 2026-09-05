@@ -71,8 +71,7 @@
       "On": "Se restablece el {{date}}"
     },
     "ResetCredits": {
-      "Title": "Créditos de restablecimiento",
-      "Description": "Un crédito restablece a la vez todas las ventanas de cuota de esta cuenta.",
+      "Title": "Reinicios disponibles",
       "DefaultTitle": "Restablecimiento de límite",
       "Expires": "Vence el {{date}}",
       "NoExpiry": "Sin vencimiento",

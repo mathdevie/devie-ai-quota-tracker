@@ -11,7 +11,7 @@ import styles from "./QuotaBars.module.scss";
 function ResetTime({ value }: { value?: string }) {
   const { t, i18n } = useTranslation();
   const text = untilText(t, value);
-  if (!value || !text) return <span className={styles.reset}>—</span>;
+  if (!value || !text) return <span aria-hidden className={styles.reset} />;
   return (
     <Tooltip.Root>
       <Tooltip.Trigger render={<span className={styles.reset} />}>
@@ -124,7 +124,6 @@ export default function QuotaBars({
         const pinLabel = pinned ? t("Quota.Pin.Shown") : t("Quota.Pin.Show");
         // Keep a short red fill when any limited allowance is fully spent.
         const empty = left === 0;
-        const reached = Boolean(window.paid) && empty;
         return (
           <div
             className={styles.window}
@@ -155,11 +154,7 @@ export default function QuotaBars({
                     ? ""
                     : `${left}%`}
                 </span>
-                {reached && !window.resetsAt ? (
-                  <span aria-hidden className={styles.reset} />
-                ) : (
-                  <ResetTime value={window.resetsAt} />
-                )}
+                <ResetTime value={window.resetsAt} />
                 {window.amount && <Amount amount={window.amount} />}
               </>
             )}

@@ -25,10 +25,13 @@ import IconTip from "./IconTip";
 import PopoverRow from "./PopoverRow";
 import styles from "./PopoverSurface.module.scss";
 import QuotaFilters from "./QuotaFilters";
+import ResetCredits from "./ResetCredits";
 
 /** The Tauri window caps the height at this value; the list scrolls past it. */
 const MAX_HEIGHT = 760;
 const MIN_HEIGHT = 120;
+/** Room for the reset list and its confirmation, which float over the list. */
+const OVERLAY_HEIGHT = 400;
 /** The top and bottom border of the rounded frame. */
 const FRAME = 2;
 
@@ -36,11 +39,13 @@ export default function PopoverSurface({
   state,
   refreshing,
   onRefresh,
+  onUseReset,
   onStateChange,
 }: {
   state: DashboardState;
   refreshing: boolean;
   onRefresh: () => void;
+  onUseReset: (id: string, creditId: string) => Promise<boolean>;
   onStateChange: (next: DashboardState) => void;
 }) {
   const { t } = useTranslation();
@@ -64,22 +69,24 @@ export default function PopoverSurface({
     };
   }, []);
 
-  // The window follows the content height.
+  // The window follows the content height, or grows for an open overlay.
   const headerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [overlay, setOverlay] = useState(false);
   useEffect(() => {
     const header = headerRef.current;
     const content = contentRef.current;
     if (!header || !content) return;
+    const floor = overlay ? OVERLAY_HEIGHT : MIN_HEIGHT;
     const fit = () => {
       const height = header.offsetHeight + content.offsetHeight + FRAME;
-      void resizePopover(Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, height)));
+      void resizePopover(Math.min(MAX_HEIGHT, Math.max(floor, height)));
     };
     const observer = new ResizeObserver(fit);
     observer.observe(content);
     fit();
     return () => observer.disconnect();
-  }, []);
+  }, [overlay]);
 
   const providerCount = new Set(
     state.connections
@@ -129,6 +136,14 @@ export default function PopoverSurface({
             </div>
           )}
           <div className={styles.headerActions}>
+            <ResetCredits
+              compact
+              connections={state.connections.filter(
+                (connection) => connection.enabled,
+              )}
+              onOverlayChange={setOverlay}
+              onUseReset={onUseReset}
+            />
             <IconTip label={t("Quota.RefreshQuotas")}>
               <Button
                 aria-label={t("Quota.RefreshQuotas")}
