@@ -5,6 +5,29 @@ All notable changes to Devie AI Quota Tracker are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-09-05
+
+### Added
+
+- Antigravity as an unofficial provider: Google sign-in and the grouped
+  quota of the IDE (Gemini and Other, each with a five-hour and a weekly
+  window). The provider page shows a warning, as Google documents no quota
+  API.
+- The "Stale" badge shows a tooltip with the time of the last update and
+  the reason.
+- The Codex row of the menu bar popover shows the available reset count.
+  The list and the confirmation open from there.
+
+### Changed
+
+- The reset popover is titled "Available Resets" and has no subtitle.
+  A missing reset date shows a blank cell.
+
+### Fixed
+
+- Accounts of a provider this build does not know are skipped instead of
+  shown as Claude.
+
 ## [0.12.1] - 2026-09-03
 
 ### Fixed
