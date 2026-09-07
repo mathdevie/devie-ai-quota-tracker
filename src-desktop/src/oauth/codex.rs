@@ -340,27 +340,36 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     })
 }
 
-/// Prepaid credits that cover usage past the plan. Codex reports only the
-/// balance left, so the window shows no percent.
+/// Credits that cover usage past the plan windows. A Team workspace caps
+/// them per member and per month (`spend_control.individual_limit`); the
+/// ChatGPT usage page shows that cap and no balance. Other plans report
+/// only the balance left, so the window shows no percent.
 fn add_credits(json: &Value, windows: &mut Vec<QuotaWindow>) {
+    if let Some(window) = monthly_credit_limit(json) {
+        windows.push(window);
+        return;
+    }
     let Some(credits) = json.get("credits").and_then(Value::as_object) else {
         return;
     };
-    if !credits
-        .get("has_credits")
-        .and_then(Value::as_bool)
-        .unwrap_or(false)
-    {
+    let flag = |key: &str| credits.get(key).and_then(Value::as_bool).unwrap_or(false);
+    if flag("unlimited") {
+        windows.push(QuotaWindow {
+            key: "credits".to_string(),
+            label: "Credits".to_string(),
+            used_percent: 0.0,
+            resets_at: None,
+            unlimited: true,
+            amount: None,
+            paid: true,
+        });
         return;
     }
-    let balance = credits
-        .get("balance")
-        .and_then(|value| value.as_f64().or_else(|| value.as_str()?.parse().ok()))
-        .unwrap_or(0.0);
-    let reached = credits
-        .get("overage_limit_reached")
-        .and_then(Value::as_bool)
-        .unwrap_or(false)
+    if !flag("has_credits") {
+        return;
+    }
+    let balance = number(credits.get("balance")).unwrap_or(0.0);
+    let reached = flag("overage_limit_reached")
         || json
             .get("spend_control")
             .and_then(|control| control.get("reached"))
@@ -379,11 +388,49 @@ fn add_credits(json: &Value, windows: &mut Vec<QuotaWindow>) {
         amount: Some(QuotaAmount {
             used: None,
             total: balance,
-            unit: Some("USD".to_string()),
+            unit: Some("credits".to_string()),
             overage: None,
         }),
         paid: true,
     });
+}
+
+/// "8,000 of 25,000 credits used, resets in 23d": the monthly credit cap of
+/// a Team workspace member. The field names follow the Codex CLI's
+/// `SpendControlLimitDetails`; the amounts are decimal strings.
+fn monthly_credit_limit(json: &Value) -> Option<QuotaWindow> {
+    let limit = json
+        .get("spend_control")?
+        .get("individual_limit")?
+        .as_object()?;
+    let total = number(limit.get("limit"))?;
+    let used = number(limit.get("used"))
+        .or_else(|| number(limit.get("remaining")).map(|left| total - left))
+        .unwrap_or(0.0)
+        .max(0.0);
+    let used_percent = number(limit.get("used_percent"))
+        .or_else(|| number(limit.get("remaining_percent")).map(|left| 100.0 - left))
+        .or_else(|| (total > 0.0).then(|| used / total * 100.0))
+        .unwrap_or(0.0);
+    let resets_at =
+        reset_time(limit.get("reset_at").filter(|value| !value.is_null())).or_else(|| {
+            number(limit.get("reset_after_seconds"))
+                .map(|seconds| (Utc::now() + Duration::seconds(seconds as i64)).to_rfc3339())
+        });
+    Some(QuotaWindow {
+        key: "monthly_credits".to_string(),
+        label: "Monthly credits".to_string(),
+        used_percent: used_percent.clamp(0.0, 100.0),
+        resets_at,
+        unlimited: false,
+        amount: Some(QuotaAmount {
+            used: Some(used),
+            total,
+            unit: Some("credits".to_string()),
+            overage: None,
+        }),
+        paid: true,
+    })
 }
 
 /// The marketing name of a ChatGPT `plan_type`. `prolite` is the cheaper Pro
@@ -489,6 +536,7 @@ mod tests {
         assert_eq!(credits.used_percent, 0.0);
         let amount = credits.amount.clone().expect("amount");
         assert_eq!((amount.used, amount.total), (None, 12.5));
+        assert_eq!(amount.unit.as_deref(), Some("credits"));
 
         let none: Value = serde_json::from_str(
             r#"{"rate_limit":{"primary_window":{"used_percent":24,"limit_window_seconds":18000,"reset_after_seconds":100}},"credits":{"has_credits":false,"balance":"0"}}"#,
@@ -499,6 +547,77 @@ mod tests {
             .windows
             .iter()
             .all(|w| w.key != "credits"));
+    }
+
+    #[test]
+    fn team_monthly_credit_limit_replaces_the_balance() {
+        // A Team member: the workspace caps credits per month. Field values
+        // mirror the Codex CLI test fixture for `spend_control`.
+        let json: Value = serde_json::from_str(
+            r#"{"plan_type":"team","rate_limit":{"primary_window":{"used_percent":0,"limit_window_seconds":18000,"reset_at":1788802743},
+                "secondary_window":{"used_percent":0,"limit_window_seconds":604800,"reset_at":1789389543}},
+            "credits":{"has_credits":true,"unlimited":false,"overage_limit_reached":false,"balance":"0"},
+            "spend_control":{"reached":false,"individual_limit":{"source":"workspace","limit":"25000","used":"8000",
+                "remaining":"17000","used_percent":32,"remaining_percent":68,"reset_after_seconds":3600,"reset_at":1790828400}}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_usage(&json).expect("reading");
+        assert!(reading.windows.iter().all(|w| w.key != "credits"));
+        let monthly = reading
+            .windows
+            .iter()
+            .find(|w| w.key == "monthly_credits")
+            .expect("monthly credits");
+        assert!(monthly.paid);
+        assert_eq!(monthly.label, "Monthly credits");
+        assert_eq!(monthly.used_percent, 32.0);
+        assert_eq!(
+            monthly.resets_at.as_deref(),
+            Some("2026-10-01T04:20:00+00:00")
+        );
+        let amount = monthly.amount.clone().expect("amount");
+        assert_eq!((amount.used, amount.total), (Some(8000.0), 25000.0));
+        assert_eq!(amount.unit.as_deref(), Some("credits"));
+        assert_eq!(
+            reading.identity.and_then(|value| value.plan).as_deref(),
+            Some("Team")
+        );
+    }
+
+    #[test]
+    fn monthly_credit_limit_falls_back_to_the_remaining_percent() {
+        let json: Value = serde_json::from_str(
+            r#"{"rate_limit":{"primary_window":{"used_percent":5,"limit_window_seconds":18000,"reset_after_seconds":100}},
+            "spend_control":{"reached":true,"individual_limit":{"limit":"2000","remaining":"0","remaining_percent":0,"reset_after_seconds":60}}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_usage(&json).expect("reading");
+        let monthly = reading
+            .windows
+            .iter()
+            .find(|w| w.key == "monthly_credits")
+            .expect("monthly credits");
+        assert_eq!(monthly.used_percent, 100.0);
+        assert!(monthly.resets_at.is_some());
+        let amount = monthly.amount.clone().expect("amount");
+        assert_eq!((amount.used, amount.total), (Some(2000.0), 2000.0));
+    }
+
+    #[test]
+    fn unlimited_credits_show_as_unlimited() {
+        let json: Value = serde_json::from_str(
+            r#"{"rate_limit":{"primary_window":{"used_percent":5,"limit_window_seconds":18000,"reset_after_seconds":100}},
+            "credits":{"has_credits":true,"unlimited":true,"balance":null}}"#,
+        )
+        .expect("fixture");
+        let reading = parse_usage(&json).expect("reading");
+        let credits = reading
+            .windows
+            .iter()
+            .find(|w| w.key == "credits")
+            .expect("credits");
+        assert!(credits.unlimited && credits.paid);
+        assert!(credits.amount.is_none());
     }
 
     #[tokio::test]
