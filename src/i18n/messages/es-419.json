@@ -89,6 +89,8 @@
       "Show": "Fijar a la barra de menús"
     },
     "Unlimited": "Ilimitado",
+    "Available": "Disponible",
+    "LimitReached": "Límite alcanzado",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} extra",
     "Balance": "{{balance}} restantes",

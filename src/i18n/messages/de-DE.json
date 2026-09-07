@@ -89,6 +89,8 @@
       "Show": "An Menüleiste anheften"
     },
     "Unlimited": "Unbegrenzt",
+    "Available": "Verfügbar",
+    "LimitReached": "Limit erreicht",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} darüber",
     "Balance": "{{balance}} übrig",

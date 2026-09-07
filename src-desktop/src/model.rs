@@ -86,6 +86,14 @@ pub struct QuotaWindow {
     pub paid: bool,
 }
 
+impl QuotaWindow {
+    /// Credits with no visible balance report availability, not a percentage.
+    /// `used_percent` is 0 while available, or 100 for an explicit spend block.
+    pub fn is_credit_status(&self) -> bool {
+        self.key == "credits" && self.paid && !self.unlimited && self.amount.is_none()
+    }
+}
+
 /// "677 of 1,500 credits, plus 12 over the cap".
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]

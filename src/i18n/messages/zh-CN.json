@@ -89,6 +89,8 @@
       "Show": "固定到菜单栏"
     },
     "Unlimited": "无限制",
+    "Available": "可用",
+    "LimitReached": "已达到上限",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "超出 +{{overage}}",
     "Balance": "剩余 {{balance}}",

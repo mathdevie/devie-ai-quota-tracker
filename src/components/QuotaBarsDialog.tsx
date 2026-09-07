@@ -8,7 +8,7 @@ import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
 import OptionRow from "./OptionRow";
 import styles from "./OptionRow.module.scss";
-import { untilText } from "./QuotaBars";
+import { quotaStatusText, untilText } from "./QuotaBars";
 
 /** One switch per quota window: on shows the bar on the card, off hides it. */
 export default function QuotaBarsDialog({
@@ -37,7 +37,8 @@ export default function QuotaBarsDialog({
 
   /** "37% left · resets in 4h 13m", or "Unlimited" for an uncapped window. */
   const describe = (window: ProviderConnection["windows"][number]) => {
-    if (window.unlimited) return t("Quota.Unlimited");
+    const status = quotaStatusText(t, window);
+    if (status) return status;
     const left = Math.max(0, Math.round(100 - window.usedPercent));
     const reset = untilText(t, window.resetsAt);
     const parts = [t("Bars.Left", { percent: left })];

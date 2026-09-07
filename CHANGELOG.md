@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Codex credits are counted in credits, not US dollars. A Team account no
   longer shows a red "$0.00 left" credits row; its balance is not exposed
   per member.
+- Codex monthly credit limits load even when the API omits the five-hour
+  and weekly windows. A positive balance remains visible beside the limit.
+- Codex credits with a hidden balance show "Available" or "Limit reached"
+  from the reported spend state, instead of an invented zero balance.
+  Availability-only rows cannot be pinned as a percentage in the menu bar.
 
 ## [0.13.0] - 2026-09-05
 

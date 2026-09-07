@@ -89,6 +89,8 @@
       "Show": "Vastzetten in de menubalk"
     },
     "Unlimited": "Onbeperkt",
+    "Available": "Beschikbaar",
+    "LimitReached": "Limiet bereikt",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} extra",
     "Balance": "{{balance}} over",

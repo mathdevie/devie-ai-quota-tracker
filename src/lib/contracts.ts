@@ -14,7 +14,8 @@ export interface QuotaWindow {
   resetsAt?: string;
   /** True when the provider sets no cap. `usedPercent` is 0. */
   unlimited?: boolean;
-  /** The absolute count behind the percent, when the provider gives one. */
+  /** The absolute count when exposed. A paid `credits` window without an
+   * amount or unlimited flag reports availability: 0 = available, 100 = blocked. */
   amount?: QuotaAmount;
   /** A paid allowance past the plan: extra usage, credits. Never drives the menu bar. */
   paid?: boolean;

@@ -615,6 +615,7 @@ fn tray_window<'a>(
             .windows
             .iter()
             .filter(|window| !connection.hidden_windows.contains(&window.key))
+            .filter(|window| !window.is_credit_status())
             .find(|window| window.key == summary.window_key)?;
         Some((connection, window))
     });
@@ -1025,4 +1026,51 @@ pub fn run() {
                 let _ = show_main_window(app);
             }
         });
+}
+
+#[cfg(test)]
+mod quota_status_tests {
+    use super::*;
+
+    #[test]
+    fn hidden_credit_status_survives_storage_and_ignores_an_old_tray_pin() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let database = db::Database::open(directory.path().join("test.sqlite3")).expect("database");
+        database
+            .upsert_connections(&[model::NewConnection {
+                id: "codex-member".into(),
+                provider: model::Provider::Codex,
+                label: "Codex member".into(),
+                source_locator: "oauth/codex/member".into(),
+                identity: None,
+            }])
+            .expect("connection");
+        let reading = oauth::codex::parse_usage(&serde_json::json!({
+            "credits": {"has_credits": true, "unlimited": false, "balance": null},
+            "spend_control": {"reached": false, "individual_limit": null}
+        }))
+        .expect("available credits");
+        database
+            .save_reading("codex-member", &reading)
+            .expect("reading");
+        database
+            .set_tray_summary(Some(&model::TraySummary {
+                connection_id: "codex-member".into(),
+                window_key: "credits".into(),
+            }))
+            .expect("old pin");
+
+        let mut state = database.dashboard_state().expect("stored state");
+        let credits = &state.connections[0].windows[0];
+        assert!(credits.is_credit_status());
+        assert_eq!(credits.used_percent, 0.0);
+        assert!(tray_window(&state).is_none());
+
+        state.connections[0].windows.push(model::QuotaWindow {
+            key: "primary".into(),
+            used_percent: 25.0,
+            ..Default::default()
+        });
+        assert_eq!(tray_window(&state).unwrap().1.key, "primary");
+    }
 }

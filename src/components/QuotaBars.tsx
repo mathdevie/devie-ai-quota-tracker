@@ -3,6 +3,7 @@ import { Pin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { QuotaAmount, QuotaWindow } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/date";
+import { isCreditStatus } from "@/lib/labels";
 import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
 import styles from "./QuotaBars.module.scss";
@@ -93,6 +94,20 @@ function Amount({ amount }: { amount?: QuotaAmount }) {
 
 export type QuotaLevel = "ok" | "warning" | "danger";
 
+/** A known status without a measurable allowance must not show a percent. */
+export function quotaStatusText(
+  t: TFunction,
+  window: QuotaWindow,
+): string | undefined {
+  if (window.unlimited) return t("Quota.Unlimited");
+  if (isCreditStatus(window)) {
+    return window.usedPercent >= 100
+      ? t("Quota.LimitReached")
+      : t("Quota.Available");
+  }
+  return undefined;
+}
+
 /** Bars turn orange under 50% left and red under 25% left. */
 export function quotaLevel(leftPercent: number): QuotaLevel {
   if (leftPercent < 25) return "danger";
@@ -119,6 +134,7 @@ export default function QuotaBars({
       {windows.map((window) => {
         const left = Math.max(0, Math.round(100 - window.usedPercent));
         const pinned = window.key === pinnedKey;
+        const status = quotaStatusText(t, window);
         const pinLabel = pinned ? t("Quota.Pin.Shown") : t("Quota.Pin.Show");
         // Keep a short red fill when any limited allowance is fully spent.
         const empty = left === 0;
@@ -132,9 +148,9 @@ export default function QuotaBars({
             <span className={styles.label} title={window.label}>
               {window.label}
             </span>
-            {window.unlimited ? (
+            {status ? (
               <>
-                <span className={styles.unlimited}>{t("Quota.Unlimited")}</span>
+                <span className={styles.unlimited}>{status}</span>
                 <ResetTime value={window.resetsAt} />
               </>
             ) : (
@@ -156,7 +172,7 @@ export default function QuotaBars({
                 {window.amount && <Amount amount={window.amount} />}
               </>
             )}
-            {onPin && (
+            {onPin && !isCreditStatus(window) && (
               <IconTip label={pinLabel}>
                 <button
                   aria-label={pinLabel}

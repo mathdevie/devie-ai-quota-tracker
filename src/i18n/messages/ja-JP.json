@@ -89,6 +89,8 @@
       "Show": "メニューバーに固定"
     },
     "Unlimited": "無制限",
+    "Available": "利用可能",
+    "LimitReached": "上限に達しました",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} 超過",
     "Balance": "残り {{balance}}",

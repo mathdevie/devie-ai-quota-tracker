@@ -101,6 +101,23 @@ the timer (a refresh button always fetches), one request per token runs at
 a time, a `429` pauses the endpoint for three minutes, and a failed read
 shows the last good data as "Stale".
 
+Codex usage can contain rolling windows, a monthly limit at
+`spend_control.individual_limit`, or credits without rolling windows.
+Parse all available values before rejecting an empty reading. Monthly
+limits and positive credit balances are independent and remain visible
+together. Unlimited credits remain explicit.
+
+When `has_credits` is true, a zero, missing, or invalid balance can mean
+the workspace hides it. Such credits show "Available" unless a spend flag
+explicitly reports a block, in which case they show "Limit reached". The
+monthly row replaces a redundant "Available" status when its limit exists.
+Availability-only rows carry no amount or unlimited flag, cannot be pinned
+as a menu bar percentage, and use `used_percent` 0/100 only for their
+available/blocked state. The quota bars dialog displays the same status.
+Constructed regression fixtures and their upstream sources live in
+`src-desktop/src/oauth/fixtures/`. A captured Team response remains necessary
+to verify which optional fields that account receives.
+
 ## Security
 
 Report vulnerabilities in private: use **Security → Report a

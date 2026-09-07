@@ -89,6 +89,8 @@
       "Show": "Kiinnitä valikkoriville"
     },
     "Unlimited": "Rajaton",
+    "Available": "Saatavilla",
+    "LimitReached": "Raja saavutettu",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} yli",
     "Balance": "{{balance}} jäljellä",

@@ -89,6 +89,8 @@
       "Show": "Fäst i menyraden"
     },
     "Unlimited": "Obegränsat",
+    "Available": "Tillgängligt",
+    "LimitReached": "Gränsen nådd",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} över",
     "Balance": "{{balance}} kvar",

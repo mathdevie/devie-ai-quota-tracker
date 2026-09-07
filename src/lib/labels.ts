@@ -42,6 +42,16 @@ export function visibleWindows(connection: ProviderConnection): QuotaWindow[] {
   return connection.windows.filter((window) => !hidden.includes(window.key));
 }
 
+/** Mirrors QuotaWindow::is_credit_status in the native model. */
+export function isCreditStatus(window: QuotaWindow): boolean {
+  return (
+    window.key === "credits" &&
+    !!window.paid &&
+    !window.unlimited &&
+    !window.amount
+  );
+}
+
 /** "Claude Code work@example.com" for menus and accessible names. */
 export function fullName(connection: ProviderConnection): string {
   return `${PROVIDER_NAMES[connection.provider]} ${accountLabel(connection)}`;

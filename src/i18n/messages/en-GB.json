@@ -89,6 +89,8 @@
       "Show": "Pin to menu bar"
     },
     "Unlimited": "Unlimited",
+    "Available": "Available",
+    "LimitReached": "Limit reached",
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} over",
     "Balance": "{{balance}} left",
