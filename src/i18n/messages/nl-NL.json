@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Gereed",
       "Stale": "Verouderd",
-      "Login": "Inloggen",
       "SignInNeeded": "Inloggen vereist",
       "Error": "Fout"
     },
@@ -45,6 +44,9 @@
       "Off": "Uit"
     },
     "MoreActions": "Meer acties",
+    "SignIn": "Inloggen",
+    "SignInTo": "Inloggen bij {{name}}",
+    "SignInNeededTip": "De opgeslagen login van dit account werkt niet meer. Log opnieuw in met hetzelfde account om het te blijven volgen.",
     "AllBarsHidden": "Alle quotabalken zijn verborgen.",
     "StaleTip": "Laatst bijgewerkt {{ago}}. De laatste update is mislukt: de provider heeft mogelijk een tijdelijk probleem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Een {{name}}-account toevoegen",
+    "RenewTitle": "Opnieuw inloggen bij {{name}}",
+    "RenewHint": "Gebruik het account {{account}}. Een ander account wordt als nieuw account toegevoegd.",
+    "RenewMismatch": "Je bent ingelogd met een ander account. {{account}} moet nog steeds inloggen.",
     "OpeningBrowser": "Browser wordt geopend…",
     "WaitingFor": "Wachten op {{name}}…",
     "OpenPageAgain": "Pagina opnieuw openen",

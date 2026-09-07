@@ -117,8 +117,7 @@ function UpdateRow() {
     installUpdate,
   } = useAppUpdater();
 
-  // A check is quick: the row does not change while it runs. A toast tells
-  // the result when there is nothing to install.
+  // A check is quick; a toast reports when there is nothing to install.
   async function check() {
     const result = await checkForUpdates();
     if (result === "up-to-date") {
@@ -184,8 +183,7 @@ function UpdateRow() {
   );
 }
 
-// The OS keeps the login item state, so the row loads and saves it itself
-// instead of going through the dashboard state.
+// The OS owns the login item state, so the row reads and writes it directly.
 function LaunchAtLoginRow() {
   const { t } = useTranslation();
   const [enabled, setEnabled] = useState<boolean | null>(null);

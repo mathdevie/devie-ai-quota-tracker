@@ -1,6 +1,5 @@
-//! Provider logos for the menu bar item. The same PNG files as the web UI
-//! (`public/providers`), decoded once and given rounded corners like a macOS
-//! app icon. The tray shows them in color, not as template images.
+//! Provider logos for the menu bar: the web UI PNGs (`public/providers`),
+//! decoded once with rounded corners, shown in color.
 
 use std::{collections::HashMap, sync::OnceLock};
 

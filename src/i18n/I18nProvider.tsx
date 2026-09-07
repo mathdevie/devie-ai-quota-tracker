@@ -25,7 +25,6 @@ export default function I18nProvider({ children }: I18nProviderProps) {
   const [i18n, setI18n] = useState<I18nInstance | null>(null);
 
   useEffect(() => {
-    // Only import and initialize i18n on the client side
     import("@/i18n/i18n").then((module) => {
       setI18n(module.default);
     });
@@ -43,8 +42,7 @@ export default function I18nProvider({ children }: I18nProviderProps) {
 
     const syncDocumentMetadata = () => syncMetaDescription(i18n);
 
-    // The main window and the menu bar popover share localStorage; a change
-    // in one window reaches the other through the storage event.
+    // Both windows share localStorage; the storage event carries a change across.
     const syncFromStorage = (event: StorageEvent) => {
       if (event.key !== LANGUAGE_STORAGE_KEY) return;
       if (
@@ -66,7 +64,6 @@ export default function I18nProvider({ children }: I18nProviderProps) {
     };
   }, [i18n]);
 
-  // Don't render children until i18n is initialized
   if (!i18n) {
     return null;
   }

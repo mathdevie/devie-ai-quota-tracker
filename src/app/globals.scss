@@ -1,7 +1,6 @@
 @use "../ui/_devie.scss" as *;
 
-// The typography of a native macOS window. Not in the layer, so it wins
-// over every theme.
+// Native macOS typography. Outside the layer, so it wins over every theme.
 :root {
   --devie__font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
@@ -26,8 +25,7 @@
     margin: 0;
   }
 
-  // The same reset as devie-ui.com. The Devie UI components (toast, dialog,
-  // callout) set no margins on their headings and paragraphs and expect it.
+  // The devie-ui.com reset: its components expect no heading and paragraph margins.
   h1,
   h2,
   h3,

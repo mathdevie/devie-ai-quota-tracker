@@ -1,11 +1,7 @@
-//! Anonymous usage events and crash reports, sent to PostHog (EU).
-//!
-//! Every event is gated on the `telemetry_enabled` setting and carries a
-//! random id that is unrelated to any account or machine. Events never
-//! include account names, tokens, quota numbers, or user labels.
-//!
-//! The project key comes from `POSTHOG_API_KEY` at build time. A build
-//! without a key sends nothing, so local development stays silent.
+//! Anonymous usage events and crash reports for PostHog (EU), gated on
+//! `telemetry_enabled`, with a random id unrelated to any account or machine.
+//! No names, tokens, quota numbers, or labels. The key comes from
+//! `POSTHOG_API_KEY` at build time; without it nothing is sent.
 
 use std::time::Duration;
 
@@ -58,8 +54,7 @@ impl Telemetry {
         });
     }
 
-    /// Sends one event and waits for it, for the moments right before the
-    /// process ends (a panic). Bounded by the client timeout.
+    /// Sends one event and waits, for right before the process ends (a panic).
     pub fn capture_blocking(&self, event: &'static str, properties: Value) {
         let Some(payload) = self.payload(event, properties) else {
             return;

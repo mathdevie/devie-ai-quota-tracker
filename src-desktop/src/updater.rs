@@ -1,7 +1,5 @@
-//! In-app updates from CrabNebula Cloud on a stable or a nightly channel.
-//!
-//! The channel is a user setting, so the update endpoint is built here at
-//! runtime instead of in `tauri.conf.json`, whose endpoints are static.
+//! In-app updates from CrabNebula Cloud. The channel is a user setting, so
+//! the endpoint is built at runtime, not in `tauri.conf.json`.
 
 use std::sync::Mutex;
 
@@ -54,8 +52,7 @@ pub enum DownloadEvent {
     Finished,
 }
 
-/// The update endpoint for a channel. Stable is CrabNebula's unnamed
-/// default channel, so it carries no query parameter.
+/// The endpoint for a channel. Stable is CrabNebula's unnamed default: no query parameter.
 fn endpoint(channel: UpdateChannel) -> Result<Url, String> {
     let url = match channel {
         UpdateChannel::Stable => ENDPOINT.to_string(),

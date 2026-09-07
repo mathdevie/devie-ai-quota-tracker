@@ -1,9 +1,6 @@
-//! Claude subscription sign-in and quota reading.
-//!
-//! Uses the public Claude Code OAuth client. The authorization code flow with
-//! PKCE redirects to `http://localhost:54545/callback`, which is the port the
-//! Claude Code CLI listens on. The user can also paste the code shown on the
-//! Anthropic page if the browser cannot reach the app.
+//! Claude subscription sign-in and quota reading, with the public Claude Code
+//! OAuth client. PKCE callback on `localhost:54545`, the CLI port; the user can
+//! also paste the code from the Anthropic page.
 
 use std::{
     collections::HashMap,
@@ -47,8 +44,7 @@ struct UsageSlot {
     fresh_until: Option<Instant>,
     cooldown_until: Option<Instant>,
     identity: Option<RemoteIdentity>,
-    /// Held while one request is in flight so callers wait instead of
-    /// sending a second request for the same token.
+    /// Held while a request is in flight, so callers wait instead of sending another.
     in_flight: Arc<tokio::sync::Mutex<()>>,
 }
 
@@ -69,12 +65,10 @@ fn with_slot<T>(key: &str, action: impl FnOnce(&mut UsageSlot) -> T) -> T {
     action(cache.entry(key.to_string()).or_default())
 }
 
-/// Reads the quota through the shared cache, like 9router's `getClaudeUsage`:
-/// - a fresh read is served from memory unless `force` is set;
-/// - one request per token is in flight at a time, others wait for it;
-/// - after a 429 the endpoint rests, and the last good read is served;
-/// - a network or server error also falls back to the last good read;
-/// - an expired login is always reported, never masked by old data.
+/// Reads the quota through the shared cache, like 9router: a fresh read is
+/// served from memory unless `force`; one request per token at a time; after a
+/// 429 or a server error the last good read is served; an expired login is
+/// always reported.
 pub async fn cached_usage(
     client: &reqwest::Client,
     access_token: &str,
@@ -447,14 +441,9 @@ fn add_window(
     });
 }
 
-/// Per-model weekly windows from the newer `limits` array.
-///
-/// Anthropic moved the model-scoped quotas here: the old top-level
-/// `seven_day_<model>` fields now arrive as `null` while the same limit shows
-/// up as a `weekly_scoped` entry carrying its own display name. The array also
-/// repeats the session and plan-wide weekly windows, so only the scoped
-/// entries are read. A matching `seven_day_<model>` field still wins, because
-/// it is already in the list under the same key.
+/// Per-model weekly windows from the `limits` array, where Anthropic moved the
+/// model quotas (the old `seven_day_<model>` fields are now null). Only the
+/// `weekly_scoped` entries are read; a matching legacy field wins.
 fn add_scoped_limits(object: &serde_json::Map<String, Value>, windows: &mut Vec<QuotaWindow>) {
     let Some(limits) = object.get("limits").and_then(Value::as_array) else {
         return;
@@ -504,8 +493,7 @@ fn weekly_model_label(name: &str) -> String {
     }
 }
 
-/// "Claude Fable" -> "claude_fable", so a server label and the legacy
-/// `seven_day_<model>` field land on the same key.
+/// "Claude Fable" -> "claude_fable": a server label and the legacy field share a key.
 fn slug(value: &str) -> String {
     let mut slug = String::with_capacity(value.len());
     for character in value.chars() {
@@ -688,9 +676,7 @@ mod tests {
         assert_eq!(fable.used_percent, 36.0);
     }
 
-    /// The live shape since Anthropic moved model quotas into `limits`: every
-    /// `seven_day_<model>` field is null and Fable only appears as a scoped
-    /// weekly entry.
+    /// The live shape: `seven_day_<model>` is null, Fable is a scoped weekly entry.
     #[test]
     fn parses_the_scoped_fable_limit_from_the_limits_array() {
         let json: Value = serde_json::from_str(
@@ -754,9 +740,8 @@ mod tests {
         assert_eq!(reading.windows[0].key, "five_hour");
     }
 
-    /// A sanitized capture of a live response, taken 2026-08-28. It keeps the
-    /// unnamed buckets the server ships alongside the real ones, so a new
-    /// codename cannot turn into a stray window.
+    /// A sanitized live capture (2026-08-28) with the unnamed buckets the
+    /// server ships, so a new codename cannot become a stray window.
     #[test]
     fn reads_a_sanitized_live_response() {
         let json: Value = serde_json::from_str(

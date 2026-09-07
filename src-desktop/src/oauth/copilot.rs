@@ -1,7 +1,5 @@
-//! GitHub Copilot sign-in through the GitHub device code flow.
-//!
-//! Uses the public GitHub Copilot client id. Quota comes from the internal
-//! Copilot user endpoint with the GitHub OAuth token.
+//! GitHub Copilot sign-in (device code flow, public client id). Quota comes
+//! from the internal Copilot user endpoint with the GitHub OAuth token.
 
 use std::time::Duration as StdDuration;
 
@@ -221,8 +219,8 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
             .get("quota_reset_date_utc")
             .or_else(|| object.get("quota_reset_date")),
     );
-    // Since June 2026 the premium allowance is billed in AI Credits (one
-    // credit is one US cent). Annual subscribers may still count requests.
+    // Since June 2026 the allowance is in AI Credits (one credit is one US
+    // cent); annual plans may still count requests.
     let credits = object
         .get("token_based_billing")
         .and_then(Value::as_bool)

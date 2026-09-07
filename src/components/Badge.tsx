@@ -29,7 +29,7 @@ function Badge({
   as = "div",
   ...props
 }: Badge.Props) {
-  // Badge.Props types the rendered element with div attributes, whatever tag `as` is
+  // The props stay div attributes whatever tag `as` is
   const Component = as as React.ElementType<
     React.HTMLAttributes<HTMLDivElement>
   >;

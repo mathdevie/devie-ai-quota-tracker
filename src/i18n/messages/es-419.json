@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Listo",
       "Stale": "Desactualizado",
-      "Login": "Iniciar sesión",
       "SignInNeeded": "Inicio de sesión necesario",
       "Error": "Error"
     },
@@ -45,6 +44,9 @@
       "Off": "Desactivado"
     },
     "MoreActions": "Más acciones",
+    "SignIn": "Iniciar sesión",
+    "SignInTo": "Iniciar sesión en {{name}}",
+    "SignInNeededTip": "El inicio de sesión guardado de esta cuenta dejó de funcionar. Vuelve a iniciar sesión con la misma cuenta para seguir controlándola.",
     "AllBarsHidden": "Todas las barras de cuota están ocultas.",
     "StaleTip": "Última actualización {{ago}}. La última actualización falló: el proveedor puede tener un problema temporal."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Agregar una cuenta de {{name}}",
+    "RenewTitle": "Volver a iniciar sesión en {{name}}",
+    "RenewHint": "Usa la cuenta {{account}}. Otra cuenta se agrega como cuenta nueva.",
+    "RenewMismatch": "Iniciaste sesión con otra cuenta. {{account}} todavía necesita iniciar sesión.",
     "OpeningBrowser": "Abriendo el navegador…",
     "WaitingFor": "Esperando a {{name}}…",
     "OpenPageAgain": "Abrir la página de nuevo",

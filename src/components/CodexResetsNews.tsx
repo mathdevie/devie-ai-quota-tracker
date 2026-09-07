@@ -21,10 +21,7 @@ const CACHE_FOR = 10 * 60_000;
 const MAX_AGE = 3 * 86_400_000;
 /** The time of the last dismissed item. Everything up to it stays hidden. */
 const DISMISSED_KEY = "codexResetsNews.dismissedAt";
-/**
- * How often the banner re-checks the clock and the status. The cache serves
- * most ticks; a request goes out when it expires, and a failure is retried.
- */
+/** The tick interval. The cache serves most ticks; a request goes out when it expires. */
 const TICK = 60_000;
 
 const cache: {
@@ -48,11 +45,7 @@ function loadStatus(): Promise<CodexResetsStatus> {
   return cache.pending;
 }
 
-/**
- * Keeps an answer, aged by its fetch time. When codex-resets.com fails, the
- * core hands back its last good answer with the old time, so the next tick
- * asks again instead of waiting another ten minutes.
- */
+/** An answer aged by its fetch time: a failed fetch keeps the old time, so the next tick retries. */
 function storeStatus(value: CodexResetsStatus) {
   const fetchedAt = new Date(value.fetchedAt).getTime();
   cache.value = value;
@@ -72,11 +65,7 @@ interface NewsItem {
   sourceUrl?: string;
 }
 
-/**
- * The newest item: an active forecast, or a reset from the last three days.
- * Items are told apart by time, because the API gives the reset an id but
- * the forecast none.
- */
+/** The newest item: an active forecast, or a recent reset. Told apart by time: a forecast has no id. */
 export function latestNews(
   status: CodexResetsStatus,
   now = Date.now(),
@@ -125,11 +114,7 @@ function writeDismissedAt(at: string) {
   }
 }
 
-/**
- * A warning banner in the Codex card with the latest reset news from
- * codex-resets.com: one line of text, a link to the source, and a cross.
- * A dismissed item stays hidden, with everything older; a newer item shows.
- */
+/** The Codex card banner with the latest codex-resets.com news. A dismissal hides the item and everything older. */
 export default function CodexResetsNews({ className }: { className?: string }) {
   const { t, i18n } = useTranslation();
   const [status, setStatus] = useState<CodexResetsStatus>();
@@ -164,8 +149,7 @@ export default function CodexResetsNews({ className }: { className?: string }) {
   const item = status ? latestNews(status, now) : undefined;
   if (!item || new Date(item.at).getTime() <= dismissedAt) return null;
 
-  // The forecast window is English text from the site. It follows the
-  // translated sentence instead of being inlined.
+  // The forecast window is English text from the site, so it follows the sentence.
   const ago = formatAgo(item.at, i18n.language, now);
   const text =
     item.kind === "reset"

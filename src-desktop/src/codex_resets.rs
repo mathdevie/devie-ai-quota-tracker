@@ -1,10 +1,6 @@
-//! Community reset news for Codex, from codex-resets.com.
-//!
-//! The site tracks the reset announcements of OpenAI staff on X and publishes
-//! a read-only API: the latest reset, an AI-classified forecast ("watch"),
-//! and aggregate statistics. It is not affiliated with OpenAI. The app reads
-//! `/api/v1/status` only, caches it for a while, and never sends account data.
-//! Spec: https://codex-resets.com/api/openapi.json
+//! Community reset news for Codex, from codex-resets.com (not affiliated with
+//! OpenAI). The app reads `/api/v1/status` only, caches it, and sends no
+//! account data. Spec: https://codex-resets.com/api/openapi.json
 
 use std::{
     sync::Arc,
@@ -82,8 +78,7 @@ pub struct CodexResetsStatus {
 #[derive(Clone, Default)]
 pub struct Cache(Arc<tokio::sync::Mutex<Option<(Instant, CodexResetsStatus)>>>);
 
-/// Reads the status, from the cache when it is fresh. `force` skips the
-/// cache, which the user expects from a refresh button but not from a timer.
+/// Reads the status, from the cache when fresh. `force` skips the cache.
 pub async fn status(
     client: &reqwest::Client,
     cache: &Cache,
@@ -105,8 +100,7 @@ pub async fn status(
     }
 }
 
-/// The shared client follows redirects; this third-party endpoint gets a
-/// client that does not, so the answer always comes from codex-resets.com.
+/// A client without redirects, so the answer always comes from codex-resets.com.
 async fn fetch(client: &reqwest::Client) -> Result<CodexResetsStatus, String> {
     let strict = reqwest::Client::builder()
         .redirect(reqwest::redirect::Policy::none())

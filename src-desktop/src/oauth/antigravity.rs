@@ -1,9 +1,6 @@
-//! Unofficial Antigravity integration: browser OAuth and the quota summary
-//! of the IDE's Model Quota panel (two pools, each with a five-hour and a
-//! weekly window). The model catalog is the fallback.
-//!
-//! Antigravity has no documented quota API and no published OAuth client;
-//! these are internal Google endpoints, reproduced from the IDE and 9router.
+//! Unofficial Antigravity integration: browser OAuth and the IDE's Model
+//! Quota summary (two pools, five-hour and weekly), with the model catalog as
+//! fallback. Internal Google endpoints, reproduced from the IDE and 9router.
 
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};
@@ -15,9 +12,8 @@ use crate::{
     parse::{number, reset_time},
 };
 
-// The installed-application client of the closed-source IDE; its secret is
-// non-confidential by Google's rules. Not the Gemini CLI client: their
-// refresh tokens must never be interchanged.
+// The IDE's installed-application client (its secret is non-confidential).
+// Not the Gemini CLI client: refresh tokens must never be interchanged.
 const CLIENT_ID: &str = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com";
 const CLIENT_SECRET: &str = "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";
 const SCOPES: &str = "https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/cclog https://www.googleapis.com/auth/experimentsandconfigs";
@@ -72,8 +68,7 @@ pub async fn exchange(
     .await?;
     let mut credentials = credentials_from(&tokens, None)?;
     let (mut identity, account_key) = gemini::profile(client, &credentials.access_token).await?;
-    // Save the login even when the quota service is down; the first read
-    // shows the error.
+    // Save the login even when the quota service is down.
     if let Ok(info) = subscription(client, &credentials.access_token).await {
         credentials.project_id = gemini::project_id(info.get("cloudaicompanionProject"));
         identity.plan = gemini::plan_name(&info);

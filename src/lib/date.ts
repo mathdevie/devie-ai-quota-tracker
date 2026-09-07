@@ -4,10 +4,7 @@ import { getDayjsLocale } from "@/i18n/dayjs-locale";
 
 dayjs.extend(localizedFormat);
 
-/**
- * A full date with time in the interface language, for example
- * "September 4, 2026 4:00 PM" or "4 septembre 2026 16:00".
- */
+/** A full date with time, for example "September 4, 2026 4:00 PM". */
 export function formatDateTime(value: string | Date, locale: string): string {
   return dayjs(value).locale(getDayjsLocale(locale)).format("LLL");
 }

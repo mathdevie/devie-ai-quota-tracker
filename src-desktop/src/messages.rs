@@ -1,6 +1,5 @@
-//! Tray and notification strings, read from the same locale files as the
-//! interface (`src/i18n/messages/*.json`). The frontend owns the language
-//! choice and sends it through `set_language`.
+//! Tray and notification strings from the interface locale files
+//! (`src/i18n/messages`). The frontend picks the language via `set_language`.
 
 use std::{collections::HashMap, sync::OnceLock};
 

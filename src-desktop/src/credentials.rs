@@ -1,9 +1,5 @@
-//! Token storage for OAuth connections.
-//!
-//! Tokens live in one private JSON file per connection under the application
-//! data folder, with `0600` permissions. This mirrors what the provider CLIs
-//! do with their own credential files and avoids Keychain prompts on every
-//! rebuild of an unsigned development binary.
+//! Token storage: one private JSON file (`0600`) per connection under the app
+//! data folder, like the provider CLIs. No Keychain prompts on unsigned dev builds.
 
 use std::{
     fs,

@@ -10,7 +10,6 @@ import {
   type SupportedLocale,
 } from "./locales";
 
-// Import translation files
 import daDK from "./messages/da-DK.json";
 import deDE from "./messages/de-DE.json";
 import enGB from "./messages/en-GB.json";
@@ -83,13 +82,11 @@ i18n
       escapeValue: false, // react already safes from xss
     },
 
-    // React to language changes
     react: {
       useSuspense: false,
     },
   });
 
-// Save language changes to localStorage
 i18n.on("languageChanged", (lng) => {
   if (typeof window === "undefined") return;
   try {

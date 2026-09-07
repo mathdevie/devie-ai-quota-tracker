@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Pronto",
       "Stale": "Desatualizado",
-      "Login": "Login",
       "SignInNeeded": "Login necessário",
       "Error": "Erro"
     },
@@ -45,6 +44,9 @@
       "Off": "Desativado"
     },
     "MoreActions": "Mais ações",
+    "SignIn": "Entrar",
+    "SignInTo": "Entrar em {{name}}",
+    "SignInNeededTip": "O login salvo desta conta parou de funcionar. Entre novamente com a mesma conta para continuar acompanhando.",
     "AllBarsHidden": "Todas as barras de cota estão ocultas.",
     "StaleTip": "Última atualização {{ago}}. A última atualização falhou: o provedor pode estar com um problema temporário."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Adicionar uma conta {{name}}",
+    "RenewTitle": "Entrar novamente em {{name}}",
+    "RenewHint": "Use a conta {{account}}. Outra conta é adicionada como uma nova conta.",
+    "RenewMismatch": "Você entrou com outra conta. {{account}} ainda precisa de login.",
     "OpeningBrowser": "Abrindo o navegador…",
     "WaitingFor": "Aguardando {{name}}…",
     "OpenPageAgain": "Abrir a página novamente",

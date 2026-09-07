@@ -3,9 +3,14 @@
 import { Check, Copy, ExternalLink, LoaderCircle } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { DashboardState, LoginStart, Provider } from "@/lib/contracts";
+import type {
+  DashboardState,
+  LoginStart,
+  Provider,
+  ProviderConnection,
+} from "@/lib/contracts";
 import { cancelLogin, finishLogin, startLogin } from "@/lib/desktop";
-import { PROVIDER_NAMES } from "@/lib/labels";
+import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
 import Field from "@/ui/Field";
@@ -21,11 +26,14 @@ function errorMessage(reason: unknown): string {
 export default function LoginDialog({
   provider,
   open,
+  renew,
   onOpenChange,
   onConnected,
 }: {
   provider: Provider;
   open: boolean;
+  /** The account to renew: the title and a hint ask for the same account. */
+  renew?: ProviderConnection;
   onOpenChange: (open: boolean) => void;
   onConnected: (state: DashboardState) => void;
 }) {
@@ -36,8 +44,7 @@ export default function LoginDialog({
   const [code, setCode] = useState("");
   const [copied, setCopied] = useState(false);
   const sessionRef = useRef<string>(undefined);
-  // The parent passes new callbacks on every render. The effect must not
-  // restart the sign-in when that happens, so it reads them through refs.
+  // Refs, so new callbacks on each render do not restart the sign-in.
   const onConnectedRef = useRef(onConnected);
   const onOpenChangeRef = useRef(onOpenChange);
   useEffect(() => {
@@ -126,7 +133,9 @@ export default function LoginDialog({
             <Dialog.Title>
               <span className={styles.title}>
                 <ProviderIcon provider={provider} size={18} />
-                {t("Login.Title", { name })}
+                {renew
+                  ? t("Login.RenewTitle", { name })
+                  : t("Login.Title", { name })}
               </span>
             </Dialog.Title>
           </Dialog.Header>
@@ -141,6 +150,11 @@ export default function LoginDialog({
 
               {phase === "waiting" && start && (
                 <>
+                  {renew && (
+                    <p className={styles.hint}>
+                      {t("Login.RenewHint", { account: accountLabel(renew) })}
+                    </p>
+                  )}
                   <p className={styles.hint}>{t(`Login.Hint.${provider}`)}</p>
                   {start.userCode && (
                     <button

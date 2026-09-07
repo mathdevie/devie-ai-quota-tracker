@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Klar",
       "Stale": "Forældet",
-      "Login": "Log ind",
       "SignInNeeded": "Login påkrævet",
       "Error": "Fejl"
     },
@@ -45,6 +44,9 @@
       "Off": "Fra"
     },
     "MoreActions": "Flere handlinger",
+    "SignIn": "Log ind",
+    "SignInTo": "Log ind på {{name}}",
+    "SignInNeededTip": "Det gemte login til denne konto virker ikke længere. Log ind igen med den samme konto for at fortsætte med at følge den.",
     "AllBarsHidden": "Alle kvotebjælker er skjult.",
     "StaleTip": "Sidst opdateret {{ago}}. Den seneste opdatering mislykkedes: udbyderen har muligvis et midlertidigt problem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Tilføj en {{name}}-konto",
+    "RenewTitle": "Log ind igen på {{name}}",
+    "RenewHint": "Brug kontoen {{account}}. En anden konto tilføjes som en ny konto.",
+    "RenewMismatch": "Du loggede ind med en anden konto. {{account}} mangler stadig et login.",
     "OpeningBrowser": "Åbner browseren…",
     "WaitingFor": "Venter på {{name}}…",
     "OpenPageAgain": "Åbn siden igen",

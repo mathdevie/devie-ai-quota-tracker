@@ -143,8 +143,7 @@ pub struct ProviderConnection {
     pub reset_credits: Vec<ResetCredit>,
 }
 
-/// One Codex rate-limit reset credit. Spending one resets every quota window
-/// of the account at once.
+/// One Codex reset credit. Spending it resets every window of the account.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetCredit {

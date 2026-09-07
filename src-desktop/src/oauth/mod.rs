@@ -116,8 +116,7 @@ impl LoginSessions {
 
     pub fn insert(&self, id: String, login: PendingLogin) {
         let mut registry = self.lock();
-        // Only one sign-in at a time: a new one cancels the previous ones so
-        // the fixed callback ports become free again.
+        // One sign-in at a time: a new one cancels the rest and frees the fixed ports.
         registry.pending.clear();
         for stop in registry.waiting.drain().map(|(_, stop)| stop) {
             stop.store(true, Ordering::Relaxed);
@@ -272,8 +271,8 @@ pub async fn start(
     }
 }
 
-/// Finishes a sign-in. `manual_code` is a code the user pasted; otherwise
-/// the function waits for the browser redirect or the device approval.
+/// Finishes a sign-in with a pasted `manual_code`, else waits for the browser
+/// redirect or the device approval.
 pub async fn finish(
     client: &reqwest::Client,
     login: PendingLogin,
@@ -316,8 +315,7 @@ pub async fn finish(
                     let code = params
                         .code
                         .ok_or_else(|| "The provider returned no code.".to_string())?;
-                    // A browser callback must always echo the state; only a
-                    // manually pasted code may omit it.
+                    // A browser callback must echo the state; only a pasted code may omit it.
                     let state = params.state.ok_or_else(|| {
                         "The sign-in response does not match this session. Start again.".to_string()
                     })?;

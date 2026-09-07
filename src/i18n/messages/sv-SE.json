@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Klar",
       "Stale": "Inaktuell",
-      "Login": "Logga in",
       "SignInNeeded": "Inloggning krävs",
       "Error": "Fel"
     },
@@ -45,6 +44,9 @@
       "Off": "Av"
     },
     "MoreActions": "Fler åtgärder",
+    "SignIn": "Logga in",
+    "SignInTo": "Logga in på {{name}}",
+    "SignInNeededTip": "Den sparade inloggningen för det här kontot fungerar inte längre. Logga in igen med samma konto för att fortsätta följa det.",
     "AllBarsHidden": "Alla kvotstaplar är dolda.",
     "StaleTip": "Senast uppdaterad {{ago}}. Den senaste uppdateringen misslyckades: leverantören kan ha ett tillfälligt problem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Lägg till ett {{name}}-konto",
+    "RenewTitle": "Logga in igen på {{name}}",
+    "RenewHint": "Använd kontot {{account}}. Ett annat konto läggs till som ett nytt konto.",
+    "RenewMismatch": "Du loggade in med ett annat konto. {{account}} behöver fortfarande en inloggning.",
     "OpeningBrowser": "Öppnar webbläsaren…",
     "WaitingFor": "Väntar på {{name}}…",
     "OpenPageAgain": "Öppna sidan igen",

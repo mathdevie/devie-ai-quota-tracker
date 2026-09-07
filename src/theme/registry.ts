@@ -33,8 +33,7 @@ export const APPEARANCE_THEMES: ThemeOption[] = [
     nameKey: "system",
     className: SYSTEM_THEME,
     thumbnailSrc: SystemThumbnail,
-    // The system theme resolves to Light or Dark before the appearance is
-    // read, so this value never reaches the window chrome.
+    // Resolves to Light or Dark first, so this value never reaches the chrome.
     appearance: "light",
     displayName: {
       "en-US": "System",
