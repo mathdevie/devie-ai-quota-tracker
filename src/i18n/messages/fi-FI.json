@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Valmis",
       "Stale": "Vanhentunut",
-      "Login": "Kirjaudu",
       "SignInNeeded": "Kirjautuminen vaaditaan",
       "Error": "Virhe"
     },
@@ -45,6 +44,9 @@
       "Off": "Pois"
     },
     "MoreActions": "Lisää toimintoja",
+    "SignIn": "Kirjaudu",
+    "SignInTo": "Kirjaudu palveluun {{name}}",
+    "SignInNeededTip": "Tämän tilin tallennettu kirjautuminen ei enää toimi. Kirjaudu uudelleen samalla tilillä, jotta seuranta jatkuu.",
     "AllBarsHidden": "Kaikki kiintiöpalkit on piilotettu.",
     "StaleTip": "Päivitetty viimeksi {{ago}}. Viimeisin päivitys epäonnistui: palveluntarjoajalla voi olla tilapäinen ongelma."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Lisää {{name}}-tili",
+    "RenewTitle": "Kirjaudu uudelleen palveluun {{name}}",
+    "RenewHint": "Käytä tiliä {{account}}. Toinen tili lisätään uutena tilinä.",
+    "RenewMismatch": "Kirjauduit toisella tilillä. {{account}} tarvitsee edelleen kirjautumisen.",
     "OpeningBrowser": "Avataan selainta…",
     "WaitingFor": "Odotetaan: {{name}}…",
     "OpenPageAgain": "Avaa sivu uudelleen",

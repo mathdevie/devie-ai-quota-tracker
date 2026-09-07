@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Pronto",
       "Stale": "Non aggiornato",
-      "Login": "Accesso",
       "SignInNeeded": "Accesso richiesto",
       "Error": "Errore"
     },
@@ -45,6 +44,9 @@
       "Off": "Disattivo"
     },
     "MoreActions": "Altre azioni",
+    "SignIn": "Accedi",
+    "SignInTo": "Accedi a {{name}}",
+    "SignInNeededTip": "L'accesso salvato per questo account non funziona più. Accedi di nuovo con lo stesso account per continuare a monitorarlo.",
     "AllBarsHidden": "Tutte le barre di quota sono nascoste.",
     "StaleTip": "Ultimo aggiornamento {{ago}}. L’ultimo aggiornamento non è riuscito: il fornitore potrebbe avere un problema temporaneo."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Aggiungi un account {{name}}",
+    "RenewTitle": "Accedi di nuovo a {{name}}",
+    "RenewHint": "Usa l'account {{account}}. Un altro account viene aggiunto come nuovo account.",
+    "RenewMismatch": "Hai effettuato l'accesso con un altro account. {{account}} richiede ancora un accesso.",
     "OpeningBrowser": "Apertura del browser…",
     "WaitingFor": "In attesa di {{name}}…",
     "OpenPageAgain": "Apri di nuovo la pagina",

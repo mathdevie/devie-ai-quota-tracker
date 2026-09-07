@@ -1,7 +1,5 @@
-//! Codex (ChatGPT subscription) sign-in and quota reading.
-//!
-//! Uses the public Codex CLI OAuth client. The callback is fixed to
-//! `http://localhost:1455/auth/callback`, which is what OpenAI allows for it.
+//! Codex (ChatGPT subscription) sign-in and quota reading, with the public
+//! Codex CLI OAuth client and its fixed `localhost:1455/auth/callback`.
 
 use chrono::{Duration, Utc};
 use serde_json::Value;

@@ -1,8 +1,6 @@
 @use "../ui/_devie.scss" as *;
 
-// One grid for every row, so the columns line up across rows. The label
-// column has a fixed width; the bar column shrinks first; the reset time
-// takes its natural width and is never cut.
+// One grid for every row, so the columns align. The bar shrinks first; the reset time is never cut.
 .bars {
   display: grid;
   gap: $devie__spacing__x1;

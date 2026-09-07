@@ -20,10 +20,7 @@ export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
 }
 
-/**
- * True only for packaged builds (`tauri build`). `tauri dev` must not read
- * the production update feed or install over the development binary.
- */
+/** Packaged builds only: `tauri dev` must not read the update feed or install over itself. */
 export const IS_DESKTOP_BUILD =
   process.env.NEXT_PUBLIC_IS_DESKTOP_BUILD === "true";
 
@@ -306,10 +303,7 @@ export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
   return call("get_codex_resets_status");
 }
 
-/**
- * Calls `handler` with the reset news the core fetched after a manual
- * refresh, in every window. Returns a function that stops listening.
- */
+/** Listens for the reset news the core fetches on a manual refresh. Returns a stop function. */
 export function onCodexResetsStatus(
   handler: (status: CodexResetsStatus) => void,
 ): () => void {

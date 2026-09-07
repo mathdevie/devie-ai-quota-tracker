@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Prêt",
       "Stale": "Obsolète",
-      "Login": "Connexion",
       "SignInNeeded": "Connexion requise",
       "Error": "Erreur"
     },
@@ -45,6 +44,9 @@
       "Off": "Désactivé"
     },
     "MoreActions": "Plus d’actions",
+    "SignIn": "Se connecter",
+    "SignInTo": "Se connecter à {{name}}",
+    "SignInNeededTip": "La connexion enregistrée pour ce compte ne fonctionne plus. Reconnectez-vous avec le même compte pour continuer le suivi.",
     "AllBarsHidden": "Toutes les barres de quota sont masquées.",
     "StaleTip": "Dernière mise à jour {{ago}}. La dernière actualisation a échoué : le fournisseur a peut-être un problème temporaire."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Ajouter un compte {{name}}",
+    "RenewTitle": "Se reconnecter à {{name}}",
+    "RenewHint": "Utilisez le compte {{account}}. Un autre compte sera ajouté comme nouveau compte.",
+    "RenewMismatch": "Vous vous êtes connecté avec un autre compte. {{account}} a toujours besoin d'une connexion.",
     "OpeningBrowser": "Ouverture du navigateur…",
     "WaitingFor": "En attente de {{name}}…",
     "OpenPageAgain": "Rouvrir la page",

@@ -62,13 +62,9 @@ function message(reason: unknown): string {
 }
 
 /**
- * Checks at start and every 15 minutes, and downloads a found update in
- * the background. A ready update never installs by itself: the title bar
- * shows an "Update ready" badge, which restarts into the new version on
- * click.
- *
- * The checks run on the Rust side (`src-desktop/src/updater.rs`), which
- * builds the update endpoint from the release channel setting.
+ * Checks at start and every 15 minutes, and downloads in the background. An
+ * update installs only from the title bar badge. The Rust side (`updater.rs`)
+ * builds the endpoint from the channel setting.
  */
 export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<UpdateStatus>("idle");

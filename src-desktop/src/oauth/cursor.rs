@@ -1,14 +1,8 @@
-//! Cursor sign-in and quota reading.
-//!
-//! Cursor has no public OAuth client. The desktop app signs in with a PKCE
-//! deep link: it opens `cursor.com/loginDeepControl` and polls
-//! `api2.cursor.sh/auth/poll` until the user confirms in the browser. No
-//! callback port is needed. Third-party tools (pi-cursor, several write-ups)
-//! use the same flow. It is undocumented and can change.
-//!
-//! Quota comes from the dashboard endpoints on `cursor.com`, with the access
-//! token sent as the `WorkosCursorSessionToken` cookie, which is what
-//! CodexBar and cursor-stats do.
+//! Cursor sign-in and quota reading. No public OAuth client: the desktop
+//! app's PKCE deep link (`cursor.com/loginDeepControl`, polled on
+//! `api2.cursor.sh/auth/poll`) is reproduced, undocumented as it is. Quota
+//! comes from the `cursor.com` dashboard endpoints with the token as the
+//! `WorkosCursorSessionToken` cookie, like CodexBar and cursor-stats.
 
 use std::time::Duration as StdDuration;
 
@@ -217,16 +211,10 @@ pub async fn usage(
     Ok(reading)
 }
 
-/// Turns `/api/usage-summary` into quota windows.
-///
-/// - `individualUsage.plan`: the included plan usage. Current dashboards
-///   split it into two pools, `autoPercentUsed` ("Cursor Models": Composer
-///   and Cursor Grok) and `apiPercentUsed` ("Other Models"). Older shapes
-///   give one `totalPercentUsed` or cents. Both reset at `billingCycleEnd`.
-/// - `individualUsage.onDemand`: usage-based spending in cents. Capped: a
-///   paid window with the amount. Uncapped: an unlimited "On-demand" row.
-/// - `individualUsage.overall`: a personal cap for team and enterprise seats.
-/// - `teamUsage.pooled`: the pool shared by a team, when capped.
+/// Turns `/api/usage-summary` into quota windows: the included plan (two
+/// pools, "Cursor Models" and "Other Models", or one total on older shapes),
+/// on-demand spending in cents (paid when capped, unlimited otherwise), the
+/// personal cap of a team seat, and the capped team pool.
 pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
     let resets_at =
         reset_time(json.get("billingCycleEnd")).and_then(|value| normalize_time(&value));
@@ -312,9 +300,8 @@ fn add_plan_windows(plan: &Value, resets_at: &Option<String>, windows: &mut Vec<
     }
 }
 
-/// On-demand spending: a capped block is a paid window with the amount; an
-/// enabled block without a cap shows as unlimited, so the user sees that
-/// usage past the plan is billed.
+/// On-demand spending: capped is a paid window with the amount; uncapped shows
+/// as unlimited, so the user sees that usage past the plan is billed.
 fn add_on_demand(
     block: Option<&Value>,
     resets_at: &Option<String>,

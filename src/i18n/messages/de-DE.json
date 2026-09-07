@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Bereit",
       "Stale": "Veraltet",
-      "Login": "Anmelden",
       "SignInNeeded": "Anmeldung erforderlich",
       "Error": "Fehler"
     },
@@ -45,6 +44,9 @@
       "Off": "Aus"
     },
     "MoreActions": "Weitere Aktionen",
+    "SignIn": "Anmelden",
+    "SignInTo": "Bei {{name}} anmelden",
+    "SignInNeededTip": "Die gespeicherte Anmeldung für dieses Konto funktioniert nicht mehr. Melden Sie sich erneut mit demselben Konto an, um es weiter zu verfolgen.",
     "AllBarsHidden": "Alle Kontingentbalken sind ausgeblendet.",
     "StaleTip": "Zuletzt aktualisiert {{ago}}. Die letzte Aktualisierung ist fehlgeschlagen: Der Anbieter hat möglicherweise ein vorübergehendes Problem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "{{name}}-Konto hinzufügen",
+    "RenewTitle": "Erneut bei {{name}} anmelden",
+    "RenewHint": "Verwenden Sie das Konto {{account}}. Ein anderes Konto wird als neues Konto hinzugefügt.",
+    "RenewMismatch": "Sie haben sich mit einem anderen Konto angemeldet. {{account}} benötigt weiterhin eine Anmeldung.",
     "OpeningBrowser": "Browser wird geöffnet…",
     "WaitingFor": "Warten auf {{name}}…",
     "OpenPageAgain": "Seite erneut öffnen",

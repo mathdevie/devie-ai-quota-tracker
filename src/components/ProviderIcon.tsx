@@ -1,10 +1,7 @@
 import type { Provider } from "@/lib/contracts";
 import styles from "./ProviderIcon.module.scss";
 
-/**
- * Official app icons, 128×128 PNG, as bundled by 9router
- * (https://github.com/decolua/9router/tree/main/public/providers).
- */
+/** Official 128×128 PNG icons, as bundled by 9router (github.com/decolua/9router). */
 export type BrandId =
   | Provider
   | "antigravity"

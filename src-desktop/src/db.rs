@@ -241,8 +241,7 @@ impl Database {
         })
     }
 
-    /// Turning telemetry off also forgets the anonymous id, so a later
-    /// opt-in starts a new, unlinked identity.
+    /// Turning telemetry off also forgets the anonymous id: a later opt-in starts unlinked.
     pub fn set_telemetry_enabled(&self, enabled: bool) -> Result<(), String> {
         self.put_setting(TELEMETRY_ENABLED, Some(if enabled { "1" } else { "0" }))?;
         if !enabled {
@@ -251,8 +250,7 @@ impl Database {
         Ok(())
     }
 
-    /// The random id telemetry events carry. It is created on first use and
-    /// never derived from an account or the machine.
+    /// The random telemetry id, created on first use, unrelated to any account or machine.
     pub fn telemetry_id(&self) -> Result<String, String> {
         if let Some(id) = Self::setting(&self.connection()?, TELEMETRY_ID)? {
             return Ok(id);
@@ -262,8 +260,7 @@ impl Database {
         Ok(id)
     }
 
-    /// Records the running version and returns the one that ran before,
-    /// when it differs. `None` on a fresh install or an unchanged version.
+    /// Records the running version and returns the previous one when it differs.
     pub fn record_run_version(&self, version: &str) -> Result<Option<String>, String> {
         let previous = Self::setting(&self.connection()?, LAST_RUN_VERSION)?;
         if previous.as_deref() != Some(version) {
@@ -600,8 +597,7 @@ impl Database {
         Ok(())
     }
 
-    /// Turning auto-ping on forgets the last observed reset, so the first
-    /// ping waits for a reset that happens from now on.
+    /// Turning auto-ping on forgets the last observed reset, so the first ping waits for a new one.
     pub fn set_auto_ping_enabled(&self, id: &str, enabled: bool) -> Result<(), String> {
         let changed = self
             .connection()?

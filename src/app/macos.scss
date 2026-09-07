@@ -6,8 +6,7 @@
   --macos__radius__sidebar: 16px;
 }
 
-// The native macOS palette covers the Light and Dark appearances only. The
-// custom Devie themes derive the same surfaces in `theme/custom-themes.css`.
+// Light and Dark only; the custom themes derive theirs in `theme/custom-themes.css`.
 [data-devie-theme="theme-light"] {
   --devie__color__primary-label: #ffffff;
   --devie__color__success: #34c759;

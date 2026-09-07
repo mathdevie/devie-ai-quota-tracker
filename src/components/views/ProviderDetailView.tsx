@@ -13,12 +13,19 @@ import Switch from "@/ui/Switch";
 import {
   type ConnectionActions,
   ConnectionMenu,
+  SignInButton,
   StaleBadge,
 } from "../ConnectionCard";
 import ProviderIcon from "../ProviderIcon";
 import styles from "./views.module.scss";
 
-function ProviderStatus({ connection }: { connection: ProviderConnection }) {
+function ProviderStatus({
+  connection,
+  onSignIn,
+}: {
+  connection: ProviderConnection;
+  onSignIn?: (connection: ProviderConnection) => void;
+}) {
   const { t } = useTranslation();
   if (connection.status === "ready") {
     return <Badge variant="success">{t("Connection.Status.Ready")}</Badge>;
@@ -27,6 +34,9 @@ function ProviderStatus({ connection }: { connection: ProviderConnection }) {
     return <StaleBadge connection={connection} />;
   }
   if (connection.status === "needs_login") {
+    if (onSignIn) {
+      return <SignInButton connection={connection} onSignIn={onSignIn} />;
+    }
     return (
       <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>
     );
@@ -112,7 +122,10 @@ export default function ProviderDetailView({
               </div>
             </div>
             <div className={styles.rowActions}>
-              <ProviderStatus connection={connection} />
+              <ProviderStatus
+                connection={connection}
+                onSignIn={actions.onSignIn}
+              />
               <Switch.Root
                 aria-label={t(
                   connection.enabled

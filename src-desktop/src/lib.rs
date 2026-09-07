@@ -323,8 +323,7 @@ fn set_telemetry_enabled(
     publish_state(&app, &core)
 }
 
-/// Whether the app is registered to start when the user logs in. The OS is
-/// the source of truth, so the value is read fresh instead of being stored.
+/// Whether the app starts at login. Read from the OS each time: it owns the state.
 #[tauri::command]
 fn launch_at_login_enabled(app: AppHandle) -> Result<bool, String> {
     app.autolaunch()
@@ -431,8 +430,7 @@ async fn get_codex_resets_status(
 /// Event with the reset news after a forced refresh, for every window.
 const CODEX_RESETS_UPDATED: &str = "codex-resets:updated";
 
-/// Fetches the reset news again and tells every window. The fetch runs on
-/// its own so a slow codex-resets.com does not hold up the quota refresh.
+/// Fetches the reset news on its own task, so a slow site does not hold up the refresh.
 fn refresh_codex_resets(app: &AppHandle, core: &Core) {
     let app = app.clone();
     let core = core.clone();
@@ -446,8 +444,7 @@ fn refresh_codex_resets(app: &AppHandle, core: &Core) {
 /// The sites the reset news links to. Nothing else opens from the app.
 const EXTERNAL_HOSTS: &[&str] = &["codex-resets.com", "x.com", "twitter.com"];
 
-/// Opens a web link in the default browser: `https` only, no credentials,
-/// a known host, and a sane length.
+/// Opens a web link in the default browser: `https`, a known host, no credentials.
 #[tauri::command]
 fn open_external_url(url: String) -> Result<(), String> {
     let parsed = reqwest::Url::parse(&url).map_err(|_| "The link is not valid.".to_string())?;
@@ -479,8 +476,7 @@ fn hide_popover(app: AppHandle) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
-/// Refreshes every enabled connection. `force` skips the short quota cache,
-/// which the user expects from a refresh button but not from the timer.
+/// Refreshes every enabled connection. `force` (the refresh button) skips the quota cache.
 async fn refresh_all_internal(app: &AppHandle, force: bool) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
     let connections: Vec<_> = core
@@ -575,8 +571,7 @@ async fn auto_ping_tick(app: &AppHandle) {
     }
 }
 
-/// A coarse class for a refresh error. The message itself may name an
-/// account, so it never leaves the machine.
+/// A coarse class for a refresh error; the message may name an account and stays local.
 fn telemetry_error_kind(message: &str) -> &'static str {
     let lower = message.to_lowercase();
     if lower.contains("sign in") || lower.contains("login") || lower.contains("expired") {
@@ -603,9 +598,8 @@ fn publish_state(app: &AppHandle, core: &Core) -> Result<DashboardState, String>
     Ok(state)
 }
 
-/// The window the menu bar summarizes: the user's pick when it still exists,
-/// is enabled and is not hidden, else the enabled, visible window with the
-/// least quota left.
+/// The window the menu bar shows: the user's pick while it is valid, else the
+/// enabled, visible window with the least quota left.
 fn tray_window<'a>(
     state: &'a DashboardState,
 ) -> Option<(&'a model::ProviderConnection, &'a model::QuotaWindow)> {
@@ -659,8 +653,7 @@ fn show_main_window(app: &AppHandle) -> Result<(), String> {
     let window = app
         .get_webview_window("main")
         .ok_or_else(|| "The main window does not exist.".to_string())?;
-    // The app is a regular app while the main window is open, and a menu
-    // bar app once the window is closed. The Dock icon follows the window.
+    // A regular app while the main window is open, a menu bar app once closed.
     #[cfg(target_os = "macos")]
     let _ = app.set_dock_visibility(true);
     window.show().map_err(|error| error.to_string())?;
@@ -670,11 +663,9 @@ fn show_main_window(app: &AppHandle) -> Result<(), String> {
     window.set_focus().map_err(|error| error.to_string())
 }
 
-/// Brings the app to the front. A relaunch after an update starts the new
-/// process from the old one, not from Finder or Launch Services, so macOS
-/// does not activate it. An inactive app gets no clicks: each click only
-/// tries to activate the app, and the buttons never react. Menu bar apps
-/// (`ActivationPolicy::Accessory`) never activate on their own.
+/// Brings the app to the front. macOS does not activate a relaunch after an
+/// update, and an inactive app swallows clicks. Accessory apps never activate
+/// on their own.
 #[cfg(target_os = "macos")]
 fn activate_app() {
     use objc2_app_kit::NSApplication;
@@ -694,9 +685,8 @@ fn toggle_popover(app: &AppHandle) {
         return;
     }
     let _ = window.move_window(Position::TrayCenter);
-    // The panel is non-activating: it becomes key without activating the
-    // app, so the main window stays where it is. It must be key so that a
-    // click elsewhere makes it lose focus and hide.
+    // A non-activating panel becomes key without activating the app; key, so
+    // an outside click makes it lose focus and hide.
     let _ = window.show();
     let _ = window.set_focus();
 }
@@ -707,9 +697,8 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .inner_size(1120.0, 760.0)
         .min_inner_size(780.0, 560.0)
         .center();
-    // The interface draws its own title bar. macOS keeps the native traffic
-    // lights, centered in the 52px title bar; the web side clears them
-    // with a matching left inset (TitleBar.module.scss).
+    // Custom title bar; macOS keeps the traffic lights, which
+    // TitleBar.module.scss clears with a left inset.
     #[cfg(target_os = "macos")]
     let main = main
         .title_bar_style(tauri::TitleBarStyle::Overlay)
@@ -721,8 +710,7 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         WebviewWindowBuilder::new(app, "popover", WebviewUrl::App("?surface=popover".into()))
             .title("Devie AI Quota Tracker — Quotas")
             .inner_size(POPOVER_WIDTH, 480.0)
-            // The popover resizes itself to its content, down to one short
-            // list. The user cannot resize or move it.
+            // The popover sizes itself to its content; the user cannot resize or move it.
             .min_inner_size(POPOVER_WIDTH, 120.0)
             .max_inner_size(POPOVER_WIDTH, 760.0)
             .resizable(false)
@@ -752,16 +740,15 @@ fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
 const POPOVER_WIDTH: f64 = 440.0;
 
-/// Turns the popover into a non-activating panel: it opens over other apps
-/// without bringing the main window forward, like a native menu bar popover.
+/// Turns the popover into a non-activating panel, like a native menu bar popover.
 #[cfg(target_os = "macos")]
 fn make_non_activating_panel(window: &tauri::WebviewWindow) {
     use objc2::{define_class, runtime::AnyObject, ClassType, MainThreadOnly};
     use objc2_app_kit::{NSPanel, NSWindowCollectionBehavior, NSWindowStyleMask};
 
     define_class!(
-        // A borderless NSPanel refuses to become key, so the webview gets no
-        // hover, no tooltips, and no focus-lost event. This subclass accepts.
+        // A borderless NSPanel refuses key status, which kills hover, tooltips,
+        // and focus-lost events. This subclass accepts.
         #[unsafe(super(NSPanel))]
         #[thread_kind = MainThreadOnly]
         #[name = "DevieQuotaPopoverPanel"]
@@ -787,13 +774,10 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
         panel.setHidesOnDeactivate(false);
-        // A window that is not key gets no mouse-moved events by default, so
-        // hover tooltips in the webview never open. Ask for them.
+        // A non-key window gets no mouse-moved events, so tooltips never open.
         panel.setAcceptsMouseMovedEvents(true);
-        // Like a native menu bar menu: it shows on every Space, also over an
-        // app in full screen. The window level stays "floating" (from
-        // always_on_top): a higher level is not kept out of the menu bar and
-        // ends up under the notch.
+        // Shows on every Space, also over a full-screen app. The level stays
+        // floating: a higher one ends up under the notch.
         panel.setCollectionBehavior(
             NSWindowCollectionBehavior::CanJoinAllSpaces
                 | NSWindowCollectionBehavior::FullScreenAuxiliary
@@ -802,10 +786,9 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
     }
 }
 
-/// A non-activating panel does not always resign key focus when the user
-/// clicks elsewhere, so the focus-lost event is not enough. Native mouse
-/// monitors hide the popover on any click outside it: in another app
-/// (global monitor) or in another window of this app (local monitor).
+/// A non-activating panel does not always resign key on an outside click, so
+/// mouse monitors hide the popover: a global one for other apps, a local one
+/// for this app's windows.
 #[cfg(target_os = "macos")]
 fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow) {
     use objc2_app_kit::{NSEvent, NSEventMask};
@@ -990,10 +973,9 @@ pub fn run() {
                 let _ = window.app_handle().set_dock_visibility(false);
             }
             tauri::WindowEvent::Focused(false) if window.label() == "popover" => {
-                // On macOS the mouse monitors hide the popover on an outside
-                // click instead. Focus loss alone is not a dismissal there: a
-                // full screen Space takes key focus back when its auto-hidden
-                // menu bar slides away, while the popover should stay open.
+                // On macOS the mouse monitors do this: a full screen Space takes
+                // key focus back when its menu bar slides away, and the popover
+                // must stay open.
                 #[cfg(not(target_os = "macos"))]
                 let _ = window.hide();
             }
@@ -1034,8 +1016,7 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("Devie AI Quota Tracker failed to start")
         .run(|app, event| {
-            // A click on the Dock icon with no visible window reopens the
-            // main window (Cmd+H or a click on the tray hides it).
+            // A Dock click with no visible window reopens the main window.
             if let tauri::RunEvent::Reopen {
                 has_visible_windows: false,
                 ..

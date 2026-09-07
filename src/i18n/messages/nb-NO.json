@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Klar",
       "Stale": "Utdatert",
-      "Login": "Logg inn",
       "SignInNeeded": "Innlogging kreves",
       "Error": "Feil"
     },
@@ -45,6 +44,9 @@
       "Off": "Av"
     },
     "MoreActions": "Flere handlinger",
+    "SignIn": "Logg inn",
+    "SignInTo": "Logg inn på {{name}}",
+    "SignInNeededTip": "Den lagrede innloggingen for denne kontoen virker ikke lenger. Logg inn igjen med samme konto for å fortsette å følge den.",
     "AllBarsHidden": "Alle kvotelinjer er skjult.",
     "StaleTip": "Sist oppdatert {{ago}}. Den siste oppdateringen mislyktes: leverandøren kan ha et midlertidig problem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Legg til en {{name}}-konto",
+    "RenewTitle": "Logg inn igjen på {{name}}",
+    "RenewHint": "Bruk kontoen {{account}}. En annen konto legges til som en ny konto.",
+    "RenewMismatch": "Du logget inn med en annen konto. {{account}} trenger fortsatt en innlogging.",
     "OpeningBrowser": "Åpner nettleseren…",
     "WaitingFor": "Venter på {{name}}…",
     "OpenPageAgain": "Åpne siden igjen",

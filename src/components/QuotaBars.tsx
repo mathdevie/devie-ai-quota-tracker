@@ -51,10 +51,7 @@ export function untilText(t: TFunction, value?: string): string | undefined {
 /** One GitHub AI Credit is one US cent. */
 const CENTS_PER_CREDIT = 0.01;
 
-/**
- * "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", or
- * "$12.50 left", in small print under the bar.
- */
+/** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", or "$12.50 left". */
 function Amount({ amount }: { amount?: QuotaAmount }) {
   const { t, i18n } = useTranslation();
   const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "")
@@ -99,10 +96,7 @@ export function quotaLevel(leftPercent: number): QuotaLevel {
   return "ok";
 }
 
-/**
- * One line per quota window: label, bar, percent left, reset time. The bar
- * gives way first; the reset time is never cut.
- */
+/** One line per quota window. The bar gives way first; the reset time is never cut. */
 export default function QuotaBars({
   windows,
   size = "md",

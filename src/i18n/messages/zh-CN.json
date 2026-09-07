@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "就绪",
       "Stale": "数据已过期",
-      "Login": "登录",
       "SignInNeeded": "需要登录",
       "Error": "错误"
     },
@@ -45,6 +44,9 @@
       "Off": "关"
     },
     "MoreActions": "更多操作",
+    "SignIn": "登录",
+    "SignInTo": "登录 {{name}}",
+    "SignInNeededTip": "此账号保存的登录已失效。请使用同一账号重新登录以继续跟踪。",
     "AllBarsHidden": "所有额度条都已隐藏。",
     "StaleTip": "最后更新于{{ago}}。上次刷新失败：提供商可能出现了临时问题。"
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "添加 {{name}} 账号",
+    "RenewTitle": "重新登录 {{name}}",
+    "RenewHint": "请使用账号 {{account}}。其他账号将作为新账号添加。",
+    "RenewMismatch": "您使用了其他账号登录。{{account}} 仍需登录。",
     "OpeningBrowser": "正在打开浏览器…",
     "WaitingFor": "正在等待 {{name}}…",
     "OpenPageAgain": "重新打开页面",

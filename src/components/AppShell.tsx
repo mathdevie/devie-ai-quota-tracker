@@ -28,7 +28,7 @@ import {
   setUpdateChannel,
   spendResetCredit,
 } from "@/lib/desktop";
-import { PROVIDER_NAMES } from "@/lib/labels";
+import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import ScrollArea from "@/ui/ScrollArea";
 import { Toaster } from "@/ui/Toaster";
 import Tooltip from "@/ui/Tooltip";
@@ -54,6 +54,14 @@ interface AppPage {
   provider?: Provider;
 }
 
+interface LoginRequest {
+  open: boolean;
+  /** Absent until the first sign-in: the dialog is not mounted before. */
+  provider?: Provider;
+  /** The account whose saved login the sign-in renews. */
+  renew?: ProviderConnection;
+}
+
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
 }
@@ -77,7 +85,7 @@ function Shell() {
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string>();
   const [settingsBusy, setSettingsBusy] = useState(false);
-  const [login, setLogin] = useState({ open: false });
+  const [login, setLogin] = useState<LoginRequest>({ open: false });
   const [renaming, setRenaming] = useState<ProviderConnection>();
   const [barsFor, setBarsFor] = useState<ProviderConnection>();
   const [alertsFor, setAlertsFor] = useState<ProviderConnection>();
@@ -151,8 +159,11 @@ function Shell() {
 
   const onRefresh = (id: string) =>
     void run(() => refreshConnection(id), withBusyId(id));
+  const onSignIn = (connection: ProviderConnection) =>
+    setLogin({ open: true, provider: connection.provider, renew: connection });
   const actions = {
     onRefresh,
+    onSignIn,
     onRename: setRenaming,
     onBars: setBarsFor,
     onAlerts: setAlertsFor,
@@ -164,6 +175,22 @@ function Shell() {
     onUseReset: (id: string, creditId: string) =>
       run(() => spendResetCredit(id, creditId), withBusyId(id)),
   };
+
+  // A sign-in with another account adds it; the old one still needs its own.
+  function handleConnected(next: DashboardState) {
+    setState(next);
+    const renewed = login.renew;
+    if (!renewed) return;
+    const current = next.connections.find((item) => item.id === renewed.id);
+    if (current?.status === "needs_login") {
+      toasts.add({
+        type: "info",
+        description: t("Login.RenewMismatch", {
+          account: accountLabel(renewed),
+        }),
+      });
+    }
+  }
 
   async function handleAlertsSubmit(
     id: string,
@@ -216,8 +243,7 @@ function Shell() {
   const title = onProviderPage
     ? PROVIDER_NAMES[providerPage]
     : t(view === "settings" ? "Nav.Settings" : "Nav.Quota");
-  // A provider page goes up to Settings with the arrow; anywhere inside
-  // Settings, the cross at the right closes back to the dashboard.
+  // The arrow goes up to Settings; the cross closes back to the dashboard.
   const leading = onProviderPage
     ? {
         icon: "back" as const,
@@ -264,7 +290,7 @@ function Shell() {
             {onProviderPage && (
               <ProviderDetailView
                 busyId={busyId}
-                onAdd={() => setLogin({ open: true })}
+                onAdd={() => setLogin({ open: true, provider: providerPage })}
                 onBack={() => setPage({ view: "settings" })}
                 provider={providerPage}
                 state={state}
@@ -299,14 +325,15 @@ function Shell() {
           </ScrollArea.Scrollbar>
         </ScrollArea.Root>
 
-        {providerPage && (
+        {login.provider && (
           <LoginDialog
-            onConnected={setState}
+            onConnected={handleConnected}
             onOpenChange={(open) =>
               setLogin((current) => ({ ...current, open }))
             }
             open={login.open}
-            provider={providerPage}
+            provider={login.provider}
+            renew={login.renew}
           />
         )}
         <RenameDialog

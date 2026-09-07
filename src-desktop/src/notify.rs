@@ -1,12 +1,7 @@
-//! Desktop notifications.
-//!
-//! The Tauri notification plugin uses the legacy `NSUserNotificationCenter`
-//! API on macOS. That API never asks the user for permission, and current
-//! macOS versions drop its notifications for apps that were never
-//! authorized. Packaged builds therefore talk to `UNUserNotificationCenter`
-//! directly: it shows the system permission prompt and delivers reliably.
-//! `tauri dev` runs outside an app bundle, where the modern API aborts the
-//! process, so development keeps the plugin path.
+//! Desktop notifications. The Tauri plugin uses the legacy
+//! `NSUserNotificationCenter`, which never asks for permission, so macOS drops
+//! its notifications. Packaged builds call `UNUserNotificationCenter` directly.
+//! `tauri dev` runs outside a bundle, where that API aborts, and keeps the plugin.
 
 use tauri::AppHandle;
 use tauri_plugin_notification::NotificationExt;
@@ -55,9 +50,8 @@ mod macos {
         UNNotificationRequest, UNNotificationSettings, UNUserNotificationCenter,
     };
 
-    /// How long to wait for a completion handler from the notification
-    /// daemon. The permission prompt itself does not block: macOS reports
-    /// the answer only after the user clicks, so this covers that too.
+    /// The wait for a completion handler. macOS reports the permission prompt
+    /// only after the user clicks, so this covers it too.
     const REPLY_TIMEOUT: Duration = Duration::from_secs(120);
 
     fn status_name(status: UNAuthorizationStatus) -> &'static str {

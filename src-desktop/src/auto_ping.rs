@@ -19,10 +19,8 @@ pub fn supported(connection: &ProviderConnection) -> bool {
     matches!(connection.provider, Provider::Claude | Provider::Codex)
 }
 
-/// Claude needs a forced quota read near its fixed reset and while the
-/// session is idle, so the ping can restart the timer quickly. Codex needs
-/// one each minute because an inactive session reports a reset time that
-/// slides.
+/// Claude: a forced read near its fixed reset and while idle, so the ping
+/// restarts the timer fast. Codex: every minute, as an idle reset time slides.
 pub fn refresh_due(connection: &ProviderConnection, now: DateTime<Utc>) -> bool {
     if !connection.enabled || !connection.auto_ping.enabled || !supported(connection) {
         return false;
@@ -34,8 +32,7 @@ pub fn refresh_due(connection: &ProviderConnection, now: DateTime<Utc>) -> bool 
         return false;
     };
     let Some(reset) = reset_time(session) else {
-        // An idle session reports no reset time; keep reading so the next
-        // `after_reading` can start the timer.
+        // No reset time while idle; keep reading so `after_reading` can start the timer.
         return true;
     };
     reset - now <= Duration::minutes(5) && now - reset <= Duration::minutes(15)
@@ -55,8 +52,7 @@ pub async fn after_reading(
         return;
     };
     let now = Utc::now();
-    // An idle Claude session reports no reset time: the timer is stopped,
-    // which is the exact state the optimizer exists to fix.
+    // No reset time: the timer is stopped, the state the optimizer exists to fix.
     let Some(current_reset) = session.resets_at.as_deref() else {
         if connection.provider == Provider::Claude {
             start_claude_session(
@@ -77,8 +73,7 @@ pub async fn after_reading(
         let _ = database.set_auto_ping_observation(&connection.id, current_reset);
         return;
     }
-    // Codex: ping when the reported reset slid forward between readings,
-    // because an inactive session keeps pushing its reset into the future.
+    // Codex: an inactive session pushes its reset forward; ping when it slid.
     let Some(observed_reset) = connection.auto_ping.observed_reset_at.as_deref() else {
         let _ = database.set_auto_ping_observation(&connection.id, current_reset);
         return;
@@ -133,8 +128,7 @@ async fn start_claude_session(
     }
 }
 
-/// The interval guard also covers the readings right after a successful ping,
-/// which can still report an idle session until the API catches up.
+/// Also covers the readings right after a ping, which can still report an idle session.
 fn claude_ping_blocked(
     connection: &ProviderConnection,
     reading: &QuotaReading,

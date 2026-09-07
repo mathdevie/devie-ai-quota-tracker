@@ -28,7 +28,6 @@
     "Status": {
       "Ready": "Ready",
       "Stale": "Stale",
-      "Login": "Login",
       "SignInNeeded": "Sign-in needed",
       "Error": "Error"
     },
@@ -45,6 +44,9 @@
       "Off": "Off"
     },
     "MoreActions": "More actions",
+    "SignIn": "Sign in",
+    "SignInTo": "Sign in to {{name}}",
+    "SignInNeededTip": "The saved login for this account stopped working. Sign in again with the same account to keep tracking it.",
     "AllBarsHidden": "All quota bars are hidden.",
     "StaleTip": "Last updated {{ago}}. The last refresh failed: the provider may have a temporary problem."
   },
@@ -117,6 +119,9 @@
   },
   "Login": {
     "Title": "Add an account for {{name}}",
+    "RenewTitle": "Sign in again to {{name}}",
+    "RenewHint": "Use the account {{account}}. Another account is added as a new account.",
+    "RenewMismatch": "You signed in with another account. {{account}} still needs a sign-in.",
     "OpeningBrowser": "Opening the browser…",
     "WaitingFor": "Waiting for {{name}}…",
     "OpenPageAgain": "Open the page again",

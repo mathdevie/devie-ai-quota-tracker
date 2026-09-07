@@ -60,8 +60,7 @@ impl CallbackServer {
         self.port
     }
 
-    /// A flag that stops the server early. Set it from another task to
-    /// abandon a sign-in: `wait` returns `None` and the port becomes free.
+    /// Set from another task to abandon a sign-in: `wait` returns `None` and the port frees.
     pub fn stop_handle(&self) -> Arc<AtomicBool> {
         self.stop.clone()
     }
@@ -87,8 +86,7 @@ impl CallbackServer {
     }
 }
 
-/// A previous sign-in on the same fixed port may still be closing its
-/// listener. Wait a little before the port counts as busy.
+/// A previous sign-in may still be closing the fixed port. Wait a little first.
 fn bind_with_retry(port: u16) -> std::io::Result<TcpListener> {
     let address = SocketAddrV4::new(Ipv4Addr::LOCALHOST, port);
     let deadline = Instant::now() + Duration::from_secs(2);

@@ -1,6 +1,7 @@
 import {
   BellRing,
   Ellipsis,
+  LogIn,
   Pencil,
   Power,
   RefreshCw,
@@ -52,10 +53,40 @@ export function StaleBadge({ connection }: { connection: ProviderConnection }) {
   );
 }
 
-export function StatusBadge({
+/** Renews an account whose saved login stopped working. The tooltip gives the reason. */
+export function SignInButton({
   connection,
+  onSignIn,
 }: {
   connection: ProviderConnection;
+  onSignIn: (connection: ProviderConnection) => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <IconTip
+      label={connection.lastError ?? t("Connection.SignInNeededTip")}
+      side="top"
+    >
+      <Button
+        aria-label={t("Connection.SignInTo", { name: fullName(connection) })}
+        onClick={() => onSignIn(connection)}
+        size="sm"
+        variant="secondary"
+      >
+        <LogIn size={13} />
+        {t("Connection.SignIn")}
+      </Button>
+    </IconTip>
+  );
+}
+
+/** The status of an account that is not ready. With `onSignIn`, a needed sign-in is a button. */
+export function StatusBadge({
+  connection,
+  onSignIn,
+}: {
+  connection: ProviderConnection;
+  onSignIn?: (connection: ProviderConnection) => void;
 }) {
   const { t } = useTranslation();
   if (connection.status === "ready") return null;
@@ -63,13 +94,20 @@ export function StatusBadge({
     return <StaleBadge connection={connection} />;
   }
   if (connection.status === "needs_login") {
-    return <Badge variant="warning">{t("Connection.Status.Login")}</Badge>;
+    if (onSignIn) {
+      return <SignInButton connection={connection} onSignIn={onSignIn} />;
+    }
+    return (
+      <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>
+    );
   }
   return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
 
 export interface ConnectionActions {
   onRefresh?: (id: string) => void;
+  /** Opens the sign-in flow that renews the saved login of the account. */
+  onSignIn?: (connection: ProviderConnection) => void;
   onRename?: (connection: ProviderConnection) => void;
   /** Opens the dialog that shows or hides the quota bars of the card. */
   onBars?: (connection: ProviderConnection) => void;
@@ -96,10 +134,7 @@ function alertsOn(connection: ProviderConnection): boolean {
   return Object.values(connection.alerts).some(Boolean);
 }
 
-/**
- * Alert and Quota Optimizer shortcuts in the card header. An active feature
- * always shows; an inactive one shows on hover.
- */
+/** Alert and Quota Optimizer shortcuts: an active one always shows, an inactive one on hover. */
 function FeatureFlags({
   connection,
   onAlerts,
@@ -267,7 +302,7 @@ export default function ConnectionCard({
             {plan && <span className={styles.plan}> ({plan})</span>}
           </p>
         </div>
-        <StatusBadge connection={connection} />
+        <StatusBadge connection={connection} onSignIn={actions.onSignIn} />
         {busy && <RefreshCw className={styles.spinning} size={13} />}
         <FeatureFlags
           connection={connection}

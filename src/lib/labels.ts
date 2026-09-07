@@ -25,10 +25,7 @@ export const PROVIDERS: Provider[] = [
   "cursor",
 ];
 
-/**
- * The line under the provider name: the user's own label, else the account
- * email or id, else the discovered label.
- */
+/** The user's label, else the account email or id, else the discovered label. */
 export function accountLabel(connection: ProviderConnection): string {
   return (
     connection.customLabel ||
