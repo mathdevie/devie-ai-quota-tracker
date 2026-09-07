@@ -1,9 +1,12 @@
 # Auto-updates
 
-Devie AI Quota Tracker updates itself through CrabNebula Cloud. The app checks at
-start and installs a found update right
-away. Later checks run every 15 minutes; a downloaded update shows an
-**Update available** button in the sidebar.
+Devie AI Quota Tracker updates itself through CrabNebula Cloud. The app checks
+at start and every 15 minutes, and downloads a found update in the background.
+A downloaded update shows an **Update ready** badge in the title bar; it never
+installs by itself. Later checks keep the download fresh: a newer release
+replaces it. A click on the badge checks once more, downloads a newer release
+if one shipped since, then installs and restarts. So the app restarts into
+the latest release once.
 
 Updates run only in packaged builds. `tauri dev` never reads the update feed
 (`NEXT_PUBLIC_IS_DESKTOP_BUILD` is set by `beforeBuildCommand` only).

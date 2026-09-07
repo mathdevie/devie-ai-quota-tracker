@@ -31,6 +31,8 @@ export interface UpdateInfo {
   version: string;
   currentVersion: string;
   body?: string;
+  /** An earlier check already downloaded this version. */
+  downloaded: boolean;
 }
 
 /** The download progress the Rust `download_update` command streams. */
@@ -45,9 +47,9 @@ interface AppUpdaterValue {
   progress: number;
   info?: UpdateInfo;
   error?: string;
-  /** Looks for an update and downloads it. */
+  /** Looks for an update and downloads it. A newer one replaces a download. */
   checkForUpdates: () => Promise<CheckResult>;
-  /** Installs the downloaded update and restarts the app. */
+  /** Checks once more, installs the latest download, and restarts the app. */
   installUpdate: () => Promise<void>;
   /** After a channel change: forgets any found update and checks again. */
   recheck: () => Promise<void>;
@@ -62,9 +64,11 @@ function message(reason: unknown): string {
 }
 
 /**
- * Checks at start and every 15 minutes, and downloads in the background. An
- * update installs only from the title bar badge. The Rust side (`updater.rs`)
- * builds the endpoint from the channel setting.
+ * Checks at start and every 15 minutes, and downloads in the background. Later
+ * checks keep the download fresh: a newer release replaces it. An update
+ * installs only from the title bar badge, after one more check, so the app
+ * restarts into the latest release once. The Rust side (`updater.rs`) builds
+ * the endpoint from the channel setting.
  */
 export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<UpdateStatus>("idle");
@@ -73,6 +77,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string>();
   const statusRef = useRef<UpdateStatus>("idle");
   const startedRef = useRef(false);
+  const installingRef = useRef(false);
 
   const commit = useCallback((next: UpdateStatus) => {
     statusRef.current = next;
@@ -112,30 +117,45 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
   const checkForUpdates = useCallback(async (): Promise<CheckResult> => {
     if (!UPDATER_ENABLED) return "up-to-date";
     const current = statusRef.current;
-    if (current === "ready") return "ready";
     if (current === "downloading" || current === "installing") return "busy";
-    commit("checking");
+    // A ready update keeps its badge while a later check runs.
+    const wasReady = current === "ready";
+    if (!wasReady) commit("checking");
     setError(undefined);
     try {
       const { invoke } = await import("@tauri-apps/api/core");
       const found = await invoke<UpdateInfo | null>("fetch_update");
       if (!found) {
+        setInfo(undefined);
         commit("idle");
         return "up-to-date";
       }
       setInfo(found);
+      if (found.downloaded) {
+        commit("ready");
+        return "ready";
+      }
       return (await download()) ? "ready" : "error";
     } catch (reason) {
-      setError(message(reason));
-      commit("error");
+      // A failed check leaves a downloaded update in place on the Rust side.
+      if (wasReady) {
+        commit("ready");
+      } else {
+        setError(message(reason));
+        commit("error");
+      }
       return "error";
     }
   }, [commit, download]);
 
   const installUpdate = useCallback(async () => {
-    if (statusRef.current !== "ready") return;
-    commit("installing");
+    if (statusRef.current !== "ready" || installingRef.current) return;
+    installingRef.current = true;
     try {
+      // A newer release may have shipped since the download: get it first.
+      await checkForUpdates();
+      if (statusRef.current !== "ready") return;
+      commit("installing");
       const { invoke } = await import("@tauri-apps/api/core");
       await invoke("install_update");
       const { relaunch } = await import("@tauri-apps/plugin-process");
@@ -143,8 +163,10 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
     } catch (reason) {
       setError(message(reason));
       commit("error");
+    } finally {
+      installingRef.current = false;
     }
-  }, [commit]);
+  }, [checkForUpdates, commit]);
 
   // The Rust side already forgot the pending update of the old channel.
   const recheck = useCallback(async () => {
