@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A downloaded update no longer goes stale. Background checks replace it when
+  a newer release ships, and the "Update ready" badge checks once more before
+  it installs. The app restarts into the latest release once, instead of
+  showing "Update ready" again after the restart.
 - Codex credits are counted in credits, not US dollars. A Team account no
   longer shows a red "$0.00 left" credits row; its balance is not exposed
   per member.
