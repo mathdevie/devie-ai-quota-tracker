@@ -51,7 +51,7 @@ export function untilText(t: TFunction, value?: string): string | undefined {
 /** One GitHub AI Credit is one US cent. */
 const CENTS_PER_CREDIT = 0.01;
 
-/** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", or "$12.50 left". */
+/** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", "$12.50 left", or "12 credits left". */
 function Amount({ amount }: { amount?: QuotaAmount }) {
   const { t, i18n } = useTranslation();
   const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "")
@@ -69,7 +69,11 @@ function Amount({ amount }: { amount?: QuotaAmount }) {
     <span className={styles.amount}>
       {amount &&
         (amount.used === undefined
-          ? t("Quota.Balance", { balance: format(amount.total) })
+          ? t("Quota.Balance", {
+              balance: currency
+                ? format(amount.total)
+                : `${format(amount.total)} ${amount.unit ?? ""}`.trim(),
+            })
           : t("Quota.Amount", {
               used: format(amount.used),
               total: format(amount.total),

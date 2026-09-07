@@ -5,6 +5,21 @@ All notable changes to Devie AI Quota Tracker are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Codex Team accounts show the monthly credit limit of the workspace as a
+  "Monthly credits" window: credits used of the cap, the percent left, and
+  the reset date. The ChatGPT usage page calls it "Workspace monthly credit
+  limit".
+
+### Fixed
+
+- Codex credits are counted in credits, not US dollars. A Team account no
+  longer shows a red "$0.00 left" credits row; its balance is not exposed
+  per member.
+
 ## [0.13.0] - 2026-09-05
 
 ### Added
