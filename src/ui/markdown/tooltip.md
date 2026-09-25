@@ -1,87 +1,10 @@
 # <Tooltip />
 
-The Tooltip component extends [ Base UI's Tooltip ](https://base-ui.com/react/components/tooltip) , changing the default delay to 100ms for a snappier feel.
+A hint that appears when an element is hovered or focused. The Tooltip component extends [ Base UI's Tooltip ](https://base-ui.com/react/components/tooltip) , changing the default delay to 100ms for a snappier feel.
 
 Built on [Base UI](https://base-ui.com/react/components/tooltip).
 
 ## Installation
-
-### tooltip.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .trigger {
-        outline: none;
-        cursor: pointer;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        &:where(button) {
-            background: none;
-            padding: 0;
-        }
-    }
-
-    .arrow {
-        display: flex;
-        position: absolute;
-
-        &[data-side="top"] {
-            bottom: -8px;
-            rotate: 180deg;
-        }
-
-        &[data-side="bottom"] {
-            top: -8px;
-            rotate: 0deg;
-        }
-
-        &[data-side="left"] {
-            right: -13px;
-            rotate: 90deg;
-        }
-
-        &[data-side="right"] {
-            left: -12px;
-            rotate: -90deg;
-        }
-
-    }
-
-    .popup {
-        background-color: $devie__color__text;
-        border: 1px solid $devie__color__text;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
-        box-shadow: $devie__shadow__menu;
-        font-size: 12px;
-        font-weight: 600;
-        color: $devie__color__background;
-        transform-origin: var(--transform-origin);
-
-        &[data-starting-style],
-        &[data-ending-style] {
-            opacity: 0;
-        }
-
-        &[data-instant] {
-            transition-duration: 0ms;
-        }
-    }
-
-    .arrowFill {
-        fill: $devie__color__text;
-    }
-
-    .arrowInnerStroke {
-        fill: $devie__color__text;
-    }
-}
-```
 
 ### tooltip.tsx
 
@@ -192,6 +115,88 @@ function ArrowSvg(props: React.ComponentProps<"svg">) {
       />
     </svg>
   );
+}
+```
+
+### tooltip.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .trigger {
+        outline: none;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:where(button) {
+            background: none;
+            padding: 0;
+        }
+    }
+
+    .arrow {
+        display: flex;
+        position: absolute;
+
+        &[data-side="top"] {
+            bottom: -8px;
+            rotate: 180deg;
+        }
+
+        &[data-side="bottom"] {
+            top: -8px;
+            rotate: 0deg;
+        }
+
+        &[data-side="left"] {
+            right: -11.5px;
+            rotate: 90deg;
+        }
+
+        &[data-side="right"] {
+            left: -11.5px;
+            rotate: -90deg;
+        }
+
+    }
+
+    .popup {
+        box-sizing: border-box;
+        width: max-content;
+        max-width: min(280px, var(--available-width, 90vw));
+        background-color: $devie__color__text;
+        border: 1px solid $devie__color__text;
+        border-radius: $devie__radius;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        box-shadow: $devie__shadow__menu;
+        font-size: 12px;
+        font-weight: 600;
+        color: $devie__color__background;
+        transform-origin: var(--transform-origin);
+        white-space: normal;
+        overflow-wrap: break-word;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        &[data-instant] {
+            transition-duration: 0ms;
+        }
+    }
+
+    .arrowFill {
+        fill: $devie__color__text;
+
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__text;
+    }
 }
 ```
 

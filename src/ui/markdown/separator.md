@@ -1,6 +1,6 @@
 # <Separator />
 
-The Separator component is built on top of the [ Base UI Separator ](https://base-ui.com/react/components/separator) component. It supports all Base UI props including `orientation`, plus an additional [text](#text) prop for displaying text in the middle of horizontal separators.
+A separator line that is accessible to screen readers. The Separator component is built on top of the [ Base UI Separator ](https://base-ui.com/react/components/separator) component. It supports all Base UI props including `orientation`, plus an additional [text](#text) prop for displaying text in the middle of horizontal separators.
 
 Built on [Base UI](https://base-ui.com/react/components/separator).
 

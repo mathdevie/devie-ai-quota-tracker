@@ -52,7 +52,6 @@
         background: transparent;
         border: none;
         padding: 0;
-        cursor: pointer;
         color: $devie__color__text-sub;
 
         &:hover:not([data-disabled]) {
@@ -87,7 +86,6 @@
         background: transparent;
         border: none;
         padding: $devie__spacing__x05;
-        cursor: pointer;
         color: $devie__color__text;
         border-radius: $devie__radius;
         transition: none;
@@ -98,8 +96,9 @@
     }
 
     .popup:has(.item, .empty) {
+        line-height: 1.5;
         box-sizing: border-box;
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
@@ -148,9 +147,6 @@
         }
     }
 
-    .item {
-        cursor: pointer;
-    }
 
     .empty {
         cursor: default;
@@ -186,7 +182,7 @@
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
         stroke: $devie__color__line;
         stroke-width: 1px;
         z-index: 1;

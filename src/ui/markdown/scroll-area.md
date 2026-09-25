@@ -1,130 +1,10 @@
 # <ScrollArea />
 
-Vernacular architecture is building done outside any academic tradition, and without professional guidance. It is not a particular architectural movement or style, but rather a broad category, encompassing a wide range and variety of building types, with differing methods of construction, from around the world, both historical and extant and classical and modern. Vernacular architecture constitutes 95% of the world's built environment, as estimated in 1995 by Amos Rapoport, as measured against the small percentage of new buildings every year designed by architects and built by engineers.
-
-This type of architecture usually serves immediate, local needs, is constrained by the materials available in its particular region and reflects local traditions and cultural practices. The study of vernacular architecture does not examine formally schooled architects, but instead that of the design skills and tradition of local builders, who were rarely given any attribution for the work. More recently, vernacular architecture has been examined by designers and the building industry in an effort to be more energy conscious with contemporary design and construction, as part of a broader interest in sustainable design.
-
-Vernacular architecture can be contrasted against polite architecture, which is characterized by stylistic elements of design intentionally incorporated by a professional architect for aesthetic purposes. While vernacular architecture is typically associated with simpler, more utilitarian structures, many vernacular buildings are renowned for their beauty and the craft that went into their construction.
-
-The ScrollArea component extends [ Base UI's Scroll Area ](https://base-ui.com/react/components/scroll-area) . It provides a native scroll container with custom-styled scrollbars that appear on hover or when scrolling.
+A native scroll container with custom scrollbars. The ScrollArea component extends [ Base UI's Scroll Area ](https://base-ui.com/react/components/scroll-area) . It provides a native scroll container with custom-styled scrollbars that appear on hover or when scrolling.
 
 Built on [Base UI](https://base-ui.com/react/components/scroll-area).
 
 ## Installation
-
-### scroll-area.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-  .root {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .viewport {
-    height: 100%;
-    overscroll-behavior: contain;
-    border-radius: $devie__radius;
-    outline: 1px solid $devie__color__line;
-    outline-offset: -1px;
-
-    &:focus-visible {
-      outline: 2px solid $devie__color__primary;
-      outline-offset: -2px;
-    }
-  }
-
-  .content {
-    display: block;
-  }
-
-  .scrollbar {
-    display: flex;
-    background-color: transparent;
-    border-radius: $devie__radius;
-    opacity: 0;
-    transition: opacity 150ms;
-    pointer-events: none;
-
-    &[data-orientation="vertical"] {
-      position: absolute;
-      top: 0;
-      right: $devie__spacing__x05;
-      bottom: 0;
-      width: 6px;
-      flex-direction: column;
-    }
-
-    &[data-orientation="horizontal"] {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: $devie__spacing__x05;
-      height: 6px;
-      flex-direction: row;
-    }
-
-    &::before {
-      content: '';
-      position: absolute;
-    }
-
-    &[data-orientation="vertical"]::before {
-      top: 0;
-      bottom: 0;
-      left: -8px;
-      right: -4px;
-    }
-
-    &[data-orientation="horizontal"]::before {
-      left: 0;
-      right: 0;
-      top: -8px;
-      bottom: -4px;
-    }
-
-    &[data-scrolling] {
-      transition-duration: 0ms;
-    }
-
-    &[data-hovering],
-    &[data-scrolling] {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  .thumb {
-    border-radius: inherit;
-    background-color: $devie__color__text-sub;
-    transition: background-color 150ms;
-
-    &:hover {
-      background-color: $devie__color__text;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 100%;
-    }
-
-    &[data-orientation="horizontal"] {
-      height: 100%;
-    }
-  }
-
-  .corner {
-    position: absolute;
-    right: $devie__spacing__x05;
-    bottom: 0;
-    width: 8px;
-    height: calc(8px + #{$devie__spacing__x05});
-    background-color: transparent;
-    border-radius: $devie__radius;
-  }
-}
-```
 
 ### scroll-area.tsx
 
@@ -240,6 +120,119 @@ namespace ScrollArea {
 }
 
 export default ScrollArea;
+```
+
+### scroll-area.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+  .root {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .viewport {
+    height: 100%;
+    overscroll-behavior: contain;
+    border-radius: $devie__radius;
+    outline: 1px solid $devie__color__line;
+    outline-offset: -1px;
+
+    &:focus-visible {
+      @include devie-focus-ring(-2px);
+    }
+  }
+
+  .content {
+    display: block;
+  }
+
+  .scrollbar {
+    display: flex;
+    background-color: transparent;
+    border-radius: $devie__radius;
+    opacity: 0;
+    transition: opacity 150ms;
+    pointer-events: none;
+
+    &[data-orientation="vertical"] {
+      position: absolute;
+      top: 0;
+      right: $devie__spacing__x05;
+      bottom: 0;
+      width: 6px;
+      flex-direction: column;
+    }
+
+    &[data-orientation="horizontal"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: $devie__spacing__x05;
+      height: 6px;
+      flex-direction: row;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+    }
+
+    &[data-orientation="vertical"]::before {
+      top: 0;
+      bottom: 0;
+      left: -8px;
+      right: -4px;
+    }
+
+    &[data-orientation="horizontal"]::before {
+      left: 0;
+      right: 0;
+      top: -8px;
+      bottom: -4px;
+    }
+
+    &[data-scrolling] {
+      transition-duration: 0ms;
+    }
+
+    &[data-hovering],
+    &[data-scrolling] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .thumb {
+    border-radius: inherit;
+    background-color: $devie__color__text-sub;
+    transition: background-color 150ms;
+
+    &:hover {
+      background-color: $devie__color__text;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 100%;
+    }
+
+    &[data-orientation="horizontal"] {
+      height: 100%;
+    }
+  }
+
+  .corner {
+    position: absolute;
+    right: $devie__spacing__x05;
+    bottom: 0;
+    width: 8px;
+    height: calc(8px + #{$devie__spacing__x05});
+    background-color: transparent;
+    border-radius: $devie__radius;
+  }
+}
 ```
 
 ## Use Cases

@@ -13,7 +13,6 @@
         padding: 0;
         margin: 0;
         border: none;
-        cursor: pointer;
         transition: none;
 
         &[data-unchecked] {
@@ -27,8 +26,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
 
         &:hover:not([data-disabled]) {

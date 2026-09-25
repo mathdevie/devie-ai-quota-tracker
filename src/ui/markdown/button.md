@@ -1,10 +1,85 @@
 # <Button />
 
-The Button component extends [ Base UI's Button ](https://base-ui.com/react/components/button) . It adds [variant](#variant), [size](#size), [loading state](#loading-state), and [icon](#icon) props for common use cases.
+A button that can render as another tag and stay focusable when disabled. The Button component extends [ Base UI's Button ](https://base-ui.com/react/components/button) . It adds [variant](#variant), [size](#size), [loading state](#loading-state), and [icon](#icon) props for common use cases.
 
 Built on [Base UI](https://base-ui.com/react/components/button).
 
 ## Installation
+
+### button.tsx
+
+```tsx
+// https://devie-ui.com/components/button
+// https://base-ui.com/react/components/button
+
+import { Button as BaseButton } from "@base-ui/react/button";
+import clsx from "clsx";
+import styles from "./Button.module.scss";
+
+type Variant =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "naked"
+  | "icon-primary"
+  | "icon-secondary"
+  | "icon-danger"
+  | "icon-naked";
+
+type Size = "sm" | "md" | "xl";
+
+function Button({
+  variant = "primary",
+  size = "md",
+  children,
+  className,
+  disabled,
+  isLoading,
+  ...props
+}: Button.Props) {
+  return (
+    <BaseButton
+      className={clsx(
+        styles.button,
+        variant === "primary" && styles.variantPrimary,
+        variant === "secondary" && styles.variantSecondary,
+        variant === "danger" && styles.variantDanger,
+        variant === "naked" && styles.variantNaked,
+        variant === "icon-primary" && [styles.variantPrimary, styles.icon],
+        variant === "icon-secondary" && [styles.variantSecondary, styles.icon],
+        variant === "icon-danger" && [styles.variantDanger, styles.icon],
+        variant === "icon-naked" && [styles.variantNaked, styles.icon],
+        size === "sm" && styles.sizeSm,
+        size === "md" && styles.sizeMd,
+        size === "xl" && styles.sizeXl,
+        className,
+      )}
+      data-loading={isLoading}
+      disabled={disabled || isLoading}
+      focusableWhenDisabled={isLoading}
+      {...props}
+    >
+      {children}
+      {isLoading && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loader} />
+        </div>
+      )}
+    </BaseButton>
+  );
+}
+
+namespace Button {
+  export interface Props extends BaseButton.Props {
+    variant?: Variant;
+    size?: Size;
+    isLoading?: boolean;
+  }
+  export type State = BaseButton.State;
+}
+
+export default Button;
+```
 
 ### button.module.scss
 
@@ -20,7 +95,6 @@ Built on [Base UI](https://base-ui.com/react/components/button).
     justify-content: center;
     border: none;
     white-space: nowrap;
-    cursor: pointer;
     gap: $devie__spacing__x05;
     border-radius: $devie__radius;
     font-family: $devie__font-family;
@@ -31,6 +105,10 @@ Built on [Base UI](https://base-ui.com/react/components/button).
     &[data-loading="true"] {
       user-select: none;
       color: transparent;
+    }
+
+    &:focus-visible {
+      @include devie-focus-ring(2px);
     }
   }
 
@@ -201,6 +279,10 @@ Built on [Base UI](https://base-ui.com/react/components/button).
       background: #{devie-hover-color($devie__color__background)};
     }
 
+    &:active:not([data-loading="true"]):not([data-disabled]) {
+      background: #{devie-hover-color(devie-hover-color($devie__color__background))};
+    }
+
     &[data-disabled] {
       cursor: not-allowed;
       color: #{devie-disabled-color($devie__color__text)};
@@ -212,89 +294,15 @@ Built on [Base UI](https://base-ui.com/react/components/button).
       conic-gradient(#0000 30%, $devie__color__text);
     mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
   }
+
 }
-```
-
-### button.tsx
-
-```tsx
-// https://devie-ui.com/components/button
-// https://base-ui.com/react/components/button
-
-import { Button as BaseButton } from "@base-ui/react/button";
-import clsx from "clsx";
-import styles from "./Button.module.scss";
-
-type Variant =
-  | "primary"
-  | "secondary"
-  | "danger"
-  | "naked"
-  | "icon-primary"
-  | "icon-secondary"
-  | "icon-danger"
-  | "icon-naked";
-
-type Size = "sm" | "md" | "xl";
-
-function Button({
-  variant = "primary",
-  size = "md",
-  children,
-  className,
-  disabled,
-  isLoading,
-  ...props
-}: Button.Props) {
-  return (
-    <BaseButton
-      className={clsx(
-        styles.button,
-        variant === "primary" && styles.variantPrimary,
-        variant === "secondary" && styles.variantSecondary,
-        variant === "danger" && styles.variantDanger,
-        variant === "naked" && styles.variantNaked,
-        variant === "icon-primary" && [styles.variantPrimary, styles.icon],
-        variant === "icon-secondary" && [styles.variantSecondary, styles.icon],
-        variant === "icon-danger" && [styles.variantDanger, styles.icon],
-        variant === "icon-naked" && [styles.variantNaked, styles.icon],
-        size === "sm" && styles.sizeSm,
-        size === "md" && styles.sizeMd,
-        size === "xl" && styles.sizeXl,
-        className,
-      )}
-      data-loading={isLoading}
-      disabled={disabled || isLoading}
-      focusableWhenDisabled={isLoading}
-      {...props}
-    >
-      {children}
-      {isLoading && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.loader} />
-        </div>
-      )}
-    </BaseButton>
-  );
-}
-
-namespace Button {
-  export interface Props extends BaseButton.Props {
-    variant?: Variant;
-    size?: Size;
-    isLoading?: boolean;
-  }
-  export type State = BaseButton.State;
-}
-
-export default Button;
 ```
 
 ## Use Cases
 
-### Button with different variants
+### Variants
 
-The Button component offers four distinct variants to fit different UI needs: **primary** for main call-to-action buttons, **secondary** for less visually dominant actions, **danger** for destructive actions, and **naked** for minimal buttons without background.
+Set `variant` to `primary`, `secondary` , `danger`, or `naked`. Use `danger` for a destructive action and `naked` for a button without background.
 
 ```tsx
 <Button variant="primary">Confirm</Button>
@@ -303,9 +311,9 @@ The Button component offers four distinct variants to fit different UI needs: **
 <Button variant="naked">Naked</Button>
 ```
 
-### Button with different sizes
+### Sizes
 
-Buttons can be sized using the `size` prop with three options: `sm` for compact buttons, `md` for the default medium size, and `xl` for larger, more prominent buttons.
+Set `size` to `sm`, `md`, or `xl`. The default is `md`.
 
 ```tsx
 <Button variant="primary" size="sm">Small</Button>
@@ -313,9 +321,9 @@ Buttons can be sized using the `size` prop with three options: `sm` for compact 
 <Button variant="primary" size="xl">Extra Large</Button>
 ```
 
-### Loading state of the button
+### Loading state
 
-The `isLoading` prop provides a CSS-only loader state that maintains the button's original dimensions to prevent layout shifts during loading transitions. This ensures a smooth UI experience, especially in forms or button groups where sudden width changes could disrupt the layout.
+Set `isLoading` to show a spinner. The button keeps its width, so the layout does not shift.
 
 ```tsx
 const [isLoading, setIsLoading] = useState(false);
@@ -332,9 +340,9 @@ const handleClick = () => {
 </Button>
 ```
 
-### Disabled state of the buttons
+### Disabled state
 
-Buttons can be disabled using the standard `disabled` prop. When disabled, buttons show a reduced opacity and are not interactive, providing clear visual feedback to users.
+Set `disabled` to prevent interaction.
 
 ```tsx
 <Button variant="primary" disabled>Disabled Primary</Button>
@@ -345,7 +353,7 @@ Buttons can be disabled using the standard `disabled` prop. When disabled, butto
 
 ### Icon-only buttons
 
-The `icon` prop creates a square button with equal padding on all sides, perfect for icon-only buttons. This works with all variants and sizes.
+Set `icon` to render a square button with equal padding. It works with every variant and size.
 
 ```tsx
 <Button variant="icon-primary">

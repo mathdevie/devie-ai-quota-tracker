@@ -14,65 +14,53 @@ $badge-literal-colors: (
 
 @layer devie {
     .badge {
-        border-radius: 999px;
-        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        border-radius: calc($devie__radius / 2);
+        padding: calc($devie__spacing__x05 / 2) $devie__spacing__x1;
         display: flex;
         align-items: center;
-        gap: $devie__spacing__x1;
+        gap: $devie__spacing__x05;
         width: fit-content;
-        font-size: $devie__font-size__normal;
+        font-size: $devie__font-size__small;
+        font-weight: 500;
         line-height: 1.5;
-        cursor: default;
         font-family: $devie__font-family;
         transition: none;
-        background: var(--badge-background);
-        color: var(--badge-color);
-        border: 1px solid var(--badge-border);
+        background: color-mix(in srgb, var(--badge-tone) 13%, $devie__color__background);
+        color: var(--badge-color, var(--badge-tone));
+        border: 1px solid color-mix(in srgb, var(--badge-tone) 22%, $devie__color__background);
 
         a &,
         &[type="button"] {
             &:hover {
-                background: #{devie-hover-color(var(--badge-background))};
-                cursor: pointer;
+                background: color-mix(in srgb, var(--badge-tone) 18%, $devie__color__background);
             }
         }
     }
 
     .primary {
-        --badge-background: #{$devie__color__primary};
-        --badge-color: #{$devie__color__primary-label};
-        --badge-border: #{$devie__color__primary};
+        --badge-tone: #{$devie__color__primary};
     }
 
     .outline {
-        --badge-background: #{$devie__color__background};
+        --badge-tone: #{$devie__color__text-sub};
         --badge-color: #{$devie__color__text};
-        --badge-border: #{$devie__color__line};
     }
 
     .danger {
-        --badge-background: #{$devie__color__danger};
-        --badge-color: #{$devie__color__danger-label};
-        --badge-border: #{$devie__color__danger};
+        --badge-tone: #{$devie__color__danger};
     }
 
     .success {
-        --badge-background: #{$devie__color__success};
-        --badge-color: #{$devie__color__success-label};
-        --badge-border: #{$devie__color__success};
+        --badge-tone: #{$devie__color__success};
     }
 
     .warning {
-        --badge-background: #{$devie__color__warning};
-        --badge-color: #{$devie__color__warning-label};
-        --badge-border: #{$devie__color__warning};
+        --badge-tone: #{$devie__color__warning};
     }
 
     @each $name, $color in $badge-literal-colors {
         .#{$name} {
-            --badge-background: #{$color};
-            --badge-color: #FFFFFF;
-            --badge-border: #{$color};
+            --badge-tone: #{$color};
         }
     }
 }

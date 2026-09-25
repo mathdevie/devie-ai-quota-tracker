@@ -47,9 +47,8 @@
         }
 
         @media (hover: hover) {
-            &:hover:not([data-selected]) {
+            &:hover:not([data-active]) {
                 color: $devie__color__primary;
-                cursor: pointer;
             }
         }
 
@@ -61,8 +60,7 @@
                 position: absolute;
                 inset: $devie__spacing__x1 0;
                 border-radius: $devie__radius;
-                outline: 2px solid $devie__color__primary;
-                outline-offset: -1px;
+                @include devie-focus-ring(-1px);
             }
         }
     }
@@ -89,6 +87,57 @@
             width: auto;
             border-right: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, height 200ms ease-in-out;
+        }
+    }
+
+    .listSegmented {
+        display: inline-flex;
+        padding: $devie__spacing__x05;
+        gap: $devie__spacing__x05;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+        background: $devie__color__background-sunken;
+
+        &[data-orientation="vertical"] {
+            padding: $devie__spacing__x05;
+            border: 1px solid $devie__color__line;
+        }
+
+        .tab {
+            padding: $devie__spacing__x1 $devie__spacing__x2;
+            color: $devie__color__text-sub;
+            border-radius: calc($devie__radius - 2px);
+
+            &[data-active] {
+                color: $devie__color__text;
+                font-weight: 500;
+            }
+
+            @media (hover: hover) {
+                &:hover:not([data-active]) {
+                    color: $devie__color__text;
+                }
+            }
+
+            &:focus-visible::before {
+                inset: 0;
+                border-radius: calc($devie__radius - 2px);
+            }
+        }
+
+        .indicator[data-orientation] {
+            top: 0;
+            left: 0;
+            right: auto;
+            translate: var(--active-tab-left) var(--active-tab-top);
+            width: var(--active-tab-width);
+            height: var(--active-tab-height);
+            box-sizing: border-box;
+            border: 1px solid $devie__color__line;
+            border-radius: calc($devie__radius - 2px);
+            background: $devie__color__background;
+            box-shadow: 0 1px 2px rgb(9 9 11 / 8%);
+            transition: translate 200ms ease-in-out, width 200ms ease-in-out, height 200ms ease-in-out;
         }
     }
 }

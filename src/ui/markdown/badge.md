@@ -1,6 +1,6 @@
 # <Badge />
 
-The Badge component is a custom implementation designed to display labels, tags, or status indicators with various visual styles and variants.
+A tinted chip for a label, a tag, or a status. This is a custom component with no Base UI primitive. The `variant` prop sets the tone, and `as` sets the rendered element.
 
 ## Installation
 
@@ -83,214 +83,67 @@ export default Badge;
 ```scss
 @use './_devie.scss' as *;
 
+$badge-literal-colors: (
+    literalGray: $devie__color__literal-gray,
+    literalBrown: $devie__color__literal-brown,
+    literalOrange: $devie__color__literal-orange,
+    literalYellow: $devie__color__literal-yellow,
+    literalGreen: $devie__color__literal-green,
+    literalBlue: $devie__color__literal-blue,
+    literalPurple: $devie__color__literal-purple,
+    literalPink: $devie__color__literal-pink,
+    literalRed: $devie__color__literal-red,
+);
+
 @layer devie {
     .badge {
-        border-radius: 999px;
-        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        border-radius: calc($devie__radius / 2);
+        padding: calc($devie__spacing__x05 / 2) $devie__spacing__x1;
         display: flex;
         align-items: center;
-        gap: $devie__spacing__x1;
+        gap: $devie__spacing__x05;
         width: fit-content;
-        font-size: $devie__font-size__normal;
+        font-size: $devie__font-size__small;
+        font-weight: 500;
         line-height: 1.5;
-        cursor: default;
         font-family: $devie__font-family;
         transition: none;
+        background: color-mix(in srgb, var(--badge-tone) 13%, $devie__color__background);
+        color: var(--badge-color, var(--badge-tone));
+        border: 1px solid color-mix(in srgb, var(--badge-tone) 22%, $devie__color__background);
+
+        a &,
+        &[type="button"] {
+            &:hover {
+                background: color-mix(in srgb, var(--badge-tone) 18%, $devie__color__background);
+            }
+        }
     }
 
     .primary {
-        background: $devie__color__primary;
-        color: $devie__color__primary-label;
-        border: 1px solid $devie__color__primary;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__primary)};
-                cursor: pointer;
-            }
-        }
+        --badge-tone: #{$devie__color__primary};
     }
 
     .outline {
-        background: $devie__color__background;
-        border: 1px solid $devie__color__line;
-        color: $devie__color__text;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__background)};
-                cursor: pointer;
-            }
-        }
+        --badge-tone: #{$devie__color__text-sub};
+        --badge-color: #{$devie__color__text};
     }
 
     .danger {
-        background: $devie__color__danger;
-        color: $devie__color__danger-label;
-        border: 1px solid $devie__color__danger;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__danger)};
-                cursor: pointer;
-            }
-        }
+        --badge-tone: #{$devie__color__danger};
     }
 
     .success {
-        background: $devie__color__success;
-        color: $devie__color__success-label;
-        border: 1px solid $devie__color__success;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__success)};
-                cursor: pointer;
-            }
-        }
+        --badge-tone: #{$devie__color__success};
     }
 
     .warning {
-        background: $devie__color__warning;
-        color: $devie__color__warning-label;
-        border: 1px solid $devie__color__warning;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__warning)};
-                cursor: pointer;
-            }
-        }
+        --badge-tone: #{$devie__color__warning};
     }
 
-    .literalGray {
-        background: $devie__color__literal-gray;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-gray;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-gray)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalBrown {
-        background: $devie__color__literal-brown;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-brown;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-brown)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalOrange {
-        background: $devie__color__literal-orange;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-orange;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-orange)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalYellow {
-        background: $devie__color__literal-yellow;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-yellow;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-yellow)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalGreen {
-        background: $devie__color__literal-green;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-green;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-green)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalBlue {
-        background: $devie__color__literal-blue;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-blue;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-blue)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalPurple {
-        background: $devie__color__literal-purple;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-purple;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-purple)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalPink {
-        background: $devie__color__literal-pink;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-pink;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-pink)};
-                cursor: pointer;
-            }
-        }
-    }
-
-    .literalRed {
-        background: $devie__color__literal-red;
-        color: #FFFFFF;
-        border: 1px solid $devie__color__literal-red;
-
-        a &,
-        &[type="button"] {
-            &:hover {
-                background: #{devie-hover-color($devie__color__literal-red)};
-                cursor: pointer;
-            }
+    @each $name, $color in $badge-literal-colors {
+        .#{$name} {
+            --badge-tone: #{$color};
         }
     }
 }
@@ -298,9 +151,9 @@ export default Badge;
 
 ## Use Cases
 
-### Badge Variants
+### Variants
 
-Badges come in different variants to convey different meanings: **primary**, **outline**, **danger**, **success**, and **warning**.
+Set `variant` to `primary`, `outline`, `danger`, `success`, `warning`, or one of the literal colors such as `literalBlue`.
 
 ```tsx
 <div>
@@ -312,9 +165,9 @@ Badges come in different variants to convey different meanings: **primary**, **o
 </div>
 ```
 
-### Badge with Icons
+### With icons
 
-It's possible to add icons from Lucide or any other icon library to enhance the badge's visual meaning.
+Place an icon before the label.
 
 ```tsx
 <div>
@@ -329,9 +182,9 @@ It's possible to add icons from Lucide or any other icon library to enhance the 
 </div>
 ```
 
-### Clickable Badges
+### Clickable badges
 
-Badges can be made interactive by wrapping them in an anchor tag or using them as buttons. Hover effects applies automatically when the badge is inside an anchor (<a>) or rendered as a button element.s
+Wrap the badge in an anchor, or set `as="button"`. The hover style applies in both cases.
 
 ```tsx
 <a href="/">

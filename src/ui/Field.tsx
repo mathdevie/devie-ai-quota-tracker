@@ -4,6 +4,7 @@
 import { Field as BaseField } from "@base-ui/react/field";
 import clsx from "clsx";
 import styles from "./Field.module.scss";
+import Input from "./Input";
 
 function Root({ className, ...props }: BaseField.Root.Props) {
   return <BaseField.Root className={clsx(styles.root, className)} {...props} />;
@@ -15,10 +16,8 @@ function Label({ className, ...props }: BaseField.Label.Props) {
   );
 }
 
-function Control({ className, ...props }: BaseField.Control.Props) {
-  return (
-    <BaseField.Control className={clsx(styles.control, className)} {...props} />
-  );
+function Control(props: BaseField.Control.Props) {
+  return <Input {...props} />;
 }
 
 function Description({ className, ...props }: BaseField.Description.Props) {

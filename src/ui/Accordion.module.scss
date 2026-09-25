@@ -33,7 +33,6 @@
         border: none;
         outline: none;
         text-align: left;
-        cursor: pointer;
         border-radius: 0;
         transition: none;
 
@@ -61,8 +60,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: -2px;
+            @include devie-focus-ring(-2px);
             z-index: 1;
         }
     }

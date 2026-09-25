@@ -7,8 +7,17 @@ import styles from "./Tabs.module.scss";
 
 const Root = BaseTabs.Root;
 
-function List({ className, ...props }: BaseTabs.List.Props) {
-  return <BaseTabs.List className={clsx(styles.list, className)} {...props} />;
+function List({ className, variant = "underline", ...props }: Tabs.List.Props) {
+  return (
+    <BaseTabs.List
+      className={clsx(
+        styles.list,
+        variant === "segmented" && styles.listSegmented,
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 const tabStyles = styles.tab;
@@ -46,7 +55,10 @@ namespace Tabs {
     export type ChangeEventDetails = BaseTabs.Root.ChangeEventDetails;
   }
   export namespace List {
-    export type Props = BaseTabs.List.Props;
+    export type Variant = "underline" | "segmented";
+    export interface Props extends BaseTabs.List.Props {
+      variant?: Variant;
+    }
   }
   export namespace Tab {
     export type Props = BaseTabs.Tab.Props;

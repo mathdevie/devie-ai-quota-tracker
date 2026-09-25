@@ -3,7 +3,7 @@
 @layer devie {
     .root {
         position: relative;
-        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background 95%);
+        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background-raised 95%);
         border: 1px solid $devie__color__primary;
         border-radius: $devie__radius;
         padding: $devie__spacing__x2 $devie__spacing__x4 $devie__spacing__x2 $devie__spacing__x2;
@@ -15,12 +15,12 @@
         transition: transform 0.3s ease, opacity 0.3s ease;
 
         &[data-type="success"] {
-            background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background 95%);
+            background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background-raised 95%);
             border-color: $devie__color__success;
         }
 
         &[data-type="error"] {
-            background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background 95%);
+            background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background-raised 95%);
             border-color: $devie__color__danger;
         }
 
@@ -99,7 +99,6 @@
         border-radius: $devie__radius;
         padding: $devie__spacing__x1 $devie__spacing__x2;
         font-size: $devie__font-size__small;
-        cursor: pointer;
 
         &:hover {
             background: #{devie-hover-color($devie__color__primary)};
@@ -117,7 +116,6 @@
         border-radius: $devie__radius;
         display: grid;
         place-items: center;
-        cursor: pointer;
         transition: none;
 
         &:hover {

@@ -1,67 +1,10 @@
 # <Progress />
 
-The Progress component extends [ Base UI's Progress ](https://base-ui.com/react/components/progress) . It provides a visual indicator for the completion status of a task, supporting both determinate and indeterminate states.
+A progress bar that displays the status of a long task. The Progress component extends [ Base UI's Progress ](https://base-ui.com/react/components/progress) . It provides a visual indicator for the completion status of a task, supporting both determinate and indeterminate states.
 
 Built on [Base UI](https://base-ui.com/react/components/progress).
 
 ## Installation
-
-### progress.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-  .root {
-    display: flex;
-    flex-direction: column;
-    gap: $devie__spacing__x05;
-    width: 100%;
-    font-family: $devie__font-family;
-  }
-
-  .track {
-    position: relative;
-    height: 8px;
-    width: 100%;
-    overflow: hidden;
-    border-radius: $devie__radius;
-    background-color: $devie__color__background-sub;
-  }
-
-  .indicator {
-    height: 100%;
-    background-color: $devie__color__primary;
-    border-radius: $devie__radius;
-    transition: width 0.3s ease-out;
-
-    &[data-indeterminate] {
-      width: 30% !important;
-      animation: indeterminate 1.5s ease-in-out infinite;
-    }
-  }
-
-  @keyframes indeterminate {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(400%);
-    }
-  }
-
-  .label {
-    font-size: $devie__font-size__small;
-    color: $devie__color__text;
-  }
-
-  .value {
-    font-size: $devie__font-size__small;
-    color: $devie__color__text-sub;
-    font-variant-numeric: tabular-nums;
-  }
-}
-```
 
 ### progress.tsx
 
@@ -142,6 +85,64 @@ namespace Progress {
 }
 
 export default Progress;
+```
+
+### progress.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: $devie__spacing__x05;
+    width: 100%;
+    font-family: $devie__font-family;
+  }
+
+  .track {
+    position: relative;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: $devie__radius;
+    background-color: $devie__color__background-sunken;
+  }
+
+  .indicator {
+    height: 100%;
+    background-color: $devie__color__primary;
+    border-radius: $devie__radius;
+    transition: width 0.3s ease-out;
+
+    &[data-indeterminate] {
+      width: 30% !important;
+      animation: indeterminate 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
+  .label {
+    font-size: $devie__font-size__small;
+    color: $devie__color__text;
+  }
+
+  .value {
+    font-size: $devie__font-size__small;
+    color: $devie__color__text-sub;
+    font-variant-numeric: tabular-nums;
+  }
+}
 ```
 
 ## Use Cases

@@ -1,9 +1,6 @@
 @use './_devie.scss' as *;
 
 @layer devie {
-    .trigger {
-        cursor: pointer;
-    }
 
     .backdrop {
         position: fixed;
@@ -23,7 +20,7 @@
     }
 
     .popup {
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
@@ -52,7 +49,7 @@
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
         stroke: $devie__color__line;
         stroke-width: 1px;
         z-index: 1;
@@ -98,7 +95,6 @@
         background: transparent;
         border: none;
         padding: $devie__spacing__x05;
-        cursor: pointer;
         color: $devie__color__text;
         border-radius: $devie__radius;
         transition: none;

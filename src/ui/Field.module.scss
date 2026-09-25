@@ -13,46 +13,6 @@
         }
     }
 
-    .control {
-        background-color: $devie__color__background;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x1;
-        border: 1px solid $devie__color__line;
-        box-sizing: border-box;
-        min-width: 200px;
-        width: 100%;
-        color: $devie__color__text;
-
-        &:focus-visible {
-            border-color: $devie__color__primary;
-            outline: 0;
-        }
-
-        &::placeholder {
-            color: $devie__color__text-sub;
-        }
-
-        &[data-invalid] {
-            border-color: $devie__color__danger;
-            color: $devie__color__danger;
-
-            &::placeholder {
-                color: $devie__color__danger;
-            }
-        }
-
-        &:disabled {
-            cursor: not-allowed;
-            background: #{devie-disabled-color($devie__color__background)};
-            border-color: #{devie-disabled-color($devie__color__line)};
-            color: #{devie-disabled-color($devie__color__text)};
-
-            &::placeholder {
-                color: #{devie-disabled-color($devie__color__text-sub)};
-            }
-        }
-    }
-
     .description {
         font-size: $devie__font-size__small;
         color: $devie__color__text-sub;

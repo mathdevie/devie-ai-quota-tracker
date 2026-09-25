@@ -8,7 +8,9 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { THEMES } from "@/ui/themes/registry";
 
@@ -29,11 +31,10 @@ interface Props {
 
 const DEFAULT_THEME = "theme-default";
 const STORAGE_KEY = "devie-theme";
+const CHANGE_EVENT = "devie-theme-change";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
 
 function getStoredTheme(): string | null {
-  if (typeof window === "undefined") return null;
-
   try {
     const storedTheme = localStorage.getItem(STORAGE_KEY);
     if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
@@ -46,18 +47,29 @@ function getStoredTheme(): string | null {
   return null;
 }
 
-function persistTheme(theme: string): void {
-  if (typeof window === "undefined") return;
+function getServerTheme(): null {
+  return null;
+}
 
+function subscribeToStoredTheme(onChange: () => void): () => void {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(CHANGE_EVENT, onChange);
+  };
+}
+
+function persistTheme(theme: string): void {
   try {
     localStorage.setItem(STORAGE_KEY, theme);
   } catch {
     // Storage unavailable
   }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 function applyThemeToDOM(theme: string): void {
-  if (typeof document === "undefined") return;
   document.documentElement.dataset.devieTheme = theme;
 }
 
@@ -65,16 +77,24 @@ export function ThemeProvider({
   children,
   defaultTheme = DEFAULT_THEME,
 }: Props) {
-  const [selectedTheme, setSelectedTheme] = useState(
-    () => getStoredTheme() ?? defaultTheme,
+  const storedTheme = useSyncExternalStore(
+    subscribeToStoredTheme,
+    getStoredTheme,
+    getServerTheme,
   );
+  const selectedTheme = storedTheme ?? defaultTheme;
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState("#7B7481");
 
   const currentTheme = previewedTheme ?? selectedTheme;
+  const appliedRef = useRef(false);
 
   useEffect(() => {
-    applyThemeToDOM(currentTheme);
+    // Nothing chosen yet: keep the attribute set by the boot script.
+    if (storedTheme !== null || previewedTheme !== null || appliedRef.current) {
+      applyThemeToDOM(currentTheme);
+      appliedRef.current = true;
+    }
 
     const computedColor = getComputedStyle(document.documentElement)
       .getPropertyValue("--devie__color__primary")
@@ -83,24 +103,9 @@ export function ThemeProvider({
     if (computedColor) {
       setPrimaryColor(computedColor);
     }
-  }, [currentTheme]);
-
-  useEffect(() => {
-    function handleStorageChange(event: StorageEvent) {
-      if (event.key !== STORAGE_KEY) return;
-      const newTheme = event.newValue;
-      if (newTheme && ALLOWED_THEMES.has(newTheme)) {
-        setSelectedTheme(newTheme);
-        setPreviewedTheme(null);
-      }
-    }
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [currentTheme, storedTheme, previewedTheme]);
 
   const setTheme = useCallback((theme: string) => {
-    setSelectedTheme(theme);
     setPreviewedTheme(null);
     persistTheme(theme);
   }, []);

@@ -8,7 +8,6 @@
         gap: $devie__spacing__x05;
         padding: $devie__spacing__x1;
         border: none;
-        cursor: pointer;
         border-radius: $devie__radius;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
@@ -20,8 +19,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
     }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import Badge from "@/components/Badge";
+import Badge from "@/ui/Badge";
 import IconTip from "../IconTip";
 import { useAppUpdater } from "./AppUpdater";
 import styles from "./UpdateBadge.module.scss";

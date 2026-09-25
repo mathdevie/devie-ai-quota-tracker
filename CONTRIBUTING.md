@@ -57,6 +57,20 @@ The bundle is written under `src-desktop/target/debug/bundle/macos/`.
   [Devie UI](https://www.devie-ui.com/). Never edit or delete files inside
   it; a sync is a plain rsync. Customizations belong in `src/components`,
   `src/theme`, and `src/app`.
+  The sole sync exception is the API-key example in
+  `src/ui/markdown/input-group.md`: use `example-api-key` because GitHub
+  push protection rejects the upstream Stripe-shaped placeholder.
+  Last synced from `mathdevie/devie-ui.com` at
+  `dc5082eb67f6888c43d3a970d79044158c6521d4` (`origin/main`, 2026-09-24).
+  Import the default tokens before the desktop preset and the color themes.
+  The desktop preset supplies typography and sizing; the app keeps SF Pro
+  across all themes in `src/app/globals.scss`. Use the upstream Badge,
+  InputGroup, and ButtonGroup instead of copying their styles.
+  The app root uses `--devie__zoom`; the library scales portaled overlays.
+  Keep viewport sizing on that root and measure native popover content in
+  rendered pixels so both surfaces can follow the same scale.
+  `src/theme/desktop.scss` keeps native vibrancy and the color fallback for
+  older WebKit versions supported by the app's macOS 12 minimum.
 - `src/lib/contracts.ts` mirrors `src-desktop/src/model.rs` by hand. When
   you change one, change the other in the same pull request.
 - Rust owns network requests, SQLite, and the menu bar. The webview

@@ -1,6 +1,6 @@
 # <NavigationMenu />
 
-The NavigationMenu component extends [ Base UI's NavigationMenu ](https://base-ui.com/react/components/navigation-menu) . It provides a collection of links and menus for website navigation, with support for hover-triggered dropdowns, keyboard navigation, and accessibility features.
+A collection of links and menus for website navigation. The NavigationMenu component extends [ Base UI's NavigationMenu ](https://base-ui.com/react/components/navigation-menu) . It provides a collection of links and menus for website navigation, with support for hover-triggered dropdowns, keyboard navigation, and accessibility features.
 
 Built on [Base UI](https://base-ui.com/react/components/navigation-menu).
 
@@ -231,7 +231,6 @@ export default NavigationMenu;
         color: $devie__color__text;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
-        cursor: pointer;
         border-radius: $devie__radius;
         outline: none;
         transition: none;
@@ -245,8 +244,7 @@ export default NavigationMenu;
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
     }
 
@@ -285,8 +283,7 @@ export default NavigationMenu;
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
     }
 
@@ -294,34 +291,61 @@ export default NavigationMenu;
         position: fixed;
         inset: 0;
         background: transparent;
+        opacity: 1;
+        transition: opacity 200ms ease;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
     }
 
     .positioner {
         &:not([data-instant]) {
-            transition: left 400ms ease;
+            transition: left 300ms ease;
         }
     }
 
     .popup {
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
         overflow: hidden;
+        opacity: 1;
+        transform: scale(1);
+        transform-origin: var(--transform-origin);
+        transition:
+            opacity 200ms ease,
+            transform 200ms ease;
+
+        &[data-starting-style] {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.96);
+        }
     }
 
     .viewport {
         overflow: hidden;
+        // Animate viewport size changes when switching between menu items
+        transition:
+            width 300ms ease,
+            height 300ms ease;
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
         stroke: $devie__color__line;
         stroke-width: 1px;
         z-index: 1;
 
         &:not([data-instant]) {
-            transition: left 400ms ease;
+            transition: left 300ms ease;
         }
 
         &[data-side='top'] {

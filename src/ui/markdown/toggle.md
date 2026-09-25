@@ -1,10 +1,47 @@
 # <Toggle />
 
-The Toggle component extends [ Base UI's Toggle ](https://base-ui.com/react/components/toggle) . It's a two-state button that can be on (pressed) or off. Perfect for favorite buttons, formatting options, or any binary state.
+A two-state button that can be on or off. The Toggle component extends [ Base UI's Toggle ](https://base-ui.com/react/components/toggle) . It's a two-state button that can be on (pressed) or off. Perfect for favorite buttons, formatting options, or any binary state.
 
 Built on [Base UI](https://base-ui.com/react/components/toggle).
 
 ## Installation
+
+### toggle.tsx
+
+```tsx
+// https://devie-ui.com/components/toggle
+// https://base-ui.com/react/components/toggle
+
+import { Toggle as BaseToggle } from "@base-ui/react/toggle";
+import clsx from "clsx";
+import styles from "./Toggle.module.scss";
+
+type Variant = "secondary" | "naked";
+
+function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
+  return (
+    <BaseToggle
+      className={clsx(
+        styles.toggle,
+        variant === "secondary" && styles.variantSecondary,
+        variant === "naked" && styles.variantNaked,
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+namespace Toggle {
+  export interface Props extends BaseToggle.Props {
+    variant?: Variant;
+  }
+  export type State = BaseToggle.State;
+  export type ChangeEventDetails = BaseToggle.ChangeEventDetails;
+}
+
+export default Toggle;
+```
 
 ### toggle.module.scss
 
@@ -19,7 +56,6 @@ Built on [Base UI](https://base-ui.com/react/components/toggle).
         gap: $devie__spacing__x05;
         padding: $devie__spacing__x1;
         border: none;
-        cursor: pointer;
         border-radius: $devie__radius;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
@@ -31,8 +67,7 @@ Built on [Base UI](https://base-ui.com/react/components/toggle).
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
     }
 
@@ -97,43 +132,6 @@ Built on [Base UI](https://base-ui.com/react/components/toggle).
         }
     }
 }
-```
-
-### toggle.tsx
-
-```tsx
-// https://devie-ui.com/components/toggle
-// https://base-ui.com/react/components/toggle
-
-import { Toggle as BaseToggle } from "@base-ui/react/toggle";
-import clsx from "clsx";
-import styles from "./Toggle.module.scss";
-
-type Variant = "secondary" | "naked";
-
-function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
-  return (
-    <BaseToggle
-      className={clsx(
-        styles.toggle,
-        variant === "secondary" && styles.variantSecondary,
-        variant === "naked" && styles.variantNaked,
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-namespace Toggle {
-  export interface Props extends BaseToggle.Props {
-    variant?: Variant;
-  }
-  export type State = BaseToggle.State;
-  export type ChangeEventDetails = BaseToggle.ChangeEventDetails;
-}
-
-export default Toggle;
 ```
 
 ## Use Cases

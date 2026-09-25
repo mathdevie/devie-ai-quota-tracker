@@ -13,7 +13,6 @@
         border: 1px solid $devie__color__line;
         background-color: $devie__color__background;
         padding: 2px;
-        cursor: pointer;
         transition: background-color 150ms ease, border-color 150ms ease;
 
         &[data-checked] {
@@ -22,8 +21,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
 
         &[data-disabled] {

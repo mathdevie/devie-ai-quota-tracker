@@ -48,17 +48,21 @@ Both Base UI and Lucide are tree-shakeable, so your app bundle will contain only
 
 All components are styled using a set of CSS Variables.
 
-You need to define these variables in your project.
+Load Figtree as the default font. In Next.js, import Figtree from `next/font/google`. Set its `variable` option to `"--font-figtree"` and apply its variable class to the `html` element. In other apps, load the font with the family name `Figtree`.
+
+Define these variables in your project. For desktop typography, add the global overrides from [ Design for desktop ](/how-to/design-for-desktop-native) .
 
 ```css
 @layer devie {
   :root {
+    color-scheme: light;
     /* Color Tokens */
     --devie__color__text: #111111;
     --devie__color__text-sub: #848385;
     --devie__color__line: #d7d7d7;
     --devie__color__background: #ffffff;
-    --devie__color__background-sub: #f5f5f5;
+    --devie__color__background-sunken: #f5f5f5;
+    --devie__color__background-raised: #ffffff;
     --devie__color__primary: #5739da;
     --devie__color__primary-label: #ffffff;
     --devie__color__danger: #df5449;
@@ -70,13 +74,17 @@ You need to define these variables in your project.
 
     /* Font Tokens */
     --devie__font-family:
-      -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
+      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", sans-serif;
     --devie__font-size__title1: 32px;
     --devie__font-size__title2: 24px;
     --devie__font-size__title3: 20.5px;
     --devie__font-size__normal: 16px;
     --devie__font-size__small: 14px;
+
+    /* Interface Tokens */
+    --devie__zoom: 1;
 
     /* Radius Tokens */
     --devie__radius: 8px;
@@ -84,10 +92,10 @@ You need to define these variables in your project.
 
     /* Shadow Tokens */
     --devie__shadow__menu:
-    0px 10px 30px -16px rgba(0, 0, 0, 0.1), 0px 4px 10px -6px
-    rgba(0, 0, 0, 0.25);
+      0px 10px 30px -16px rgba(0, 0, 0, 0.1),
+      0px 4px 10px -6px rgba(0, 0, 0, 0.25);
 
-    /* Literal Colors Tokens */
+    /* Litteral Colors Tokens */
     --devie__color__literal-gray: #6b7280;
     --devie__color__literal-brown: #a16207;
     --devie__color__literal-orange: #ea580c;
@@ -100,7 +108,7 @@ You need to define these variables in your project.
 
     /* Effect Tokens */
     --devie__effect__hover-intensity: 0.06;
-    --devie__effect__disabled-intensity: 0.7;
+    --devie__effect__disabled-intensity: 0.8;
     --devie__effect__disabled-desaturate: 0.5;
     --devie__effect__disabled-target-l: 0.9;
 
@@ -116,6 +124,14 @@ You need to define these variables in your project.
     --devie__spacing__x8: 64px;
   }
 }
+
+@layer devie {
+  /* Zooms the popups rendered in portals. A positioner (data-side) stays unzoomed. */
+  [data-base-ui-portal] > *:not([data-base-ui-portal]):not([data-side]),
+  [data-base-ui-portal] > [data-side] > * {
+    zoom: var(--devie__zoom);
+  }
+}
 ```
 
 Learn how to customize your theme(s) by visiting the [Theming](/theming) section.
@@ -127,12 +143,12 @@ The `_devie.scss` file re-exports CSS variables as SCSS variables for type-safet
 ```scss
 @use 'sass:string';
 
-/* Color Tokens */
 $devie__color__text: var(--devie__color__text);
 $devie__color__text-sub: var(--devie__color__text-sub);
 $devie__color__line: var(--devie__color__line);
 $devie__color__background: var(--devie__color__background);
-$devie__color__background-sub: var(--devie__color__background-sub);
+$devie__color__background-sunken: var(--devie__color__background-sunken);
+$devie__color__background-raised: var(--devie__color__background-raised);
 $devie__color__primary: var(--devie__color__primary);
 $devie__color__primary-label: var(--devie__color__primary-label);
 $devie__color__danger: var(--devie__color__danger);
@@ -142,7 +158,6 @@ $devie__color__success-label: var(--devie__color__success-label);
 $devie__color__warning: var(--devie__color__warning);
 $devie__color__warning-label: var(--devie__color__warning-label);
 
-/* Font Tokens */
 $devie__font-family: var(--devie__font-family);
 $devie__font-size__title1: var(--devie__font-size__title1);
 $devie__font-size__title2: var(--devie__font-size__title2);
@@ -150,14 +165,11 @@ $devie__font-size__title3: var(--devie__font-size__title3);
 $devie__font-size__normal: var(--devie__font-size__normal);
 $devie__font-size__small: var(--devie__font-size__small);
 
-/* Radius Tokens */
 $devie__radius: var(--devie__radius);
 $devie__radius-strong: var(--devie__radius-strong);
 
-/* Shadow Tokens */
 $devie__shadow__menu: var(--devie__shadow__menu);
 
-/* Literal Color Tokens */
 $devie__color__literal-gray: var(--devie__color__literal-gray);
 $devie__color__literal-brown: var(--devie__color__literal-brown);
 $devie__color__literal-orange: var(--devie__color__literal-orange);
@@ -168,7 +180,6 @@ $devie__color__literal-purple: var(--devie__color__literal-purple);
 $devie__color__literal-pink: var(--devie__color__literal-pink);
 $devie__color__literal-red: var(--devie__color__literal-red);
 
-/* Spacing Tokens */
 $devie__spacing__x05: var(--devie__spacing__x05);
 $devie__spacing__x1: var(--devie__spacing__x1);
 $devie__spacing__x2: var(--devie__spacing__x2);
@@ -179,17 +190,21 @@ $devie__spacing__x6: var(--devie__spacing__x6);
 $devie__spacing__x7: var(--devie__spacing__x7);
 $devie__spacing__x8: var(--devie__spacing__x8);
 
-/* Effect Transformers */
+$devie__zoom: var(--devie__zoom);
+
+
 @function devie-hover-color($color) {
-    @return string.unquote(
-        "oklch(from #{$color} calc(l * (1 - var(--devie__effect__hover-intensity))) c h)"
+    @return string.unquote("oklch(from #{$color} calc(l * (1 - var(--devie__effect__hover-intensity))) c h)"
     );
 }
 
 @function devie-disabled-color($color) {
-    @return string.unquote(
-        "oklch(from #{$color} calc(l + (var(--devie__effect__disabled-target-l) - l) * var(--devie__effect__disabled-intensity)) calc(c * var(--devie__effect__disabled-desaturate)) h)"
+    @return string.unquote("oklch(from #{$color} calc(l + (var(--devie__effect__disabled-target-l) - l) * var(--devie__effect__disabled-intensity)) calc(c * var(--devie__effect__disabled-desaturate)) h)"
     );
+}
+@mixin devie-focus-ring($offset: 2px) {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: $offset;
 }
 ```
 
@@ -209,7 +224,7 @@ For this to work properly, your application needs to define a new [ stacking con
 </body>
 ```
 
-See the [ Stack elements without z-index ](/how-to/z-index-and-stacking) guide for the full rationale and frequently asked questions.
+See the [Stack without z-index](/how-to/z-index-and-stacking) guide for the full rationale and frequently asked questions.
 
 ## 6. All Set
 

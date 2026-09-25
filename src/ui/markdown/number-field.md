@@ -1,6 +1,6 @@
 # <NumberField />
 
-The NumberField component extends [ Base UI's NumberField ](https://base-ui.com/react/components/number-field) . It provides a numeric input with increment and decrement buttons, supporting min/max constraints, step values, and a scrub area for mouse drag interactions.
+A numeric input with increment and decrement buttons, and a scrub area. The NumberField component extends [ Base UI's NumberField ](https://base-ui.com/react/components/number-field) . It provides a numeric input with increment and decrement buttons, supporting min/max constraints, step values, and a scrub area for mouse drag interactions.
 
 Built on [Base UI](https://base-ui.com/react/components/number-field).
 
@@ -213,25 +213,24 @@ export default NumberField;
         padding: $devie__spacing__x1;
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius;
-        background-color: $devie__color__background-sub;
+        background-color: $devie__color__background-sunken;
         background-clip: padding-box;
         color: $devie__color__text;
         user-select: none;
-        cursor: pointer;
 
         @media (hover: hover) {
             &:hover:not([data-disabled]) {
-                background-color: #{devie-hover-color($devie__color__background-sub)};
+                background-color: #{devie-hover-color($devie__color__background-sunken)};
             }
         }
 
         &:active:not([data-disabled]) {
-            background-color: #{devie-hover-color($devie__color__background-sub)};
+            background-color: #{devie-hover-color($devie__color__background-sunken)};
         }
 
         &[data-disabled] {
             cursor: not-allowed;
-            background: #{devie-disabled-color($devie__color__background-sub)};
+            background: #{devie-disabled-color($devie__color__background-sunken)};
             border-color: #{devie-disabled-color($devie__color__line)};
             color: #{devie-disabled-color($devie__color__text)};
         }

@@ -4,6 +4,7 @@ import I18nProvider from "@/i18n/I18nProvider";
 import { THEMES } from "@/theme/registry";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import "@/ui/themes/default.css";
+import "@/ui/themes/desktop.scss";
 import "@/theme/light/theme.css";
 import "@/theme/dark/theme.css";
 import "@/ui/themes/midnight-ink/theme.css";
@@ -15,8 +16,7 @@ import "@/ui/themes/command-prompt/theme.css";
 import "@/ui/themes/totoro/theme.css";
 import "@/ui/themes/catpuccin-latte/theme.css";
 import "./globals.scss";
-import "./macos.scss";
-import "@/theme/custom-themes.css";
+import "@/theme/desktop.scss";
 
 export const metadata: Metadata = {
   title: "Devie AI Quota Tracker",
@@ -52,7 +52,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <I18nProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <div className="appRoot">{children}</div>
+          </ThemeProvider>
         </I18nProvider>
       </body>
     </html>

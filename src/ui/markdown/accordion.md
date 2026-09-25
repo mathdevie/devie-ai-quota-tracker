@@ -1,6 +1,6 @@
 # <Accordion />
 
-The Accordion component extends the [ Base UI Accordion ](https://base-ui.com/react/components/accordion) with polished default styles and an additional `Accordion.Content` subcomponent for consistent content padding. We also replaced the default chevron icon with the Lucide icon for better visual consistency across the design system.
+A component that displays a set of collapsible panels with headings. The Accordion component extends the [ Base UI Accordion ](https://base-ui.com/react/components/accordion) with polished default styles and an additional `Accordion.Content` subcomponent for consistent content padding. We also replaced the default chevron icon with the Lucide icon for better visual consistency across the design system.
 
 Built on [Base UI](https://base-ui.com/react/components/accordion).
 
@@ -142,7 +142,6 @@ export default Accordion;
         border: none;
         outline: none;
         text-align: left;
-        cursor: pointer;
         border-radius: 0;
         transition: none;
 
@@ -170,8 +169,7 @@ export default Accordion;
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: -2px;
+            @include devie-focus-ring(-2px);
             z-index: 1;
         }
     }

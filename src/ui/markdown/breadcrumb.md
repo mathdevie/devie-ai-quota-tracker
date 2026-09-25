@@ -1,6 +1,6 @@
 # <Breadcrumb />
 
-The Breadcrumb component provides a navigational aid that helps users understand their current location within a website hierarchy. It's built as a compound component with subcomponents for flexible composition.
+A navigation trail that shows the current location in a site hierarchy. It's built as a compound component with subcomponents for flexible composition.
 
 ## Installation
 

@@ -24,7 +24,6 @@
     align-items: center;
     width: 100%;
     height: 20px;
-    cursor: pointer;
     touch-action: none;
 
     &[data-orientation='vertical'] {
@@ -94,8 +93,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid $devie__color__primary;
-      outline-offset: 2px;
+      @include devie-focus-ring(2px);
     }
 
     &[data-dragging] {

@@ -1,18 +1,18 @@
 # Use SCSS Variables
 
-Devie UI tokens are CSS variables, so they can be swapped at runtime (themes, dark mode, user preferences). To make authoring SCSS less error-prone, Devie UI also re-exports each token as an SCSS variable in `src/ui/_variables.scss`.
+Devie UI tokens are CSS variables, so they can be swapped at runtime (themes, dark mode, user preferences). To make authoring SCSS less error-prone, Devie UI also re-exports each token as an SCSS variable in `src/ui/_devie.scss`.
 
 ## Why Use SCSS Variables?
 
 - **Cleaner SCSS:** write `$devie__color__text` instead of `var(--devie__color__text)`
-- **“Type-safe” (typo-safe) tokens:** misspelling an SCSS variable fails at build time, while a misspelled CSS variable usually fails silently at runtime
+- **Typo-safe tokens:** misspelling an SCSS variable fails at build time, while a misspelled CSS variable usually fails silently at runtime
 - **Still themeable:** these SCSS variables expand to `var(--...)`, so switching themes updates values without recompiling
 
 ## How It Works
 
-The file `src/ui/_variables.scss` maps each design token to its CSS variable. The SCSS variable is just an alias, and the browser still resolves the value at runtime:
+The file `src/ui/_devie.scss` maps each design token to its CSS variable. The SCSS variable is just an alias, and the browser still resolves the value at runtime:
 
-**src/ui/_variables.scss**
+**src/ui/_devie.scss**
 
 ```scss
 // src/ui/_devie.scss
@@ -51,7 +51,7 @@ Import the variables once at the top of your `.module.scss` file, then use the t
 ## Gotchas
 
 - **Sass color functions won't work:** these values are `var(...)` strings, so functions like `lighten()` or `darken()` can't compute a new color at build time.
-- **Use CSS runtime functions instead:** prefer `color-mix()` or the helpers in `src/ui/_utils.scss` when you need hover/disabled overlays that still work across themes.
+- **Use CSS runtime functions instead:** prefer `color-mix()` or the `devie-hover-color()` and `devie-disabled-color()` functions in `src/ui/_devie.scss` for hover and disabled overlays that work across themes.
 
 ## Related Guides
 

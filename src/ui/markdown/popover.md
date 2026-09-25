@@ -1,6 +1,6 @@
 # <Popover />
 
-The Popover component extends [ Base UI's Popover ](https://base-ui.com/react/components/popover) . It provides a floating panel that appears relative to a trigger element, useful for displaying supplementary content, tooltips with rich content, or contextual actions.
+An accessible popup anchored to a trigger. The Popover component extends [ Base UI's Popover ](https://base-ui.com/react/components/popover) . It provides a floating panel that appears relative to a trigger element, useful for displaying supplementary content, tooltips with rich content, or contextual actions.
 
 Built on [Base UI](https://base-ui.com/react/components/popover).
 
@@ -21,11 +21,7 @@ const Root = BasePopover.Root;
 
 function Trigger({ className, render, ...props }: BasePopover.Trigger.Props) {
   return (
-    <BasePopover.Trigger
-      className={clsx(!render && styles.trigger, className)}
-      render={render}
-      {...props}
-    />
+    <BasePopover.Trigger className={className} render={render} {...props} />
   );
 }
 
@@ -152,9 +148,6 @@ export default Popover;
 @use './_devie.scss' as *;
 
 @layer devie {
-    .trigger {
-        cursor: pointer;
-    }
 
     .backdrop {
         position: fixed;
@@ -174,12 +167,12 @@ export default Popover;
     }
 
     .popup {
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
         overflow: hidden;
-        width: 600px;
+        min-width: 200px;
         max-width: var(--available-width, 90vw);
         max-height: 80vh;
         transform-origin: var(--transform-origin);
@@ -203,7 +196,7 @@ export default Popover;
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
         stroke: $devie__color__line;
         stroke-width: 1px;
         z-index: 1;
@@ -249,7 +242,6 @@ export default Popover;
         background: transparent;
         border: none;
         padding: $devie__spacing__x05;
-        cursor: pointer;
         color: $devie__color__text;
         border-radius: $devie__radius;
         transition: none;
@@ -305,6 +297,112 @@ Set `modal` to `true` to lock page scroll and disable interactions outside the p
 A more complex example showing a notifications panel with custom header, list items, and footer actions. This demonstrates using controlled state via `open` and `onOpenChange` props, custom styling via `className`, and structured layouts within the popup.
 
 ### Additional Examples
+
+#### Hover Scss
+
+```scss
+.hoverPopup {
+  width: 280px !important;
+}
+
+.hoverContent {
+  padding: $devie__spacing__x2;
+  display: flex;
+  flex-direction: column;
+  gap: $devie__spacing__x1;
+}
+```
+
+#### Hover Tsx
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger
+    openOnHover
+    delay={200}
+    render={<Button variant="secondary">Open Popover (On Hover)</Button>}
+  />
+  <Popover.Portal>
+    <Popover.Positioner side="bottom" sideOffset={8}>
+      <Popover.Popup className={styles.hoverPopup}>
+        <Popover.Arrow />
+        <div className={styles.hoverContent}>
+          <Popover.Title>Quick Info</Popover.Title>
+          <Popover.Description>
+            This popover opens on hover with a 200ms delay. Move your mouse away
+            to close it automatically.
+          </Popover.Description>
+        </div>
+      </Popover.Popup>
+    </Popover.Positioner>
+  </Popover.Portal>
+</Popover.Root>
+```
+
+#### Modal Scss
+
+```scss
+.modalPopup {
+  width: 320px !important;
+}
+
+.modalContent {
+  padding: $devie__spacing__x3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $devie__spacing__x2;
+}
+
+.modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $devie__color__danger;
+  color: $devie__color__danger-label;
+}
+
+.modalActions {
+  display: flex;
+  gap: $devie__spacing__x1;
+  margin-top: $devie__spacing__x1;
+}
+```
+
+#### Modal Tsx
+
+```tsx
+<Popover.Root modal>
+  <Popover.Trigger
+    render={<Button variant="secondary">Open Popover (Modal Mode)</Button>}
+  />
+  <Popover.Portal>
+    <Popover.Backdrop />
+    <Popover.Positioner side="bottom" sideOffset={8}>
+      <Popover.Popup className={styles.modalPopup}>
+        <div className={styles.modalContent}>
+          <div className={styles.modalIcon}>
+            <AlertTriangle size={24} />
+          </div>
+          <Popover.Title>Delete your account?</Popover.Title>
+          <Popover.Description>
+            This action cannot be undone. All your data will be permanently
+            removed from our servers.
+          </Popover.Description>
+          <div className={styles.modalActions}>
+            <Popover.Close render={<Button variant="secondary">Cancel</Button>} />
+            <Popover.Close render={<Button variant="danger">Yes, delete</Button>} />
+          </div>
+        </div>
+      </Popover.Popup>
+    </Popover.Positioner>
+  </Popover.Portal>
+</Popover.Root>
+```
 
 #### Rich Content Scss
 
@@ -368,7 +466,7 @@ A more complex example showing a notifications panel with custom header, list it
   color: $devie__color__text-sub;
 
   &:hover {
-    background: $devie__color__background-sub;
+    background: $devie__color__background-sunken;
     color: $devie__color__text;
   }
 }
@@ -402,7 +500,7 @@ A more complex example showing a notifications panel with custom header, list it
   width: 28px;
   height: 28px;
   border-radius: $devie__radius;
-  background: $devie__color__background-sub;
+  background: $devie__color__background-sunken;
   color: $devie__color__text;
   flex-shrink: 0;
 
@@ -525,112 +623,6 @@ const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
           >
             View all
           </Button>
-        </div>
-      </Popover.Popup>
-    </Popover.Positioner>
-  </Popover.Portal>
-</Popover.Root>
-```
-
-#### Modal Tsx
-
-```tsx
-<Popover.Root modal>
-  <Popover.Trigger
-    render={<Button variant="secondary">Open Popover (Modal Mode)</Button>}
-  />
-  <Popover.Portal>
-    <Popover.Backdrop />
-    <Popover.Positioner side="bottom" sideOffset={8}>
-      <Popover.Popup className={styles.modalPopup}>
-        <div className={styles.modalContent}>
-          <div className={styles.modalIcon}>
-            <AlertTriangle size={24} />
-          </div>
-          <Popover.Title>Delete your account?</Popover.Title>
-          <Popover.Description>
-            This action cannot be undone. All your data will be permanently
-            removed from our servers.
-          </Popover.Description>
-          <div className={styles.modalActions}>
-            <Popover.Close render={<Button variant="secondary">Cancel</Button>} />
-            <Popover.Close render={<Button variant="danger">Yes, delete</Button>} />
-          </div>
-        </div>
-      </Popover.Popup>
-    </Popover.Positioner>
-  </Popover.Portal>
-</Popover.Root>
-```
-
-#### Hover Scss
-
-```scss
-.hoverPopup {
-  width: 280px !important;
-}
-
-.hoverContent {
-  padding: $devie__spacing__x2;
-  display: flex;
-  flex-direction: column;
-  gap: $devie__spacing__x1;
-}
-```
-
-#### Modal Scss
-
-```scss
-.modalPopup {
-  width: 320px !important;
-}
-
-.modalContent {
-  padding: $devie__spacing__x3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: $devie__spacing__x2;
-}
-
-.modalIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: $devie__color__danger;
-  color: $devie__color__danger-label;
-}
-
-.modalActions {
-  display: flex;
-  gap: $devie__spacing__x1;
-  margin-top: $devie__spacing__x1;
-}
-```
-
-#### Hover Tsx
-
-```tsx
-<Popover.Root>
-  <Popover.Trigger
-    openOnHover
-    delay={200}
-    render={<Button variant="secondary">Open Popover (On Hover)</Button>}
-  />
-  <Popover.Portal>
-    <Popover.Positioner side="bottom" sideOffset={8}>
-      <Popover.Popup className={styles.hoverPopup}>
-        <Popover.Arrow />
-        <div className={styles.hoverContent}>
-          <Popover.Title>Quick Info</Popover.Title>
-          <Popover.Description>
-            This popover opens on hover with a 200ms delay. Move your mouse away
-            to close it automatically.
-          </Popover.Description>
         </div>
       </Popover.Popup>
     </Popover.Positioner>

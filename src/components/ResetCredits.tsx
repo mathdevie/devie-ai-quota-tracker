@@ -7,6 +7,7 @@ import type { ProviderConnection, ResetCredit } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/date";
 import { accountLabel } from "@/lib/labels";
 import AlertDialog from "@/ui/AlertDialog";
+import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Popover from "@/ui/Popover";
 import styles from "./ResetCredits.module.scss";
@@ -55,7 +56,7 @@ export default function ResetCredits({
     <>
       <Popover.Root onOpenChange={setOpen} open={open}>
         <Popover.Trigger
-          render={<Button size="sm" variant="naked" />}
+          render={<Badge as="button" variant="primary" />}
           className={styles.trigger}
           aria-label={t("Quota.ResetCredits.Available", {
             count: credits.length,

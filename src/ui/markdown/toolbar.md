@@ -1,147 +1,10 @@
 # <Toolbar />
 
-The Toolbar component extends [ Base UI's Toolbar ](https://base-ui.com/react/components/toolbar) . It provides a container for grouping a set of controls like buttons, toggles, and links with proper keyboard navigation. Icon-only buttons automatically use square aspect ratio. We add `Toolbar.Toggle` which wraps our [Toggle component](/components/toggle) with the naked variant for seamless toolbar integration.
+A component that groups a set of buttons and controls. The Toolbar component extends [ Base UI's Toolbar ](https://base-ui.com/react/components/toolbar) . It provides a container for grouping a set of controls like buttons, toggles, and links with proper keyboard navigation. Icon-only buttons automatically use square aspect ratio. We add `Toolbar.Toggle` which wraps our [Toggle component](/components/toggle) with the naked variant for seamless toolbar integration.
 
 Built on [Base UI](https://base-ui.com/react/components/toolbar).
 
 ## Installation
-
-### toolbar.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .root {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x05;
-        padding: $devie__spacing__x1;
-        background-color: $devie__color__background;
-        border: 1px solid $devie__color__line;
-        border-radius: $devie__radius;
-
-        &[data-orientation='vertical'] {
-            flex-direction: column;
-            align-items: stretch;
-        }
-    }
-
-    .button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: $devie__spacing__x05;
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        border: none;
-        background: transparent;
-        color: $devie__color__text;
-        font-family: $devie__font-family;
-        font-size: $devie__font-size__normal;
-        cursor: pointer;
-        border-radius: $devie__radius;
-        outline: none;
-        transition: background 150ms ease, color 150ms ease;
-
-        &:has(> svg:only-child) {
-            padding: $devie__spacing__x1;
-        }
-
-        &:hover {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-
-        &[data-pressed] {
-            background: #{devie-hover-color($devie__color__background)};
-            color: $devie__color__primary;
-        }
-
-        &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text)};
-            background: transparent;
-        }
-    }
-
-    .link {
-        display: flex;
-        align-items: center;
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        color: $devie__color__text-sub;
-        text-decoration: none;
-        font-family: $devie__font-family;
-        font-size: $devie__font-size__small;
-        border-radius: $devie__radius;
-        outline: none;
-        transition: color 150ms ease;
-
-        &:hover {
-            color: $devie__color__text;
-        }
-
-        &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
-        }
-    }
-
-    .input {
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        border: 1px solid $devie__color__line;
-        background: transparent;
-        color: $devie__color__text;
-        font-family: $devie__font-family;
-        font-size: $devie__font-size__normal;
-        border-radius: $devie__radius;
-        outline: none;
-        transition: border-color 150ms ease;
-
-        &:hover {
-            border-color: $devie__color__text-sub;
-        }
-
-        &:focus {
-            border-color: $devie__color__primary;
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text)};
-            border-color: #{devie-disabled-color($devie__color__line)};
-        }
-    }
-
-    .group {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x05;
-    }
-
-    .separator {
-        width: 1px;
-        height: 24px;
-        background-color: $devie__color__line;
-        margin: 0 $devie__spacing__x05;
-
-        [data-orientation='vertical'] > & {
-            width: 100%;
-            height: 1px;
-            margin: $devie__spacing__x05 0;
-        }
-    }
-
-    .toggle {
-        &:has(> svg:only-child) {
-            padding: $devie__spacing__x1;
-        }
-    }
-}
-```
 
 ### toolbar.tsx
 
@@ -239,6 +102,142 @@ namespace Toolbar {
 }
 
 export default Toolbar;
+```
+
+### toolbar.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        padding: $devie__spacing__x1;
+        background-color: $devie__color__background;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+
+        &[data-orientation='vertical'] {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $devie__spacing__x05;
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        border: none;
+        background: transparent;
+        color: $devie__color__text;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__normal;
+        border-radius: $devie__radius;
+        outline: none;
+        transition: background 150ms ease, color 150ms ease;
+
+        &:has(> svg:only-child) {
+            padding: $devie__spacing__x1;
+        }
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-pressed] {
+            background: #{devie-hover-color($devie__color__background)};
+            color: $devie__color__primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+            background: transparent;
+        }
+    }
+
+    .link {
+        display: flex;
+        align-items: center;
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        text-decoration: none;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__small;
+        border-radius: $devie__radius;
+        outline: none;
+        transition: color 150ms ease;
+
+        &:hover {
+            color: $devie__color__text;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $devie__color__primary;
+            outline-offset: 2px;
+        }
+    }
+
+    .input {
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        border: 1px solid $devie__color__line;
+        background: transparent;
+        color: $devie__color__text;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__normal;
+        border-radius: $devie__radius;
+        outline: none;
+        transition: border-color 150ms ease;
+
+        &:hover {
+            border-color: $devie__color__text-sub;
+        }
+
+        &:focus {
+            border-color: $devie__color__primary;
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+            border-color: #{devie-disabled-color($devie__color__line)};
+        }
+    }
+
+    .group {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+    }
+
+    .separator {
+        width: 1px;
+        height: 24px;
+        background-color: $devie__color__line;
+        margin: 0 $devie__spacing__x05;
+
+        [data-orientation='vertical']>& {
+            width: 100%;
+            height: 1px;
+            margin: $devie__spacing__x05 0;
+        }
+    }
+
+    .toggle {
+        &:has(> svg:only-child) {
+            padding: $devie__spacing__x1;
+        }
+    }
+}
 ```
 
 ## Use Cases

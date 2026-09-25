@@ -1,6 +1,6 @@
 # <Tabs />
 
-The Tabs component extends [ Base UI's Tabs ](https://base-ui.com/react/components/tabs) . It provides a tabbed interface with an animated indicator that smoothly transitions between tabs. Supports both horizontal and vertical orientations.
+A component for toggling between related panels on the same page. The Tabs component extends [ Base UI's Tabs ](https://base-ui.com/react/components/tabs) . It adds an animated `Tabs.Indicator`, horizontal and vertical orientations, and a [segmented](#segmented) variant on `Tabs.List`.
 
 Built on [Base UI](https://base-ui.com/react/components/tabs).
 
@@ -18,8 +18,17 @@ import styles from "./Tabs.module.scss";
 
 const Root = BaseTabs.Root;
 
-function List({ className, ...props }: BaseTabs.List.Props) {
-  return <BaseTabs.List className={clsx(styles.list, className)} {...props} />;
+function List({ className, variant = "underline", ...props }: Tabs.List.Props) {
+  return (
+    <BaseTabs.List
+      className={clsx(
+        styles.list,
+        variant === "segmented" && styles.listSegmented,
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 const tabStyles = styles.tab;
@@ -57,7 +66,10 @@ namespace Tabs {
     export type ChangeEventDetails = BaseTabs.Root.ChangeEventDetails;
   }
   export namespace List {
-    export type Props = BaseTabs.List.Props;
+    export type Variant = "underline" | "segmented";
+    export interface Props extends BaseTabs.List.Props {
+      variant?: Variant;
+    }
   }
   export namespace Tab {
     export type Props = BaseTabs.Tab.Props;
@@ -126,9 +138,8 @@ export default Tabs;
         }
 
         @media (hover: hover) {
-            &:hover:not([data-selected]) {
+            &:hover:not([data-active]) {
                 color: $devie__color__primary;
-                cursor: pointer;
             }
         }
 
@@ -140,8 +151,7 @@ export default Tabs;
                 position: absolute;
                 inset: $devie__spacing__x1 0;
                 border-radius: $devie__radius;
-                outline: 2px solid $devie__color__primary;
-                outline-offset: -1px;
+                @include devie-focus-ring(-1px);
             }
         }
     }
@@ -155,7 +165,7 @@ export default Tabs;
             translate: var(--active-tab-left) var(--active-tab-top);
             width: var(--active-tab-width);
             height: var(--active-tab-height);
-            box-sizing: content-box;
+            box-sizing: border-box;
             border-bottom: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, width 200ms ease-in-out;
         }
@@ -168,6 +178,57 @@ export default Tabs;
             width: auto;
             border-right: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, height 200ms ease-in-out;
+        }
+    }
+
+    .listSegmented {
+        display: inline-flex;
+        padding: $devie__spacing__x05;
+        gap: $devie__spacing__x05;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+        background: $devie__color__background-sunken;
+
+        &[data-orientation="vertical"] {
+            padding: $devie__spacing__x05;
+            border: 1px solid $devie__color__line;
+        }
+
+        .tab {
+            padding: $devie__spacing__x1 $devie__spacing__x2;
+            color: $devie__color__text-sub;
+            border-radius: calc($devie__radius - 2px);
+
+            &[data-active] {
+                color: $devie__color__text;
+                font-weight: 500;
+            }
+
+            @media (hover: hover) {
+                &:hover:not([data-active]) {
+                    color: $devie__color__text;
+                }
+            }
+
+            &:focus-visible::before {
+                inset: 0;
+                border-radius: calc($devie__radius - 2px);
+            }
+        }
+
+        .indicator[data-orientation] {
+            top: 0;
+            left: 0;
+            right: auto;
+            translate: var(--active-tab-left) var(--active-tab-top);
+            width: var(--active-tab-width);
+            height: var(--active-tab-height);
+            box-sizing: border-box;
+            border: 1px solid $devie__color__line;
+            border-radius: calc($devie__radius - 2px);
+            background: $devie__color__background;
+            box-shadow: 0 1px 2px rgb(9 9 11 / 8%);
+            transition: translate 200ms ease-in-out, width 200ms ease-in-out, height 200ms ease-in-out;
         }
     }
 }
@@ -226,6 +287,26 @@ Set the `orientation` prop on the `Root` to `"vertical"` for a vertical tab layo
   <Tabs.Panel value="overview">Overview content</Tabs.Panel>
   <Tabs.Panel value="settings">Settings content</Tabs.Panel>
   <Tabs.Panel value="account">Account content</Tabs.Panel>
+</Tabs.Root>
+```
+
+### Segmented control
+
+Set `variant` to `segmented` on `Tabs.List`. The indicator becomes a raised pill inside a sunken track. Works with both orientations.
+
+```tsx
+<Tabs.Root defaultValue="week">
+  <Tabs.List variant="segmented" aria-label="Period">
+    <Tabs.Tab value="day">Day</Tabs.Tab>
+    <Tabs.Tab value="week">Week</Tabs.Tab>
+    <Tabs.Tab value="month">Month</Tabs.Tab>
+    <Tabs.Tab value="year">Year</Tabs.Tab>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Panel value="day">Sales for today</Tabs.Panel>
+  <Tabs.Panel value="week">Sales for this week</Tabs.Panel>
+  <Tabs.Panel value="month">Sales for this month</Tabs.Panel>
+  <Tabs.Panel value="year">Sales for this year</Tabs.Panel>
 </Tabs.Root>
 ```
 
