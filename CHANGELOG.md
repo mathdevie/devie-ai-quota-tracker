@@ -37,6 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from the reported spend state, instead of an invented zero balance.
   Availability-only rows cannot be pinned as a percentage in the menu bar.
 
+### Security
+
+- Next.js is updated from 16.3.2 to 16.3.6. This includes the fixes for
+  GHSA-p293-qw3h-jr36 (CVE-2026-75604) and GHSA-2xp9-vwfh-vxw4. The app
+  ships a static export without the image optimizer, so it was not exposed,
+  but the browser preview now runs on a patched version.
+
 ## [0.13.0] - 2026-09-05
 
 ### Added
