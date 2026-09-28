@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The app icon uses a white hexagon and quota boundary with violet light on
   a charcoal background, matching the Devie shader style.
+- The interface uses the latest Devie UI desktop design and keeps SF Pro in
+  every theme. Badges, buttons, inputs, and dialogs follow the Devie UI 8px
+  grid.
 
 ### Fixed
 
