@@ -1,8 +1,10 @@
+import { Toast } from "@base-ui/react/toast";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import I18nProvider from "@/i18n/I18nProvider";
 import { THEMES } from "@/theme/registry";
 import { ThemeProvider } from "@/theme/ThemeContext";
+import { Toaster } from "@/ui/Toaster";
 import "@/ui/themes/default.css";
 import "@/ui/themes/desktop.scss";
 import "@/theme/light/theme.css";
@@ -53,7 +55,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <I18nProvider>
           <ThemeProvider>
-            <div className="appRoot">{children}</div>
+            <Toast.Provider timeout={6000}>
+              <div className="appRoot">{children}</div>
+              <Toaster />
+            </Toast.Provider>
           </ThemeProvider>
         </I18nProvider>
       </body>
