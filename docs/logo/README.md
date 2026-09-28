@@ -1,27 +1,48 @@
 # App icon
 
-![The app icon at 460px, 128px, 64px, 32px and 22px](preview.png)
+![The app icon at 460, 128, 64, 32, 22, and 16px](preview.png)
 
-The mark is a pointy-top hexagon shell with a chevron-topped fill. The fill
-level reads as a quota gauge, and its peak echoes the shell's peak. It sits on
-the geometric centre of the 512px canvas.
+The **Light level** icon keeps the pointy-top hexagon and chevron quota
+boundary. White outlines surround a violet light field that fades toward
+the bottom of the gauge. The matte charcoal plate, fine grain, and local
+glow follow the Devie shaders Light seams style and the approved Devie Code
+icon.
 
-The plate is top-lit (`#2e2e35` → `#07070a`), vignetted at the corners, and
-carries a 3px rim highlight along the top edge, so the icon reads with depth
-rather than as flat black.
+[master.png](master.png) is the selected 1254 × 1254 raster artwork. It
+preserves the approved mark, light, and texture. The built-in image
+generator produced it in edit mode; the [exact prompt](prompt.md) records
+the design inputs. Asset generation never calls an image service or
+redraws the mark.
 
-`generate.py` is the single source of truth for the geometry and the plate
-treatment. It also renders `preview.png`, which shows the icon down to 22px —
-the menu-bar size, and the one that decides whether a treatment survives.
+[app-icon.png](app-icon.png) is the generated 1024 × 1024 source for all
+exports. The exporter scales the full master to 915px and centers it on a
+transparent canvas. Combined with the master's existing border, the visible
+plate occupies about 81% of the canvas, matching the Devie Code icon.
 
 ## Regenerating
 
+On macOS, with Bun dependencies installed:
+
 ```sh
 python3 docs/logo/generate.py
-cp docs/logo/app-icon.svg src-desktop/icons/app-icon.svg
-cp docs/logo/app-icon.svg src/app/icon.svg
-bun tauri icon src-desktop/icons/app-icon.svg
 ```
 
-`tauri icon` rewrites the macOS `.icns`, the Windows `.ico`, and the PNG, iOS
-and Android sets under `src-desktop/icons/`.
+The script uses the local Tauri CLI in a temporary directory. It first
+generates `app-icon.png` from an SVG wrapper around the raster master, then
+exports only the app's macOS assets into `src-desktop/icons/`:
+
+- `32x32.png`
+- `128x128.png`
+- `128x128@2x.png`
+- `icon.icns`
+- `icon.png`
+
+The browser favicon at `src/app/icon.png` is an identical copy of the
+128px native export. The README uses `docs/logo/app-icon.png`. The former
+SVG sources are removed so they cannot restore the old white-fill design.
+Quick Look renders the size preview. No additional Python packages are
+required.
+
+The no-quota menu-bar state uses the app's default icon. When a provider is
+selected, the menu bar continues to use that provider's icon and percentage.
+Provider logos and quota-status colors are independent of this app artwork.

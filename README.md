@@ -1,4 +1,4 @@
-<img src="docs/logo/app-icon.svg" alt="The Devie AI Quota Tracker app icon" width="96" />
+<img src="docs/logo/app-icon.png" alt="The Devie AI Quota Tracker app icon" width="96" />
 
 # Devie AI Quota Tracker
 
