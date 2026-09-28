@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the reset date. The ChatGPT usage page calls it "Workspace monthly credit
   limit".
 
+### Changed
+
+- The app icon uses a white hexagon and quota boundary with violet light on
+  a charcoal background, matching the Devie shader style.
+
 ### Fixed
 
 - A downloaded update no longer goes stale. Background checks replace it when
