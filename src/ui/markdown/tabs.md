@@ -129,6 +129,7 @@ export default Tabs;
         padding: $devie__spacing__x2;
         font-family: inherit;
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text;
         border-radius: $devie__radius;
 
@@ -183,14 +184,14 @@ export default Tabs;
 
     .listSegmented {
         display: inline-flex;
-        padding: $devie__spacing__x05;
+        padding: calc($devie__spacing__x05 - 1px);
         gap: $devie__spacing__x05;
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius;
         background: $devie__color__background-sunken;
 
         &[data-orientation="vertical"] {
-            padding: $devie__spacing__x05;
+            padding: calc($devie__spacing__x05 - 1px);
             border: 1px solid $devie__color__line;
         }
 

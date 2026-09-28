@@ -110,6 +110,7 @@ export default Slider;
 @layer devie {
   .label {
     font-size: $devie__font-size__small;
+    line-height: $devie__spacing__x3;
     font-weight: 600;
     color: $devie__color__text;
   }
@@ -130,11 +131,11 @@ export default Slider;
     display: flex;
     align-items: center;
     width: 100%;
-    height: 20px;
+    height: $devie__spacing__x3;
     touch-action: none;
 
     &[data-orientation='vertical'] {
-      width: 20px;
+      width: $devie__spacing__x3;
       height: 100%;
       flex-direction: column;
     }
@@ -217,6 +218,7 @@ export default Slider;
 
   .value {
     font-size: $devie__font-size__small;
+    line-height: $devie__spacing__x3;
     color: $devie__color__text-sub;
     font-family: $devie__font-family;
   }

@@ -138,6 +138,7 @@ export default Accordion;
         color: $devie__color__text;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         background: $devie__color__background;
         border: none;
         outline: none;
@@ -213,6 +214,7 @@ export default Accordion;
         padding: $devie__spacing__x2;
         color: $devie__color__text-sub;
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         background: $devie__color__background;
 
         .item:last-child & {

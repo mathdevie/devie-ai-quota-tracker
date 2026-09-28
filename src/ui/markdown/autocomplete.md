@@ -312,7 +312,7 @@ export default Autocomplete;
     .input {
         background-color: $devie__color__background;
         border-radius: $devie__radius;
-        padding: $devie__spacing__x1;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         border: 1px solid $devie__color__line;
         box-sizing: border-box;
         min-width: 200px;
@@ -320,6 +320,7 @@ export default Autocomplete;
         color: $devie__color__text;
         font-size: inherit;
         font-family: inherit;
+        line-height: $devie__spacing__x3;
 
         &:focus-visible {
             border-color: $devie__color__primary;
@@ -397,7 +398,7 @@ export default Autocomplete;
     }
 
     .popup:has(.item, .empty) {
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
         box-sizing: border-box;
         background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
@@ -413,6 +414,7 @@ export default Autocomplete;
     .status {
         padding: $devie__spacing__x1;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
         text-align: center;
     }
@@ -470,7 +472,7 @@ export default Autocomplete;
     }
 
     .groupLabel {
-        padding: $devie__spacing__x1;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
         font-size: $devie__font-size__small;
         color: $devie__color__text-sub;
         font-weight: 600;

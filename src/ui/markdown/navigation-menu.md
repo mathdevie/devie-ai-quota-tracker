@@ -231,6 +231,7 @@ export default NavigationMenu;
         color: $devie__color__text;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x2;
         border-radius: $devie__radius;
         outline: none;
         transition: none;
@@ -266,7 +267,8 @@ export default NavigationMenu;
 
     .link {
         display: block;
-        padding: $devie__spacing__x1 $devie__spacing__x1;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text;
         text-decoration: none;
         font-size: $devie__font-size__normal;

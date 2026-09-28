@@ -99,7 +99,7 @@ export default Button;
     border-radius: $devie__radius;
     font-family: $devie__font-family;
     width: fit-content;
-    line-height: 1;
+    line-height: $devie__spacing__x2;
     transition: none;
 
     &[data-loading="true"] {

@@ -314,7 +314,7 @@ export default ContextMenu;
 
 @layer devie {
     .popup {
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
         min-width: 180px;
         background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
@@ -411,7 +411,7 @@ export default ContextMenu;
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
-        line-height: 1.2;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         background: none;
         border: none;

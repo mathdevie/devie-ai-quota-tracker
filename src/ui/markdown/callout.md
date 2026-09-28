@@ -96,7 +96,7 @@ export default Callout;
         flex-direction: row;
         align-items: flex-start;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x2;
+        padding: calc($devie__spacing__x2 - 1px);
         border-radius: $devie__radius;
         border-width: 1px;
         border-style: solid;

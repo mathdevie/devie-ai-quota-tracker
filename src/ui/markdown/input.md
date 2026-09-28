@@ -38,7 +38,7 @@ export default Input;
     .input {
         background-color: $devie__color__background;
         border-radius: $devie__radius;
-        padding: $devie__spacing__x1;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         border: 1px solid $devie__color__line;
         box-sizing: border-box;
         min-width: 200px;
@@ -46,6 +46,7 @@ export default Input;
         color: $devie__color__text;
         font-family: inherit;
         font-size: inherit;
+        line-height: $devie__spacing__x3;
 
         &:focus-visible {
             border-color: $devie__color__primary;

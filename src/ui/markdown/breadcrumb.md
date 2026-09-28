@@ -118,6 +118,7 @@ export default Breadcrumb;
     gap: $devie__spacing__x1;
     color: $devie__color__text;
     font-size: $devie__font-size__normal;
+    line-height: $devie__spacing__x3;
     font-family: $devie__font-family;
 
     a {
@@ -127,6 +128,10 @@ export default Breadcrumb;
       &:hover {
         text-decoration: underline;
       }
+    }
+
+    [aria-current="page"] {
+      font-weight: 600;
     }
   }
 

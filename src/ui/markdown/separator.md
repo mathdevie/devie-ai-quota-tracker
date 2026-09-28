@@ -93,6 +93,7 @@ export default Separator;
     .text {
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         font-family: $devie__font-family;
         padding: 0 $devie__spacing__x05;
     }

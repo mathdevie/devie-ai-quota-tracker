@@ -107,6 +107,7 @@ export default InputGroup;
         background-color: $devie__color__background-sunken;
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         white-space: nowrap;
     }
 }

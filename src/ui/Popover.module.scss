@@ -79,12 +79,14 @@
         margin: 0;
         font-size: $devie__font-size__normal;
         font-weight: 600;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text;
     }
 
     .description {
         margin: 0;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
     }
 

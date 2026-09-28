@@ -160,7 +160,7 @@ export default NumberField;
     .root {
         display: flex;
         flex-direction: column;
-        gap: $devie__spacing__x05;
+        gap: $devie__spacing__x1;
     }
 
     .group {
@@ -170,7 +170,8 @@ export default NumberField;
     .input {
         box-sizing: border-box;
         margin: 0;
-        padding: $devie__spacing__x1;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        line-height: $devie__spacing__x3;
         border-radius: 0;
         border: 1px solid $devie__color__line;
         background-color: $devie__color__background;
@@ -210,7 +211,7 @@ export default NumberField;
         justify-content: center;
         margin: 0;
         outline: 0;
-        padding: $devie__spacing__x1;
+        padding: calc($devie__spacing__x1 - 1px);
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius;
         background-color: $devie__color__background-sunken;
@@ -250,6 +251,7 @@ export default NumberField;
     }
 
     .scrubArea {
+        line-height: $devie__spacing__x3;
         cursor: ew-resize;
         user-select: none;
     }

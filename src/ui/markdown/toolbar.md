@@ -114,7 +114,7 @@ export default Toolbar;
         display: flex;
         align-items: center;
         gap: $devie__spacing__x05;
-        padding: $devie__spacing__x1;
+        padding: calc($devie__spacing__x1 - 1px);
         background-color: $devie__color__background;
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius;
@@ -136,6 +136,7 @@ export default Toolbar;
         color: $devie__color__text;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x2;
         border-radius: $devie__radius;
         outline: none;
         transition: background 150ms ease, color 150ms ease;
@@ -173,6 +174,7 @@ export default Toolbar;
         text-decoration: none;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
         border-radius: $devie__radius;
         outline: none;
         transition: color 150ms ease;
@@ -188,7 +190,8 @@ export default Toolbar;
     }
 
     .input {
-        padding: $devie__spacing__x1 $devie__spacing__x2;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x2;
+        line-height: $devie__spacing__x3;
         border: 1px solid $devie__color__line;
         background: transparent;
         color: $devie__color__text;

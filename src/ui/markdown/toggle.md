@@ -59,7 +59,7 @@ export default Toggle;
         border-radius: $devie__radius;
         font-family: $devie__font-family;
         font-size: $devie__font-size__normal;
-        line-height: 1;
+        line-height: $devie__spacing__x2;
         transition: background 150ms ease, color 150ms ease, outline-color 150ms ease;
 
         &[data-disabled] {

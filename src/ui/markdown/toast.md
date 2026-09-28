@@ -118,7 +118,7 @@ export default Toast;
         background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background-raised 95%);
         border: 1px solid $devie__color__primary;
         border-radius: $devie__radius;
-        padding: $devie__spacing__x2 $devie__spacing__x4 $devie__spacing__x2 $devie__spacing__x2;
+        padding: calc($devie__spacing__x2 - 1px) calc($devie__spacing__x4 - 1px) calc($devie__spacing__x2 - 1px) calc($devie__spacing__x2 - 1px);
         display: flex;
         align-items: flex-start;
         gap: $devie__spacing__x1;
@@ -196,12 +196,12 @@ export default Toast;
     .title {
         font-size: $devie__font-size__normal;
         font-weight: 600;
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
     }
 
     .description {
         font-size: $devie__font-size__normal;
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
     }
 
     .action {
@@ -211,6 +211,7 @@ export default Toast;
         border-radius: $devie__radius;
         padding: $devie__spacing__x1 $devie__spacing__x2;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
 
         &:hover {
             background: #{devie-hover-color($devie__color__primary)};
@@ -308,7 +309,7 @@ export function Toaster() {
   .contentContainer {
     display: flex;
     flex-direction: column;
-    gap: $devie__spacing__x05;
+    gap: $devie__spacing__x1;
     flex: 1;
     min-width: 0;
   }

@@ -240,7 +240,7 @@ export default Command;
     }
 
     .dialogPopup {
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
         position: fixed;
         left: 50%;
         top: 50%;
@@ -284,7 +284,8 @@ export default Command;
         color: $devie__color__text;
         font-size: $devie__font-size__normal;
         font-family: $devie__font-family;
-        padding: $devie__spacing__x05 0;
+        line-height: $devie__spacing__x3;
+        padding: 0;
 
         &::placeholder {
             color: $devie__color__text-sub;
@@ -329,7 +330,6 @@ export default Command;
         outline: none;
         user-select: none;
         transition: none;
-        min-height: 36px;
 
         &:hover:not([data-disabled]),
         &[data-highlighted]:not([data-disabled]) {
@@ -362,6 +362,7 @@ export default Command;
         padding: $devie__spacing__x1 $devie__spacing__x2;
         padding-top: $devie__spacing__x2;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
         font-weight: 600;
         color: $devie__color__text-sub;
         user-select: none;
@@ -395,7 +396,7 @@ export default Command;
     }
 
     .panel {
-        line-height: 1.5;
+        line-height: $devie__spacing__x3;
         background: $devie__color__background-raised;
         border-radius: $devie__radius-strong;
         border: 1px solid $devie__color__line;

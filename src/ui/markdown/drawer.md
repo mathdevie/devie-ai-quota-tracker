@@ -357,6 +357,7 @@ export default Drawer;
 
     .title {
         font-size: $devie__font-size__title3;
+        line-height: $devie__spacing__x4;
         font-weight: 600;
         color: $devie__color__text;
         margin: 0;
@@ -364,6 +365,7 @@ export default Drawer;
 
     .description {
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
         margin: 0;
     }

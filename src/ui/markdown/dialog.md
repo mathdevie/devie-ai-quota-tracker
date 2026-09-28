@@ -283,12 +283,14 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
     .title {
         font-size: $devie__font-size__title3;
+        line-height: $devie__spacing__x4;
         color: $devie__color__text;
         margin: 0;
     }
 
     .description {
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
         margin: 0;
     }

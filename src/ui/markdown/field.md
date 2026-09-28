@@ -98,10 +98,12 @@ export default Field;
     .root {
         display: flex;
         flex-direction: column;
-        gap: $devie__spacing__x05;
+        gap: $devie__spacing__x1;
     }
 
     .label {
+        line-height: $devie__spacing__x3;
+
         &[data-invalid] {
             color: $devie__color__danger;
         }
@@ -109,6 +111,7 @@ export default Field;
 
     .description {
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
     }
 
@@ -124,6 +127,7 @@ export default Field;
 
     .error {
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
         display: flex;
         align-items: center;
         gap: $devie__spacing__x05;

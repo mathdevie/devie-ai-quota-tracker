@@ -96,7 +96,7 @@ export default Progress;
   .root {
     display: flex;
     flex-direction: column;
-    gap: $devie__spacing__x05;
+    gap: $devie__spacing__x1;
     width: 100%;
     font-family: $devie__font-family;
   }
@@ -134,11 +134,13 @@ export default Progress;
 
   .label {
     font-size: $devie__font-size__small;
+    line-height: $devie__spacing__x3;
     color: $devie__color__text;
   }
 
   .value {
     font-size: $devie__font-size__small;
+    line-height: $devie__spacing__x3;
     color: $devie__color__text-sub;
     font-variant-numeric: tabular-nums;
   }

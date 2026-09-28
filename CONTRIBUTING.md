@@ -61,7 +61,7 @@ The bundle is written under `src-desktop/target/debug/bundle/macos/`.
   `src/ui/markdown/input-group.md`: use `example-api-key` because GitHub
   push protection rejects the upstream Stripe-shaped placeholder.
   Last synced from `mathdevie/devie-ui.com` at
-  `dc5082eb67f6888c43d3a970d79044158c6521d4` (`origin/main`, 2026-09-24).
+  `de78af98ffee31774f76b50cdd54c4b1e2440d30` (`origin/main`, 2026-09-28).
   Import the default tokens before the desktop preset and the color themes.
   The desktop preset supplies typography and sizing; the app keeps SF Pro
   across all themes in `src/app/globals.scss`. Use the upstream Badge,
