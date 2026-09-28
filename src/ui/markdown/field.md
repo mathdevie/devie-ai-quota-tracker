@@ -1,93 +1,10 @@
 # <Field />
 
-The Field component extends [ Base UI's Field ](https://base-ui.com/react/components/field) . It uses a text input by default, but it is meant to wrap any input type ([Checkbox](/components/checkbox), [CheckboxGroup](/components/checkbox-group), [Radio](/components/radio), [Switch](/components/switch), [Select](/components/select), and more). It provides labels, descriptions, and validation/error display management. Fields are typically used within a [Form](/components/form) component that coordinates across multiple Fields.
+A component that provides labeling and validation for form controls. The Field component extends [ Base UI's Field ](https://base-ui.com/react/components/field) . It adds a label, a description, and an error message around any input: an [Input](/components/input) by default, or [Checkbox](/components/checkbox), [Radio](/components/radio), [Switch](/components/switch), [Select](/components/select), and more. Use it inside a [Form](/components/form) to validate several fields together.
 
 Built on [Base UI](https://base-ui.com/react/components/field).
 
 ## Installation
-
-### field.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .root {
-        display: flex;
-        flex-direction: column;
-        gap: $devie__spacing__x05;
-    }
-
-    .label {
-        &[data-invalid] {
-            color: $devie__color__danger;
-        }
-    }
-
-    .control {
-        background-color: $devie__color__background;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x1;
-        border: 1px solid $devie__color__line;
-        box-sizing: border-box;
-        min-width: 200px;
-        width: 100%;
-        color: $devie__color__text;
-
-        &:focus-visible {
-            border-color: $devie__color__primary;
-            outline: 0;
-        }
-
-        &::placeholder {
-            color: $devie__color__text-sub;
-        }
-
-        &[data-invalid] {
-            border-color: $devie__color__danger;
-            color: $devie__color__danger;
-
-            &::placeholder {
-                color: $devie__color__danger;
-            }
-        }
-
-        &:disabled {
-            cursor: not-allowed;
-            background: #{devie-disabled-color($devie__color__background)};
-            border-color: #{devie-disabled-color($devie__color__line)};
-            color: #{devie-disabled-color($devie__color__text)};
-
-            &::placeholder {
-                color: #{devie-disabled-color($devie__color__text-sub)};
-            }
-        }
-    }
-
-    .description {
-        font-size: $devie__font-size__small;
-        color: $devie__color__text-sub;
-    }
-
-    .item {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x1;
-
-        &[data-disabled] {
-            cursor: not-allowed;
-        }
-    }
-
-    .error {
-        font-size: $devie__font-size__small;
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x05;
-        color: $devie__color__danger;
-    }
-}
-```
 
 ### field.tsx
 
@@ -98,6 +15,7 @@ Built on [Base UI](https://base-ui.com/react/components/field).
 import { Field as BaseField } from "@base-ui/react/field";
 import clsx from "clsx";
 import styles from "./Field.module.scss";
+import Input from "./Input";
 
 function Root({ className, ...props }: BaseField.Root.Props) {
   return <BaseField.Root className={clsx(styles.root, className)} {...props} />;
@@ -109,10 +27,8 @@ function Label({ className, ...props }: BaseField.Label.Props) {
   );
 }
 
-function Control({ className, ...props }: BaseField.Control.Props) {
-  return (
-    <BaseField.Control className={clsx(styles.control, className)} {...props} />
-  );
+function Control(props: BaseField.Control.Props) {
+  return <Input {...props} />;
 }
 
 function Description({ className, ...props }: BaseField.Description.Props) {
@@ -173,11 +89,58 @@ namespace Field {
 export default Field;
 ```
 
+### field.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+    }
+
+    .label {
+        line-height: $devie__spacing__x3;
+
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
+    }
+
+    .description {
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
+        color: $devie__color__text-sub;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+
+        &[data-disabled] {
+            cursor: not-allowed;
+        }
+    }
+
+    .error {
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        color: $devie__color__danger;
+    }
+}
+```
+
 ## Use Cases
 
 ### Simple fields
 
-Compose fields by combining subcomponents: a standalone input, an input with a label, a complete field with description, or a field displaying an error state. Labels are automatically associated with inputs for accessibility.
+Compose `Field.Label`, `Field.Control`, `Field.Description`, and `Field.Error` inside `Field.Root`. `Field.Control` renders an [Input](/components/input), and the label is associated with it automatically.
 
 ```tsx
 <Field.Root>
@@ -202,9 +165,9 @@ Compose fields by combining subcomponents: a standalone input, an input with a l
 </Field.Root>
 ```
 
-### Basic validation with HTML constraints
+### Native HTML validation
 
-You can use native HTML5 validation attributes like `required`, `minLength`, `pattern`, and `type`. Use `Field.Error` with the `match` prop to display messages based on the browser's [ ValidityState ](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) .
+Set `required`, `minLength`, `pattern`, or `type` on the control. Use `Field.Error` with the `match` prop to show a message for a [ ValidityState ](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) key.
 
 ```tsx
 <form onSubmit={(event) => event.preventDefault()}>
@@ -238,13 +201,13 @@ You can use native HTML5 validation attributes like `required`, `minLength`, `pa
 </form>
 ```
 
-### Standard client-side input validation
+### Custom validation
 
-For most cases, the best way to add client-side input validation is to use the `validate` prop on `Field.Root`. This allows you to define custom validation rules for each input:
+Pass a `validate` function to `Field.Root`. Return an error string, an array of strings, or `null`. Set `validationMode` to `onBlur` or `onChange` to validate before submit; see the [ Base UI reference ](https://base-ui.com/react/components/field#root) for the details.
 
 ### Non-text inputs
 
-Fields are designed to wrap any input type, not just text. You can compose them with components like [Select](/components/select), [Combobox](/components/combobox), [Autocomplete](/components/autocomplete), [Slider](/components/slider), [NumberField](/components/number-field), [Radio](/components/radio), [CheckboxGroup](/components/checkbox-group), [Checkbox](/components/checkbox), or [Switch](/components/switch) while keeping a consistent layout and validation surface.
+Wrap [Select](/components/select), [Combobox](/components/combobox), [Autocomplete](/components/autocomplete), [Slider](/components/slider), [NumberField](/components/number-field), [Radio](/components/radio), [CheckboxGroup](/components/checkbox-group), [Checkbox](/components/checkbox), or [Switch](/components/switch) in `Field.Root` to share the same layout and validation.
 
 ```tsx
 const COUNTRIES = [
@@ -437,9 +400,9 @@ const TIMEZONES = [
 </Field.Root>
 ```
 
-### Server-side validation and Forms
+### Server-side validation
 
-Server-side actions and error handling are typically managed using the [Form](/components/form) component, which coordinates validation across multiple Fields. The Form component provides an `onFormSubmit` callback for triggering server-side validation and an `errors` prop to display server-returned errors on specific Fields.
+Use the [Form](/components/form) component to validate several fields together and to display server errors with its `errors` prop.
 
 ### Additional Examples
 
@@ -456,6 +419,30 @@ function validateEmail(value: unknown) {
 <Field.Root validate={validateEmail} validationMode="onBlur">
   <Field.Label>Email</Field.Label>
   <Field.Control placeholder="you@example.com" />
+  <Field.Error match="customError">
+    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
+  </Field.Error>
+</Field.Root>
+```
+
+#### Validation Onchange
+
+```tsx
+function validateUsername(value: unknown) {
+  const username = String(value).trim();
+  if (!username) return null;
+  if (username.length < 3) return "Must be at least 3 characters";
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) return "Only letters, numbers, and underscores";
+  return null;
+}
+
+<Field.Root
+  validate={validateUsername}
+  validationMode="onChange"
+  validationDebounceTime={200}
+>
+  <Field.Label>Username</Field.Label>
+  <Field.Control placeholder="min 3 chars, alphanumeric" />
   <Field.Error match="customError">
     <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
   </Field.Error>
@@ -482,30 +469,6 @@ function validateAddress(value: unknown) {
   </Field.Root>
   <Button type="submit">Submit</Button>
 </Form>
-```
-
-#### Validation Onchange
-
-```tsx
-function validateUsername(value: unknown) {
-  const username = String(value).trim();
-  if (!username) return null;
-  if (username.length < 3) return "Must be at least 3 characters";
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) return "Only letters, numbers, and underscores";
-  return null;
-}
-
-<Field.Root
-  validate={validateUsername}
-  validationMode="onChange"
-  validationDebounceTime={200}
->
-  <Field.Label>Username</Field.Label>
-  <Field.Control placeholder="min 3 chars, alphanumeric" />
-  <Field.Error match="customError">
-    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
-  </Field.Error>
-</Field.Root>
 ```
 
 ---

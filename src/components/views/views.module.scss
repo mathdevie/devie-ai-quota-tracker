@@ -46,9 +46,9 @@
 
 .list {
   overflow: hidden;
-  border: 1px solid var(--macos__container-border);
-  border-radius: var(--macos__radius__group);
-  background: var(--macos__group-background);
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius-strong;
+  background: $devie__color__background-sunken;
 }
 
 .row {
@@ -140,9 +140,9 @@
   justify-content: space-between;
   gap: $devie__spacing__x1;
   padding: $devie__spacing__x2;
-  border: 1px solid var(--macos__container-border);
+  border: 1px solid $devie__color__line;
   border-radius: $devie__radius-strong;
-  background: var(--macos__group-background);
+  background: $devie__color__background-sunken;
   color: $devie__color__text;
   font: inherit;
   text-align: left;

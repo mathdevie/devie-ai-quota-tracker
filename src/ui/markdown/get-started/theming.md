@@ -5,7 +5,7 @@ Styling for all Devie UI components utilizes a unified set of design tokens defi
 - It ensures design consistency across the components.
 - It provides a centralized way to edit the theme to match your style.
 
-Following the [Installation guide](/installation), you should have already defined the default variables in your project.
+Following the [Installation guide](/installation), you should have already defined the default variables in your project. For a desktop window, add the global overrides for the system font, compact text, and smaller corners. See [Design for desktop native](/how-to/design-for-desktop-native).
 
 ## Customizing Theme
 
@@ -21,14 +21,17 @@ This approach to theming can be leveraged to [implement dark mode](/how-to/imple
 
 We prefer variables to serve a functional role as design tokens (e.g. "color-text") rather than hue values typically used in other libraries (e.g. "blue-500").
 
+Backgrounds form three levels. `background-sunken` sits below the page, `background` is the page, and `background-raised` floats above it. A component picks its level by how far it sits above the page, not by what it is.
+
 ### Color Tokens
 
 | Token | Description |
 |-------|-------------|
 | `--devie__color__text` | Main text color. |
 | `--devie__color__text-sub` | Sub-text color. |
-| `--devie__color__background` | Main background color. |
-| `--devie__color__background-sub` | Secondary background color for contrast areas. |
+| `--devie__color__background` | The page. The default surface level. |
+| `--devie__color__background-sunken` | A recessed area below the page: a well, a track, a shell. |
+| `--devie__color__background-raised` | A layer above the page. It pairs with the menu shadow. |
 | `--devie__color__line` | Color for borders and dividers. |
 | `--devie__color__primary` | Primary brand color for buttons and interactive elements. |
 | `--devie__color__primary-label` | Text color compatible with primary color. |
@@ -64,6 +67,14 @@ We prefer variables to serve a functional role as design tokens (e.g. "color-tex
 | Token | Description |
 |-------|-------------|
 | `--devie__shadow__menu` | Default shadow for menus. |
+
+### Interface Tokens
+
+| Token | Description |
+|-------|-------------|
+| `--devie__zoom` | The interface zoom factor, 1 at native scale. Applied to the app root and to the popups. |
+
+The zoom scales the interface; see [Scale the interface](/how-to/scale-the-interface).
 
 ### Literal Color Tokens
 

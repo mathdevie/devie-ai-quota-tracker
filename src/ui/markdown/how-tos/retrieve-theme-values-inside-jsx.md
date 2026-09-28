@@ -1,4 +1,4 @@
-# Retrieve Theme Values Inside JSX
+# Get values in JSX
 
 Devie UI themes are powered by CSS variables. Most of the time you should use those tokens directly in CSS. But sometimes you need the actual value in JavaScript. Here's how you can do it.
 
@@ -25,7 +25,7 @@ If you need these values in multiple places (or you need them to update when the
 
 **hooks/useThemeColor.ts**
 
-```ts
+```tsx
 import { useSyncExternalStore } from "react";
 
 export interface ThemeColors {
@@ -58,7 +58,7 @@ const CSS_VARIABLES: Record<keyof ThemeColors, string> = {
   textSub: "--devie__color__text-sub",
   line: "--devie__color__line",
   background: "--devie__color__background",
-  backgroundSub: "--devie__color__background-sub",
+  backgroundSub: "--devie__color__background-sunken",
   primary: "--devie__color__primary",
   primaryLabel: "--devie__color__primary-label",
   danger: "--devie__color__danger",
@@ -103,9 +103,25 @@ const NULL_COLORS: ThemeColors = {
   literalRed: null,
 };
 
-// Cache the snapshot so we don't allocate a new object if nothing changed
+// Cache for the snapshot to avoid creating new objects unnecessarily
 let cachedSnapshot: ThemeColors = NULL_COLORS;
-let cachedSnapshotHash = "";
+let cachedSnapshotHash: string = "";
+
+let probe: HTMLElement | null = null;
+
+// Resolves a color keyword such as AccentColor to rgb().
+function resolveColor(value: string): string {
+  if (/^(#|rgb|hsl|oklch|oklab|color\()/i.test(value)) return value;
+  if (!probe) {
+    probe = document.createElement("span");
+    probe.hidden = true;
+    document.body.append(probe);
+  }
+  probe.style.color = "";
+  probe.style.color = value;
+  const resolved = getComputedStyle(probe).color;
+  return resolved || value;
+}
 
 function computeThemeColors(): ThemeColors {
   if (typeof document === "undefined") return NULL_COLORS;
@@ -115,7 +131,7 @@ function computeThemeColors(): ThemeColors {
 
   for (const [key, cssVar] of Object.entries(CSS_VARIABLES)) {
     const value = computedStyle.getPropertyValue(cssVar).trim();
-    colors[key as keyof ThemeColors] = value || null;
+    colors[key as keyof ThemeColors] = value ? resolveColor(value) : null;
   }
 
   return colors as ThemeColors;
@@ -125,12 +141,16 @@ function getThemeColorsSnapshot(): ThemeColors {
   if (typeof document === "undefined") return NULL_COLORS;
 
   const newColors = computeThemeColors();
+
+  // Create a hash string for comparison
   const hash = JSON.stringify(newColors);
 
+  // Only return a new object if values actually changed
   if (cachedSnapshotHash === hash) {
     return cachedSnapshot;
   }
 
+  // Update cache
   cachedSnapshot = newColors;
   cachedSnapshotHash = hash;
   return newColors;
@@ -139,10 +159,9 @@ function getThemeColorsSnapshot(): ThemeColors {
 function subscribeToThemeChanges(callback: () => void): () => void {
   if (typeof document === "undefined") return () => {};
 
-  // Devie UI switches themes by swapping a CSS class on <html>.
-  // If your app uses a different mechanism (e.g. data-theme attribute),
-  // update this observer accordingly.
+  // Watch the data-devie-theme attribute on documentElement (where ThemeProvider applies the theme)
   const observer = new MutationObserver(() => {
+    // Clear cache when mutations occur so next getSnapshot call will recompute
     cachedSnapshot = NULL_COLORS;
     cachedSnapshotHash = "";
     callback();
@@ -150,17 +169,37 @@ function subscribeToThemeChanges(callback: () => void): () => void {
 
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["class"],
+    attributeFilter: ["data-devie-theme"],
   });
 
-  return () => observer.disconnect();
+  const scheme = window.matchMedia("(prefers-color-scheme: dark)");
+  const onSchemeChange = () => {
+    cachedSnapshot = NULL_COLORS;
+    cachedSnapshotHash = "";
+    callback();
+  };
+  scheme.addEventListener("change", onSchemeChange);
+
+  return () => {
+    observer.disconnect();
+    scheme.removeEventListener("change", onSchemeChange);
+  };
 }
 
+/**
+ * Returns all theme color values from CSS variables.
+ * Updates automatically when the theme changes.
+ *
+ * Note: Watches the `data-devie-theme` attribute on `document.documentElement`
+ * (the `<html>` element) since that's where the ThemeProvider applies the theme.
+ *
+ * @returns ThemeColors object with string values for available colors, null for unavailable ones
+ */
 export function useThemeColor(): ThemeColors {
   return useSyncExternalStore(
     subscribeToThemeChanges,
     getThemeColorsSnapshot,
-    () => NULL_COLORS,
+    () => NULL_COLORS, // Server-side snapshot
   );
 }
 ```

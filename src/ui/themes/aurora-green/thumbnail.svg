@@ -12,28 +12,13 @@
       <rect width="120" height="120" rx="16" ry="16"/>
     </clipPath>
   </defs>
-  
   <g clip-path="url(#clip-aurora-green)">
-    <!-- Solid background base -->
     <rect width="120" height="120" fill="#0f172a"/>
-    
-    <!-- Fixed position blobs - diagonal gradient from top-left to bottom-right -->
-    <!-- Main primary blob - bottom right -->
     <ellipse cx="100" cy="100" rx="70" ry="65" fill="#2dd4bf" filter="url(#blur-aurora-green)"/>
-    
-    <!-- Secondary blob - middle area -->
     <ellipse cx="65" cy="75" rx="45" ry="40" fill="#2dd4bf" filter="url(#blur-aurora-green)"/>
-    
-    <!-- Light accent - transition zone -->
     <ellipse cx="45" cy="55" rx="35" ry="30" fill="#77e3d5" filter="url(#blur-aurora-green)"/>
-    
-    <!-- Dark accent - corner depth -->
     <ellipse cx="115" cy="115" rx="40" ry="35" fill="#229f8f" filter="url(#blur-aurora-green)"/>
-    
-    <!-- Subtle grain overlay -->
     <rect width="120" height="120" fill="#0f172a" filter="url(#grain-aurora-green)" opacity="0.1"/>
   </g>
-  
-  <!-- Rounded border -->
   <rect width="120" height="120" rx="16" ry="16" fill="none" stroke="#2dd4bf" stroke-width="0.5" stroke-opacity="0.15"/>
 </svg>

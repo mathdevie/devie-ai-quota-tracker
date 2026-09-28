@@ -3,7 +3,6 @@
 @layer devie {
     .trigger {
         outline: none;
-        cursor: pointer;
         border: none;
         display: inline-flex;
         align-items: center;
@@ -30,12 +29,12 @@
         }
 
         &[data-side="left"] {
-            right: -11.5px;
+            right: -13px;
             rotate: 90deg;
         }
 
         &[data-side="right"] {
-            left: -11.5px;
+            left: -13px;
             rotate: -90deg;
         }
 
@@ -47,10 +46,11 @@
         max-width: min(280px, var(--available-width, 90vw));
         background-color: $devie__color__text;
         border: 1px solid $devie__color__text;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        border-radius: calc($devie__radius / 2);
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         box-shadow: $devie__shadow__menu;
         font-size: 12px;
+        line-height: $devie__spacing__x2;
         font-weight: 600;
         color: $devie__color__background;
         transform-origin: var(--transform-origin);

@@ -12,28 +12,13 @@
       <rect width="120" height="120" rx="16" ry="16"/>
     </clipPath>
   </defs>
-  
   <g clip-path="url(#clip-totoro)">
-    <!-- Solid background base -->
     <rect width="120" height="120" fill="#fdfbf7"/>
-    
-    <!-- Fixed position blobs - diagonal gradient from top-left to bottom-right -->
-    <!-- Main primary blob - bottom right -->
     <ellipse cx="100" cy="100" rx="70" ry="65" fill="#8a7967" filter="url(#blur-totoro)"/>
-    
-    <!-- Secondary blob - middle area -->
     <ellipse cx="65" cy="75" rx="45" ry="40" fill="#8a7967" filter="url(#blur-totoro)"/>
-    
-    <!-- Light accent - transition zone -->
     <ellipse cx="45" cy="55" rx="35" ry="30" fill="#b3a89c" filter="url(#blur-totoro)"/>
-    
-    <!-- Dark accent - corner depth -->
     <ellipse cx="115" cy="115" rx="40" ry="35" fill="#685b4d" filter="url(#blur-totoro)"/>
-    
-    <!-- Subtle grain overlay -->
     <rect width="120" height="120" fill="#fdfbf7" filter="url(#grain-totoro)" opacity="0.1"/>
   </g>
-  
-  <!-- Rounded border -->
   <rect width="120" height="120" rx="16" ry="16" fill="none" stroke="#8a7967" stroke-width="0.5" stroke-opacity="0.15"/>
 </svg>

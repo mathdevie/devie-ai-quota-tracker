@@ -1,6 +1,6 @@
 # <Dialog />
 
-The Dialog component extends [ Base UI's Dialog ](https://base-ui.com/react/components/dialog) with polished default styles and structural subcomponents: `Dialog.Header`, `Dialog.Body`, and `Dialog.Footer`. Set `size` on `Dialog.Root` (`sm`, `md`, `lg`, `xl`) to pick a popup width preset. Unlike [AlertDialog](/components/alert-dialog) (which uses `role="alertdialog"` for confirmations), Dialog uses `role="dialog"` and closes on outside click or Escape by default.
+A dialog that opens on top of the entire page. The Dialog component extends [ Base UI's Dialog ](https://base-ui.com/react/components/dialog) . It adds the `Dialog.Header`, `Dialog.Body`, and `Dialog.Footer` subcomponents and a `size` prop on `Dialog.Root`. For a confirmation that needs an explicit answer, use [AlertDialog](/components/alert-dialog).
 
 Built on [Base UI](https://base-ui.com/react/components/dialog).
 
@@ -219,7 +219,7 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         width: 90vw;
         max-height: 95vh;
         transform: translate(-50%, -50%);
-        background: $devie__color__background;
+        background: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
@@ -283,12 +283,14 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
     .title {
         font-size: $devie__font-size__title3;
+        line-height: $devie__spacing__x4;
         color: $devie__color__text;
         margin: 0;
     }
 
     .description {
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
         margin: 0;
     }
@@ -299,7 +301,7 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
 ### Simple dialog
 
-A basic dialog with a title, description, and action buttons. Use `Dialog.Trigger` to open and `Dialog.Close` to dismiss.
+Use `Dialog.Trigger` to open the dialog and `Dialog.Close` to dismiss it.
 
 ```tsx
 <Dialog.Root>
@@ -345,7 +347,7 @@ A basic dialog with a title, description, and action buttons. Use `Dialog.Trigge
 
 ### Sizes
 
-Use the `size` prop on `Dialog.Root` to choose a popup width. The default is `md`.
+Set `size` on `Dialog.Root` to `sm`, `md`, `lg`, or `xl`. The default is `md`.
 
 ```tsx
 <Dialog.Root size="lg">
@@ -359,7 +361,7 @@ Use the `size` prop on `Dialog.Root` to choose a popup width. The default is `md
 
 ### Controlled with state
 
-Use `open` and `onOpenChange` to control the dialog programmatically without a `Dialog.Trigger`.
+Use `open` and `onOpenChange` to control the dialog without a `Dialog.Trigger`.
 
 ```tsx
 const [open, setOpen] = useState(false);
@@ -392,11 +394,7 @@ const [open, setOpen] = useState(false);
 
 ### Nested dialogs
 
-Use a nested dialog for a short, tightly related subtask when closing the parent would discard useful context. Place the child `Dialog.Root` inside the parent root and usually give it a narrower `size`.
-
-Base UI's [ nested dialog guidance ](https://base-ui.com/react/components/dialog#nested-dialogs) explains that a child backdrop is not rendered. This component keeps the single page backdrop, but applies the same 70% darkening to the entire parent popup through `data-nested-dialog-open`. The composed popup—including its content, border, and shadow—also shrinks by 4% per nested level without compounding the backdrop over the whole viewport.
-
-**Best practice:** keep the stack to two layers, give every dialog its own title and visible close or cancel action, and let Base UI manage focus, Escape, and stacking. Use an [AlertDialog](/components/alert-dialog) for an irreversible confirmation. For a long or independent flow, prefer a page or replace the parent dialog instead of adding another layer. The [ WAI-ARIA modal dialog pattern ](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) similarly requires that only the active dialog is interactive, focus stays inside it, and focus returns to its invoking control when it closes.
+Place a child `Dialog.Root` inside the parent and give it a smaller `size`. Base UI renders [ no second backdrop ](https://base-ui.com/react/components/dialog#nested-dialogs) . Instead, the parent popup is dimmed and shrinks while the child is open. Keep the stack to two levels, and use [AlertDialog](/components/alert-dialog) for an irreversible confirmation.
 
 ```tsx
 <Dialog.Root size="lg">

@@ -14,6 +14,8 @@ import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
 import Field from "@/ui/Field";
+import Input from "@/ui/Input";
+import InputGroup from "@/ui/InputGroup";
 import styles from "./LoginDialog.module.scss";
 import ProviderIcon from "./ProviderIcon";
 
@@ -183,22 +185,24 @@ export default function LoginDialog({
                     <form className={styles.manual} onSubmit={handleManualCode}>
                       <Field.Root>
                         <Field.Label>{t("Login.PasteCode")}</Field.Label>
-                        <Field.Control
-                          autoComplete="off"
-                          onChange={(event) => setCode(event.target.value)}
-                          placeholder={t("Login.CodePlaceholder")}
-                          spellCheck={false}
-                          value={code}
-                        />
+                        <InputGroup.Root>
+                          <Input
+                            autoComplete="off"
+                            onChange={(event) => setCode(event.target.value)}
+                            placeholder={t("Login.CodePlaceholder")}
+                            spellCheck={false}
+                            value={code}
+                          />
+                          <Button
+                            disabled={!code.trim()}
+                            size="sm"
+                            type="submit"
+                            variant="secondary"
+                          >
+                            {t("Login.UseCode")}
+                          </Button>
+                        </InputGroup.Root>
                       </Field.Root>
-                      <Button
-                        disabled={!code.trim()}
-                        size="sm"
-                        type="submit"
-                        variant="secondary"
-                      >
-                        {t("Login.UseCode")}
-                      </Button>
                     </form>
                   )}
                 </>

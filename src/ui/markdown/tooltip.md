@@ -1,87 +1,10 @@
 # <Tooltip />
 
-The Tooltip component extends [ Base UI's Tooltip ](https://base-ui.com/react/components/tooltip) , changing the default delay to 100ms for a snappier feel.
+A hint that appears when an element is hovered or focused. The Tooltip component extends [ Base UI's Tooltip ](https://base-ui.com/react/components/tooltip) , changing the default delay to 100ms for a snappier feel.
 
 Built on [Base UI](https://base-ui.com/react/components/tooltip).
 
 ## Installation
-
-### tooltip.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .trigger {
-        outline: none;
-        cursor: pointer;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        &:where(button) {
-            background: none;
-            padding: 0;
-        }
-    }
-
-    .arrow {
-        display: flex;
-        position: absolute;
-
-        &[data-side="top"] {
-            bottom: -8px;
-            rotate: 180deg;
-        }
-
-        &[data-side="bottom"] {
-            top: -8px;
-            rotate: 0deg;
-        }
-
-        &[data-side="left"] {
-            right: -13px;
-            rotate: 90deg;
-        }
-
-        &[data-side="right"] {
-            left: -12px;
-            rotate: -90deg;
-        }
-
-    }
-
-    .popup {
-        background-color: $devie__color__text;
-        border: 1px solid $devie__color__text;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
-        box-shadow: $devie__shadow__menu;
-        font-size: 12px;
-        font-weight: 600;
-        color: $devie__color__background;
-        transform-origin: var(--transform-origin);
-
-        &[data-starting-style],
-        &[data-ending-style] {
-            opacity: 0;
-        }
-
-        &[data-instant] {
-            transition-duration: 0ms;
-        }
-    }
-
-    .arrowFill {
-        fill: $devie__color__text;
-    }
-
-    .arrowInnerStroke {
-        fill: $devie__color__text;
-    }
-}
-```
 
 ### tooltip.tsx
 
@@ -138,7 +61,6 @@ function Positioner({ className, ...props }: BaseTooltip.Positioner.Props) {
   );
 }
 
-// Base UI v1.3.0: `closeOnClick` is supported and forwarded by Root.
 const Root = BaseTooltip.Root;
 
 const Tooltip = {
@@ -183,15 +105,98 @@ function ArrowSvg(props: React.ComponentProps<"svg">) {
     <svg width="20" height="10" viewBox="0 0 20 10" fill="none" {...props}>
       <title>Tooltip arrow</title>
       <path
-        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8H0V10H20V8H18.5349C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
         className={styles.arrowFill}
       />
       <path
-        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9H0V8H2.13172C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8H20V9H18.5349C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
         className={styles.arrowInnerStroke}
       />
     </svg>
   );
+}
+```
+
+### tooltip.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .trigger {
+        outline: none;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:where(button) {
+            background: none;
+            padding: 0;
+        }
+    }
+
+    .arrow {
+        display: flex;
+        position: absolute;
+
+        &[data-side="top"] {
+            bottom: -8px;
+            rotate: 180deg;
+        }
+
+        &[data-side="bottom"] {
+            top: -8px;
+            rotate: 0deg;
+        }
+
+        &[data-side="left"] {
+            right: -13px;
+            rotate: 90deg;
+        }
+
+        &[data-side="right"] {
+            left: -13px;
+            rotate: -90deg;
+        }
+
+    }
+
+    .popup {
+        box-sizing: border-box;
+        width: max-content;
+        max-width: min(280px, var(--available-width, 90vw));
+        background-color: $devie__color__text;
+        border: 1px solid $devie__color__text;
+        border-radius: calc($devie__radius / 2);
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        box-shadow: $devie__shadow__menu;
+        font-size: 12px;
+        line-height: $devie__spacing__x2;
+        font-weight: 600;
+        color: $devie__color__background;
+        transform-origin: var(--transform-origin);
+        white-space: normal;
+        overflow-wrap: break-word;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        &[data-instant] {
+            transition-duration: 0ms;
+        }
+    }
+
+    .arrowFill {
+        fill: $devie__color__text;
+
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__text;
+    }
 }
 ```
 

@@ -1,11 +1,13 @@
 @layer devie {
   [data-devie-theme="theme-totoro"] {
+    color-scheme: light;
     --devie__theme-name: Totoro;
     --devie__color__text: #4a4036;
     --devie__color__text-sub: #948c85;
     --devie__color__line: #dcd6cc;
     --devie__color__background: #fdfbf7;
-    --devie__color__background-sub: #f2efe9;
+    --devie__color__background-sunken: #f2efe9;
+    --devie__color__background-raised: #ffffff;
     --devie__color__primary: #8a7967;
     --devie__color__primary-label: #ffffff;
     --devie__color__danger: #d98279;
@@ -15,6 +17,8 @@
     --devie__color__warning: #e6b655;
     --devie__color__warning-label: #ffffff;
     --devie__font-family:
-      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
+      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", sans-serif;
   }
 }

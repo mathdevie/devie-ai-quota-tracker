@@ -2,8 +2,9 @@
 
 @layer devie {
     .popup {
+        line-height: $devie__spacing__x3;
         min-width: 180px;
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         padding: $devie__spacing__x05;
         box-shadow: $devie__shadow__menu;
@@ -23,10 +24,14 @@
         user-select: none;
         outline: none;
         color: $devie__color__text;
-        cursor: pointer;
         font-size: $devie__font-size__small;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         transition: none;
+
+        > svg {
+            flex-shrink: 0;
+            color: $devie__color__text-sub;
+        }
 
         &:hover:not([data-disabled]),
         &[data-highlighted]:not([data-disabled]) {
@@ -36,6 +41,10 @@
         &[data-disabled] {
             cursor: not-allowed;
             color: #{devie-disabled-color($devie__color__text)};
+
+            > svg {
+                color: inherit;
+            }
         }
 
         &[data-popup-open] {
@@ -77,7 +86,7 @@
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
     }
 
     .submenuChevron {
@@ -94,7 +103,7 @@
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
-        line-height: 1.2;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         background: none;
         border: none;

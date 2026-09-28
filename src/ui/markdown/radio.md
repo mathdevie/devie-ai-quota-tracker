@@ -1,32 +1,60 @@
 # <Radio />
 
-The Radio component extends [ Base UI's Radio ](https://base-ui.com/react/components/radio) . Radio buttons allow users to select a single option from a set of mutually exclusive choices. The `RadioGroup` component provides shared state management for a series of radio buttons.
+A set of radio buttons for choosing one option. The Radio component extends [ Base UI's Radio ](https://base-ui.com/react/components/radio) . Radio buttons allow users to select a single option from a set of mutually exclusive choices. The `RadioGroup` component provides shared state management for a series of radio buttons.
 
 Built on [Base UI](https://base-ui.com/react/components/radio).
 
 ## Installation
 
-### radio-group.tsx
+### radio.tsx
 
 ```tsx
-// https://devie-ui.com/components/radio-group
-// https://base-ui.com/react/components/radio-group
+// https://devie-ui.com/components/radio
+// https://base-ui.com/react/components/radio
 
-import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
+import { Radio as BaseRadio } from "@base-ui/react/radio";
 import clsx from "clsx";
-import styles from "./RadioGroup.module.scss";
+import styles from "./Radio.module.scss";
 
-function RadioGroup({ className, ...props }: BaseRadioGroup.Props) {
-  return <BaseRadioGroup className={clsx(styles.root, className)} {...props} />;
+function Root({ className, ...props }: BaseRadio.Root.Props) {
+  return <BaseRadio.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-namespace RadioGroup {
-  export type Props = BaseRadioGroup.Props;
-  export type State = BaseRadioGroup.State;
-  export type ChangeEventDetails = BaseRadioGroup.ChangeEventDetails;
+function Indicator({
+  className,
+  children,
+  ...props
+}: BaseRadio.Indicator.Props) {
+  return (
+    <BaseRadio.Indicator
+      className={clsx(styles.indicator, className)}
+      {...props}
+    >
+      {children || <DefaultIndicatorDot />}
+    </BaseRadio.Indicator>
+  );
 }
 
-export default RadioGroup;
+function DefaultIndicatorDot() {
+  return <div className={styles.dot} />;
+}
+
+const Radio = {
+  Root,
+  Indicator,
+};
+
+namespace Radio {
+  export namespace Root {
+    export type Props = BaseRadio.Root.Props;
+    export type State = BaseRadio.Root.State;
+  }
+  export namespace Indicator {
+    export type Props = BaseRadio.Indicator.Props;
+  }
+}
+
+export default Radio;
 ```
 
 ### radio.module.scss
@@ -47,7 +75,6 @@ export default RadioGroup;
         padding: 0;
         margin: 0;
         border: none;
-        cursor: pointer;
         transition: none;
 
         &[data-unchecked] {
@@ -61,8 +88,7 @@ export default RadioGroup;
         }
 
         &:focus-visible {
-            outline: 2px solid $devie__color__primary;
-            outline-offset: 2px;
+            @include devie-focus-ring(2px);
         }
 
         &:hover:not([data-disabled]) {
@@ -114,6 +140,29 @@ export default RadioGroup;
 }
 ```
 
+### radio-group.tsx
+
+```tsx
+// https://devie-ui.com/components/radio-group
+// https://base-ui.com/react/components/radio-group
+
+import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
+import clsx from "clsx";
+import styles from "./RadioGroup.module.scss";
+
+function RadioGroup({ className, ...props }: BaseRadioGroup.Props) {
+  return <BaseRadioGroup className={clsx(styles.root, className)} {...props} />;
+}
+
+namespace RadioGroup {
+  export type Props = BaseRadioGroup.Props;
+  export type State = BaseRadioGroup.State;
+  export type ChangeEventDetails = BaseRadioGroup.ChangeEventDetails;
+}
+
+export default RadioGroup;
+```
+
 ### radio-group.module.scss
 
 ```scss
@@ -126,57 +175,6 @@ export default RadioGroup;
         gap: $devie__spacing__x1;
     }
 }
-```
-
-### radio.tsx
-
-```tsx
-// https://devie-ui.com/components/radio
-// https://base-ui.com/react/components/radio
-
-import { Radio as BaseRadio } from "@base-ui/react/radio";
-import clsx from "clsx";
-import styles from "./Radio.module.scss";
-
-function Root({ className, ...props }: BaseRadio.Root.Props) {
-  return <BaseRadio.Root className={clsx(styles.root, className)} {...props} />;
-}
-
-function Indicator({
-  className,
-  children,
-  ...props
-}: BaseRadio.Indicator.Props) {
-  return (
-    <BaseRadio.Indicator
-      className={clsx(styles.indicator, className)}
-      {...props}
-    >
-      {children || <DefaultIndicatorDot />}
-    </BaseRadio.Indicator>
-  );
-}
-
-function DefaultIndicatorDot() {
-  return <div className={styles.dot} />;
-}
-
-const Radio = {
-  Root,
-  Indicator,
-};
-
-namespace Radio {
-  export namespace Root {
-    export type Props = BaseRadio.Root.Props;
-    export type State = BaseRadio.Root.State;
-  }
-  export namespace Indicator {
-    export type Props = BaseRadio.Indicator.Props;
-  }
-}
-
-export default Radio;
 ```
 
 ## Use Cases

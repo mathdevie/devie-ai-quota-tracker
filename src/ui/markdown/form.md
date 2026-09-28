@@ -1,25 +1,10 @@
 # <Form />
 
-The Form component extends [ Base UI's Form ](https://base-ui.com/react/components/form) . It coordinates validation across multiple form controls like [Field](/components/field), [Checkbox](/components/checkbox), and [CheckboxGroup](/components/checkbox-group). The Form validates all fields before calling `onFormSubmit`.
+A form with consolidated error handling. The Form component extends [ Base UI's Form ](https://base-ui.com/react/components/form) . It validates every [Field](/components/field), [Checkbox](/components/checkbox), and [CheckboxGroup](/components/checkbox-group) before it calls `onFormSubmit`, and it displays server errors with the `errors` prop.
 
 Built on [Base UI](https://base-ui.com/react/components/form).
 
 ## Installation
-
-### form.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: $devie__spacing__x2;
-    }
-}
-```
 
 ### form.tsx
 
@@ -45,11 +30,26 @@ namespace Form {
 export default Form;
 ```
 
+### form.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x2;
+    }
+}
+```
+
 ## Use Cases
 
-### Form with client-side validation
+### Client-side validation
 
-Use the `validate` prop on `Field.Root` to define custom validation rules. Set `validationMode` to control when validation runs: `"onBlur"` validates when the field loses focus, `"onChange"` validates on every keystroke.
+Pass a `validate` function to `Field.Root`. Set `validationMode` to `onBlur` or `onChange` to validate before submit.
 
 ```tsx
 function validateEmail(value: unknown) {
@@ -108,11 +108,11 @@ async function handleSubmit(formValues: Form.Values) {
 </Form>
 ```
 
-### Combining client-side validation and server errors
+### Server errors
 
-Client-side validation (via the `validate` prop) provides instant feedback, while server-side validation catches issues that can only be verified remotely, like checking if a code is valid.
+Pass an object to the `errors` prop on `Form`. Keys are field `name`s, values are messages. `Field.Error` displays server errors together with client errors.
 
-Pass server errors to the `errors` prop on `Form` as an object mapping field `name`s to error messages. `Field.Error` automatically displays both client-side and server errors.
+Wrap Select, Combobox, and Autocomplete in a Field. Otherwise the Form cannot validate them. See [non-text inputs](/components/field#non-text-inputs).
 
 ```tsx
 function validateCode(value: unknown) {
@@ -158,9 +158,9 @@ async function handleSubmit(formValues: Form.Values) {
 </Form>
 ```
 
-### Using with Zod
+### With Zod
 
-If you use [ Zod ](https://zod.dev) for validation, define your schema with custom error messages, then use `safeParse` and `error.flatten()` to convert validation errors into the format expected by Form's `errors` prop.
+Define the [ Zod ](https://zod.dev) schema with custom messages. Call `safeParse`, then `error.flatten()` to build the `errors` object.
 
 ```tsx
 const ProjectSchema = z.object({
@@ -203,9 +203,9 @@ async function handleSubmit(formValues: Form.Values) {
 </Form>
 ```
 
-### Integrating with other form libraries
+### Other form libraries
 
-Base UI can also integrate with [ TanStack Form ](https://base-ui.com/react/handbook/forms#tanstack-form) and [ React Hook Form ](https://base-ui.com/react/handbook/forms#react-hook-form) if you prefer to use these libraries to manage your form states.
+Base UI also documents [ TanStack Form ](https://base-ui.com/react/handbook/forms#tanstack-form) and [ React Hook Form ](https://base-ui.com/react/handbook/forms#react-hook-form) .
 
 ### Additional Examples
 

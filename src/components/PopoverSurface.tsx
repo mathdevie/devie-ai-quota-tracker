@@ -19,6 +19,7 @@ import {
   writeFilters,
 } from "@/lib/filters";
 import Button from "@/ui/Button";
+import ButtonGroup from "@/ui/ButtonGroup";
 import ScrollArea from "@/ui/ScrollArea";
 import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
@@ -78,10 +79,15 @@ export default function PopoverSurface({
     if (!header || !content) return;
     const floor = overlay ? OVERLAY_HEIGHT : MIN_HEIGHT;
     const fit = () => {
-      const height = header.offsetHeight + content.offsetHeight + FRAME;
+      const scale = header.getBoundingClientRect().height / header.offsetHeight;
+      const height =
+        header.getBoundingClientRect().height +
+        content.getBoundingClientRect().height +
+        FRAME * scale;
       void resizePopover(Math.min(MAX_HEIGHT, Math.max(floor, height)));
     };
     const observer = new ResizeObserver(fit);
+    observer.observe(header);
     observer.observe(content);
     fit();
     return () => observer.disconnect();
@@ -134,7 +140,10 @@ export default function PopoverSurface({
               />
             </div>
           )}
-          <div className={styles.headerActions}>
+          <ButtonGroup
+            aria-label={t("Nav.Quota")}
+            className={styles.headerActions}
+          >
             <IconTip label={t("Quota.RefreshQuotas")}>
               <Button
                 aria-label={t("Quota.RefreshQuotas")}
@@ -159,7 +168,7 @@ export default function PopoverSurface({
                 <Settings size={14} />
               </Button>
             </IconTip>
-          </div>
+          </ButtonGroup>
         </header>
 
         <ScrollArea.Root className={styles.list}>

@@ -1,6 +1,6 @@
 # <ContextMenu />
 
-The ContextMenu component extends [ Base UI's ContextMenu ](https://base-ui.com/react/components/context-menu) with polished default styles. It displays a menu of contextual actions triggered by right-clicking (or long-pressing on touch devices) on an element. We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
+A menu that appears at the pointer on right click or long press. The ContextMenu component extends [ Base UI's ContextMenu ](https://base-ui.com/react/components/context-menu) with polished default styles. It displays a menu of contextual actions triggered by right-clicking (or long-pressing on touch devices) on an element. We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
 
 Built on [Base UI](https://base-ui.com/react/components/context-menu).
 
@@ -314,8 +314,9 @@ export default ContextMenu;
 
 @layer devie {
     .popup {
+        line-height: $devie__spacing__x3;
         min-width: 180px;
-        background-color: $devie__color__background;
+        background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         padding: $devie__spacing__x05;
         box-shadow: $devie__shadow__menu;
@@ -331,10 +332,14 @@ export default ContextMenu;
         user-select: none;
         outline: none;
         color: $devie__color__text;
-        cursor: pointer;
         font-size: $devie__font-size__small;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         transition: none;
+
+        > svg {
+            flex-shrink: 0;
+            color: $devie__color__text-sub;
+        }
 
         &:hover:not([data-disabled]),
         &[data-highlighted]:not([data-disabled]) {
@@ -344,6 +349,10 @@ export default ContextMenu;
         &[data-disabled] {
             cursor: not-allowed;
             color: #{devie-disabled-color($devie__color__text)};
+
+            > svg {
+                color: inherit;
+            }
         }
 
         &[data-popup-open] {
@@ -385,7 +394,7 @@ export default ContextMenu;
     }
 
     .arrow {
-        fill: $devie__color__background;
+        fill: $devie__color__background-raised;
     }
 
     .submenuChevron {
@@ -402,7 +411,7 @@ export default ContextMenu;
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
-        line-height: 1.2;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         background: none;
         border: none;

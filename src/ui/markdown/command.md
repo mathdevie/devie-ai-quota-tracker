@@ -1,191 +1,10 @@
 # <Command />
 
-The Command component is a command palette built by composing [Dialog](/components/dialog) (modal overlay) and [ Base UI's Autocomplete ](https://base-ui.com/react/components/autocomplete) (inline filtering and keyboard navigation). The autocomplete is rendered inline inside the dialog, with no portal or positioner needed. Use `Command.Shortcut` to show keyboard hints alongside items. This component is not a direct Base UI primitive.
+A command palette that filters actions as the user types. The Command component is a command palette built by composing [Dialog](/components/dialog) (modal overlay) and [ Base UI's Autocomplete ](https://base-ui.com/react/components/autocomplete) (inline filtering and keyboard navigation). The autocomplete is rendered inline inside the dialog, with no portal or positioner needed. Use `Command.Shortcut` to show keyboard hints alongside items. This component is not a direct Base UI primitive.
 
 Built on [Base UI](https://base-ui.com/react/components/autocomplete#command-palette).
 
 ## Installation
-
-### command.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .backdrop {
-        background-color: #000000;
-        opacity: 0.7;
-        position: fixed;
-        inset: 0;
-    }
-
-    .dialogPopup {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        width: 90vw;
-        min-width: 384px;
-        max-width: 640px;
-        max-height: 85vh;
-        transform: translate(-50%, -55%);
-        background: $devie__color__background;
-        border-radius: $devie__radius-strong;
-        border: 1px solid $devie__color__line;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .inputWrapper {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x2;
-        padding: $devie__spacing__x2 $devie__spacing__x3;
-        border-bottom: 1px solid $devie__color__line;
-    }
-
-    .inputKbd {
-        flex-shrink: 0;
-        margin-left: auto;
-    }
-
-    .inputIcon {
-        flex-shrink: 0;
-        color: $devie__color__text-sub;
-    }
-
-    .input {
-        flex: 1;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: $devie__color__text;
-        font-size: $devie__font-size__normal;
-        font-family: $devie__font-family;
-        padding: $devie__spacing__x05 0;
-
-        &::placeholder {
-            color: $devie__color__text-sub;
-        }
-    }
-
-    .toolbar {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x2;
-        border-bottom: 1px solid $devie__color__line;
-        font-size: $devie__font-size__small;
-        color: $devie__color__text-sub;
-    }
-
-    .listScroller {
-        max-height: 300px;
-        overflow-y: auto;
-        scroll-padding-block: $devie__spacing__x1;
-        background: $devie__color__background-sub;
-
-        mask-image:
-            linear-gradient(to bottom, transparent, black 8px, black calc(100% - 8px), transparent);
-        -webkit-mask-image:
-            linear-gradient(to bottom, transparent, black 8px, black calc(100% - 8px), transparent);
-    }
-
-    .list {
-        display: flex;
-        flex-direction: column;
-        padding: $devie__spacing__x1;
-    }
-
-    .item {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x2;
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        border-radius: calc($devie__radius - $devie__spacing__x05);
-        color: $devie__color__text;
-        font-size: $devie__font-size__small;
-        cursor: pointer;
-        outline: none;
-        user-select: none;
-        transition: none;
-        min-height: 36px;
-
-        &:hover:not([data-disabled]),
-        &[data-highlighted]:not([data-disabled]) {
-            background: #{devie-hover-color($devie__color__background-sub)};
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text)};
-        }
-    }
-
-    .empty {
-        padding: $devie__spacing__x4 $devie__spacing__x2;
-        text-align: center;
-        color: $devie__color__text-sub;
-        font-size: $devie__font-size__small;
-
-        &:empty {
-            display: none;
-        }
-    }
-
-    .group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .groupLabel {
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        padding-top: $devie__spacing__x2;
-        font-size: 11px;
-        font-weight: 600;
-        color: $devie__color__text-sub;
-        user-select: none;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .separator {
-        height: 1px;
-        background-color: $devie__color__line;
-        margin: $devie__spacing__x1 $devie__spacing__x1;
-    }
-
-    .shortcut {
-        margin-left: auto;
-        flex-shrink: 0;
-        font-family: $devie__font-family;
-        font-size: 11px;
-        line-height: 1;
-        color: $devie__color__text-sub;
-        padding: 0;
-    }
-
-    .footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: $devie__spacing__x2;
-        padding: $devie__spacing__x1 $devie__spacing__x3;
-        border-top: 1px solid $devie__color__line;
-        font-size: $devie__font-size__small;
-        color: $devie__color__text-sub;
-    }
-
-    .panel {
-        background: $devie__color__background;
-        border-radius: $devie__radius-strong;
-        border: 1px solid $devie__color__line;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-}
-```
 
 ### command.tsx
 
@@ -405,6 +224,187 @@ namespace Command {
 }
 
 export default Command;
+```
+
+### command.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .backdrop {
+        background-color: #000000;
+        opacity: 0.7;
+        position: fixed;
+        inset: 0;
+    }
+
+    .dialogPopup {
+        line-height: $devie__spacing__x3;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 90vw;
+        min-width: 384px;
+        max-width: 640px;
+        max-height: 85vh;
+        transform: translate(-50%, -55%);
+        background: $devie__color__background-raised;
+        border-radius: $devie__radius-strong;
+        border: 1px solid $devie__color__line;
+        box-shadow: $devie__shadow__menu;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .inputWrapper {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x2;
+        padding: $devie__spacing__x2 $devie__spacing__x3;
+        border-bottom: 1px solid $devie__color__line;
+    }
+
+    .inputKbd {
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .inputIcon {
+        flex-shrink: 0;
+        color: $devie__color__text-sub;
+    }
+
+    .input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: $devie__color__text;
+        font-size: $devie__font-size__normal;
+        font-family: $devie__font-family;
+        line-height: $devie__spacing__x3;
+        padding: 0;
+
+        &::placeholder {
+            color: $devie__color__text-sub;
+        }
+    }
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        border-bottom: 1px solid $devie__color__line;
+        font-size: $devie__font-size__small;
+        color: $devie__color__text-sub;
+    }
+
+    .listScroller {
+        max-height: 300px;
+        overflow-y: auto;
+        scroll-padding-block: $devie__spacing__x1;
+
+        mask-image:
+            linear-gradient(to bottom, transparent, black 8px, black calc(100% - 8px), transparent);
+        -webkit-mask-image:
+            linear-gradient(to bottom, transparent, black 8px, black calc(100% - 8px), transparent);
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        padding: $devie__spacing__x1;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x2;
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        border-radius: calc($devie__radius - $devie__spacing__x05);
+        color: $devie__color__text;
+        font-size: $devie__font-size__small;
+        outline: none;
+        user-select: none;
+        transition: none;
+
+        &:hover:not([data-disabled]),
+        &[data-highlighted]:not([data-disabled]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+    }
+
+    .empty {
+        padding: $devie__spacing__x4 $devie__spacing__x2;
+        text-align: center;
+        color: $devie__color__text-sub;
+        font-size: $devie__font-size__small;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    .group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .groupLabel {
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        padding-top: $devie__spacing__x2;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        font-weight: 600;
+        color: $devie__color__text-sub;
+        user-select: none;
+    }
+
+    .separator {
+        height: 1px;
+        background-color: $devie__color__line;
+        margin: $devie__spacing__x1 $devie__spacing__x1;
+    }
+
+    .shortcut {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__small;
+        font-weight: 500;
+        color: $devie__color__text-sub;
+        padding: 0;
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $devie__spacing__x2;
+        padding: $devie__spacing__x1 $devie__spacing__x3;
+        border-top: 1px solid $devie__color__line;
+        font-size: $devie__font-size__small;
+        color: $devie__color__text-sub;
+    }
+
+    .panel {
+        line-height: $devie__spacing__x3;
+        background: $devie__color__background-raised;
+        border-radius: $devie__radius-strong;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+}
 ```
 
 ## Use Cases

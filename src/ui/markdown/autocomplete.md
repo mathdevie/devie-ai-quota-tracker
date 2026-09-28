@@ -1,223 +1,12 @@
 # <Autocomplete />
 
-The Autocomplete component provides a text input with a dropdown of suggestions that filter as the user types. It extends [ Base UI's Autocomplete ](https://base-ui.com/react/components/autocomplete) .
+A text input with a list of suggestions that filter as the user types. It extends [ Base UI's Autocomplete ](https://base-ui.com/react/components/autocomplete) .
 
 Autocomplete is best suited for free-form text input with suggestions (e.g., search fields, address inputs).
 
 Built on [Base UI](https://base-ui.com/react/components/autocomplete).
 
 ## Installation
-
-### autocomplete.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .input {
-        background-color: $devie__color__background;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x1;
-        border: 1px solid $devie__color__line;
-        box-sizing: border-box;
-        min-width: 200px;
-        width: 100%;
-        color: $devie__color__text;
-        font-size: inherit;
-        font-family: inherit;
-
-        &:focus-visible {
-            border-color: $devie__color__primary;
-            outline: 0;
-        }
-
-        &::placeholder {
-            color: $devie__color__text-sub;
-        }
-
-        &[data-popup-open] {
-            border-color: $devie__color__primary;
-        }
-
-        &:disabled {
-            cursor: not-allowed;
-            background: #{devie-disabled-color($devie__color__background)};
-            border-color: #{devie-disabled-color($devie__color__line)};
-            color: #{devie-disabled-color($devie__color__text)};
-
-            &::placeholder {
-                color: #{devie-disabled-color($devie__color__text-sub)};
-            }
-        }
-    }
-
-    .trigger {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        color: $devie__color__text-sub;
-
-        &:hover:not([data-disabled]) {
-            color: $devie__color__text;
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text-sub)};
-        }
-    }
-
-    .icon {
-        display: flex;
-        transition: transform 0.2s ease;
-        color: $devie__color__text-sub;
-        pointer-events: none;
-
-        [data-popup-open] & {
-            transform: rotate(180deg);
-        }
-
-        [data-disabled] & {
-            color: #{devie-disabled-color($devie__color__text-sub)};
-        }
-    }
-
-    .clear {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: none;
-        padding: $devie__spacing__x05;
-        cursor: pointer;
-        color: $devie__color__text;
-        border-radius: $devie__radius;
-
-        &:hover {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-    }
-
-    .popup:has(.item, .empty) {
-        box-sizing: border-box;
-        background-color: $devie__color__background;
-        border: 1px solid $devie__color__line;
-        border-radius: $devie__radius;
-        box-shadow: $devie__shadow__menu;
-        padding: $devie__spacing__x05;
-        max-height: var(--available-height);
-        overflow-y: auto;
-        scroll-padding-block: $devie__spacing__x2;
-        transition: none;
-    }
-
-    .status {
-        padding: $devie__spacing__x1;
-        font-size: $devie__font-size__small;
-        color: $devie__color__text-sub;
-        text-align: center;
-    }
-
-    .item,
-    .popup[data-empty] .empty {
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
-        border-radius: calc($devie__radius - $devie__spacing__x05);
-        color: $devie__color__text;
-        min-width: var(--anchor-width);
-        outline: 0;
-        font-size: $devie__font-size__small;
-        user-select: none;
-        transition: none;
-
-        &:hover:not([data-disabled]),
-        &[data-highlighted]:not([data-disabled]) {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text)};
-        }
-
-        &[data-selected] {
-            color: $devie__color__primary;
-        }
-    }
-
-    .item {
-        cursor: pointer;
-    }
-
-    .empty {
-        cursor: default;
-    }
-
-    .list {
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    }
-
-    .row {
-        display: flex;
-        gap: $devie__spacing__x05;
-    }
-
-    .group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .groupLabel {
-        padding: $devie__spacing__x1;
-        font-size: $devie__font-size__small;
-        color: $devie__color__text-sub;
-        font-weight: 600;
-    }
-
-    .separator {
-        height: 1px;
-        background-color: $devie__color__line;
-        margin: $devie__spacing__x05 0;
-    }
-
-    .arrow {
-        fill: $devie__color__background;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
-        z-index: 1;
-
-        &[data-side='top'] {
-            bottom: -8px;
-            rotate: 180deg;
-        }
-
-        &[data-side='bottom'] {
-            top: -8px;
-            rotate: 0deg;
-        }
-
-        &[data-side='left'] {
-            right: -13px;
-            rotate: 90deg;
-        }
-
-        &[data-side='right'] {
-            left: -13px;
-            rotate: -90deg;
-        }
-    }
-}
-```
 
 ### autocomplete.tsx
 
@@ -505,6 +294,223 @@ namespace Autocomplete {
 }
 
 export default Autocomplete;
+```
+
+### autocomplete.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .inputGroup {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        width: 100%;
+    }
+
+    .input {
+        background-color: $devie__color__background;
+        border-radius: $devie__radius;
+        padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        border: 1px solid $devie__color__line;
+        box-sizing: border-box;
+        min-width: 200px;
+        width: 100%;
+        color: $devie__color__text;
+        font-size: inherit;
+        font-family: inherit;
+        line-height: $devie__spacing__x3;
+
+        &:focus-visible {
+            border-color: $devie__color__primary;
+            outline: 0;
+        }
+
+        &::placeholder {
+            color: $devie__color__text-sub;
+        }
+
+        &[data-popup-open] {
+            border-color: $devie__color__primary;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            background: #{devie-disabled-color($devie__color__background)};
+            border-color: #{devie-disabled-color($devie__color__line)};
+            color: #{devie-disabled-color($devie__color__text)};
+
+            &::placeholder {
+                color: #{devie-disabled-color($devie__color__text-sub)};
+            }
+        }
+    }
+
+    .trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: $devie__color__text-sub;
+
+        &:hover:not([data-disabled]) {
+            color: $devie__color__text;
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text-sub)};
+        }
+    }
+
+    .icon {
+        display: flex;
+        transition: transform 0.2s ease;
+        color: $devie__color__text-sub;
+        pointer-events: none;
+
+        [data-popup-open] & {
+            transform: rotate(180deg);
+        }
+
+        [data-disabled] & {
+            color: #{devie-disabled-color($devie__color__text-sub)};
+        }
+    }
+
+    .clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: $devie__spacing__x05;
+        color: $devie__color__text;
+        border-radius: $devie__radius;
+        transition: none;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+    }
+
+    .popup:has(.item, .empty) {
+        line-height: $devie__spacing__x3;
+        box-sizing: border-box;
+        background-color: $devie__color__background-raised;
+        border: 1px solid $devie__color__line;
+        border-radius: $devie__radius;
+        box-shadow: $devie__shadow__menu;
+        padding: $devie__spacing__x05;
+        max-height: var(--available-height);
+        overflow-y: auto;
+        scroll-padding-block: $devie__spacing__x2;
+        transition: none;
+    }
+
+    .status {
+        padding: $devie__spacing__x1;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x3;
+        color: $devie__color__text-sub;
+        text-align: center;
+    }
+
+    .item,
+    .popup[data-empty] .empty {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $devie__spacing__x1;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        border-radius: calc($devie__radius - $devie__spacing__x05);
+        color: $devie__color__text;
+        min-width: var(--anchor-width);
+        outline: 0;
+        font-size: $devie__font-size__small;
+        user-select: none;
+        transition: none;
+
+        &:hover:not([data-disabled]),
+        &[data-highlighted]:not([data-disabled]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+        }
+
+        &[data-selected] {
+            color: $devie__color__primary;
+        }
+    }
+
+
+    .empty {
+        cursor: default;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .row {
+        display: flex;
+        gap: $devie__spacing__x05;
+    }
+
+    .group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .groupLabel {
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        font-size: $devie__font-size__small;
+        color: $devie__color__text-sub;
+        font-weight: 600;
+    }
+
+    .separator {
+        height: 1px;
+        background-color: $devie__color__line;
+        margin: $devie__spacing__x05 0;
+    }
+
+    .arrow {
+        fill: $devie__color__background-raised;
+        stroke: $devie__color__line;
+        stroke-width: 1px;
+        z-index: 1;
+
+        &[data-side='top'] {
+            bottom: -8px;
+            rotate: 180deg;
+        }
+
+        &[data-side='bottom'] {
+            top: -8px;
+            rotate: 0deg;
+        }
+
+        &[data-side='left'] {
+            right: -13px;
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: -13px;
+            rotate: -90deg;
+        }
+    }
+}
 ```
 
 ## Use Cases

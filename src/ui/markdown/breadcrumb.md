@@ -1,6 +1,6 @@
 # <Breadcrumb />
 
-The Breadcrumb component provides a navigational aid that helps users understand their current location within a website hierarchy. It's built as a compound component with subcomponents for flexible composition.
+A navigation trail that shows the current location in a site hierarchy. It's built as a compound component with subcomponents for flexible composition.
 
 ## Installation
 
@@ -118,6 +118,7 @@ export default Breadcrumb;
     gap: $devie__spacing__x1;
     color: $devie__color__text;
     font-size: $devie__font-size__normal;
+    line-height: $devie__spacing__x3;
     font-family: $devie__font-family;
 
     a {
@@ -127,6 +128,10 @@ export default Breadcrumb;
       &:hover {
         text-decoration: underline;
       }
+    }
+
+    [aria-current="page"] {
+      font-weight: 600;
     }
   }
 

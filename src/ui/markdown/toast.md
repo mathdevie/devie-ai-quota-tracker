@@ -1,221 +1,12 @@
 # <Toast />
 
-The Toast component extends [ Base UI's Toast ](https://base-ui.com/react/components/toast) . Toasts display brief, non-intrusive notifications that appear temporarily and auto-dismiss. They're ideal for confirming actions, showing status updates, or providing feedback without interrupting the user's workflow.
+A component that generates notifications. The Toast component extends [ Base UI's Toast ](https://base-ui.com/react/components/toast) . Toasts display brief, non-intrusive notifications that appear temporarily and auto-dismiss. They're ideal for confirming actions, showing status updates, or providing feedback without interrupting the user's workflow.
 
 The implementation consists of two parts: `Toast` provides the styled primitives (Viewport, Root, Title, Description, Close), while `Toaster` is a ready-to-use component that renders all active toasts with appropriate icons based on their type. Note that `Toast.Provider` must be imported directly from Base UI in your layout due to React context limitations.
 
 Built on [Base UI](https://base-ui.com/react/components/toast).
 
 ## Installation
-
-### toaster.tsx
-
-```tsx
-// https://devie-ui.com/components/toast
-
-"use client";
-
-import { CheckCircle, Info, X, XCircle } from "lucide-react";
-import Toast from "@/ui/Toast";
-import styles from "./Toaster.module.scss";
-
-export function Toaster() {
-  const { toasts } = Toast.useToastManager();
-
-  return (
-    <Toast.Viewport>
-      {toasts.map((toast) => {
-        const type = toast.type || "info";
-        return (
-          <Toast.Root key={toast.id} toast={toast} data-type={type}>
-            <div className={styles.iconContainer}>
-              {type === "info" && <Info size={16} strokeWidth={1.5} />}
-              {type === "success" && (
-                <CheckCircle size={16} strokeWidth={1.5} />
-              )}
-              {type === "error" && <XCircle size={16} strokeWidth={1.5} />}
-            </div>
-            <div className={styles.contentContainer}>
-              {toast.title && <Toast.Title>{toast.title}</Toast.Title>}
-              {toast.description && (
-                <Toast.Description>{toast.description}</Toast.Description>
-              )}
-              {toast.actionProps && <Toast.Action {...toast.actionProps} />}
-            </div>
-            <Toast.Close aria-label="Close">
-              <X size={16} />
-            </Toast.Close>
-          </Toast.Root>
-        );
-      })}
-    </Toast.Viewport>
-  );
-}
-```
-
-### toast.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .root {
-        position: relative;
-        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background 95%);
-        border: 1px solid $devie__color__primary;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x2 $devie__spacing__x4 $devie__spacing__x2 $devie__spacing__x2;
-        display: flex;
-        align-items: flex-start;
-        gap: $devie__spacing__x1;
-        box-shadow: $devie__shadow__menu;
-        margin-bottom: $devie__spacing__x2;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-
-        &[data-type="success"] {
-            background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background 95%);
-            border-color: $devie__color__success;
-        }
-
-        &[data-type="error"] {
-            background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background 95%);
-            border-color: $devie__color__danger;
-        }
-
-        &[data-starting-style] {
-            animation: toastSlideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        &[data-swiping] {
-            transform: translateX(var(--toast-swipe-movement-x));
-            transition: none;
-        }
-
-        &[data-ending-style] {
-            opacity: 0;
-        }
-
-        &[data-ending-style][data-swipe-direction='right'] {
-            transform: translateX(calc(100% + $devie__spacing__x4));
-        }
-
-        &[data-ending-style][data-swipe-direction='left'] {
-            transform: translateX(calc(-100% - $devie__spacing__x4));
-        }
-
-        @keyframes toastHide {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0;
-            }
-        }
-
-        @keyframes toastSlideIn {
-            from {
-                transform: translateX(calc(100% + $devie__spacing__x4));
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-    }
-
-    .viewport {
-        position: fixed;
-        top: $devie__spacing__x4;
-        right: $devie__spacing__x4;
-        z-index: 1;
-        width: 320px;
-
-        @media (max-width: 1024px) {
-            top: $devie__spacing__x2;
-            right: $devie__spacing__x2;
-            left: $devie__spacing__x2;
-            width: auto;
-        }
-    }
-
-    .title {
-        font-size: $devie__font-size__normal;
-        font-weight: 600;
-        line-height: 1.5;
-    }
-
-    .description {
-        font-size: $devie__font-size__normal;
-        line-height: 1.5;
-    }
-
-    .action {
-        background: $devie__color__primary;
-        color: $devie__color__primary-label;
-        border: none;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x1 $devie__spacing__x2;
-        font-size: $devie__font-size__small;
-        cursor: pointer;
-
-        &:hover {
-            background: #{devie-hover-color($devie__color__primary)};
-        }
-    }
-
-    .close {
-        position: absolute;
-        top: $devie__spacing__x2;
-        right: $devie__spacing__x1;
-        background: transparent;
-        border: none;
-        color: $devie__color__text;
-        padding: $devie__spacing__x05;
-        border-radius: $devie__radius;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-
-        &:hover {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-    }
-}
-```
-
-### toaster.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-  .iconContainer {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: $devie__spacing__x05;
-    color: $devie__color__primary;
-
-    [data-type="success"] & {
-      color: $devie__color__success;
-    }
-
-    [data-type="error"] & {
-      color: $devie__color__danger;
-    }
-  }
-
-  .contentContainer {
-    display: flex;
-    flex-direction: column;
-    gap: $devie__spacing__x05;
-    flex: 1;
-    min-width: 0;
-  }
-}
-```
 
 ### toast.tsx
 
@@ -314,6 +105,215 @@ namespace Toast {
 }
 
 export default Toast;
+```
+
+### toast.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        position: relative;
+        background-color: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background-raised 95%);
+        border: 1px solid $devie__color__primary;
+        border-radius: $devie__radius;
+        padding: calc($devie__spacing__x2 - 1px) calc($devie__spacing__x4 - 1px) calc($devie__spacing__x2 - 1px) calc($devie__spacing__x2 - 1px);
+        display: flex;
+        align-items: flex-start;
+        gap: $devie__spacing__x1;
+        box-shadow: $devie__shadow__menu;
+        margin-bottom: $devie__spacing__x2;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+
+        &[data-type="success"] {
+            background-color: color-mix(in srgb, $devie__color__success 5%, $devie__color__background-raised 95%);
+            border-color: $devie__color__success;
+        }
+
+        &[data-type="error"] {
+            background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background-raised 95%);
+            border-color: $devie__color__danger;
+        }
+
+        &[data-starting-style] {
+            animation: toastSlideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        &[data-swiping] {
+            transform: translateX(var(--toast-swipe-movement-x));
+            transition: none;
+        }
+
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        &[data-ending-style][data-swipe-direction='right'] {
+            transform: translateX(calc(100% + $devie__spacing__x4));
+        }
+
+        &[data-ending-style][data-swipe-direction='left'] {
+            transform: translateX(calc(-100% - $devie__spacing__x4));
+        }
+
+        @keyframes toastHide {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(calc(100% + $devie__spacing__x4));
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+    }
+
+    .viewport {
+        position: fixed;
+        top: $devie__spacing__x4;
+        right: $devie__spacing__x4;
+        z-index: 1;
+        width: 320px;
+
+        @media (max-width: 480px) {
+            top: $devie__spacing__x2;
+            right: $devie__spacing__x2;
+            left: $devie__spacing__x2;
+            width: auto;
+        }
+    }
+
+    .title {
+        font-size: $devie__font-size__normal;
+        font-weight: 600;
+        line-height: $devie__spacing__x3;
+    }
+
+    .description {
+        font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
+    }
+
+    .action {
+        background: $devie__color__primary;
+        color: $devie__color__primary-label;
+        border: none;
+        border-radius: $devie__radius;
+        padding: $devie__spacing__x1 $devie__spacing__x2;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__primary)};
+        }
+    }
+
+    .close {
+        position: absolute;
+        top: $devie__spacing__x2;
+        right: $devie__spacing__x1;
+        background: transparent;
+        border: none;
+        color: $devie__color__text;
+        padding: $devie__spacing__x05;
+        border-radius: $devie__radius;
+        display: grid;
+        place-items: center;
+        transition: none;
+
+        &:hover {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+    }
+}
+```
+
+### toaster.tsx
+
+```tsx
+// https://devie-ui.com/components/toast
+
+"use client";
+
+import { CheckCircle, Info, X, XCircle } from "lucide-react";
+import Toast from "@/ui/Toast";
+import styles from "./Toaster.module.scss";
+
+export function Toaster() {
+  const { toasts } = Toast.useToastManager();
+
+  return (
+    <Toast.Viewport>
+      {toasts.map((toast) => {
+        const type = toast.type || "info";
+        return (
+          <Toast.Root key={toast.id} toast={toast} data-type={type}>
+            <div className={styles.iconContainer}>
+              {type === "info" && <Info size={16} strokeWidth={1.5} />}
+              {type === "success" && (
+                <CheckCircle size={16} strokeWidth={1.5} />
+              )}
+              {type === "error" && <XCircle size={16} strokeWidth={1.5} />}
+            </div>
+            <div className={styles.contentContainer}>
+              {toast.title && <Toast.Title>{toast.title}</Toast.Title>}
+              {toast.description && (
+                <Toast.Description>{toast.description}</Toast.Description>
+              )}
+              {toast.actionProps && <Toast.Action {...toast.actionProps} />}
+            </div>
+            <Toast.Close aria-label="Close">
+              <X size={16} />
+            </Toast.Close>
+          </Toast.Root>
+        );
+      })}
+    </Toast.Viewport>
+  );
+}
+```
+
+### toaster.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+  .iconContainer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: $devie__spacing__x05;
+    color: $devie__color__primary;
+
+    [data-type="success"] & {
+      color: $devie__color__success;
+    }
+
+    [data-type="error"] & {
+      color: $devie__color__danger;
+    }
+  }
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $devie__spacing__x1;
+    flex: 1;
+    min-width: 0;
+  }
+}
 ```
 
 ## Use Cases
