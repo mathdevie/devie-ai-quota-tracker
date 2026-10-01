@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Cursor on-demand usage without a spending cap shows the amount spent this
-  billing cycle under "Unlimited", for example "$18.40 spent".
+  billing cycle on the right of "Unlimited", for example "$18.40 spent".
 
 ## [0.14.0] - 2026-09-28
 
