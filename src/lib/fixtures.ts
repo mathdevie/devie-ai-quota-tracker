@@ -253,6 +253,7 @@ export const previewState: DashboardState = {
           usedPercent: 0,
           resetsAt: "2026-08-29T00:00:00Z",
           unlimited: true,
+          amount: { used: 18.4, total: 0, unit: "USD" },
           paid: true,
         },
       ],

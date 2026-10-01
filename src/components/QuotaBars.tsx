@@ -52,8 +52,14 @@ export function untilText(t: TFunction, value?: string): string | undefined {
 /** One GitHub AI Credit is one US cent. */
 const CENTS_PER_CREDIT = 0.01;
 
-/** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", "$12.50 left", or "12 credits left". */
-function Amount({ amount }: { amount?: QuotaAmount }) {
+/** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", "$12.50 left", "12 credits left", or "$3.00 spent" without a cap. */
+function Amount({
+  amount,
+  unlimited,
+}: {
+  amount?: QuotaAmount;
+  unlimited?: boolean;
+}) {
   const { t, i18n } = useTranslation();
   const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "")
     ? amount?.unit
@@ -69,17 +75,19 @@ function Amount({ amount }: { amount?: QuotaAmount }) {
   return (
     <span className={styles.amount}>
       {amount &&
-        (amount.used === undefined
-          ? t("Quota.Balance", {
-              balance: currency
-                ? format(amount.total)
-                : `${format(amount.total)} ${amount.unit ?? ""}`.trim(),
-            })
-          : t("Quota.Amount", {
-              used: format(amount.used),
-              total: format(amount.total),
-              unit: currency ? "" : (amount.unit ?? ""),
-            }).trim())}
+        (unlimited && amount.used !== undefined
+          ? t("Quota.Spent", { used: format(amount.used) })
+          : amount.used === undefined
+            ? t("Quota.Balance", {
+                balance: currency
+                  ? format(amount.total)
+                  : `${format(amount.total)} ${amount.unit ?? ""}`.trim(),
+              })
+            : t("Quota.Amount", {
+                used: format(amount.used),
+                total: format(amount.total),
+                unit: currency ? "" : (amount.unit ?? ""),
+              }).trim())}
       {overage > 0 && (
         <span className={styles.overage}>
           {" · "}
@@ -152,6 +160,9 @@ export default function QuotaBars({
               <>
                 <span className={styles.unlimited}>{status}</span>
                 <ResetTime value={window.resetsAt} />
+                {window.unlimited && window.amount?.used !== undefined && (
+                  <Amount amount={window.amount} unlimited />
+                )}
               </>
             ) : (
               <>
