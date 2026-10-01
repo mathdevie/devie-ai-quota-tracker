@@ -73,7 +73,7 @@ function Amount({
     ).format(value);
   const overage = amount?.overage ?? 0;
   return (
-    <span className={styles.amount}>
+    <span className={unlimited ? styles.spent : styles.amount}>
       {amount &&
         (unlimited && amount.used !== undefined
           ? t("Quota.Spent", { used: format(amount.used) })
@@ -158,11 +158,13 @@ export default function QuotaBars({
             </span>
             {status ? (
               <>
-                <span className={styles.unlimited}>{status}</span>
+                <span className={styles.unlimited}>
+                  {status}
+                  {window.unlimited && window.amount?.used !== undefined && (
+                    <Amount amount={window.amount} unlimited />
+                  )}
+                </span>
                 <ResetTime value={window.resetsAt} />
-                {window.unlimited && window.amount?.used !== undefined && (
-                  <Amount amount={window.amount} unlimited />
-                )}
               </>
             ) : (
               <>
