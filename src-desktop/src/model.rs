@@ -98,9 +98,11 @@ impl QuotaWindow {
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct QuotaAmount {
-    /// Absent for a balance the provider only reports as "left".
+    /// Absent for a balance the provider only reports as "left". On an
+    /// unlimited window, the spend so far.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub used: Option<f64>,
+    /// The cap. 0 and ignored on an unlimited window.
     pub total: f64,
     /// A short unit name ("credits", "requests") or an ISO currency ("USD").
     #[serde(default, skip_serializing_if = "Option::is_none")]

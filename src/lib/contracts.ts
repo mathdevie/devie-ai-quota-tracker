@@ -23,8 +23,10 @@ export interface QuotaWindow {
 
 /** "677 of 1,500 credits, plus 12 over the cap". */
 export interface QuotaAmount {
-  /** Absent for a balance the provider only reports as "left". */
+  /** Absent for a balance the provider only reports as "left". On an
+   * unlimited window, the spend so far. */
   used?: number;
+  /** The cap. 0 and ignored on an unlimited window. */
   total: number;
   /** A short unit name ("credits") or an ISO currency code ("USD"). */
   unit?: string;
