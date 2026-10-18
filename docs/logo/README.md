@@ -3,7 +3,8 @@
 ![The app icon at 460, 128, 64, 32, 22, and 16px](preview.png)
 
 The mark is a black hexagonal gauge with a single inward arm. Three clean
-cuts separate its top, left, and right sections. Thin rainbow highlights
+cuts separate its top, left, and right sections. Broad bands give the mark
+more weight, with extra white space around its silhouette. Thin rainbow highlights
 follow the edges of the matte black surfaces. The white background remains
 visible through the center and the cuts.
 
