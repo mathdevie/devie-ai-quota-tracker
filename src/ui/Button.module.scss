@@ -9,17 +9,20 @@
     justify-content: center;
     border: none;
     white-space: nowrap;
-    cursor: pointer;
     gap: $devie__spacing__x05;
     border-radius: $devie__radius;
     font-family: $devie__font-family;
     width: fit-content;
-    line-height: 1;
+    line-height: $devie__spacing__x2;
     transition: none;
 
     &[data-loading="true"] {
       user-select: none;
       color: transparent;
+    }
+
+    &:focus-visible {
+      @include devie-focus-ring(2px);
     }
   }
 
@@ -188,6 +191,10 @@
     &:hover:not([data-loading="true"]):not([data-disabled]) {
       color: #{devie-hover-color($devie__color__text)};
       background: #{devie-hover-color($devie__color__background)};
+    }
+
+    &:active:not([data-loading="true"]):not([data-disabled]) {
+      background: #{devie-hover-color(devie-hover-color($devie__color__background))};
     }
 
     &[data-disabled] {

@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { ChevronLeft, Settings, X } from "lucide-react";
+import Button from "@/ui/Button";
 import styles from "./TitleBar.module.scss";
 
 export interface TitleBarAction {
@@ -13,15 +14,16 @@ const ICONS = { back: ChevronLeft, close: X, settings: Settings };
 function IconButton({ action }: { action: TitleBarAction }) {
   const Icon = ICONS[action.icon];
   return (
-    <button
+    <Button
       aria-label={action.label}
-      className={styles.iconButton}
       onClick={action.onClick}
+      size="sm"
       title={action.label}
       type="button"
+      variant="icon-naked"
     >
-      <Icon aria-hidden size={16} strokeWidth={2} />
-    </button>
+      <Icon aria-hidden size={18} strokeWidth={2} />
+    </Button>
   );
 }
 

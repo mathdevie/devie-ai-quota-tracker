@@ -11,7 +11,7 @@ CSS provides a built-in solution to implement dark mode using the `prefers-color
   --devie__color__text: #111111;
   --devie__color__text-sub: #848385;
   --devie__color__background: #ffffff;
-  --devie__color__background-sub: #f5f5f5;
+  --devie__color__background-sunken: #f5f5f5;
   --devie__color__line: #d7d7d7;
   --devie__color__primary: #5739da;
   --devie__color__primary-label: #ffffff;
@@ -25,7 +25,7 @@ CSS provides a built-in solution to implement dark mode using the `prefers-color
     --devie__color__text: #f3faff;
     --devie__color__text-sub: #8fa3b0;
     --devie__color__background: #0b1118;
-    --devie__color__background-sub: #151c26;
+    --devie__color__background-sunken: #151c26;
     --devie__color__line: #2a3441;
     --devie__color__primary: #4a90e2;
     --devie__color__primary-label: #ffffff;

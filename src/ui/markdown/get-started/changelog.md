@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-20
+
+- New [Input](/components/input) component
+- New segmented variant for [Tabs](/components/tabs#segmented)
+- New [ButtonGroup](/components/button-group) and [InputGroup](/components/input-group) components for joined controls
+
+## 2026-09-07
+
+- Update to [ Base UI 1.8.0 ](https://base-ui.com/react/overview/releases/v1-8-0)
+- Breaking: --devie__color__background-sub is renamed --devie__color__background-sunken.
+- New --devie__color__background-raised
+- New guides: [Design for desktop](/how-to/design-for-desktop-native) and [UI scaling](/how-to/scale-the-interface)
+
 ## 2026-08-18
 
 - Update to [ Base UI 1.7.0 ](https://base-ui.com/react/overview/releases/v1-7-0)

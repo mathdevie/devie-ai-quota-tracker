@@ -1,6 +1,6 @@
 # <LayerCard />
 
-The LayerCard is a custom component that provides a layered surface for grouping content. This structural element is quite versatile, and it offers a minimal abstraction: an outer shell that holds the inner card(s), with an adjusted border radius.
+A card that floats on a shell with a matching corner radius. This is a custom component with no Base UI primitive. `LayerCard.Root` is a shell, and `LayerCard.Inner` is a card that floats on it with a matching corner radius.
 
 ## Installation
 
@@ -57,7 +57,7 @@ export default LayerCard;
 
 @layer devie {
     .root {
-        background-color: $devie__color__background-sub;
+        background-color: $devie__color__background-sunken;
         border: 1px solid $devie__color__line;
         border-radius: $devie__radius-strong;
         padding: $devie__spacing__x05;
@@ -81,7 +81,7 @@ export default LayerCard;
 
 ### Single inner card
 
-The most common pattern: one `LayerCard.Inner` floats on the shell. Use it for any standalone surface that benefits from the layered look (a tabs surface, a hero panel, a stats block).
+Put one `LayerCard.Inner` inside `LayerCard.Root`.
 
 ```tsx
 <LayerCard.Root>
@@ -93,7 +93,7 @@ The most common pattern: one `LayerCard.Inner` floats on the shell. Use it for a
 
 ### Multiple inner cards
 
-Stack several `LayerCard.Inner` siblings inside one `LayerCard.Root`. The vertical gap between cards matches the outer padding, giving the recognizable floating rhythm. Useful for feature lists or grouped panels that share a surface.
+Stack several `LayerCard.Inner` inside one `LayerCard.Root`. The gap between cards equals the shell padding.
 
 ```tsx
 <LayerCard.Root>
@@ -108,7 +108,7 @@ Stack several `LayerCard.Inner` siblings inside one `LayerCard.Root`. The vertic
 
 ### Title above the inner card
 
-Bare children are allowed. Put a small label or title as a direct child of `LayerCard.Root` so it sits on the gray shell, then wrap the actual content in `LayerCard.Inner`. The title reads as a section label that owns the card below it.
+Bare children are allowed. Put a title as a direct child of `LayerCard.Root`, then wrap the content in `LayerCard.Inner`.
 
 ```tsx
 <LayerCard.Root>
@@ -123,7 +123,7 @@ Bare children are allowed. Put a small label or title as a direct child of `Laye
 
 ### Helper text below the inner card
 
-Mirror image of the previous pattern. Put your form, list, or main content inside `LayerCard.Inner`, then add a bare paragraph below it for helper text or a secondary call to action. Classic example: a sign-in form with a "No account? Sign up" link anchored to the shell.
+Put the content in `LayerCard.Inner`, then add a bare paragraph below it for helper text or a secondary link.
 
 ```tsx
 <LayerCard.Root>

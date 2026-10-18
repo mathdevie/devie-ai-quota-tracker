@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Cursor on-demand usage without a spending cap shows the amount spent this
+  billing cycle on the right of "Unlimited", for example "$18.40 spent".
+- The app icon uses a white hexagon and quota boundary with rainbow edge
+  highlights on charcoal, matching the Devie UI and Devie shader style.
+
+## [0.14.0] - 2026-09-28
+
 ### Added
 
 - Codex Team accounts show the monthly credit limit of the workspace as a
@@ -16,8 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The app icon uses a white hexagon and quota boundary with rainbow edge
-  highlights on charcoal, matching the Devie UI and Devie shader style.
+- The app icon uses a white hexagon and quota boundary with violet light on
+  a charcoal background, matching the Devie shader style.
+- The interface uses the latest Devie UI desktop design and keeps SF Pro in
+  every theme. Badges, buttons, inputs, and dialogs follow the Devie UI 8px
+  grid.
 
 ### Fixed
 
@@ -33,6 +45,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Codex credits with a hidden balance show "Available" or "Limit reached"
   from the reported spend state, instead of an invented zero balance.
   Availability-only rows cannot be pinned as a percentage in the menu bar.
+
+### Security
+
+- Next.js is updated from 16.3.2 to 16.3.6. This includes the fixes for
+  GHSA-p293-qw3h-jr36 (CVE-2026-75604) and GHSA-2xp9-vwfh-vxw4. The app
+  ships a static export without the image optimizer, so it was not exposed,
+  but the browser preview now runs on a patched version.
 
 ## [0.13.0] - 2026-09-05
 

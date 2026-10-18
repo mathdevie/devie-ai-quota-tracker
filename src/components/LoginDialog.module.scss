@@ -63,7 +63,7 @@
   padding: $devie__spacing__x2;
   border: 1px dashed $devie__color__line;
   border-radius: $devie__radius;
-  background: $devie__color__background-sub;
+  background: $devie__color__background-sunken;
   color: $devie__color__text;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: $devie__font-size__title2;
@@ -76,14 +76,8 @@
 }
 
 .manual {
-  display: grid;
-  gap: $devie__spacing__x1;
   padding-top: $devie__spacing__x1;
   border-top: 1px solid $devie__color__line;
-
-  button {
-    justify-self: end;
-  }
 }
 
 .spinning {

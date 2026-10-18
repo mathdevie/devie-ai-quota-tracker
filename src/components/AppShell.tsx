@@ -30,7 +30,6 @@ import {
 } from "@/lib/desktop";
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import ScrollArea from "@/ui/ScrollArea";
-import { Toaster } from "@/ui/Toaster";
 import Tooltip from "@/ui/Tooltip";
 import AlertsDialog from "./AlertsDialog";
 import styles from "./AppShell.module.scss";
@@ -68,12 +67,9 @@ function errorMessage(reason: unknown): string {
 
 export default function AppShell() {
   return (
-    <Toast.Provider timeout={6000}>
-      <Tooltip.Provider>
-        <Shell />
-      </Tooltip.Provider>
-      <Toaster />
-    </Toast.Provider>
+    <Tooltip.Provider>
+      <Shell />
+    </Tooltip.Provider>
   );
 }
 

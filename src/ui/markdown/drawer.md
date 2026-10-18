@@ -1,7 +1,5 @@
 # <Drawer />
 
-This is an example hero drawer. You can pull it up or swipe it down.
-
 A panel that slides in from the edge of the screen. Powered by Base UI, it comes with built-in swipe-to-dismiss gestures, snap points, nested drawers, and focus trapping capabilities.
 
 Built on [Base UI](https://base-ui.com/react/components/drawer).
@@ -248,7 +246,7 @@ export default Drawer;
     }
 
     .popup {
-        background: $devie__color__background;
+        background: $devie__color__background-raised;
         pointer-events: auto;
         display: flex;
         flex-direction: column;
@@ -359,6 +357,7 @@ export default Drawer;
 
     .title {
         font-size: $devie__font-size__title3;
+        line-height: $devie__spacing__x4;
         font-weight: 600;
         color: $devie__color__text;
         margin: 0;
@@ -366,6 +365,7 @@ export default Drawer;
 
     .description {
         font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text-sub;
         margin: 0;
     }
@@ -448,7 +448,7 @@ export default function DirectionalDrawer() {
 
 ### Non-modal
 
-Set `modal=&#123;false&#125;` to opt out of focus trapping and `disablePointerDismissal` to keep the drawer open on outside clicks.
+Set `modal={false}` to opt out of focus trapping and `disablePointerDismissal` to keep the drawer open on outside clicks.
 
 ```tsx
 import Drawer from "@/ui/Drawer";

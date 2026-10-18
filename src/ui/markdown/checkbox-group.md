@@ -1,24 +1,10 @@
 # <CheckboxGroup />
 
-The CheckboxGroup component extends [ Base UI's CheckboxGroup ](https://base-ui.com/react/components/checkbox-group) . It provides shared state to a series of checkboxes, making it easy to manage multiple selections and implement "select all" patterns.
+A component that provides shared state for a series of checkboxes. The CheckboxGroup component extends [ Base UI's CheckboxGroup ](https://base-ui.com/react/components/checkbox-group) . It provides shared state to a series of checkboxes, making it easy to manage multiple selections and implement "select all" patterns.
 
 Built on [Base UI](https://base-ui.com/react/components/checkbox-group).
 
 ## Installation
-
-### checkbox-group.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .root {
-        display: flex;
-        flex-direction: column;
-        gap: $devie__spacing__x1;
-    }
-}
-```
 
 ### checkbox-group.tsx
 
@@ -49,6 +35,20 @@ namespace CheckboxGroup {
 }
 
 export default CheckboxGroup;
+```
+
+### checkbox-group.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+    }
+}
 ```
 
 ## Use Cases

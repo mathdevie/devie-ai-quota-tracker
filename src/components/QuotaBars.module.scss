@@ -48,8 +48,20 @@
   grid-column: 3 / 5;
   justify-self: start;
   color: var(--quota-color);
+  overflow: hidden;
   font-size: 11px;
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The spend of an uncapped window, on the right of "Unlimited".
+.spent {
+  margin-left: $devie__spacing__x1;
+  color: $devie__color__text-sub;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
 }
 
 // The absolute count, in small print under the bar, left aligned.

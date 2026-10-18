@@ -1,0 +1,47 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .group {
+        display: inline-flex;
+        align-items: stretch;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        min-width: 0;
+        isolation: isolate;
+
+        // :nth-child(n) outranks the child's own radius and height rules
+        > :nth-child(n) {
+            position: relative;
+            height: auto;
+            border-radius: 0;
+
+            &:focus-visible {
+                z-index: 1;
+            }
+        }
+
+        > :first-child {
+            border-top-left-radius: $devie__radius;
+            border-bottom-left-radius: $devie__radius;
+        }
+
+        > :last-child {
+            border-top-right-radius: $devie__radius;
+            border-bottom-right-radius: $devie__radius;
+        }
+
+        > * + * {
+            margin-inline-start: -1px;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset-block: 0;
+                inset-inline-start: -1px;
+                width: 1px;
+                background: $devie__color__line;
+            }
+        }
+    }
+}

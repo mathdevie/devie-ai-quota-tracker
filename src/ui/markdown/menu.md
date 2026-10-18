@@ -1,118 +1,10 @@
 # <Menu />
 
-The Menu component extends [ Base UI's Menu ](https://base-ui.com/react/components/menu) with polished default styles and full keyboard navigation. We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
+A list of actions in a popup, with keyboard navigation. The Menu component extends [ Base UI's Menu ](https://base-ui.com/react/components/menu) with polished default styles and full keyboard navigation. We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
 
 Built on [Base UI](https://base-ui.com/react/components/menu).
 
 ## Installation
-
-### menu.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .popup {
-        min-width: 180px;
-        background-color: $devie__color__background;
-        border-radius: $devie__radius;
-        padding: $devie__spacing__x05;
-        box-shadow: $devie__shadow__menu;
-        border: 1px solid $devie__color__line;
-        overflow: hidden;
-    }
-
-    .item {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
-        user-select: none;
-        outline: none;
-        color: $devie__color__text;
-        cursor: pointer;
-        font-size: $devie__font-size__small;
-        border-radius: calc($devie__radius - $devie__spacing__x05);
-        transition: none;
-
-        &:hover:not([data-disabled]),
-        &[data-highlighted]:not([data-disabled]) {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-
-        &[data-disabled] {
-            cursor: not-allowed;
-            color: #{devie-disabled-color($devie__color__text)};
-        }
-
-        &[data-popup-open] {
-            background: #{devie-hover-color($devie__color__background)};
-        }
-    }
-
-    .separator {
-        height: 1px;
-        background-color: $devie__color__line;
-        margin: $devie__spacing__x05 0;
-    }
-
-    .group {
-        // Group is a semantic wrapper, minimal styling
-    }
-
-    .groupLabel {
-        padding: $devie__spacing__x05 $devie__spacing__x1;
-        font-weight: 600;
-        color: $devie__color__text-sub;
-        font-size: $devie__font-size__small;
-        user-select: none;
-    }
-
-    .radioItem {
-        padding-left: $devie__spacing__x3;
-        position: relative;
-    }
-
-    .checkboxItem {
-        padding-left: $devie__spacing__x4;
-        position: relative;
-    }
-
-    .itemIndicator {
-        position: absolute;
-        left: $devie__spacing__x1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $devie__color__primary;
-    }
-
-    .arrow {
-        fill: $devie__color__background;
-    }
-
-    .submenuChevron {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: auto;
-        color: $devie__color__text-sub;
-        flex-shrink: 0;
-    }
-
-    .shortcut {
-        margin-left: auto;
-        flex-shrink: 0;
-        font-family: $devie__font-family;
-        font-size: $devie__font-size__small;
-        line-height: 1.2;
-        color: $devie__color__text-sub;
-        background: none;
-        border: none;
-        padding: 0;
-    }
-}
-```
 
 ### menu.tsx
 
@@ -406,6 +298,123 @@ namespace Menu {
 export default Menu;
 ```
 
+### menu.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .popup {
+        line-height: $devie__spacing__x3;
+        min-width: 180px;
+        background-color: $devie__color__background-raised;
+        border-radius: $devie__radius;
+        padding: $devie__spacing__x05;
+        box-shadow: $devie__shadow__menu;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+    }
+
+    .viewport {
+        overflow: hidden;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        user-select: none;
+        outline: none;
+        color: $devie__color__text;
+        font-size: $devie__font-size__small;
+        border-radius: calc($devie__radius - $devie__spacing__x05);
+        transition: none;
+
+        > svg {
+            flex-shrink: 0;
+            color: $devie__color__text-sub;
+        }
+
+        &:hover:not([data-disabled]),
+        &[data-highlighted]:not([data-disabled]) {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &[data-disabled] {
+            cursor: not-allowed;
+            color: #{devie-disabled-color($devie__color__text)};
+
+            > svg {
+                color: inherit;
+            }
+        }
+
+        &[data-popup-open] {
+            background: #{devie-hover-color($devie__color__background)};
+        }
+    }
+
+    .separator {
+        height: 1px;
+        background-color: $devie__color__line;
+        margin: $devie__spacing__x05 0;
+    }
+
+    .groupLabel {
+        padding: $devie__spacing__x05 $devie__spacing__x1;
+        font-weight: 600;
+        color: $devie__color__text-sub;
+        font-size: $devie__font-size__small;
+        user-select: none;
+    }
+
+    .radioItem {
+        padding-left: $devie__spacing__x3;
+        position: relative;
+    }
+
+    .checkboxItem {
+        padding-left: $devie__spacing__x4;
+        position: relative;
+    }
+
+    .itemIndicator {
+        position: absolute;
+        left: $devie__spacing__x1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $devie__color__primary;
+    }
+
+    .arrow {
+        fill: $devie__color__background-raised;
+    }
+
+    .submenuChevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        color: $devie__color__text-sub;
+        flex-shrink: 0;
+    }
+
+    .shortcut {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-family: $devie__font-family;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+}
+```
+
 ## Use Cases
 
 ### Simple menu
@@ -420,12 +429,27 @@ A basic menu with items and a separator. Use the `disabled` prop to disable spec
   <Menu.Portal>
     <Menu.Positioner sideOffset={8}>
       <Menu.Popup>
-        <Menu.Item>New File</Menu.Item>
-        <Menu.Item>Open...</Menu.Item>
-        <Menu.Item>Save</Menu.Item>
+        <Menu.Item>
+          <FilePlus size={16} />
+          New File
+        </Menu.Item>
+        <Menu.Item>
+          <FolderOpen size={16} />
+          Open...
+        </Menu.Item>
+        <Menu.Item>
+          <Save size={16} />
+          Save
+        </Menu.Item>
         <Menu.Separator />
-        <Menu.Item>Export</Menu.Item>
-        <Menu.Item disabled>Print</Menu.Item>
+        <Menu.Item>
+          <Download size={16} />
+          Export
+        </Menu.Item>
+        <Menu.Item disabled>
+          <Printer size={16} />
+          Print
+        </Menu.Item>
       </Menu.Popup>
     </Menu.Positioner>
   </Menu.Portal>

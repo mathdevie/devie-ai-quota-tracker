@@ -1,6 +1,6 @@
 # <Avatar />
 
-The Avatar component extends [ Base UI's Avatar ](https://base-ui.com/react/components/avatar) . It's a simple component displaying an image, and a fallback to text if the image is not present. We use the new squircle shape property to have something a bit more original.
+A component that shows a user image with a text fallback. The Avatar component extends [ Base UI's Avatar ](https://base-ui.com/react/components/avatar) . It's a simple component displaying an image, and a fallback to text if the image is not present. We use the new squircle shape property to have something a bit more original.
 
 Built on [Base UI](https://base-ui.com/react/components/avatar).
 

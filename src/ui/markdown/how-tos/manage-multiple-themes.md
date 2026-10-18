@@ -1,14 +1,10 @@
 # Manage More Themes
 
-In Devie UI, supporting multiple themes in one application can be achieved relatively simply by having multiple available sets of CSS Variables to swap between.
+Devie UI supports several themes in one application with several sets of CSS variables. The active set is selected by the `data-devie-theme` attribute on the `<html>` element.
 
-Our proposed solution relies on a data attribute to scope the CSS variables: the app knows what set of variables is effective based on the `data-devie-theme` attribute on the root `<html>` element.
+## Define themes
 
-## Define Themes
-
-The main idea here is to scope the definition of variables to a data attribute value instead of applying them to the root.
-
-Then, set the `data-devie-theme` attribute on the html element to your active theme:
+Scope each set of variables to a `data-devie-theme` value instead of `:root`. Then set the attribute on the `<html>` element:
 
 **globals.scss**
 
@@ -21,10 +17,11 @@ Then, set the `data-devie-theme` attribute on the html element to your active th
 
 ```scss
 [data-devie-theme="theme-default"] {
+  color-scheme: light;
   --devie__color__text: #111111;
   --devie__color__text-sub: #848385;
   --devie__color__background: #ffffff;
-  --devie__color__background-sub: #f5f5f5;
+  --devie__color__background-sunken: #f5f5f5;
   --devie__color__primary: #5739da;
   /* ... other tokens */
 }
@@ -34,10 +31,11 @@ Then, set the `data-devie-theme` attribute on the html element to your active th
 
 ```scss
 [data-devie-theme="theme-dark"] {
+  color-scheme: dark;
   --devie__color__text: #f3faff;
   --devie__color__text-sub: #8fa3b0;
   --devie__color__background: #0b1118;
-  --devie__color__background-sub: #151c26;
+  --devie__color__background-sunken: #151c26;
   --devie__color__primary: #4a90e2;
   /* ... other tokens */
 }
@@ -51,31 +49,29 @@ Then, set the `data-devie-theme` attribute on the html element to your active th
 </html>
 ```
 
-## Set the Active Theme
+## Set the active theme
 
-You can now simply change the data attribute to change theme. This can be done using `document.documentElement.dataset.devieTheme` for example, and can be linked to the business logic of your choice as to what action triggers the theme change.
+Change the attribute to change the theme, for example with `document.documentElement.dataset.devieTheme`. Wire it to any trigger in your app.
 
-## Persist Theme on Refresh
+## Persist the theme on refresh
 
-If you want a user's theme choice to survive a page refresh, you will need to store it somewhere and restore it early enough to avoid a flash of the default theme.
+To keep the choice after a refresh, store it and restore it before the first paint. A prebuilt site cannot personalize the HTML per request. Store the theme in Local Storage and run a small inline script in `layout.tsx` before hydration.
 
-The tricky part is timing. If your app is fully prebuilt, the server cannot personalize the initial HTML per request. The best static-friendly solution is to store the theme in Local Storage and run a tiny inline script in `layout.tsx` before hydration so the correct attribute is applied as early as possible.
-
-Here are the main options and their trade-offs:
+The options and their trade-offs:
 
 | Approach | Trade-offs |
 |---|---|
-| **No persistence** | If you don't need to store the theme, the default attribute can be hardcoded on the `<html>` and resets on refresh. You won't have any flash. |
-| **Local Storage after hydration** | Simple to set up, but the saved theme is only restored after React runs. This can briefly show the default theme first. |
-| **Local Storage + early boot script** | This is what we recommend for static exports. Pages stay prebuilt, the browser restores the attribute before hydration, and theme changes remain fully client-side. |
-| **Cookies + SSR** | Useful when the server truly needs to know the theme before sending HTML, but it turns the page into request-time rendering and prevents a pure static export. |
-| **DB + SSR** | Similar to cookie-based SSR, except the preference is read from your backend. Useful for authenticated apps that already render dynamically on the server. |
+| **No persistence** | The attribute is hardcoded on `<html>` and resets on refresh. No flash. |
+| **Local Storage after hydration** | Simple, but the theme is restored after React runs. The default theme can flash first. |
+| **Local Storage + early boot script** | Recommended for static exports. Pages stay prebuilt, and the attribute is restored before hydration. |
+| **Cookies + SSR** | Use it when the server must know the theme before it sends HTML. It prevents a static export. |
+| **DB + SSR** | Same as cookies, with the preference read from your backend. Fits authenticated apps that already render on the server. |
 
-## Example: Implementing a ThemeContext
+## Example: a ThemeContext
 
-### Recommended: Static Export + Boot Script
+### Static export with a boot script
 
-This approach keeps the website fully static while still restoring the user's last selected theme before hydration. The layout injects a tiny boot script, and the ThemeContext keeps the data attribute and Local Storage in sync after the app mounts.
+The layout injects a boot script. The ThemeContext keeps the attribute and Local Storage in sync after mount.
 
 **layout.tsx**
 
@@ -141,7 +137,9 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 interface ThemeContextType {
@@ -159,33 +157,47 @@ interface Props {
   defaultTheme?: string;
 }
 
-const STORAGE_KEY = "devie-theme";
 const DEFAULT_THEME = "theme-default";
+const STORAGE_KEY = "devie-theme";
+const CHANGE_EVENT = "devie-theme-change";
 const ALLOWED_THEMES = new Set(["theme-default", "theme-dark"]);
 
 function getStoredTheme(): string | null {
-  if (typeof window === "undefined") return null;
-
   try {
     const storedTheme = localStorage.getItem(STORAGE_KEY);
-    return storedTheme && ALLOWED_THEMES.has(storedTheme) ? storedTheme : null;
+    if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
+      return storedTheme;
+    }
   } catch {
-    return null;
+    // Storage unavailable
   }
+
+  return null;
+}
+
+function getServerTheme(): null {
+  return null;
+}
+
+function subscribeToStoredTheme(onChange: () => void): () => void {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(CHANGE_EVENT, onChange);
+  };
 }
 
 function persistTheme(theme: string): void {
-  if (typeof window === "undefined") return;
-
   try {
     localStorage.setItem(STORAGE_KEY, theme);
   } catch {
     // Storage unavailable
   }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 function applyThemeToDOM(theme: string): void {
-  if (typeof document === "undefined") return;
   document.documentElement.dataset.devieTheme = theme;
 }
 
@@ -193,16 +205,24 @@ export function ThemeProvider({
   children,
   defaultTheme = DEFAULT_THEME,
 }: Props) {
-  const [selectedTheme, setSelectedTheme] = useState(
-    () => getStoredTheme() ?? defaultTheme,
+  const storedTheme = useSyncExternalStore(
+    subscribeToStoredTheme,
+    getStoredTheme,
+    getServerTheme,
   );
+  const selectedTheme = storedTheme ?? defaultTheme;
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState("#7B7481");
 
   const currentTheme = previewedTheme ?? selectedTheme;
+  const appliedRef = useRef(false);
 
   useEffect(() => {
-    applyThemeToDOM(currentTheme);
+    // Nothing chosen yet: keep the attribute set by the boot script.
+    if (storedTheme !== null || previewedTheme !== null || appliedRef.current) {
+      applyThemeToDOM(currentTheme);
+      appliedRef.current = true;
+    }
 
     const computedColor = getComputedStyle(document.documentElement)
       .getPropertyValue("--devie__color__primary")
@@ -211,24 +231,9 @@ export function ThemeProvider({
     if (computedColor) {
       setPrimaryColor(computedColor);
     }
-  }, [currentTheme]);
-
-  useEffect(() => {
-    function handleStorageChange(event: StorageEvent) {
-      if (event.key !== STORAGE_KEY) return;
-      const newTheme = event.newValue;
-      if (newTheme && ALLOWED_THEMES.has(newTheme)) {
-        setSelectedTheme(newTheme);
-        setPreviewedTheme(null);
-      }
-    }
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [currentTheme, storedTheme, previewedTheme]);
 
   const setTheme = useCallback((theme: string) => {
-    setSelectedTheme(theme);
     setPreviewedTheme(null);
     persistTheme(theme);
   }, []);
@@ -266,19 +271,19 @@ export function useTheme() {
 }
 ```
 
-### When To Choose SSR Instead
+### When to choose SSR
 
-If the server needs to know the theme before it renders the page, you will need SSR. That usually makes sense for authenticated apps or other dynamic pages, but it is overkill when the only personalized change is a data attribute on `<html>`.
+Use SSR when the server must know the theme before it renders. For a data attribute on `<html>` alone, it is overkill.
 
 ### Reference
 
-#### ThemeContext Props
+#### ThemeContext props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `defaultTheme` | `string` | `"theme-default"` | The initial theme class name |
 
-#### useTheme() Returns
+#### useTheme() returns
 
 | Property | Type | Description |
 |---|---|---|

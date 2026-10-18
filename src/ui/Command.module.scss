@@ -9,6 +9,7 @@
     }
 
     .dialogPopup {
+        line-height: $devie__spacing__x3;
         position: fixed;
         left: 50%;
         top: 50%;
@@ -17,7 +18,7 @@
         max-width: 640px;
         max-height: 85vh;
         transform: translate(-50%, -55%);
-        background: $devie__color__background;
+        background: $devie__color__background-raised;
         border-radius: $devie__radius-strong;
         border: 1px solid $devie__color__line;
         box-shadow: $devie__shadow__menu;
@@ -52,7 +53,8 @@
         color: $devie__color__text;
         font-size: $devie__font-size__normal;
         font-family: $devie__font-family;
-        padding: $devie__spacing__x05 0;
+        line-height: $devie__spacing__x3;
+        padding: 0;
 
         &::placeholder {
             color: $devie__color__text-sub;
@@ -94,11 +96,9 @@
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
         font-size: $devie__font-size__small;
-        cursor: pointer;
         outline: none;
         user-select: none;
         transition: none;
-        min-height: 36px;
 
         &:hover:not([data-disabled]),
         &[data-highlighted]:not([data-disabled]) {
@@ -131,6 +131,7 @@
         padding: $devie__spacing__x1 $devie__spacing__x2;
         padding-top: $devie__spacing__x2;
         font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
         font-weight: 600;
         color: $devie__color__text-sub;
         user-select: none;
@@ -164,7 +165,8 @@
     }
 
     .panel {
-        background: $devie__color__background;
+        line-height: $devie__spacing__x3;
+        background: $devie__color__background-raised;
         border-radius: $devie__radius-strong;
         border: 1px solid $devie__color__line;
         overflow: hidden;

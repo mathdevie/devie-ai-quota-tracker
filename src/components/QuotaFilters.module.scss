@@ -8,7 +8,8 @@
 // A text-only trigger that sits beside the popover header icon buttons.
 .compact {
   min-height: 24px;
-  padding: $devie__spacing__x05;
+  padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x05;
+  line-height: $devie__spacing__x2;
   border-color: transparent;
   background: transparent;
   white-space: nowrap;

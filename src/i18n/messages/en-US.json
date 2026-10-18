@@ -94,6 +94,7 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} over",
     "Balance": "{{balance}} left",
+    "Spent": "{{used}} spent",
     "News": {
       "Watch": "{{percent}}% chance of a Codex reset",
       "WatchNoPercent": "A Codex reset is likely",

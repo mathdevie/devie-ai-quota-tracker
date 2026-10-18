@@ -1,11 +1,13 @@
 @layer devie {
   [data-devie-theme="theme-catpuccin-latte"] {
+    color-scheme: light;
     --devie__theme-name: Catpuccin Latte;
     --devie__color__text: #4c4f69;
     --devie__color__text-sub: #5c5f77;
     --devie__color__line: #acb0be;
     --devie__color__background: #eff1f5;
-    --devie__color__background-sub: #e6e9ef;
+    --devie__color__background-sunken: #e6e9ef;
+    --devie__color__background-raised: #f6f7fa;
     --devie__color__primary: #8839ef;
     --devie__color__primary-label: #ffffff;
     --devie__color__danger: #e64553;
@@ -15,6 +17,8 @@
     --devie__color__warning: #fe640b;
     --devie__color__warning-label: #ffffff;
     --devie__font-family:
-      "Instrument Sans", "Instrument Sans Fallback", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
+      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", sans-serif;
   }
 }

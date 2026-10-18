@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Badge from "@/components/Badge";
 import type { ProviderConnection } from "@/lib/contracts";
 import { formatAgo } from "@/lib/date";
 import {
@@ -20,6 +19,7 @@ import {
   PROVIDER_NAMES,
   visibleWindows,
 } from "@/lib/labels";
+import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
 import CodexResetsNews from "./CodexResetsNews";

@@ -94,6 +94,7 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} 超過",
     "Balance": "残り {{balance}}",
+    "Spent": "{{used}} 使用済み",
     "News": {
       "Watch": "Codex のリセット確率 {{percent}}%",
       "WatchNoPercent": "Codex のリセットが近そうです",

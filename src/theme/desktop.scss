@@ -1,0 +1,74 @@
+// AppKit supplies the native popover material; retain only its window tint.
+:root {
+  --app__popover-tint: color-mix(in srgb, var(--devie__color__background) 75%, transparent);
+}
+
+[data-devie-theme="theme-light"],
+[data-devie-theme="theme-dark"] {
+  --app__popover-tint: light-dark(rgba(255, 255, 255, 0.34), rgba(0, 0, 0, 0.3));
+}
+
+// Older WebKit versions need a fallback for the desktop preset colors.
+// Keep it outside the mirrored UI source while the app supports macOS 12.
+@supports not (color: light-dark(white, black)) {
+  :root {
+    --devie__shadow__menu: 0 4px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  [data-devie-theme="theme-light"] {
+    --devie__color__text: rgba(0, 0, 0, 0.85);
+    --devie__color__text-sub: rgba(0, 0, 0, 0.5);
+    --devie__color__line: rgba(0, 0, 0, 0.1);
+    --devie__color__background: #ffffff;
+    --devie__color__background-sunken: #f0f0f0;
+    --devie__color__background-raised: #ffffff;
+    --devie__color__primary: #0071e3;
+    --devie__color__danger: #d70015;
+    --devie__color__success: #34c759;
+    --devie__color__warning: #ff9500;
+    --devie__color__literal-gray: #8e8e93;
+    --devie__color__literal-brown: #a2845e;
+    --devie__color__literal-orange: #ff9500;
+    --devie__color__literal-yellow: #ffcc00;
+    --devie__color__literal-green: #34c759;
+    --devie__color__literal-blue: #007aff;
+    --devie__color__literal-purple: #af52de;
+    --devie__color__literal-pink: #ff2d55;
+    --devie__color__literal-red: #ff3b30;
+    --app__popover-tint: rgba(255, 255, 255, 0.34);
+  }
+
+  [data-devie-theme="theme-dark"] {
+    --devie__color__text: rgba(255, 255, 255, 0.85);
+    --devie__color__text-sub: rgba(255, 255, 255, 0.55);
+    --devie__color__line: rgba(255, 255, 255, 0.1);
+    --devie__color__background: #1e1e1e;
+    --devie__color__background-sunken: #171717;
+    --devie__color__background-raised: #2a2a2a;
+    --devie__color__primary: #0a84ff;
+    --devie__color__danger: #ff453a;
+    --devie__color__success: #32d74b;
+    --devie__color__warning: #ff9f0a;
+    --devie__color__literal-gray: #98989d;
+    --devie__color__literal-brown: #ac8e68;
+    --devie__color__literal-orange: #ff9f0a;
+    --devie__color__literal-yellow: #ffd60a;
+    --devie__color__literal-green: #32d74b;
+    --devie__color__literal-blue: #0a84ff;
+    --devie__color__literal-purple: #bf5af2;
+    --devie__color__literal-pink: #ff375f;
+    --devie__color__literal-red: #ff453a;
+    --app__popover-tint: rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Use the system accent and semantic text colors when WKWebView provides them.
+@supports (color: -apple-system-label) {
+  [data-devie-theme="theme-light"],
+  [data-devie-theme="theme-dark"] {
+    --devie__color__text: -apple-system-label;
+    --devie__color__text-sub: -apple-system-secondary-label;
+    --devie__color__line: -apple-system-separator;
+    --devie__color__primary: -apple-system-control-accent;
+  }
+}

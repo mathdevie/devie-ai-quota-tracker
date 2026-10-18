@@ -1,109 +1,10 @@
 # <AlertDialog />
 
-The AlertDialog component extends the [ Base UI Alert Dialog ](https://base-ui.com/react/components/alert-dialog) with additional structural sub-components: `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer`. It also adds a `disableInteractions` prop on the root to temporarily make the dialog content inert during async actions. Use `size` on `AlertDialog.Root` for the same popup width presets as Dialog.
+A dialog that requires a user response to proceed. The AlertDialog component extends [ Base UI's Alert Dialog ](https://base-ui.com/react/components/alert-dialog) . It adds the `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` subcomponents and a `size` prop on `AlertDialog.Root`. The `disableInteractions` prop makes the popup inert during an async action.
 
 Built on [Base UI](https://base-ui.com/react/components/alert-dialog).
 
 ## Installation
-
-### alert-dialog.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-$dialog-backdrop-opacity: 0.7;
-$dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
-
-@layer devie {
-    .backdrop {
-        background-color: #000000;
-        opacity: $dialog-backdrop-opacity;
-        position: fixed;
-        inset: 0;
-    }
-
-    .popup {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        width: 90vw;
-        max-height: 95vh;
-        transform: translate(-50%, -50%);
-        background: $devie__color__background;
-        border-radius: $devie__radius;
-        box-shadow: $devie__shadow__menu;
-        border: 1px solid $devie__color__line;
-        overflow: hidden;
-        transition: filter 150ms ease-out, transform 150ms ease-out;
-
-        &[data-nested-dialog-open] {
-            filter: brightness($dialog-backdrop-brightness);
-            transform: translate(-50%, -50%) scale(calc(1 - 0.04 * var(--nested-dialogs)));
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            transition: none;
-        }
-    }
-
-    .popupSm {
-        min-width: 288px;
-        max-width: 384px;
-    }
-
-    .popupMd {
-        min-width: 384px;
-        max-width: 640px;
-    }
-
-    .popupLg {
-        min-width: 512px;
-        max-width: 832px;
-    }
-
-    .popupXl {
-        min-width: 768px;
-        max-width: 1152px;
-    }
-
-    .popupNonInteractive {
-        pointer-events: none;
-        user-select: none;
-    }
-
-    .header {
-        border-bottom: 1px solid $devie__color__line;
-        padding: $devie__spacing__x2 $devie__spacing__x3;
-    }
-
-    .footer {
-        border-top: 1px solid $devie__color__line;
-        padding: $devie__spacing__x2 $devie__spacing__x3;
-        display: flex;
-        justify-content: flex-end;
-        gap: $devie__spacing__x2;
-    }
-
-    .body {
-        padding: $devie__spacing__x3 $devie__spacing__x3;
-        display: flex;
-        flex-direction: column;
-        gap: $devie__spacing__x2;
-    }
-
-    .title {
-        font-size: $devie__font-size__title3;
-        color: $devie__color__text;
-        margin: 0;
-    }
-
-    .description {
-        font-size: $devie__font-size__normal;
-        color: $devie__color__text-sub;
-        margin: 0;
-    }
-}
-```
 
 ### alert-dialog.tsx
 
@@ -303,11 +204,112 @@ namespace AlertDialog {
 export default AlertDialog;
 ```
 
+### alert-dialog.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+$dialog-backdrop-opacity: 0.7;
+$dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
+
+@layer devie {
+    .backdrop {
+        background-color: #000000;
+        opacity: $dialog-backdrop-opacity;
+        position: fixed;
+        inset: 0;
+    }
+
+    .popup {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 90vw;
+        max-height: 95vh;
+        transform: translate(-50%, -50%);
+        background: $devie__color__background-raised;
+        border-radius: $devie__radius;
+        box-shadow: $devie__shadow__menu;
+        border: 1px solid $devie__color__line;
+        overflow: hidden;
+        transition: filter 150ms ease-out, transform 150ms ease-out;
+
+        &[data-nested-dialog-open] {
+            filter: brightness($dialog-backdrop-brightness);
+            transform: translate(-50%, -50%) scale(calc(1 - 0.04 * var(--nested-dialogs)));
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    .popupSm {
+        min-width: 288px;
+        max-width: 384px;
+    }
+
+    .popupMd {
+        min-width: 384px;
+        max-width: 640px;
+    }
+
+    .popupLg {
+        min-width: 512px;
+        max-width: 832px;
+    }
+
+    .popupXl {
+        min-width: 768px;
+        max-width: 1152px;
+    }
+
+    .popupNonInteractive {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .header {
+        border-bottom: 1px solid $devie__color__line;
+        padding: $devie__spacing__x2 $devie__spacing__x3;
+    }
+
+    .footer {
+        border-top: 1px solid $devie__color__line;
+        padding: $devie__spacing__x2 $devie__spacing__x3;
+        display: flex;
+        justify-content: flex-end;
+        gap: $devie__spacing__x2;
+    }
+
+    .body {
+        padding: $devie__spacing__x3 $devie__spacing__x3;
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x2;
+    }
+
+    .title {
+        font-size: $devie__font-size__title3;
+        line-height: $devie__spacing__x4;
+        color: $devie__color__text;
+        margin: 0;
+    }
+
+    .description {
+        font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
+        color: $devie__color__text-sub;
+        margin: 0;
+    }
+}
+```
+
 ## Use Cases
 
-### Opening with a Trigger component
+### Simple alert dialog
 
-The most common way to open an AlertDialog is by using the `AlertDialog.Trigger` component. Place it inside the `AlertDialog.Root` and it will automatically handle opening the dialog when clicked.
+Place `AlertDialog.Trigger` inside `AlertDialog.Root` to open the dialog.
 
 ```tsx
 <AlertDialog.Root>
@@ -362,7 +364,7 @@ The most common way to open an AlertDialog is by using the `AlertDialog.Trigger`
 
 ### Sizes
 
-Use the `size` prop on `AlertDialog.Root` to pick a popup width (`sm`, `md`, `lg`, `xl`). The default is `md`.
+Set `size` on `AlertDialog.Root` to `sm`, `md`, `lg`, or `xl`. The default is `md`.
 
 ```tsx
 <AlertDialog.Root size="lg">
@@ -374,9 +376,9 @@ Use the `size` prop on `AlertDialog.Root` to pick a popup width (`sm`, `md`, `lg
 </AlertDialog.Root>
 ```
 
-### Opening with a detached Trigger
+### Detached trigger
 
-When defining the AlertDialog content next to its trigger is not practical, you can use a detached trigger with `AlertDialog.createHandle()`. This allows you to place the trigger button anywhere in your component tree while still controlling the same dialog instance.
+Create a handle with `AlertDialog.createHandle()` to place the trigger anywhere in the tree.
 
 ```tsx
 const handle = AlertDialog.createHandle();
@@ -433,9 +435,9 @@ const handle = AlertDialog.createHandle();
 </AlertDialog.Root>
 ```
 
-### Opening programmatically with state
+### Controlled with state
 
-For complete control over the dialog's visibility, use the `open` and `onOpenChange` props on `AlertDialog.Root`. This is useful when you need to open the dialog based on application logic, such as after an API call or in response to a menu action.
+Use `open` and `onOpenChange` on `AlertDialog.Root` to open the dialog from application logic.
 
 ```tsx
 const [open, setOpen] = useState(false);
@@ -481,7 +483,7 @@ const [open, setOpen] = useState(false);
 
 ### With a form and async submission
 
-AlertDialogs can contain forms with validation. This example shows how to handle async form submission with a loading state on the submit button while using `disableInteractions` to keep the dialog content inert until the operation completes.
+Set `disableInteractions` while the submission is pending. The popup content stays inert until the action completes.
 
 ```tsx
 const [open, setOpen] = useState(false);
@@ -559,13 +561,9 @@ const handleSubmit = async (event) => {
 </AlertDialog.Root>
 ```
 
-### With Select dropdowns
+### With a Select
 
-AlertDialogs can contain Select components for dropdown selections. However, there's a caveat: when a Select is inside a dialog (or any scrollable container with `overflow-y: auto`), the dropdown may display excessive white space below the last item.
-
-This happens because Base UI's `Select.Positioner` defaults to `alignItemWithTrigger=&#123;true&#125;`, which calculates available height based on viewport boundaries rather than the container's bounds.
-
-**The fix:** Pass `alignItemWithTrigger=&#123;false&#125;` to `Select.Positioner`. This disables the "selected item aligns with trigger" UX behavior (the popup appears below/above instead of overlapping), but resolves the height calculation issue.
+Inside a dialog, pass `alignItemWithTrigger={false}` to `Select.Positioner`. Otherwise the popup reserves empty space below the last item.
 
 ```tsx
 const fruits = [
@@ -671,9 +669,9 @@ const priorities = [
 </AlertDialog.Root>
 ```
 
-### Minimal design without Header/Footer
+### Minimal design
 
-For simpler use cases like notifications or quick confirmations, you can omit the `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` components entirely. Apply custom padding and positioning directly on the `AlertDialog.Popup` and use `AlertDialog.Close` with an icon for a clean, minimal look.
+Omit `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` for a short confirmation. Set the padding on `AlertDialog.Popup` and place `AlertDialog.Close` with an icon.
 
 ```tsx
 <AlertDialog.Root>

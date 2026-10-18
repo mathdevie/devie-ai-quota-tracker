@@ -1,17 +1,17 @@
 @use "../ui/_devie.scss" as *;
 
-// Native macOS typography. Outside the layer, so it wins over every theme.
+// Keep SF Pro across the color themes. The desktop preset supplies the sizes.
 :root {
   --devie__font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
     "Helvetica Neue", Helvetica, Arial, "Apple Color Emoji", sans-serif;
-  --devie__font-size__title1: 26px;
-  --devie__font-size__title2: 20px;
-  --devie__font-size__title3: 16px;
-  --devie__font-size__normal: 13px;
-  --devie__font-size__small: 11.5px;
-  --devie__radius: 7px;
-  --devie__radius-strong: 12px;
+}
+
+.appRoot {
+  isolation: isolate;
+  zoom: $devie__zoom;
+  width: calc(100vw / $devie__zoom);
+  height: calc(100vh / $devie__zoom);
 }
 
 @layer devie {

@@ -301,7 +301,8 @@ fn add_plan_windows(plan: &Value, resets_at: &Option<String>, windows: &mut Vec<
 }
 
 /// On-demand spending: capped is a paid window with the amount; uncapped shows
-/// as unlimited, so the user sees that usage past the plan is billed.
+/// as unlimited with the spend so far, so the user sees what past the plan is
+/// billed.
 fn add_on_demand(
     block: Option<&Value>,
     resets_at: &Option<String>,
@@ -319,7 +320,12 @@ fn add_on_demand(
             used_percent: 0.0,
             resets_at: resets_at.clone(),
             unlimited: true,
-            amount: None,
+            amount: number(block.get("used")).map(|used| QuotaAmount {
+                used: Some(used / 100.0),
+                total: 0.0,
+                unit: Some("USD".to_string()),
+                overage: None,
+            }),
             paid: true,
         });
     }
@@ -462,6 +468,9 @@ mod tests {
         assert_eq!(reading.windows[1].key, "on_demand");
         assert!(reading.windows[1].unlimited);
         assert!(reading.windows[1].paid);
+        let amount = reading.windows[1].amount.clone().expect("spend");
+        assert_eq!((amount.used, amount.total), (Some(3.0), 0.0));
+        assert_eq!(amount.unit.as_deref(), Some("USD"));
     }
 
     #[test]

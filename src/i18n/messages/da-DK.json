@@ -94,6 +94,7 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} over",
     "Balance": "{{balance}} tilbage",
+    "Spent": "{{used}} brugt",
     "News": {
       "Watch": "{{percent}} % chance for en Codex-nulstilling",
       "WatchNoPercent": "En Codex-nulstilling er sandsynlig",

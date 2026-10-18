@@ -2,10 +2,10 @@
 
 .shell {
   display: flex;
-  height: 100vh;
+  height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: var(--macos__content-background);
+  background: $devie__color__background;
 }
 
 .main {
@@ -20,9 +20,9 @@
 
 .loading {
   display: grid;
-  min-height: 100vh;
+  min-height: 100%;
   place-items: center;
-  background: var(--macos__content-background);
+  background: $devie__color__background;
   color: $devie__color__text-sub;
 }
 

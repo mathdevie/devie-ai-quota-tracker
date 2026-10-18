@@ -10,11 +10,7 @@ const Root = BasePopover.Root;
 
 function Trigger({ className, render, ...props }: BasePopover.Trigger.Props) {
   return (
-    <BasePopover.Trigger
-      className={clsx(!render && styles.trigger, className)}
-      render={render}
-      {...props}
-    />
+    <BasePopover.Trigger className={className} render={render} {...props} />
   );
 }
 

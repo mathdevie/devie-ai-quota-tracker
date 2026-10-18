@@ -94,6 +94,7 @@
     "Amount": "{{used}} / {{total}} {{unit}}",
     "Overage": "+{{overage}} au-delà",
     "Balance": "{{balance}} restants",
+    "Spent": "{{used}} dépensés",
     "News": {
       "Watch": "{{percent}} % de chances d’une réinitialisation Codex",
       "WatchNoPercent": "Une réinitialisation Codex est probable",

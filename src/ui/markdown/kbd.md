@@ -1,63 +1,8 @@
 # <Kbd />
 
-Single keys
-
-Combinations
-
-Use **Kbd** to show keyboard keys and shortcuts inside your UI. A single key uses `Kbd.Root`; chord shortcuts are wrapped in `Kbd.Group` so multiple keys read as one unit (nested `<kbd>` is valid HTML for key combinations). Use `Kbd` for standalone keyboard hints in docs, toolbars, and footers. The default `badge` variant adds a subtle frame; `naked` is text-only. This component is not part of Base UI.
+A component that shows keyboard keys and shortcuts. A single key uses `Kbd.Root`; chord shortcuts are wrapped in `Kbd.Group` so multiple keys read as one unit (nested `<kbd>` is valid HTML for key combinations). Use `Kbd` for standalone keyboard hints in docs, toolbars, and footers. The default `badge` variant adds a subtle frame; `naked` is text-only. This component is not part of Base UI.
 
 ## Installation
-
-### kbd.module.scss
-
-```scss
-@use './_devie.scss' as *;
-
-@layer devie {
-    .root {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        font-family: $devie__font-family;
-        font-size: $devie__font-size__small;
-        line-height: 1.2;
-        color: $devie__color__text-sub;
-    }
-
-    .badge {
-        min-height: 1.375rem;
-        padding: 0 $devie__spacing__x1;
-        font-weight: 500;
-        background-color: $devie__color__background-sub;
-        border: 1px solid $devie__color__line;
-        border-radius: calc($devie__radius - 2px);
-    }
-
-    .naked {
-        padding: 0;
-        font-weight: 400;
-        background: none;
-        border: none;
-        border-radius: 0;
-    }
-
-    .group {
-        display: inline-flex;
-        align-items: center;
-        gap: $devie__spacing__x05;
-        padding: 0;
-        margin: 0;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-    }
-}
-```
 
 ### kbd.tsx
 
@@ -107,6 +52,57 @@ namespace Kbd {
 }
 
 export default Kbd;
+```
+
+### kbd.module.scss
+
+```scss
+@use './_devie.scss' as *;
+
+@layer devie {
+    .root {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        font-family: $devie__font-family;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 14px;
+        height: 16px;
+        color: $devie__color__text-sub;
+    }
+
+    .badge {
+        padding: 0 $devie__spacing__x1;
+        background-color: $devie__color__background-sunken;
+        border: 1px solid $devie__color__line;
+        border-radius: calc($devie__radius - 2px);
+    }
+
+    .naked {
+        padding: 0;
+        font-weight: 400;
+        background: none;
+        border: none;
+        border-radius: 0;
+    }
+
+    .group {
+        display: inline-flex;
+        align-items: center;
+        gap: $devie__spacing__x05;
+        padding: 0;
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
 ```
 
 ## Use Cases
