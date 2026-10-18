@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The app icon uses a white hexagon and quota boundary with violet light on
-  a charcoal background, matching the Devie shader style.
+- The app icon uses a white hexagon and quota boundary with rainbow edge
+  highlights on charcoal, matching the Devie UI and Devie shader style.
 
 ### Fixed
 

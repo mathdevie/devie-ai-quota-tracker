@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export the approved Devie Quota light-level icon.
 
-The raster master preserves the selected white hexagon, violet light seam,
+The raster master preserves the selected white hexagon, rainbow light seam,
 and fine grain. Export only adds transparent spacing and resizes the image.
 
 Run on macOS after bun install:

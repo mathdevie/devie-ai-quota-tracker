@@ -3,10 +3,11 @@
 ![The app icon at 460, 128, 64, 32, 22, and 16px](preview.png)
 
 The **Light level** icon keeps the pointy-top hexagon and chevron quota
-boundary. White outlines surround a violet light field that fades toward
-the bottom of the gauge. The matte charcoal plate, fine grain, and local
-glow follow the Devie shaders Light seams style and the approved Devie Code
-icon.
+boundary. White outlines surround rainbow highlights that fade into the
+dark lower gauge. Cyan, green, amber, and coral follow the inner chevron;
+blue and magenta reflect along the lower edges. The matte charcoal plate,
+fine grain, and local glow follow the Devie shaders Light seams style and
+the approved Devie UI logo.
 
 [master.png](master.png) is the selected 1254 × 1254 raster artwork. It
 preserves the approved mark, light, and texture. The built-in image
