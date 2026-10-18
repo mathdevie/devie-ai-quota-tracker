@@ -1,4 +1,27 @@
-# Approved icon generation prompt
+# Icon generation prompts
+
+## Rainbow highlights
+
+The current master was generated on 2026-10-18 with the built-in
+`image_gen.imagegen` tool in edit mode, with transparency enabled.
+`master.png` is an unchanged copy of the 1254 × 1254 RGBA output.
+
+Inputs, in order:
+
+1. [Previous purple master](references/purple-master.png), the edit target.
+2. [Approved Devie UI logo](references/devie-ui-rainbow.png), the color reference.
+
+### Exact edit prompt
+
+```text
+Use case: precise-object-edit.
+Asset type: production macOS app icon for Devie AI Quota Tracker.
+Image 1 is the edit target: the existing dark rounded-square icon with a white hexagonal quota gauge and purple light. Image 2 is a COLOR AND MATERIAL REFERENCE ONLY: the approved Devie UI black cube with restrained rainbow edge highlights.
+Change ONLY the lighting palette of image 1. Replace its monochrome purple illumination with restrained spectral rainbow highlights. Keep the entire existing quota symbol geometry, white outer hexagonal shell, white rising chevron boundary, dark upper region, black lower fill, matte charcoal rounded-square plate, fine grain, proportions, padding, and transparent outside corners exactly as in image 1. Do not copy the cube shape or white background from image 2.
+Use the same subtle edge-light approach as image 2. Along the inner chevron seam, color the soft light immediately below the white line: cyan and blue at the left junction, a short green and warm yellow transition near the central peak, amber and coral toward the right junction. Let restrained blue/violet and magenta edge reflections touch the lower sides. Keep white line cores white. Make the colored illumination thin and localized, fading rapidly into near-black inside the lower gauge. Reduce the broad purple wash; most of the lower fill must remain charcoal. Preserve the smooth shader-like diffusion and fine grain, no hard color stripes. The dark outer plate stays neutral charcoal, not rainbow. No extra lines, no new symbols, no words, no numbers, no watermark, no cube, no 3D extrusion, no chrome. Deliver the single complete icon on a square canvas with genuine alpha transparency outside its original rounded plate.
+```
+
+## Original purple artwork
 
 The selected **B — Light level** artwork was generated on 2026-09-28 with
 `image_gen.imagegen`, using the built-in tool in edit mode.
@@ -9,9 +32,9 @@ Input references, in order:
 2. The approved Devie Code white fish icon with violet light near its tail.
 3. The Devie shaders `rising-together.png` artwork.
 
-The tool returned the selected 1254 × 1254 RGBA image. `master.png` is an
-unchanged copy of that result. The export script only adds the family safe
-area and generates the required sizes; it does not run this prompt again.
+The tool returned the selected 1254 × 1254 RGBA image, preserved in
+`references/purple-master.png`. The export script only adds the family safe
+area and generates the required sizes; it does not run image prompts.
 
 ## Exact prompt
 
