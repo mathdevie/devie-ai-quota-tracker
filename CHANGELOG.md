@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Cursor on-demand usage without a spending cap shows the amount spent this
   billing cycle on the right of "Unlimited", for example "$18.40 spent".
-- The app icon uses a white hexagon and quota boundary with rainbow edge
-  highlights on charcoal, matching the Devie UI and Devie shader style.
+- The app icon uses a black hexagonal gauge with clean cuts and rainbow
+  edge highlights on a white plate, matching the Devie UI logo style.
 
 ## [0.14.0] - 2026-09-28
 

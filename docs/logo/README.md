@@ -2,23 +2,37 @@
 
 ![The app icon at 460, 128, 64, 32, 22, and 16px](preview.png)
 
-The **Light level** icon keeps the pointy-top hexagon and chevron quota
-boundary. White outlines surround rainbow highlights that fade into the
-dark lower gauge. Cyan, green, amber, and coral follow the inner chevron;
-blue and magenta reflect along the lower edges. The matte charcoal plate,
-fine grain, and local glow follow the Devie shaders Light seams style and
-the approved Devie UI logo.
+The mark is a black hexagonal gauge with a single inward arm. Three clean
+cuts separate its top, left, and right sections. Broad bands give the mark
+more weight, with extra white space around its silhouette. Thin rainbow highlights
+follow the edges of the matte black surfaces. The white background remains
+visible through the center and the cuts.
 
-[master.png](master.png) is the selected 1254 × 1254 raster artwork. It
-preserves the approved mark, light, and texture. The built-in image
-generator produced it in edit mode; the [exact prompt](prompt.md) records
-the design inputs. Asset generation never calls an image service or
-redraws the mark.
+The shape exploration uses [Rosamax](https://logobook.com/logo/rosamax/) as
+its reference. The cuts, rainbow edges, and fine grain follow the approved
+[Devie UI logo](references/devie-ui-rainbow.png).
 
-[app-icon.png](app-icon.png) is the generated 1024 × 1024 source for all
-exports. The exporter scales the full master to 915px and centers it on a
-transparent canvas. Combined with the master's existing border, the visible
-plate occupies about 81% of the canvas, matching the Devie Code icon.
+[master.png](master.png) is the unchanged 1254 × 1254 artwork produced by
+the built-in image generator. The [prompt record](prompt.md) describes the
+inputs and contains the final edit prompt. The exporter never calls an
+image service or redraws the mark.
+
+## Assets
+
+The [square](exports/square/) and [rounded](exports/rounded/) sets each
+contain PNG files at 16, 22, 32, 64, 128, 256, 512, and 1024px.
+
+- Square exports retain the full white canvas.
+- Rounded exports place the artwork on an 824px white plate within a
+  1024px canvas, with proportional spacing at smaller sizes. Pixels outside
+  the plate are transparent. The center and cuts remain white.
+- [app-icon.png](app-icon.png) is the 1024px rounded export used for the
+  macOS icon set and the repository README.
+- `src/app/icon.png` is the 128px square export. It uses the full canvas
+  for better favicon legibility.
+
+The rounded set has transparent outer corners; it is not a transparent
+cutout of the mark.
 
 ## Regenerating
 
@@ -28,9 +42,9 @@ On macOS, with Bun dependencies installed:
 python3 docs/logo/generate.py
 ```
 
-The script uses the local Tauri CLI in a temporary directory. It first
-generates `app-icon.png` from an SVG wrapper around the raster master, then
-exports only the app's macOS assets into `src-desktop/icons/`:
+The script wraps the master in SVG for resizing and rounded clipping with
+the local Tauri CLI. It writes both PNG sets, the favicon, and these native
+assets in `src-desktop/icons/`:
 
 - `32x32.png`
 - `128x128.png`
@@ -38,12 +52,9 @@ exports only the app's macOS assets into `src-desktop/icons/`:
 - `icon.icns`
 - `icon.png`
 
-The browser favicon at `src/app/icon.png` is an identical copy of the
-128px native export. The README uses `docs/logo/app-icon.png`. The former
-SVG sources are removed so they cannot restore the old white-fill design.
 Quick Look renders the size preview. No additional Python packages are
-required.
+required. The native bundle configuration already uses these filenames.
 
 The no-quota menu-bar state uses the app's default icon. When a provider is
-selected, the menu bar continues to use that provider's icon and percentage.
-Provider logos and quota-status colors are independent of this app artwork.
+selected, the menu bar uses that provider's icon and percentage. Provider
+logos and quota-status colors remain independent of this app artwork.
