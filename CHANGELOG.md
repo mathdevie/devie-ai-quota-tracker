@@ -7,14 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- Cursor on-demand usage without a spending cap shows the amount spent this
-  billing cycle on the right of "Unlimited", for example "$18.40 spent".
-- The app icon uses a black hexagonal gauge with clean cuts and rainbow
-  edge highlights on a white plate, matching the Devie UI logo style.
-
-## [0.14.0] - 2026-09-28
+## [0.14.1] - 2026-10-24
 
 ### Added
 
@@ -25,14 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The app icon uses a white hexagon and quota boundary with violet light on
-  a charcoal background, matching the Devie shader style.
+- Cursor on-demand usage without a spending cap shows the amount spent this
+  billing cycle on the right of "Unlimited", for example "$18.40 spent".
+- The app icon uses a black hexagonal gauge with clean cuts and rainbow
+  edge highlights on a white plate, matching the Devie UI logo style.
 - The interface uses the latest Devie UI desktop design and keeps SF Pro in
   every theme. Badges, buttons, inputs, and dialogs follow the Devie UI 8px
   grid.
 
 ### Fixed
 
+- The menu bar popover has separate refresh and dashboard icon buttons again,
+  restoring the spacing and borderless appearance from before the Devie UI update.
 - A downloaded update no longer goes stale. Background checks replace it when
   a newer release ships, and the "Update ready" badge checks once more before
   it installs. The app restarts into the latest release once, instead of

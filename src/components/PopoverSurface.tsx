@@ -19,7 +19,6 @@ import {
   writeFilters,
 } from "@/lib/filters";
 import Button from "@/ui/Button";
-import ButtonGroup from "@/ui/ButtonGroup";
 import ScrollArea from "@/ui/ScrollArea";
 import Tooltip from "@/ui/Tooltip";
 import IconTip from "./IconTip";
@@ -140,10 +139,7 @@ export default function PopoverSurface({
               />
             </div>
           )}
-          <ButtonGroup
-            aria-label={t("Nav.Quota")}
-            className={styles.headerActions}
-          >
+          <div className={styles.headerActions}>
             <IconTip label={t("Quota.RefreshQuotas")}>
               <Button
                 aria-label={t("Quota.RefreshQuotas")}
@@ -168,7 +164,7 @@ export default function PopoverSurface({
                 <Settings size={14} />
               </Button>
             </IconTip>
-          </ButtonGroup>
+          </div>
         </header>
 
         <ScrollArea.Root className={styles.list}>
