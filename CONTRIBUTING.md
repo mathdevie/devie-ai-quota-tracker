@@ -51,6 +51,19 @@ bunx tauri build --debug --bundles app
 
 The bundle is written under `src-desktop/target/debug/bundle/macos/`.
 
+### Native tray activation
+
+`cargo test --locked` includes a macOS main-thread integration test using real
+`NSStatusItem` controls. It checks native clicks, accessibility presses, explicit
+context menus, language/menu replacement, and status-item recreation.
+
+For a remote-input check, launch the app executable with `DEVIE_TRAY_TRACE=1`.
+It logs only tray click types, native activation, and popover visibility to stderr.
+Use Screen Sharing or Parsec to verify that left-click opens quotas and right-click
+opens the context menu. Repeat after changing language and hiding/showing the menu
+bar item. Native activation must position the popover correctly even before the
+first mouse-move event.
+
 ## Project rules
 
 - `src/ui` is a byte-identical mirror of the `src/ui` folder from

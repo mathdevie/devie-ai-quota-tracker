@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Native macOS menu bar activation opens the quota popover even without a
+  mouse-release event, including accessibility activation. The context menu
+  remains available on right-click.
+
 ## [0.14.1] - 2026-10-24
 
 ### Added
