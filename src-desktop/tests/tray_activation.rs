@@ -12,9 +12,16 @@ fn main() {
         MainThreadMarker, MainThreadOnly,
     };
     use objc2_app_kit::{
-        NSApplication, NSMenu, NSMenuDelegate, NSStatusBar, NSVariableStatusItemLength,
+        NSApplication, NSEvent, NSEventModifierFlags, NSEventType, NSMenu, NSMenuDelegate,
+        NSStatusBar, NSVariableStatusItemLength,
     };
-    use objc2_foundation::{NSObject, NSObjectProtocol, NSString};
+    use objc2_foundation::{NSObject, NSObjectProtocol, NSPoint, NSString};
+
+    fn mouse_event(kind: NSEventType, point: NSPoint, window: isize) -> Retained<NSEvent> {
+        NSEvent::mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure(
+            kind, point, NSEventModifierFlags::empty(), 0.0, window, None, 0, 1, 1.0,
+        ).expect("mouse event")
+    }
 
     define_class!(
         #[unsafe(super(NSObject))]
@@ -71,6 +78,43 @@ fn main() {
             }
 
             let before = count.get();
+            let window = button.window().expect("status-item window");
+            let bounds = button.convertRect_toView(button.bounds(), None);
+            let local_point = NSPoint::new(
+                bounds.origin.x + bounds.size.width / 2.0,
+                bounds.origin.y + bounds.size.height / 2.0,
+            );
+            let press = mouse_event(
+                NSEventType::LeftMouseDown,
+                local_point,
+                window.windowNumber(),
+            );
+            assert!(
+                tray_activation::is_primary_click_on_tray(&press),
+                "the outside-click monitor must leave tray presses to the toggle"
+            );
+            let screen_point = window.convertPointToScreen(local_point);
+            let global_press = mouse_event(NSEventType::LeftMouseDown, screen_point, 0);
+            assert!(
+                tray_activation::is_primary_click_on_tray(&global_press),
+                "windowless events use screen coordinates"
+            );
+            for kind in [NSEventType::RightMouseDown, NSEventType::OtherMouseDown] {
+                let event = mouse_event(kind, local_point, window.windowNumber());
+                assert!(
+                    !tray_activation::is_primary_click_on_tray(&event),
+                    "non-primary clicks still dismiss the popover"
+                );
+            }
+            let outside = mouse_event(
+                NSEventType::LeftMouseDown,
+                NSPoint::new(screen_point.x, screen_point.y - 100.0),
+                0,
+            );
+            assert!(
+                !tray_activation::is_primary_click_on_tray(&outside),
+                "clicks outside the tray still dismiss the popover"
+            );
             unsafe { button.performClick(None) };
             assert_eq!(
                 count.get(),
