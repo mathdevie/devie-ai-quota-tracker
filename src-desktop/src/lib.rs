@@ -9,6 +9,8 @@ mod notify;
 mod oauth;
 mod parse;
 mod telemetry;
+#[cfg(target_os = "macos")]
+mod tray_activation;
 mod tray_icons;
 mod updater;
 
@@ -409,12 +411,18 @@ fn apply_tray_language(app: &AppHandle, locale: &str) -> tauri::Result<()> {
         return Ok(());
     };
     tray.set_menu(Some(tray_menu(app, locale)?))?;
+    #[cfg(target_os = "macos")]
+    configure_tray_activation(&tray)?;
     tray.set_tooltip(Some(messages::t(locale, "Tray.Tooltip", &[])))
 }
 
 fn apply_tray_visibility(app: &AppHandle, visible: bool) {
     if let Some(tray) = app.tray_by_id("main-tray") {
         let _ = tray.set_visible(visible);
+        #[cfg(target_os = "macos")]
+        if visible {
+            let _ = configure_tray_activation(&tray);
+        }
     }
 }
 
@@ -678,18 +686,45 @@ fn activate_app() {
 }
 
 fn toggle_popover(app: &AppHandle) {
+    trace_tray("toggle popover");
     let Some(window) = app.get_webview_window("popover") else {
         return;
     };
     if window.is_visible().unwrap_or(false) {
+        trace_tray("hide visible popover");
         let _ = window.hide();
         return;
+    }
+    // Native/AX activation may arrive before any mouse event. Refresh the
+    // positioner's anchor so it also works on the first click and after moving
+    // the menu bar to another display.
+    if let Some(tray) = app.tray_by_id("main-tray") {
+        if let Ok(Some(rect)) = tray.rect() {
+            tauri_plugin_positioner::on_tray_event(
+                app,
+                &TrayIconEvent::Move {
+                    id: tray.id().clone(),
+                    position: rect.position.to_physical::<f64>(1.0),
+                    rect,
+                },
+            );
+        }
     }
     let _ = window.move_window(Position::TrayCenter);
     // A non-activating panel becomes key without activating the app; key, so
     // an outside click makes it lose focus and hide.
     let _ = window.show();
     let _ = window.set_focus();
+    trace_tray(&format!(
+        "popover visible after show: {:?}",
+        window.is_visible()
+    ));
+}
+
+fn trace_tray(message: &str) {
+    if std::env::var_os("DEVIE_TRAY_TRACE").is_some() {
+        eprintln!("[tray] {message}");
+    }
 }
 
 fn build_windows(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
@@ -866,6 +901,14 @@ fn build_tray(app: &tauri::App, locale: &str) -> Result<(), Box<dyn std::error::
             _ => {}
         })
         .on_tray_icon_event(|tray, event| {
+            if let TrayIconEvent::Click {
+                button,
+                button_state,
+                ..
+            } = &event
+            {
+                trace_tray(&format!("mouse {button:?} {button_state:?}"));
+            }
             tauri_plugin_positioner::on_tray_event(tray.app_handle(), &event);
             if matches!(
                 event,
@@ -877,12 +920,43 @@ fn build_tray(app: &tauri::App, locale: &str) -> Result<(), Box<dyn std::error::
             ) {
                 toggle_popover(tray.app_handle());
             }
+            #[cfg(target_os = "macos")]
+            if matches!(
+                event,
+                TrayIconEvent::Click {
+                    button: MouseButton::Right,
+                    button_state: MouseButtonState::Down,
+                    ..
+                }
+            ) {
+                trace_tray("open right-click menu");
+                tray_activation::show_context_menu();
+            }
         });
     if let Some(icon) = app.default_window_icon() {
         builder = builder.icon(icon.clone());
     }
-    builder.build(app)?;
+    let _tray = builder.build(app)?;
+    #[cfg(target_os = "macos")]
+    configure_tray_activation(&_tray)?;
     Ok(())
+}
+
+#[cfg(target_os = "macos")]
+fn configure_tray_activation(tray: &tauri::tray::TrayIcon) -> tauri::Result<()> {
+    let app = tray.app_handle().clone();
+    tray.with_inner_tray_icon(move |inner| {
+        // The native button's default action now opens quotas. Keep right-click
+        // explicit instead of tray-icon calling performClick on that button.
+        inner.set_show_menu_on_right_click(false);
+        if let Some(item) = inner.ns_status_item() {
+            tray_activation::install(item, move || {
+                trace_tray("native status-item action");
+                toggle_popover(&app);
+            });
+            trace_tray("installed native status-item action");
+        }
+    })
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
