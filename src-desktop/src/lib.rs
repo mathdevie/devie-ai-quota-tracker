@@ -841,6 +841,7 @@ fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow)
         move || {
             if let Some(window) = app.get_webview_window("popover") {
                 if window.is_visible().unwrap_or(false) {
+                    trace_tray("outside click hides popover");
                     let _ = window.hide();
                 }
             }
@@ -848,8 +849,11 @@ fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow)
     };
 
     let global_hide = hide.clone();
-    let global = block2::RcBlock::new(move |_event: std::ptr::NonNull<NSEvent>| {
-        global_hide();
+    let global = block2::RcBlock::new(move |event: std::ptr::NonNull<NSEvent>| {
+        // SAFETY: AppKit keeps the event alive for this monitor callback.
+        if !tray_activation::is_primary_click_on_tray(unsafe { event.as_ref() }) {
+            global_hide();
+        }
     });
     let local = block2::RcBlock::new(move |event: std::ptr::NonNull<NSEvent>| {
         // SAFETY: AppKit hands the monitor a live event for the duration of the call.
@@ -861,7 +865,9 @@ fn hide_popover_on_outside_click(app: AppHandle, popover: &tauri::WebviewWindow)
         let inside = event_window
             .map(|window| objc2::rc::Retained::as_ptr(&window) as usize == panel_pointer)
             .unwrap_or(false);
-        if !inside {
+        // Preserve visibility until the tray's mouse-up toggle. Otherwise the
+        // same click hides the panel here and then opens/focuses it again.
+        if !inside && !tray_activation::is_primary_click_on_tray(unsafe { event.as_ref() }) {
             hide();
         }
         event.as_ptr()
