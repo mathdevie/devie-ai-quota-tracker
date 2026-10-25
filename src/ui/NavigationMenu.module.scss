@@ -52,6 +52,10 @@
         [data-popup-open]>& {
             transform: rotate(180deg);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .content {
@@ -85,19 +89,15 @@
     .backdrop {
         position: fixed;
         inset: 0;
-        background: transparent;
-        opacity: 1;
-        transition: opacity 200ms ease;
-
-        &[data-starting-style],
-        &[data-ending-style] {
-            opacity: 0;
-        }
     }
 
     .positioner {
         &:not([data-instant]) {
             transition: left 300ms ease;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 
@@ -106,9 +106,6 @@
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
-        overflow: hidden;
-        opacity: 1;
-        transform: scale(1);
         transform-origin: var(--transform-origin);
         transition:
             opacity 200ms ease,
@@ -123,34 +120,62 @@
             opacity: 0;
             transform: scale(0.96);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .viewport {
         overflow: hidden;
-        // Animate viewport size changes when switching between menu items
         transition:
             width 300ms ease,
             height 300ms ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &:not([data-instant]) {
             transition: left 300ms ease;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
+
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
+        &[data-side='left'] {
+            right: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: -90deg;
+        }
+    }
+
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 }

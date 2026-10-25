@@ -9,12 +9,25 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         opacity: $dialog-backdrop-opacity;
         position: fixed;
         inset: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
         position: fixed;
         left: 50%;
         top: 50%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
         width: 90vw;
         max-height: 95vh;
         transform: translate(-50%, -50%);
@@ -23,11 +36,20 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
         overflow: hidden;
-        transition: filter 150ms ease-out, transform 150ms ease-out;
+        transition:
+            opacity 150ms ease-out,
+            transform 150ms ease-out,
+            filter 150ms ease-out;
 
         &[data-nested-dialog-open] {
             filter: brightness($dialog-backdrop-brightness);
             transform: translate(-50%, -50%) scale(calc(1 - 0.04 * var(--nested-dialogs)));
+        }
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.95);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -36,22 +58,22 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .popupSm {
-        min-width: 288px;
+        min-width: min(288px, 90vw);
         max-width: 384px;
     }
 
     .popupMd {
-        min-width: 384px;
+        min-width: min(384px, 90vw);
         max-width: 640px;
     }
 
     .popupLg {
-        min-width: 512px;
+        min-width: min(512px, 90vw);
         max-width: 832px;
     }
 
     .popupXl {
-        min-width: 768px;
+        min-width: min(768px, 90vw);
         max-width: 1152px;
     }
 
@@ -74,6 +96,8 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .body {
+        min-height: 0;
+        overflow-y: auto;
         padding: $devie__spacing__x3 $devie__spacing__x3;
         display: flex;
         flex-direction: column;
@@ -82,7 +106,7 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
     .title {
         font-size: $devie__font-size__title3;
-        line-height: $devie__spacing__x4;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text;
         margin: 0;
     }

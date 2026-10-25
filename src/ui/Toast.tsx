@@ -1,24 +1,15 @@
 // https://devie-ui.com/components/toast
 // https://base-ui.com/react/components/toast
 
-"use client";
-
 import { Toast as BaseToast } from "@base-ui/react/toast";
 import clsx from "clsx";
 import styles from "./Toast.module.scss";
 
-/**
- * NOTE: Toast.Provider must be imported directly from '@base-ui/react/toast'
- * in your layout because React context can't be properly re-exported.
- *
- * Usage:
- * 1. In layout.tsx: import { Toast } from '@base-ui/react/toast';
- * 2. Elsewhere: import Toast from '@/ui/Toast';
- */
+const Provider = BaseToast.Provider;
 
 const useToastManager = BaseToast.useToastManager;
 
-function Viewport({ className, ...props }: BaseToast.Viewport.Props) {
+function Viewport({ className, ...props }: Toast.Viewport.Props) {
   return (
     <BaseToast.Viewport
       className={clsx(styles.viewport, className)}
@@ -27,17 +18,17 @@ function Viewport({ className, ...props }: BaseToast.Viewport.Props) {
   );
 }
 
-function Root({ className, ...props }: BaseToast.Root.Props) {
+function Root({ className, ...props }: Toast.Root.Props) {
   return <BaseToast.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Title({ className, ...props }: BaseToast.Title.Props) {
+function Title({ className, ...props }: Toast.Title.Props) {
   return (
     <BaseToast.Title className={clsx(styles.title, className)} {...props} />
   );
 }
 
-function Description({ className, ...props }: BaseToast.Description.Props) {
+function Description({ className, ...props }: Toast.Description.Props) {
   return (
     <BaseToast.Description
       className={clsx(styles.description, className)}
@@ -46,19 +37,20 @@ function Description({ className, ...props }: BaseToast.Description.Props) {
   );
 }
 
-function Action({ className, ...props }: BaseToast.Action.Props) {
+function Action({ className, ...props }: Toast.Action.Props) {
   return (
     <BaseToast.Action className={clsx(styles.action, className)} {...props} />
   );
 }
 
-function Close({ className, ...props }: BaseToast.Close.Props) {
+function Close({ className, ...props }: Toast.Close.Props) {
   return (
     <BaseToast.Close className={clsx(styles.close, className)} {...props} />
   );
 }
 
 const Toast = {
+  Provider,
   useToastManager,
   Viewport,
   Root,
@@ -69,24 +61,40 @@ const Toast = {
 };
 
 namespace Toast {
+  export type Type = "info" | "success" | "warning" | "danger";
+  export namespace Provider {
+    export type Props = BaseToast.Provider.Props;
+  }
   export namespace Viewport {
-    export type Props = BaseToast.Viewport.Props;
+    export type Props = Omit<BaseToast.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Root {
-    export type Props = BaseToast.Root.Props;
+    export type Props = Omit<BaseToast.Root.Props, "className"> & {
+      className?: string;
+    };
     export type ToastObject = BaseToast.Root.ToastObject;
   }
   export namespace Title {
-    export type Props = BaseToast.Title.Props;
+    export type Props = Omit<BaseToast.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseToast.Description.Props;
+    export type Props = Omit<BaseToast.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Action {
-    export type Props = BaseToast.Action.Props;
+    export type Props = Omit<BaseToast.Action.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Close {
-    export type Props = BaseToast.Close.Props;
+    export type Props = Omit<BaseToast.Close.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

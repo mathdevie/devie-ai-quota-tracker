@@ -1,7 +1,6 @@
 @use './_devie.scss' as *;
 
 @layer devie {
-
     .backdrop {
         position: fixed;
         inset: 0;
@@ -17,17 +16,20 @@
         &[data-ending-style] {
             opacity: 0;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
+        outline: 0;
         background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
-        overflow: hidden;
         min-width: 200px;
         max-width: var(--available-width, 90vw);
-        max-height: 80vh;
         transform-origin: var(--transform-origin);
         transition:
             transform 150ms ease-out,
@@ -46,12 +48,14 @@
         &[data-instant] {
             transition: none;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
@@ -64,15 +68,24 @@
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
+    }
+
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .title {
@@ -86,7 +99,7 @@
     .description {
         margin: 0;
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
     }
 
@@ -103,6 +116,10 @@
 
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
         }
     }
 }

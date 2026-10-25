@@ -22,7 +22,7 @@ Scope each set of variables to a `data-devie-theme` value instead of `:root`. Th
   --devie__color__text-sub: #848385;
   --devie__color__background: #ffffff;
   --devie__color__background-sunken: #f5f5f5;
-  --devie__color__primary: #5739da;
+  --devie__color__primary: #543fd6;
   /* ... other tokens */
 }
 ```
@@ -84,11 +84,11 @@ const ALLOWED_THEMES = ["theme-default", "theme-dark"];
 const themeBootScript = `(function () {
   try {
     var allowedThemes = new Set(${JSON.stringify(ALLOWED_THEMES)});
-    var storedTheme = localStorage.getItem("devie-theme");
+    var storedTheme = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
     document.documentElement.dataset.devieTheme =
-      allowedThemes.has(storedTheme) ? storedTheme : "theme-default";
+      allowedThemes.has(storedTheme) ? storedTheme : ${JSON.stringify(DEFAULT_THEME)};
   } catch {
-    document.documentElement.dataset.devieTheme = "theme-default";
+    document.documentElement.dataset.devieTheme = ${JSON.stringify(DEFAULT_THEME)};
   }
 })();`;
 
@@ -147,7 +147,6 @@ interface ThemeContextType {
   setTheme: (theme: string) => void;
   previewTheme: (theme: string) => void;
   clearPreviewTheme: () => void;
-  primaryColor: string;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -158,13 +157,13 @@ interface Props {
 }
 
 const DEFAULT_THEME = "theme-default";
-const STORAGE_KEY = "devie-theme";
+const THEME_STORAGE_KEY = "devie-theme";
 const CHANGE_EVENT = "devie-theme-change";
 const ALLOWED_THEMES = new Set(["theme-default", "theme-dark"]);
 
 function getStoredTheme(): string | null {
   try {
-    const storedTheme = localStorage.getItem(STORAGE_KEY);
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
       return storedTheme;
     }
@@ -190,7 +189,7 @@ function subscribeToStoredTheme(onChange: () => void): () => void {
 
 function persistTheme(theme: string): void {
   try {
-    localStorage.setItem(STORAGE_KEY, theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
     // Storage unavailable
   }
@@ -212,7 +211,6 @@ export function ThemeProvider({
   );
   const selectedTheme = storedTheme ?? defaultTheme;
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
-  const [primaryColor, setPrimaryColor] = useState("#7B7481");
 
   const currentTheme = previewedTheme ?? selectedTheme;
   const appliedRef = useRef(false);
@@ -222,14 +220,6 @@ export function ThemeProvider({
     if (storedTheme !== null || previewedTheme !== null || appliedRef.current) {
       applyThemeToDOM(currentTheme);
       appliedRef.current = true;
-    }
-
-    const computedColor = getComputedStyle(document.documentElement)
-      .getPropertyValue("--devie__color__primary")
-      .trim();
-
-    if (computedColor) {
-      setPrimaryColor(computedColor);
     }
   }, [currentTheme, storedTheme, previewedTheme]);
 
@@ -252,9 +242,8 @@ export function ThemeProvider({
       setTheme,
       previewTheme,
       clearPreviewTheme,
-      primaryColor,
     }),
-    [selectedTheme, setTheme, previewTheme, clearPreviewTheme, primaryColor],
+    [selectedTheme, setTheme, previewTheme, clearPreviewTheme],
   );
 
   return (
@@ -291,7 +280,6 @@ Use SSR when the server must know the theme before it renders. For a data attrib
 | `setTheme(theme)` | `(string) => void` | Set and persist a new theme |
 | `previewTheme(theme)` | `(string) => void` | Preview a theme without persisting |
 | `clearPreviewTheme()` | `() => void` | Clear the preview, revert to selected |
-| `primaryColor` | `string` | Computed primary color from current theme |
 
 ---
 

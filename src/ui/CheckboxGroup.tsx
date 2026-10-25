@@ -5,22 +5,18 @@ import { CheckboxGroup as BaseCheckboxGroup } from "@base-ui/react/checkbox-grou
 import clsx from "clsx";
 import styles from "./CheckboxGroup.module.scss";
 
-function Root({ className, ...props }: BaseCheckboxGroup.Props) {
+function CheckboxGroup({ className, ...props }: CheckboxGroup.Props) {
   return (
     <BaseCheckboxGroup className={clsx(styles.root, className)} {...props} />
   );
 }
 
-const CheckboxGroup = {
-  Root,
-};
-
 namespace CheckboxGroup {
-  export namespace Root {
-    export type Props = BaseCheckboxGroup.Props;
-    export type State = BaseCheckboxGroup.State;
-    export type ChangeEventDetails = BaseCheckboxGroup.ChangeEventDetails;
-  }
+  export type Props = Omit<BaseCheckboxGroup.Props, "className"> & {
+    className?: string;
+  };
+  export type State = BaseCheckboxGroup.State;
+  export type ChangeEventDetails = BaseCheckboxGroup.ChangeEventDetails;
 }
 
 export default CheckboxGroup;

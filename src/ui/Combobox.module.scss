@@ -2,10 +2,11 @@
 
 @layer devie {
     .label {
-        font-size: $devie__font-size__small;
         line-height: $devie__spacing__x3;
-        font-weight: 600;
-        color: $devie__color__text;
+
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
     }
 
     .inputGroup {
@@ -20,6 +21,7 @@
         border-radius: $devie__radius;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         box-sizing: border-box;
         min-width: 200px;
         width: 100%;
@@ -45,6 +47,7 @@
             cursor: not-allowed;
             background: #{devie-disabled-color($devie__color__background)};
             border-color: #{devie-disabled-color($devie__color__line)};
+            box-shadow: none;
             color: #{devie-disabled-color($devie__color__text)};
 
             &::placeholder {
@@ -66,6 +69,10 @@
             color: $devie__color__text;
         }
 
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
+
         &[data-disabled] {
             cursor: not-allowed;
             color: #{devie-disabled-color($devie__color__text-sub)};
@@ -85,6 +92,10 @@
         [data-disabled] & {
             color: #{devie-disabled-color($devie__color__text-sub)};
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .clear {
@@ -100,10 +111,14 @@
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
         }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
     }
 
     .popup:has(.item, .empty) {
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         box-sizing: border-box;
         background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
@@ -116,6 +131,14 @@
         transition: none;
     }
 
+    .status {
+        padding: $devie__spacing__x1;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        text-align: center;
+    }
+
     .item,
     .popup[data-empty] .empty {
         box-sizing: border-box;
@@ -123,12 +146,12 @@
         align-items: center;
         justify-content: space-between;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
         min-width: var(--anchor-width);
         outline: 0;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         user-select: none;
         transition: none;
 
@@ -146,7 +169,6 @@
             color: $devie__color__primary;
         }
     }
-
 
     .empty {
         cursor: default;
@@ -168,6 +190,11 @@
         box-sizing: border-box;
     }
 
+    .row {
+        display: flex;
+        gap: $devie__spacing__x05;
+    }
+
     .group {
         display: flex;
         flex-direction: column;
@@ -187,41 +214,37 @@
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
     }
 
-    .value {
-        color: $devie__color__text;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
 
-        &[data-placeholder] {
-            color: $devie__color__text-sub;
-        }
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .chips {

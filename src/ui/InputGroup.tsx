@@ -1,7 +1,7 @@
 // https://devie-ui.com/components/input-group
 
 import clsx from "clsx";
-import type { ComponentProps } from "react";
+import type React from "react";
 import styles from "./InputGroup.module.scss";
 
 function Root({ className, ...props }: InputGroup.Root.Props) {
@@ -19,14 +19,10 @@ const InputGroup = {
 
 namespace InputGroup {
   export namespace Root {
-    export interface Props extends ComponentProps<"div"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Addon {
-    export interface Props extends ComponentProps<"span"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"span">;
   }
 }
 

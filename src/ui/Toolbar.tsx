@@ -1,53 +1,57 @@
 // https://devie-ui.com/components/toolbar
 // https://base-ui.com/react/components/toolbar
 
-import type { Toggle as BaseToggle } from "@base-ui/react/toggle";
 import { Toolbar as BaseToolbar } from "@base-ui/react/toolbar";
 import clsx from "clsx";
 import Toggle from "./Toggle";
 import styles from "./Toolbar.module.scss";
 
-function Root({ className, ...props }: BaseToolbar.Root.Props) {
+type ToggleProps = Toggle.Props;
+
+function Root({ className, ...props }: Toolbar.Root.Props) {
   return (
     <BaseToolbar.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Button({ className, ...props }: BaseToolbar.Button.Props) {
+function Button({ className, ...props }: Toolbar.Button.Props) {
   return (
     <BaseToolbar.Button className={clsx(styles.button, className)} {...props} />
   );
 }
 
-function ToolbarToggle({ className, ...props }: BaseToggle.Props) {
+function ToolbarToggle({
+  className,
+  disabled,
+  ...props
+}: Toolbar.Toggle.Props) {
   return (
-    <Toggle
-      variant="naked"
-      className={clsx(styles.toggle, className)}
-      {...props}
+    <BaseToolbar.Button
+      disabled={disabled}
+      render={<Toggle variant="naked" className={className} {...props} />}
     />
   );
 }
 
-function Link({ className, ...props }: BaseToolbar.Link.Props) {
+function Link({ className, ...props }: Toolbar.Link.Props) {
   return (
     <BaseToolbar.Link className={clsx(styles.link, className)} {...props} />
   );
 }
 
-function Input({ className, ...props }: BaseToolbar.Input.Props) {
+function Input({ className, ...props }: Toolbar.Input.Props) {
   return (
     <BaseToolbar.Input className={clsx(styles.input, className)} {...props} />
   );
 }
 
-function Group({ className, ...props }: BaseToolbar.Group.Props) {
+function Group({ className, ...props }: Toolbar.Group.Props) {
   return (
     <BaseToolbar.Group className={clsx(styles.group, className)} {...props} />
   );
 }
 
-function Separator({ className, ...props }: BaseToolbar.Separator.Props) {
+function Separator({ className, ...props }: Toolbar.Separator.Props) {
   return (
     <BaseToolbar.Separator
       className={clsx(styles.separator, className)}
@@ -68,25 +72,37 @@ const Toolbar = {
 
 namespace Toolbar {
   export namespace Root {
-    export type Props = BaseToolbar.Root.Props;
+    export type Props = Omit<BaseToolbar.Root.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Button {
-    export type Props = BaseToolbar.Button.Props;
+    export type Props = Omit<BaseToolbar.Button.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Toggle {
-    export type Props = BaseToggle.Props;
+    export type Props = Omit<ToggleProps, "variant">;
   }
   export namespace Link {
-    export type Props = BaseToolbar.Link.Props;
+    export type Props = Omit<BaseToolbar.Link.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Input {
-    export type Props = BaseToolbar.Input.Props;
+    export type Props = Omit<BaseToolbar.Input.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
-    export type Props = BaseToolbar.Group.Props;
+    export type Props = Omit<BaseToolbar.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Separator {
-    export type Props = BaseToolbar.Separator.Props;
+    export type Props = Omit<BaseToolbar.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

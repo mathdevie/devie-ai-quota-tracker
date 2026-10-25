@@ -1,22 +1,22 @@
 # Use SCSS Variables
 
-Devie UI tokens are CSS variables, so they can be swapped at runtime (themes, dark mode, user preferences). To make authoring SCSS less error-prone, Devie UI also re-exports each token as an SCSS variable in `src/ui/_devie.scss`.
+Devie UI tokens are CSS variables, so themes, dark mode, and user preferences swap them at runtime. To make SCSS authoring less error-prone, Devie UI also re-exports each token as an SCSS variable in `src/ui/_devie.scss`.
 
 ## Why Use SCSS Variables?
 
-- **Cleaner SCSS:** write `$devie__color__text` instead of `var(--devie__color__text)`
+- **Shorter SCSS:** write `$devie__color__text` instead of `var(--devie__color__text)`
 - **Typo-safe tokens:** misspelling an SCSS variable fails at build time, while a misspelled CSS variable usually fails silently at runtime
 - **Still themeable:** these SCSS variables expand to `var(--...)`, so switching themes updates values without recompiling
 
 ## How It Works
 
-The file `src/ui/_devie.scss` maps each design token to its CSS variable. The SCSS variable is just an alias, and the browser still resolves the value at runtime:
+The file `src/ui/_devie.scss` maps each design token to its CSS variable. The SCSS variable is an alias, and the browser still resolves the value at runtime:
 
 **src/ui/_devie.scss**
 
 ```scss
 // src/ui/_devie.scss
-// Each SCSS variable is just an alias to a CSS variable.
+// Each SCSS variable is an alias to a CSS variable.
 // That means the value is still resolved by the browser at runtime (and can be themed).
 
 $devie__color__text: var(--devie__color__text);
@@ -47,6 +47,8 @@ Import the variables once at the top of your `.module.scss` file, then use the t
   color: $devie__color__text;
 }
 ```
+
+> The import path is relative. If your SCSS file is not in `src/components`, adjust the `@use` path.
 
 ## Gotchas
 

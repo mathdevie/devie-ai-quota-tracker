@@ -1,12 +1,12 @@
 # <Drawer />
 
-A panel that slides in from the edge of the screen. Powered by Base UI, it comes with built-in swipe-to-dismiss gestures, snap points, nested drawers, and focus trapping capabilities.
+A panel that slides in from the edge of the screen. The Drawer component extends [Base UI's Drawer](https://base-ui.com/react/components/drawer), with swipe to dismiss, snap points, and nested drawers.
 
 Built on [Base UI](https://base-ui.com/react/components/drawer).
 
 ## Installation
 
-### drawer.tsx
+### Drawer.tsx
 
 ```tsx
 // https://devie-ui.com/components/drawer
@@ -17,16 +17,17 @@ import clsx from "clsx";
 import type React from "react";
 import styles from "./Drawer.module.scss";
 
-// Simple re-exports
 const Provider = BaseDrawer.Provider;
 const Root = BaseDrawer.Root;
 const Portal = BaseDrawer.Portal;
 const createHandle = BaseDrawer.createHandle;
+const Trigger = BaseDrawer.Trigger;
+const Close = BaseDrawer.Close;
 
 function IndentBackground({
   className,
   ...props
-}: BaseDrawer.IndentBackground.Props) {
+}: Drawer.IndentBackground.Props) {
   return (
     <BaseDrawer.IndentBackground
       className={clsx(styles.indentBackground, className)}
@@ -35,19 +36,13 @@ function IndentBackground({
   );
 }
 
-function Indent({ className, ...props }: BaseDrawer.Indent.Props) {
+function Indent({ className, ...props }: Drawer.Indent.Props) {
   return (
     <BaseDrawer.Indent className={clsx(styles.indent, className)} {...props} />
   );
 }
 
-function Trigger({ className, ...props }: BaseDrawer.Trigger.Props) {
-  return (
-    <BaseDrawer.Trigger className={className} {...props} />
-  );
-}
-
-function SwipeArea({ className, ...props }: BaseDrawer.SwipeArea.Props) {
+function SwipeArea({ className, ...props }: Drawer.SwipeArea.Props) {
   return (
     <BaseDrawer.SwipeArea
       className={clsx(styles.swipeArea, className)}
@@ -56,7 +51,7 @@ function SwipeArea({ className, ...props }: BaseDrawer.SwipeArea.Props) {
   );
 }
 
-function Backdrop({ className, ...props }: BaseDrawer.Backdrop.Props) {
+function Backdrop({ className, ...props }: Drawer.Backdrop.Props) {
   return (
     <BaseDrawer.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -65,7 +60,7 @@ function Backdrop({ className, ...props }: BaseDrawer.Backdrop.Props) {
   );
 }
 
-function Viewport({ className, ...props }: BaseDrawer.Viewport.Props) {
+function Viewport({ className, ...props }: Drawer.Viewport.Props) {
   return (
     <BaseDrawer.Viewport
       className={clsx(styles.viewport, className)}
@@ -74,13 +69,13 @@ function Viewport({ className, ...props }: BaseDrawer.Viewport.Props) {
   );
 }
 
-function Popup({ className, ...props }: BaseDrawer.Popup.Props) {
+function Popup({ className, ...props }: Drawer.Popup.Props) {
   return (
     <BaseDrawer.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function Content({ className, ...props }: BaseDrawer.Content.Props) {
+function Content({ className, ...props }: Drawer.Content.Props) {
   return (
     <BaseDrawer.Content
       className={clsx(styles.content, className)}
@@ -89,24 +84,18 @@ function Content({ className, ...props }: BaseDrawer.Content.Props) {
   );
 }
 
-function Title({ className, ...props }: BaseDrawer.Title.Props) {
+function Title({ className, ...props }: Drawer.Title.Props) {
   return (
     <BaseDrawer.Title className={clsx(styles.title, className)} {...props} />
   );
 }
 
-function Description({ className, ...props }: BaseDrawer.Description.Props) {
+function Description({ className, ...props }: Drawer.Description.Props) {
   return (
     <BaseDrawer.Description
       className={clsx(styles.description, className)}
       {...props}
     />
-  );
-}
-
-function Close({ className, ...props }: BaseDrawer.Close.Props) {
-  return (
-    <BaseDrawer.Close className={className} {...props} />
   );
 }
 
@@ -141,49 +130,65 @@ namespace Drawer {
     export type Props = BaseDrawer.Trigger.Props;
   }
   export namespace SwipeArea {
-    export type Props = BaseDrawer.SwipeArea.Props;
+    export type Props = Omit<BaseDrawer.SwipeArea.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Portal {
     export type Props = BaseDrawer.Portal.Props;
   }
   export namespace Backdrop {
-    export type Props = BaseDrawer.Backdrop.Props;
+    export type Props = Omit<BaseDrawer.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Viewport {
-    export type Props = BaseDrawer.Viewport.Props;
+    export type Props = Omit<BaseDrawer.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export type Props = BaseDrawer.Popup.Props;
+    export type Props = Omit<BaseDrawer.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Content {
-    export type Props = BaseDrawer.Content.Props;
+    export type Props = Omit<BaseDrawer.Content.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Title {
-    export type Props = BaseDrawer.Title.Props;
+    export type Props = Omit<BaseDrawer.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseDrawer.Description.Props;
+    export type Props = Omit<BaseDrawer.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Close {
     export type Props = BaseDrawer.Close.Props;
   }
   export namespace IndentBackground {
-    export type Props = BaseDrawer.IndentBackground.Props;
+    export type Props = Omit<BaseDrawer.IndentBackground.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Indent {
-    export type Props = BaseDrawer.Indent.Props;
+    export type Props = Omit<BaseDrawer.Indent.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Handle {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 
 export default Drawer;
 ```
 
-### drawer.module.scss
+### Drawer.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -204,19 +209,26 @@ export default Drawer;
         transform-origin: center top;
         transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         min-height: 100vh;
-        
+
         &[data-active] {
             border-radius: $devie__radius-strong;
             transform: scale(0.95);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 
     .backdrop {
         background-color: #000000;
-        --backdrop-opacity: 0.6;
+        --backdrop-opacity: 0.7;
         opacity: calc(var(--backdrop-opacity) * (1 - var(--drawer-swipe-progress, 0)));
         position: fixed;
         inset: 0;
+        transition-duration: 400ms;
+        transition-property: opacity;
+        transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 
         &[data-starting-style],
         &[data-ending-style] {
@@ -225,16 +237,17 @@ export default Drawer;
 
         &[data-ending-style] {
             transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
-        transition-duration: 400ms;
-        transition-property: opacity;
-        transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-        
         &[data-swiping] {
             transition-duration: 0ms;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            &[data-ending-style] {
+                transition-duration: 0ms;
+            }
         }
     }
 
@@ -258,6 +271,8 @@ export default Drawer;
         transition-duration: 400ms;
         transition-property: transform;
         transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        border: 1px solid $devie__color__line;
+        box-shadow: $devie__shadow__menu;
 
         &[data-ending-style] {
             transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
@@ -267,8 +282,12 @@ export default Drawer;
             transition-duration: 0ms;
         }
 
-        border: 1px solid $devie__color__line;
-        box-shadow: $devie__shadow__menu;
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            &[data-ending-style] {
+                transition-duration: 0ms;
+            }
+        }
 
         &[data-swipe-direction='down'] {
             margin-top: auto;
@@ -279,6 +298,7 @@ export default Drawer;
             border-bottom: none;
             transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px))) scale(var(--stack-scale));
         }
+
         &[data-ending-style][data-swipe-direction='down'],
         &[data-starting-style][data-swipe-direction='down'] {
             transform: translateY(100%);
@@ -294,6 +314,7 @@ export default Drawer;
             border-right: none;
             transform: translateX(var(--drawer-swipe-movement-x, 0px));
         }
+
         &[data-ending-style][data-swipe-direction='right'],
         &[data-starting-style][data-swipe-direction='right'] {
             transform: translateX(100%);
@@ -309,6 +330,7 @@ export default Drawer;
             border-left: none;
             transform: translateX(var(--drawer-swipe-movement-x, 0px));
         }
+
         &[data-ending-style][data-swipe-direction='left'],
         &[data-starting-style][data-swipe-direction='left'] {
             transform: translateX(-100%);
@@ -323,6 +345,7 @@ export default Drawer;
             border-top: none;
             transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px))) scale(var(--stack-scale));
         }
+
         &[data-ending-style][data-swipe-direction='up'],
         &[data-starting-style][data-swipe-direction='up'] {
             transform: translateY(-100%);
@@ -336,19 +359,24 @@ export default Drawer;
         display: flex;
         flex-direction: column;
         gap: $devie__spacing__x2;
-
         transition: opacity 300ms;
+
         .popup[data-nested-drawer-open] & {
             opacity: 0;
         }
+
         .popup[data-nested-drawer-open][data-nested-drawer-swiping] & {
             opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 
     .handle {
-        width: 32px;
-        height: 5px;
+        width: $devie__spacing__x4;
+        height: $devie__spacing__x05;
         border-radius: 9999px;
         background-color: $devie__color__line;
         margin: $devie__spacing__x2 auto $devie__spacing__x1;
@@ -357,7 +385,7 @@ export default Drawer;
 
     .title {
         font-size: $devie__font-size__title3;
-        line-height: $devie__spacing__x4;
+        line-height: $devie__spacing__x3;
         font-weight: 600;
         color: $devie__color__text;
         margin: 0;
@@ -378,7 +406,7 @@ export default Drawer;
 
 ## Use Cases
 
-### Simple Example
+### Simple drawer
 
 By default, Drawer behaves as a bottom sheet with a unified API for swiping and interaction.
 
@@ -405,7 +433,7 @@ export default function SimpleDrawer() {
                 {/* Your content goes here */}
               </div>
 
-              <Drawer.Close render={<Button variant="outline">Close</Button>} />
+              <Drawer.Close render={<Button variant="secondary">Close Drawer</Button>} />
             </Drawer.Content>
           </Drawer.Popup>
         </Drawer.Viewport>
@@ -436,7 +464,7 @@ export default function DirectionalDrawer() {
               <Drawer.Description>
                 This drawer opens from the right side. Swipe right to dismiss.
               </Drawer.Description>
-              <Drawer.Close render={<Button variant="outline">Close</Button>} />
+              <Drawer.Close render={<Button variant="secondary">Close</Button>} />
             </Drawer.Content>
           </Drawer.Popup>
         </Drawer.Viewport>
@@ -467,7 +495,7 @@ export default function NonModalDrawer() {
                 This drawer does not trap focus and ignores outside clicks. 
                 You can drag it to close, or close it manually.
               </Drawer.Description>
-              <Drawer.Close render={<Button variant="outline">Close</Button>} />
+              <Drawer.Close render={<Button variant="secondary">Close</Button>} />
             </Drawer.Content>
           </Drawer.Popup>
         </Drawer.Viewport>

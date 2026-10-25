@@ -1,12 +1,12 @@
 # <Combobox />
 
-An input combined with a filterable list of predefined items to select. It extends [ Base UI's Combobox ](https://base-ui.com/react/components/combobox) with consistent styling that matches the design system. Unlike Autocomplete, the selected value must be from the list of options.
+An input combined with a filterable list of predefined items to select. It extends [Base UI's Combobox](https://base-ui.com/react/components/combobox) with consistent styling that matches the design system. Unlike Autocomplete, the selected value must be from the list of options.
 
 Built on [Base UI](https://base-ui.com/react/components/combobox).
 
 ## Installation
 
-### combobox.tsx
+### Combobox.tsx
 
 ```tsx
 // https://devie-ui.com/components/combobox
@@ -20,19 +20,19 @@ import styles from "./Combobox.module.scss";
 
 const Root = BaseCombobox.Root;
 
-function Label({ className, ...props }: BaseCombobox.Label.Props) {
+function Label({ className, ...props }: Combobox.Label.Props) {
   return (
     <BaseCombobox.Label className={clsx(styles.label, className)} {...props} />
   );
 }
 
-function Input({ className, ...props }: BaseCombobox.Input.Props) {
+function Input({ className, ...props }: Combobox.Input.Props) {
   return (
     <BaseCombobox.Input className={clsx(styles.input, className)} {...props} />
   );
 }
 
-function InputGroup({ className, ...props }: BaseCombobox.InputGroup.Props) {
+function InputGroup({ className, ...props }: Combobox.InputGroup.Props) {
   return (
     <BaseCombobox.InputGroup
       className={clsx(styles.inputGroup, className)}
@@ -41,7 +41,7 @@ function InputGroup({ className, ...props }: BaseCombobox.InputGroup.Props) {
   );
 }
 
-function Trigger({ className, render, ...props }: BaseCombobox.Trigger.Props) {
+function Trigger({ className, render, ...props }: Combobox.Trigger.Props) {
   return (
     <BaseCombobox.Trigger
       className={clsx(!render && styles.trigger, className)}
@@ -51,11 +51,7 @@ function Trigger({ className, render, ...props }: BaseCombobox.Trigger.Props) {
   );
 }
 
-function Icon({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof BaseCombobox.Icon>) {
+function Icon({ className, children, ...props }: Combobox.Icon.Props) {
   return (
     <BaseCombobox.Icon className={clsx(styles.icon, className)} {...props}>
       {children || <ChevronDown size={16} />}
@@ -63,9 +59,13 @@ function Icon({
   );
 }
 
-function Clear({ className, children, ...props }: BaseCombobox.Clear.Props) {
+function Clear({ className, children, ...props }: Combobox.Clear.Props) {
   return (
-    <BaseCombobox.Clear className={clsx(styles.clear, className)} {...props}>
+    <BaseCombobox.Clear
+      aria-label={children ? undefined : "Clear"}
+      className={clsx(styles.clear, className)}
+      {...props}
+    >
       {children || <X size={16} />}
     </BaseCombobox.Clear>
   );
@@ -75,40 +75,52 @@ const Portal = BaseCombobox.Portal;
 
 const Backdrop = BaseCombobox.Backdrop;
 
-function Positioner({ className, ...props }: BaseCombobox.Positioner.Props) {
-  return (
-    <BaseCombobox.Positioner
-      className={clsx(styles.positioner, className)}
-      {...props}
-    />
-  );
-}
+const Positioner = BaseCombobox.Positioner;
 
-function Popup({ className, ...props }: BaseCombobox.Popup.Props) {
+function Popup({ className, ...props }: Combobox.Popup.Props) {
   return (
     <BaseCombobox.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function Arrow({ className, ...props }: BaseCombobox.Arrow.Props) {
+function Arrow({ className, children, ...props }: Combobox.Arrow.Props) {
   return (
-    <BaseCombobox.Arrow className={clsx(styles.arrow, className)} {...props} />
+    <BaseCombobox.Arrow className={clsx(styles.arrow, className)} {...props}>
+      {children || <ArrowSvg />}
+    </BaseCombobox.Arrow>
   );
 }
 
-function List({ className, ...props }: BaseCombobox.List.Props) {
+function List({ className, ...props }: Combobox.List.Props) {
   return (
     <BaseCombobox.List className={clsx(styles.list, className)} {...props} />
   );
 }
 
-function Empty({ className, ...props }: BaseCombobox.Empty.Props) {
+function Status({ className, ...props }: Combobox.Status.Props) {
+  return (
+    <BaseCombobox.Status
+      className={clsx(styles.status, className)}
+      {...props}
+    />
+  );
+}
+
+function Empty({ className, ...props }: Combobox.Empty.Props) {
   return (
     <BaseCombobox.Empty className={clsx(styles.empty, className)} {...props} />
   );
 }
 
-function Item({ className, ...props }: BaseCombobox.Item.Props) {
+const Collection = BaseCombobox.Collection;
+
+function Row({ className, ...props }: Combobox.Row.Props) {
+  return (
+    <BaseCombobox.Row className={clsx(styles.row, className)} {...props} />
+  );
+}
+
+function Item({ className, ...props }: Combobox.Item.Props) {
   return (
     <BaseCombobox.Item className={clsx(styles.item, className)} {...props} />
   );
@@ -118,7 +130,7 @@ function ItemIndicator({
   className,
   children,
   ...props
-}: BaseCombobox.ItemIndicator.Props) {
+}: Combobox.ItemIndicator.Props) {
   return (
     <BaseCombobox.ItemIndicator
       className={clsx(styles.itemIndicator, className)}
@@ -129,13 +141,13 @@ function ItemIndicator({
   );
 }
 
-function Group({ className, ...props }: BaseCombobox.Group.Props) {
+function Group({ className, ...props }: Combobox.Group.Props) {
   return (
     <BaseCombobox.Group className={clsx(styles.group, className)} {...props} />
   );
 }
 
-function GroupLabel({ className, ...props }: BaseCombobox.GroupLabel.Props) {
+function GroupLabel({ className, ...props }: Combobox.GroupLabel.Props) {
   return (
     <BaseCombobox.GroupLabel
       className={clsx(styles.groupLabel, className)}
@@ -144,7 +156,7 @@ function GroupLabel({ className, ...props }: BaseCombobox.GroupLabel.Props) {
   );
 }
 
-function Separator({ className, ...props }: BaseCombobox.Separator.Props) {
+function Separator({ className, ...props }: Combobox.Separator.Props) {
   return (
     <BaseCombobox.Separator
       className={clsx(styles.separator, className)}
@@ -155,13 +167,13 @@ function Separator({ className, ...props }: BaseCombobox.Separator.Props) {
 
 const Value = BaseCombobox.Value;
 
-function Chips({ className, ...props }: BaseCombobox.Chips.Props) {
+function Chips({ className, ...props }: Combobox.Chips.Props) {
   return (
     <BaseCombobox.Chips className={clsx(styles.chips, className)} {...props} />
   );
 }
 
-function Chip({ className, ...props }: BaseCombobox.Chip.Props) {
+function Chip({ className, ...props }: Combobox.Chip.Props) {
   return (
     <BaseCombobox.Chip className={clsx(styles.chip, className)} {...props} />
   );
@@ -171,9 +183,10 @@ function ChipRemove({
   className,
   children,
   ...props
-}: BaseCombobox.ChipRemove.Props) {
+}: Combobox.ChipRemove.Props) {
   return (
     <BaseCombobox.ChipRemove
+      aria-label={children ? undefined : "Remove"}
       className={clsx(styles.chipRemove, className)}
       {...props}
     >
@@ -198,7 +211,10 @@ const Combobox = {
   Popup,
   Arrow,
   List,
+  Status,
   Empty,
+  Collection,
+  Row,
   Item,
   ItemIndicator,
   Group,
@@ -221,22 +237,34 @@ namespace Combobox {
     export type ChangeEventReason = BaseCombobox.Root.ChangeEventReason;
   }
   export namespace Input {
-    export type Props = BaseCombobox.Input.Props;
+    export type Props = Omit<BaseCombobox.Input.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Label {
-    export type Props = BaseCombobox.Label.Props;
+    export type Props = Omit<BaseCombobox.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace InputGroup {
-    export type Props = BaseCombobox.InputGroup.Props;
+    export type Props = Omit<BaseCombobox.InputGroup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Trigger {
-    export type Props = BaseCombobox.Trigger.Props;
+    export type Props = Omit<BaseCombobox.Trigger.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Icon {
-    export type Props = React.ComponentProps<typeof BaseCombobox.Icon>;
+    export type Props = Omit<BaseCombobox.Icon.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Clear {
-    export type Props = BaseCombobox.Clear.Props;
+    export type Props = Omit<BaseCombobox.Clear.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Portal {
     export type Props = BaseCombobox.Portal.Props;
@@ -249,61 +277,121 @@ namespace Combobox {
     export type State = BaseCombobox.Positioner.State;
   }
   export namespace Popup {
-    export type Props = BaseCombobox.Popup.Props;
+    export type Props = Omit<BaseCombobox.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Arrow {
-    export type Props = BaseCombobox.Arrow.Props;
+    export type Props = Omit<BaseCombobox.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace List {
-    export type Props = BaseCombobox.List.Props;
+    export type Props = Omit<BaseCombobox.List.Props, "className"> & {
+      className?: string;
+    };
+  }
+  export namespace Status {
+    export type Props = Omit<BaseCombobox.Status.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Empty {
-    export type Props = BaseCombobox.Empty.Props;
+    export type Props = Omit<BaseCombobox.Empty.Props, "className"> & {
+      className?: string;
+    };
+  }
+  export namespace Collection {
+    export type Props = BaseCombobox.Collection.Props;
+  }
+  export namespace Row {
+    export type Props = Omit<BaseCombobox.Row.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = BaseCombobox.Item.Props;
+    export type Props = Omit<BaseCombobox.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseCombobox.Item.State;
   }
   export namespace ItemIndicator {
-    export type Props = BaseCombobox.ItemIndicator.Props;
+    export type Props = Omit<BaseCombobox.ItemIndicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
-    export type Props = BaseCombobox.Group.Props;
+    export type Props = Omit<BaseCombobox.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace GroupLabel {
-    export type Props = BaseCombobox.GroupLabel.Props;
+    export type Props = Omit<BaseCombobox.GroupLabel.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Separator {
-    export type Props = BaseCombobox.Separator.Props;
+    export type Props = Omit<BaseCombobox.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Value {
     export type Props = React.ComponentProps<typeof BaseCombobox.Value>;
   }
   export namespace Chips {
-    export type Props = BaseCombobox.Chips.Props;
+    export type Props = Omit<BaseCombobox.Chips.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Chip {
-    export type Props = BaseCombobox.Chip.Props;
+    export type Props = Omit<BaseCombobox.Chip.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ChipRemove {
-    export type Props = BaseCombobox.ChipRemove.Props;
+    export type Props = Omit<BaseCombobox.ChipRemove.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Combobox;
+
+function ArrowSvg(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        className={styles.arrowFill}
+      />
+      <path
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        className={styles.arrowInnerStroke}
+      />
+    </svg>
+  );
+}
 ```
 
-### combobox.module.scss
+### Combobox.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
     .label {
-        font-size: $devie__font-size__small;
         line-height: $devie__spacing__x3;
-        font-weight: 600;
-        color: $devie__color__text;
+
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
     }
 
     .inputGroup {
@@ -318,6 +406,7 @@ export default Combobox;
         border-radius: $devie__radius;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         box-sizing: border-box;
         min-width: 200px;
         width: 100%;
@@ -343,6 +432,7 @@ export default Combobox;
             cursor: not-allowed;
             background: #{devie-disabled-color($devie__color__background)};
             border-color: #{devie-disabled-color($devie__color__line)};
+            box-shadow: none;
             color: #{devie-disabled-color($devie__color__text)};
 
             &::placeholder {
@@ -364,6 +454,10 @@ export default Combobox;
             color: $devie__color__text;
         }
 
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
+
         &[data-disabled] {
             cursor: not-allowed;
             color: #{devie-disabled-color($devie__color__text-sub)};
@@ -383,6 +477,10 @@ export default Combobox;
         [data-disabled] & {
             color: #{devie-disabled-color($devie__color__text-sub)};
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .clear {
@@ -398,10 +496,14 @@ export default Combobox;
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
         }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
     }
 
     .popup:has(.item, .empty) {
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         box-sizing: border-box;
         background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
@@ -414,6 +516,14 @@ export default Combobox;
         transition: none;
     }
 
+    .status {
+        padding: $devie__spacing__x1;
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        text-align: center;
+    }
+
     .item,
     .popup[data-empty] .empty {
         box-sizing: border-box;
@@ -421,12 +531,12 @@ export default Combobox;
         align-items: center;
         justify-content: space-between;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
         min-width: var(--anchor-width);
         outline: 0;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         user-select: none;
         transition: none;
 
@@ -444,7 +554,6 @@ export default Combobox;
             color: $devie__color__primary;
         }
     }
-
 
     .empty {
         cursor: default;
@@ -466,6 +575,11 @@ export default Combobox;
         box-sizing: border-box;
     }
 
+    .row {
+        display: flex;
+        gap: $devie__spacing__x05;
+    }
+
     .group {
         display: flex;
         flex-direction: column;
@@ -485,41 +599,37 @@ export default Combobox;
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
     }
 
-    .value {
-        color: $devie__color__text;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
 
-        &[data-placeholder] {
-            color: $devie__color__text-sub;
-        }
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .chips {
@@ -762,7 +872,7 @@ function Example() {
 
 ### Async search with multiple selection
 
-Simulate a remote search by fetching items after a small delay and allow users to select more than one option. Use `multiple` with `value`/`onValueChange` and `onInputValueChange` to drive the async query. Type at least two characters (e.g. `ja`, `py`, `ru`).
+Simulate a remote search by fetching items after a small delay and allow users to select more than one option. Use `multiple` with `value`/`onValueChange` and `onInputValueChange` to drive the async query. Type at least two characters, such as `ja`, `py`, or `ru`.
 
 ```tsx
 import { useEffect, useRef, useState } from "react";

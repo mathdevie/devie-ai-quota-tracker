@@ -1,12 +1,12 @@
 # <Field />
 
-A component that provides labeling and validation for form controls. The Field component extends [ Base UI's Field ](https://base-ui.com/react/components/field) . It adds a label, a description, and an error message around any input: an [Input](/components/input) by default, or [Checkbox](/components/checkbox), [Radio](/components/radio), [Switch](/components/switch), [Select](/components/select), and more. Use it inside a [Form](/components/form) to validate several fields together.
+A component that provides labeling and validation for form controls. The Field component extends [Base UI's Field](https://base-ui.com/react/components/field). It adds a label, a description, and an error message around any input: an [Input](/components/input) by default, or [Checkbox](/components/checkbox), [Radio](/components/radio), [Switch](/components/switch), [Select](/components/select), and more. Use it inside a [Form](/components/form) to validate several fields together.
 
 Built on [Base UI](https://base-ui.com/react/components/field).
 
 ## Installation
 
-### field.tsx
+### Field.tsx
 
 ```tsx
 // https://devie-ui.com/components/field
@@ -17,21 +17,21 @@ import clsx from "clsx";
 import styles from "./Field.module.scss";
 import Input from "./Input";
 
-function Root({ className, ...props }: BaseField.Root.Props) {
+function Root({ className, ...props }: Field.Root.Props) {
   return <BaseField.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Label({ className, ...props }: BaseField.Label.Props) {
+function Label({ className, ...props }: Field.Label.Props) {
   return (
     <BaseField.Label className={clsx(styles.label, className)} {...props} />
   );
 }
 
-function Control(props: BaseField.Control.Props) {
+function Control(props: Field.Control.Props) {
   return <Input {...props} />;
 }
 
-function Description({ className, ...props }: BaseField.Description.Props) {
+function Description({ className, ...props }: Field.Description.Props) {
   return (
     <BaseField.Description
       className={clsx(styles.description, className)}
@@ -40,11 +40,11 @@ function Description({ className, ...props }: BaseField.Description.Props) {
   );
 }
 
-function Item({ className, ...props }: BaseField.Item.Props) {
+function Item({ className, ...props }: Field.Item.Props) {
   return <BaseField.Item className={clsx(styles.item, className)} {...props} />;
 }
 
-function ErrorField({ className, ...props }: BaseField.Error.Props) {
+function ErrorField({ className, ...props }: Field.Error.Props) {
   return (
     <BaseField.Error className={clsx(styles.error, className)} {...props} />
   );
@@ -62,23 +62,35 @@ const Field = {
 
 namespace Field {
   export namespace Root {
-    export type Props = BaseField.Root.Props;
+    export type Props = Omit<BaseField.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseField.Root.State;
   }
   export namespace Label {
-    export type Props = BaseField.Label.Props;
+    export type Props = Omit<BaseField.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Control {
-    export type Props = BaseField.Control.Props;
+    export type Props = Omit<BaseField.Control.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseField.Description.Props;
+    export type Props = Omit<BaseField.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = BaseField.Item.Props;
+    export type Props = Omit<BaseField.Item.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Error {
-    export type Props = BaseField.Error.Props;
+    export type Props = Omit<BaseField.Error.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Validity {
     export type Props = BaseField.Validity.Props;
@@ -89,7 +101,7 @@ namespace Field {
 export default Field;
 ```
 
-### field.module.scss
+### Field.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -111,7 +123,7 @@ export default Field;
 
     .description {
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
     }
 
@@ -127,7 +139,7 @@ export default Field;
 
     .error {
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         display: flex;
         align-items: center;
         gap: $devie__spacing__x05;
@@ -167,7 +179,7 @@ Compose `Field.Label`, `Field.Control`, `Field.Description`, and `Field.Error` i
 
 ### Native HTML validation
 
-Set `required`, `minLength`, `pattern`, or `type` on the control. Use `Field.Error` with the `match` prop to show a message for a [ ValidityState ](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) key.
+Set `required`, `minLength`, `pattern`, or `type` on the control. Use `Field.Error` with the `match` prop to show a message for a [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) key.
 
 ```tsx
 <form onSubmit={(event) => event.preventDefault()}>
@@ -203,7 +215,66 @@ Set `required`, `minLength`, `pattern`, or `type` on the control. Use `Field.Err
 
 ### Custom validation
 
-Pass a `validate` function to `Field.Root`. Return an error string, an array of strings, or `null`. Set `validationMode` to `onBlur` or `onChange` to validate before submit; see the [ Base UI reference ](https://base-ui.com/react/components/field#root) for the details.
+Pass a `validate` function to `Field.Root`. Return an error string, an array of strings, or `null`. Set `validationMode` to `onBlur` or `onChange` to validate before submit; see the [Base UI reference](https://base-ui.com/react/components/field#root) for the details.
+
+```tsx
+function validateUsername(value: unknown) {
+  const username = String(value).trim();
+  if (!username) return null;
+  if (username.length < 3) return "Must be at least 3 characters";
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) return "Only letters, numbers, and underscores";
+  return null;
+}
+
+<Field.Root
+  validate={validateUsername}
+  validationMode="onChange"
+  validationDebounceTime={200}
+>
+  <Field.Label>Username</Field.Label>
+  <Field.Control placeholder="min 3 chars, alphanumeric" />
+  <Field.Error match="customError">
+    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
+  </Field.Error>
+</Field.Root>
+```
+
+```tsx
+function validateEmail(value: unknown) {
+  const email = String(value).trim();
+  if (!email) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address";
+  return null;
+}
+
+<Field.Root validate={validateEmail} validationMode="onBlur">
+  <Field.Label>Email</Field.Label>
+  <Field.Control placeholder="you@example.com" />
+  <Field.Error match="customError">
+    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
+  </Field.Error>
+</Field.Root>
+```
+
+```tsx
+function validateAddress(value: unknown) {
+  const address = String(value).trim();
+  if (!address) return "Address is required";
+  if (address.length < 10) return "Address must be at least 10 characters";
+  return null;
+}
+
+<Form onFormSubmit={() => {}}>
+  <Field.Root validate={validateAddress} validationMode="onSubmit">
+    <Field.Label>Address</Field.Label>
+    <Field.Control placeholder="min 10 characters" />
+    <Field.Error match="customError">
+      <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
+    </Field.Error>
+  </Field.Root>
+  <Button type="submit">Submit</Button>
+</Form>
+```
 
 ### Non-text inputs
 
@@ -356,7 +427,7 @@ const TIMEZONES = [
 
 <Field.Root name="notifications">
   <Field.Label>Notifications (CheckboxGroup)</Field.Label>
-  <CheckboxGroup.Root defaultValue={["email"]}>
+  <CheckboxGroup defaultValue={["email"]}>
     <label className={styles.checkboxLabel}>
       <Checkbox.Root name="notifications" value="email">
         <Checkbox.Indicator />
@@ -375,7 +446,7 @@ const TIMEZONES = [
       </Checkbox.Root>
       Push
     </label>
-  </CheckboxGroup.Root>
+  </CheckboxGroup>
   <Field.Description>Select how you want to be notified.</Field.Description>
 </Field.Root>
 
@@ -403,73 +474,6 @@ const TIMEZONES = [
 ### Server-side validation
 
 Use the [Form](/components/form) component to validate several fields together and to display server errors with its `errors` prop.
-
-### Additional Examples
-
-#### Validation Onblur
-
-```tsx
-function validateEmail(value: unknown) {
-  const email = String(value).trim();
-  if (!email) return null;
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address";
-  return null;
-}
-
-<Field.Root validate={validateEmail} validationMode="onBlur">
-  <Field.Label>Email</Field.Label>
-  <Field.Control placeholder="you@example.com" />
-  <Field.Error match="customError">
-    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
-  </Field.Error>
-</Field.Root>
-```
-
-#### Validation Onchange
-
-```tsx
-function validateUsername(value: unknown) {
-  const username = String(value).trim();
-  if (!username) return null;
-  if (username.length < 3) return "Must be at least 3 characters";
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) return "Only letters, numbers, and underscores";
-  return null;
-}
-
-<Field.Root
-  validate={validateUsername}
-  validationMode="onChange"
-  validationDebounceTime={200}
->
-  <Field.Label>Username</Field.Label>
-  <Field.Control placeholder="min 3 chars, alphanumeric" />
-  <Field.Error match="customError">
-    <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
-  </Field.Error>
-</Field.Root>
-```
-
-#### Validation Onsubmit
-
-```tsx
-function validateAddress(value: unknown) {
-  const address = String(value).trim();
-  if (!address) return "Address is required";
-  if (address.length < 10) return "Address must be at least 10 characters";
-  return null;
-}
-
-<Form onFormSubmit={() => {}}>
-  <Field.Root validate={validateAddress} validationMode="onSubmit">
-    <Field.Label>Address</Field.Label>
-    <Field.Control placeholder="min 10 characters" />
-    <Field.Error match="customError">
-      <Field.Validity>{(v) => v.errors[0]}</Field.Validity>
-    </Field.Error>
-  </Field.Root>
-  <Button type="submit">Submit</Button>
-</Form>
-```
 
 ---
 

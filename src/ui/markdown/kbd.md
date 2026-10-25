@@ -1,10 +1,10 @@
 # <Kbd />
 
-A component that shows keyboard keys and shortcuts. A single key uses `Kbd.Root`; chord shortcuts are wrapped in `Kbd.Group` so multiple keys read as one unit (nested `<kbd>` is valid HTML for key combinations). Use `Kbd` for standalone keyboard hints in docs, toolbars, and footers. The default `badge` variant adds a subtle frame; `naked` is text-only. This component is not part of Base UI.
+A component that shows keyboard keys and shortcuts. This is a custom component with no Base UI primitive. Devie adds the `Kbd.Root` and [Kbd.Group](#combinations) subcomponents and a [variant](#variants) prop on `Kbd.Root`.
 
 ## Installation
 
-### kbd.tsx
+### Kbd.tsx
 
 ```tsx
 // https://devie-ui.com/components/kbd
@@ -39,22 +39,19 @@ namespace Kbd {
   export namespace Root {
     export type Variant = "badge" | "naked";
 
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
+    export interface Props extends React.ComponentProps<"kbd"> {
       variant?: Variant;
     }
   }
   export namespace Group {
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"kbd">;
   }
 }
 
 export default Kbd;
 ```
 
-### kbd.module.scss
+### Kbd.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -66,10 +63,10 @@ export default Kbd;
         justify-content: center;
         box-sizing: border-box;
         font-family: $devie__font-family;
-        font-size: 13px;
+        font-size: $devie__font-size__small;
         font-weight: 500;
-        line-height: 14px;
-        height: 16px;
+        line-height: $devie__spacing__x2;
+        height: $devie__spacing__x2;
         color: $devie__color__text-sub;
     }
 
@@ -120,7 +117,7 @@ One glyph or label per `Kbd.Root`, including symbols like ⌘ and word keys such
 
 ### Variants
 
-`variant="badge"` (default) adds a subtle frame suited to docs and toolbars. `variant="naked"` is text-only, which works better in dense lists and menus.
+Set `variant` on `Kbd.Root` to `badge` or `naked`. The default is `badge`; use `naked` for text-only keys in dense lists and menus.
 
 ```tsx
 <Kbd.Root>⌘K</Kbd.Root>

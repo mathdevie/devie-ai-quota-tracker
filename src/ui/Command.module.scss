@@ -6,6 +6,16 @@
         opacity: 0.7;
         position: fixed;
         inset: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .dialogPopup {
@@ -13,8 +23,9 @@
         position: fixed;
         left: 50%;
         top: 50%;
+        box-sizing: border-box;
         width: 90vw;
-        min-width: 384px;
+        min-width: min(384px, 90vw);
         max-width: 640px;
         max-height: 85vh;
         transform: translate(-50%, -55%);
@@ -25,6 +36,19 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        transition:
+            opacity 150ms ease-out,
+            transform 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: translate(-50%, -55%) scale(0.95);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .inputWrapper {
@@ -95,7 +119,7 @@
         padding: $devie__spacing__x1 $devie__spacing__x2;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         outline: none;
         user-select: none;
         transition: none;
@@ -148,7 +172,8 @@
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
-        font-weight: 500;
+        font-weight: 400;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         padding: 0;
     }

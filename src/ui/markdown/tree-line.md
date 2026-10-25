@@ -1,10 +1,10 @@
 # <TreeLine />
 
-A component that draws connector lines for nested lists such as file trees. This is a custom Devie component (not based on Base UI).
+A component that draws connector lines for nested lists such as file trees. This is a custom component with no Base UI primitive. Devie adds the [variant](#variants) prop.
 
 ## Installation
 
-### tree-line.tsx
+### TreeLine.tsx
 
 ```tsx
 // https://devie-ui.com/components/tree-line
@@ -13,17 +13,17 @@ import clsx from "clsx";
 import type React from "react";
 import styles from "./TreeLine.module.scss";
 
-type Variant =
+type TreeLineVariant =
   | "horizontal"
   | "vertical"
-  | "cornerTopLeft"
-  | "cornerTopRight"
-  | "cornerBottomLeft"
-  | "cornerBottomRight"
-  | "branchRight"
-  | "branchLeft"
-  | "branchDown"
-  | "branchUp";
+  | "corner-top-left"
+  | "corner-top-right"
+  | "corner-bottom-left"
+  | "corner-bottom-right"
+  | "branch-right"
+  | "branch-left"
+  | "branch-down"
+  | "branch-up";
 
 function TreeLine({ variant, className, ...props }: TreeLine.Props) {
   return (
@@ -32,14 +32,14 @@ function TreeLine({ variant, className, ...props }: TreeLine.Props) {
         styles.treeLine,
         variant === "horizontal" && styles.horizontal,
         variant === "vertical" && styles.vertical,
-        variant === "cornerTopLeft" && styles.cornerTopLeft,
-        variant === "cornerTopRight" && styles.cornerTopRight,
-        variant === "cornerBottomLeft" && styles.cornerBottomLeft,
-        variant === "cornerBottomRight" && styles.cornerBottomRight,
-        variant === "branchRight" && styles.branchRight,
-        variant === "branchLeft" && styles.branchLeft,
-        variant === "branchDown" && styles.branchDown,
-        variant === "branchUp" && styles.branchUp,
+        variant === "corner-top-left" && styles.cornerTopLeft,
+        variant === "corner-top-right" && styles.cornerTopRight,
+        variant === "corner-bottom-left" && styles.cornerBottomLeft,
+        variant === "corner-bottom-right" && styles.cornerBottomRight,
+        variant === "branch-right" && styles.branchRight,
+        variant === "branch-left" && styles.branchLeft,
+        variant === "branch-down" && styles.branchDown,
+        variant === "branch-up" && styles.branchUp,
         className,
       )}
       {...props}
@@ -48,7 +48,8 @@ function TreeLine({ variant, className, ...props }: TreeLine.Props) {
 }
 
 namespace TreeLine {
-  export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+  export type Variant = TreeLineVariant;
+  export interface Props extends React.ComponentProps<"div"> {
     variant: Variant;
   }
 }
@@ -56,187 +57,176 @@ namespace TreeLine {
 export default TreeLine;
 ```
 
-### tree-line.module.scss
+### TreeLine.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-  .treeLine {
-    position: relative;
+    .treeLine {
+        position: relative;
 
-    &::after,
-    &::before {
-      content: "";
-      position: absolute;
-      background-color: $devie__color__line;
-    }
-  }
-
-  // Straight lines
-  .vertical {
-    &::before {
-      width: 1px;
-      height: 100%;
-      top: 0;
-      left: 50%;
-    }
-  }
-
-  .horizontal {
-    &::before {
-      width: 100%;
-      height: 1px;
-      top: 50%;
-      left: 0;
-    }
-  }
-
-  // Corner pieces
-  // cornerTopLeft: ┌ (goes right and down from center)
-  .cornerTopLeft {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 50%;
+        &::after,
+        &::before {
+            content: "";
+            position: absolute;
+            background-color: $devie__color__line;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 50%;
-      bottom: 0;
-      left: 50%;
-    }
-  }
-
-  // cornerTopRight: ┐ (goes left and down from center)
-  .cornerTopRight {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 0;
+    .vertical {
+        &::before {
+            width: 1px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 50%;
-      bottom: 0;
-      left: 50%;
-    }
-  }
-
-  // cornerBottomLeft: └ (comes from top, goes right)
-  .cornerBottomLeft {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 50%;
+    .horizontal {
+        &::before {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 50%;
-      top: 0;
-      left: 50%;
-    }
-  }
+    .cornerTopLeft {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 50%;
+        }
 
-  // cornerBottomRight: ┘ (comes from top, goes left)
-  .cornerBottomRight {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 0;
-    }
-
-    &::before {
-      width: 1px;
-      height: 50%;
-      top: 0;
-      left: 50%;
-    }
-  }
-
-  // Branch pieces
-  // branchRight: ├ (vertical line with branch going right)
-  .branchRight {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 50%;
+        &::before {
+            width: 1px;
+            height: 50%;
+            bottom: 0;
+            left: 50%;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 100%;
-      top: 0;
-      left: 50%;
-    }
-  }
+    .cornerTopRight {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
 
-  // branchLeft: ┤ (vertical line with branch going left)
-  .branchLeft {
-    &::after {
-      width: 50%;
-      height: 1px;
-      top: 50%;
-      left: 0;
-    }
-
-    &::before {
-      width: 1px;
-      height: 100%;
-      top: 0;
-      left: 50%;
-    }
-  }
-
-  // branchDown: ┬ (horizontal line with branch going down)
-  .branchDown {
-    &::after {
-      width: 100%;
-      height: 1px;
-      top: 50%;
-      left: 0;
+        &::before {
+            width: 1px;
+            height: 50%;
+            bottom: 0;
+            left: 50%;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 50%;
-      top: 50%;
-      left: 50%;
-    }
-  }
+    .cornerBottomLeft {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 50%;
+        }
 
-  // branchUp: ┴ (horizontal line with branch going up)
-  .branchUp {
-    &::after {
-      width: 100%;
-      height: 1px;
-      top: 50%;
-      left: 0;
+        &::before {
+            width: 1px;
+            height: 50%;
+            top: 0;
+            left: 50%;
+        }
     }
 
-    &::before {
-      width: 1px;
-      height: 50%;
-      top: 0;
-      left: 50%;
+    .cornerBottomRight {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
+
+        &::before {
+            width: 1px;
+            height: 50%;
+            top: 0;
+            left: 50%;
+        }
     }
-  }
+
+    .branchRight {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 50%;
+        }
+
+        &::before {
+            width: 1px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
+    }
+
+    .branchLeft {
+        &::after {
+            width: 50%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
+
+        &::before {
+            width: 1px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
+    }
+
+    .branchDown {
+        &::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
+
+        &::before {
+            width: 1px;
+            height: 50%;
+            top: 50%;
+            left: 50%;
+        }
+    }
+
+    .branchUp {
+        &::after {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+            left: 0;
+        }
+
+        &::before {
+            width: 1px;
+            height: 50%;
+            top: 0;
+            left: 50%;
+        }
+    }
 }
 ```
 
 ## Use Cases
 
-### All Variants
+### Variants
 
-TreeLine provides 10 variants to create any tree structure: straight lines (`horizontal`, `vertical`), corners ( `cornerTopLeft`, `cornerTopRight`, `cornerBottomLeft`, `cornerBottomRight`), and branches (`branchRight`, `branchLeft`, `branchDown`, `branchUp`).
+Set `variant` to `horizontal` or `vertical` for a straight line, or to a corner: `corner-top-left`, `corner-top-right`, `corner-bottom-left`, or `corner-bottom-right`. For a branch, use `branch-right`, `branch-left`, `branch-down`, or `branch-up`.
 
 ```tsx
 import TreeLine from "@/ui/TreeLine";
@@ -246,21 +236,21 @@ import TreeLine from "@/ui/TreeLine";
 <TreeLine variant="vertical" />
 
 // Corners
-<TreeLine variant="cornerTopLeft" />
-<TreeLine variant="cornerTopRight" />
-<TreeLine variant="cornerBottomLeft" />
-<TreeLine variant="cornerBottomRight" />
+<TreeLine variant="corner-top-left" />
+<TreeLine variant="corner-top-right" />
+<TreeLine variant="corner-bottom-left" />
+<TreeLine variant="corner-bottom-right" />
 
 // Branches
-<TreeLine variant="branchRight" />
-<TreeLine variant="branchLeft" />
-<TreeLine variant="branchDown" />
-<TreeLine variant="branchUp" />
+<TreeLine variant="branch-right" />
+<TreeLine variant="branch-left" />
+<TreeLine variant="branch-down" />
+<TreeLine variant="branch-up" />
 ```
 
-### File Tree Example
+### File tree
 
-TreeLine can be composed to create file explorer-style hierarchies. This example shows a typical project structure with nested folders and files.
+Build each row from TreeLine cells: `vertical` continues a parent line, `branch-right` connects an item, and `corner-bottom-left` ends the last one.
 
 ```tsx
 import TreeLine from "@/ui/TreeLine";
@@ -275,7 +265,7 @@ import TreeLine from "@/ui/TreeLine";
 
   {/* components folder (middle item) */}
   <div className="row">
-    <TreeLine variant="branchRight" />
+    <TreeLine variant="branch-right" />
     <TreeLine variant="horizontal" />
     <Folder size={16} />
     <span>components</span>
@@ -284,7 +274,7 @@ import TreeLine from "@/ui/TreeLine";
   {/* Nested file (middle of components) */}
   <div className="row">
     <TreeLine variant="vertical" />     {/* continues parent line */}
-    <TreeLine variant="branchRight" />  {/* branches to this item */}
+    <TreeLine variant="branch-right" />  {/* branches to this item */}
     <TreeLine variant="horizontal" />
     <FileCode size={16} />
     <span>Button.tsx</span>
@@ -293,7 +283,7 @@ import TreeLine from "@/ui/TreeLine";
   {/* Last nested file */}
   <div className="row">
     <TreeLine variant="vertical" />
-    <TreeLine variant="cornerBottomLeft" /> {/* ends the branch */}
+    <TreeLine variant="corner-bottom-left" /> {/* ends the branch */}
     <TreeLine variant="horizontal" />
     <FileCode size={16} />
     <span>Menu.tsx</span>
@@ -301,7 +291,7 @@ import TreeLine from "@/ui/TreeLine";
 
   {/* Last root item */}
   <div className="row">
-    <TreeLine variant="cornerBottomLeft" /> {/* ends root tree */}
+    <TreeLine variant="corner-bottom-left" /> {/* ends root tree */}
     <TreeLine variant="horizontal" />
     <FileCode size={16} />
     <span>index.ts</span>

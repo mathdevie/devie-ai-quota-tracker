@@ -1,5 +1,10 @@
 @use './_devie.scss' as *;
 
+// Skips the hidden spans Base UI inserts around an open popup trigger
+$item: ':not([data-base-ui-focus-guard], [aria-owns])';
+$first: ':nth-child(1 of #{$item})';
+$last: ':nth-last-child(1 of #{$item})';
+
 @layer devie {
     .group {
         display: inline-flex;
@@ -10,38 +15,49 @@
         min-width: 0;
         isolation: isolate;
 
-        // :nth-child(n) outranks the child's own radius and height rules
+        // :nth-child(n) outranks the child's own height rule
         > :nth-child(n) {
             position: relative;
             height: auto;
-            border-radius: 0;
-
-            &:focus-visible {
-                z-index: 1;
-            }
+            // Clips each child's ring and shadow at the seams so they do not stack
+            clip-path: inset(-4px 0);
         }
 
-        > :first-child {
-            border-top-left-radius: $devie__radius;
-            border-bottom-left-radius: $devie__radius;
-        }
-
-        > :last-child {
-            border-top-right-radius: $devie__radius;
-            border-bottom-right-radius: $devie__radius;
-        }
-
-        > * + * {
+        > #{$item}:not(#{$first}) {
             margin-inline-start: -1px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
 
             &::before {
                 content: "";
                 position: absolute;
                 inset-block: 0;
-                inset-inline-start: -1px;
+                inset-inline-start: 0;
                 width: 1px;
                 background: $devie__color__line;
             }
+        }
+
+        > #{$item}:not(#{$last}) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        > #{$first} {
+            clip-path: inset(-4px 0 -4px -4px);
+        }
+
+        > #{$last} {
+            clip-path: inset(-4px -4px -4px 0);
+        }
+
+        > #{$first}#{$last} {
+            clip-path: none;
+        }
+
+        > :nth-child(n):focus-visible {
+            z-index: 1;
+            clip-path: none;
         }
     }
 }

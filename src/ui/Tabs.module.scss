@@ -78,6 +78,10 @@
             box-sizing: border-box;
             border-bottom: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, width 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
 
         &[data-orientation="vertical"] {
@@ -88,6 +92,10 @@
             width: auto;
             border-right: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, height 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 
@@ -139,6 +147,10 @@
             background: $devie__color__background;
             box-shadow: 0 1px 2px rgb(9 9 11 / 8%);
             transition: translate 200ms ease-in-out, width 200ms ease-in-out, height 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 }

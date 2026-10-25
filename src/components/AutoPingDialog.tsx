@@ -42,7 +42,7 @@ export default function AutoPingDialog({
     >
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup className={styles.dialog}>
+        <Dialog.Popup data-app-dialog className={styles.dialog}>
           <form
             className={styles.form}
             onSubmit={async (event) => {
@@ -59,7 +59,7 @@ export default function AutoPingDialog({
             <Dialog.Header>
               <Dialog.Title>{t("AutoPing.Title")}</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body data-app-dialog-body>
               <div className={styles.group}>
                 <OptionRow.Row
                   checked={supported && enabled}

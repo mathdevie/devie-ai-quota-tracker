@@ -5,15 +5,14 @@
 
 import { AlertDialog as BaseAlertDialog } from "@base-ui/react/alert-dialog";
 import clsx from "clsx";
-import * as React from "react";
+import type React from "react";
+import { createContext, useContext } from "react";
 import styles from "./AlertDialog.module.scss";
-import type { DialogSize } from "./Dialog";
 
-export type { DialogSize };
+type DialogSize = "sm" | "md" | "lg" | "xl";
 
-const AlertDialogInteractionContext = React.createContext<boolean | null>(null);
-
-const AlertDialogSizeContext = React.createContext<DialogSize>("md");
+const AlertDialogInteractionContext = createContext<boolean | null>(null);
+const AlertDialogSizeContext = createContext<DialogSize>("md");
 
 function Root({
   disableInteractions,
@@ -30,30 +29,16 @@ function Root({
     </AlertDialogSizeContext.Provider>
   );
 }
+
 const createHandle = BaseAlertDialog.createHandle;
 
-function Trigger({ className, ...props }: BaseAlertDialog.Trigger.Props) {
-  return (
-    <BaseAlertDialog.Trigger
-      className={clsx(styles.trigger, className)}
-      {...props}
-    />
-  );
-}
+const Trigger = BaseAlertDialog.Trigger;
 
 const Portal = BaseAlertDialog.Portal;
 
-function Close({ className, render, ...props }: BaseAlertDialog.Close.Props) {
-  return (
-    <BaseAlertDialog.Close
-      className={clsx(!render && styles.close, className)}
-      render={render}
-      {...props}
-    />
-  );
-}
+const Close = BaseAlertDialog.Close;
 
-function Backdrop({ className, ...props }: BaseAlertDialog.Backdrop.Props) {
+function Backdrop({ className, ...props }: AlertDialog.Backdrop.Props) {
   return (
     <BaseAlertDialog.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -67,10 +52,8 @@ function Popup({
   disableInteractions,
   ...props
 }: AlertDialog.Popup.Props) {
-  const size = React.useContext(AlertDialogSizeContext);
-  const contextDisableInteractions = React.useContext(
-    AlertDialogInteractionContext,
-  );
+  const size = useContext(AlertDialogSizeContext);
+  const contextDisableInteractions = useContext(AlertDialogInteractionContext);
   const resolvedDisableInteractions =
     disableInteractions ?? contextDisableInteractions ?? false;
 
@@ -85,14 +68,13 @@ function Popup({
         resolvedDisableInteractions && styles.popupNonInteractive,
         className,
       )}
-      aria-busy={resolvedDisableInteractions ? true : undefined}
       inert={resolvedDisableInteractions ? true : undefined}
       {...props}
     />
   );
 }
 
-function Title({ className, ...props }: BaseAlertDialog.Title.Props) {
+function Title({ className, ...props }: AlertDialog.Title.Props) {
   return (
     <BaseAlertDialog.Title
       className={clsx(styles.title, className)}
@@ -103,10 +85,7 @@ function Title({ className, ...props }: BaseAlertDialog.Title.Props) {
   );
 }
 
-function Description({
-  className,
-  ...props
-}: BaseAlertDialog.Description.Props) {
+function Description({ className, ...props }: AlertDialog.Description.Props) {
   return (
     <BaseAlertDialog.Description
       className={clsx(styles.description, className)}
@@ -143,6 +122,7 @@ const AlertDialog = {
 };
 
 namespace AlertDialog {
+  export type Size = DialogSize;
   export namespace Root {
     export interface Props extends BaseAlertDialog.Root.Props {
       disableInteractions?: boolean;
@@ -159,33 +139,35 @@ namespace AlertDialog {
     export type Props = BaseAlertDialog.Close.Props;
   }
   export namespace Backdrop {
-    export type Props = BaseAlertDialog.Backdrop.Props;
+    export type Props = Omit<BaseAlertDialog.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export interface Props extends BaseAlertDialog.Popup.Props {
+    export interface Props
+      extends Omit<BaseAlertDialog.Popup.Props, "className"> {
+      className?: string;
       disableInteractions?: boolean;
     }
   }
   export namespace Title {
-    export type Props = BaseAlertDialog.Title.Props;
+    export type Props = Omit<BaseAlertDialog.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseAlertDialog.Description.Props;
+    export type Props = Omit<BaseAlertDialog.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Header {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Body {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 

@@ -1,6 +1,6 @@
 # Design for desktop
 
-The flexibility of Devie UI's theming approach makes it easy to design apps with a desktop native feel.
+Override a few Devie UI tokens to give an app a desktop native feel.
 
 ```scss
 @layer devie {

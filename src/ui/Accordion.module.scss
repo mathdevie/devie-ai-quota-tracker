@@ -87,6 +87,10 @@
         .trigger[data-disabled] & {
             color: #{devie-disabled-color($devie__color__text)};
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .panel {
@@ -98,6 +102,10 @@
         &[data-starting-style],
         &[data-ending-style] {
             height: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 

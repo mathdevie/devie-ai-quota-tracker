@@ -1,12 +1,12 @@
 # <Command />
 
-A command palette that filters actions as the user types. The Command component is a command palette built by composing [Dialog](/components/dialog) (modal overlay) and [ Base UI's Autocomplete ](https://base-ui.com/react/components/autocomplete) (inline filtering and keyboard navigation). The autocomplete is rendered inline inside the dialog, with no portal or positioner needed. Use `Command.Shortcut` to show keyboard hints alongside items. This component is not a direct Base UI primitive.
+A command palette that filters actions as the user types. It composes [Dialog](/components/dialog) and [Base UI's Autocomplete](https://base-ui.com/react/components/autocomplete), rendered inline inside the dialog. It adds the `Command.Shortcut`, `Command.Toolbar`, and `Command.Footer` subcomponents, an `endAddon` prop on `Command.Input`, and a default `aria-label` on `Command.DialogPopup`.
 
 Built on [Base UI](https://base-ui.com/react/components/autocomplete#command-palette).
 
 ## Installation
 
-### command.tsx
+### Command.tsx
 
 ```tsx
 // https://devie-ui.com/components/command
@@ -40,26 +40,17 @@ function Root(props: Command.Root.Props) {
 
 const Dialog = BaseDialog.Root;
 
-function DialogTrigger({ className, ...props }: BaseDialog.Trigger.Props) {
-  return (
-    <BaseDialog.Trigger className={className} {...props} />
-  );
-}
+const DialogTrigger = BaseDialog.Trigger;
 
-function DialogPopup({
-  className,
-  children,
-  ...props
-}: Command.DialogPopup.Props) {
+function DialogPopup({ className, ...props }: Command.DialogPopup.Props) {
   return (
     <BaseDialog.Portal>
       <BaseDialog.Backdrop className={styles.backdrop} />
       <BaseDialog.Popup
+        aria-label="Command palette"
         className={clsx(styles.dialogPopup, className)}
         {...props}
-      >
-        {children}
-      </BaseDialog.Popup>
+      />
     </BaseDialog.Portal>
   );
 }
@@ -77,7 +68,7 @@ function Input({ className, endAddon, ...props }: Command.Input.Props) {
   );
 }
 
-function List({ className, ...props }: Autocomplete.List.Props) {
+function List({ className, ...props }: Command.List.Props) {
   return (
     <div className={styles.listScroller}>
       <Autocomplete.List className={clsx(styles.list, className)} {...props} />
@@ -85,25 +76,25 @@ function List({ className, ...props }: Autocomplete.List.Props) {
   );
 }
 
-function Item({ className, ...props }: Autocomplete.Item.Props) {
+function Item({ className, ...props }: Command.Item.Props) {
   return (
     <Autocomplete.Item className={clsx(styles.item, className)} {...props} />
   );
 }
 
-function Empty({ className, ...props }: Autocomplete.Empty.Props) {
+function Empty({ className, ...props }: Command.Empty.Props) {
   return (
     <Autocomplete.Empty className={clsx(styles.empty, className)} {...props} />
   );
 }
 
-function Group({ className, ...props }: Autocomplete.Group.Props) {
+function Group({ className, ...props }: Command.Group.Props) {
   return (
     <Autocomplete.Group className={clsx(styles.group, className)} {...props} />
   );
 }
 
-function GroupLabel({ className, ...props }: Autocomplete.GroupLabel.Props) {
+function GroupLabel({ className, ...props }: Command.GroupLabel.Props) {
   return (
     <Autocomplete.GroupLabel
       className={clsx(styles.groupLabel, className)}
@@ -112,7 +103,7 @@ function GroupLabel({ className, ...props }: Autocomplete.GroupLabel.Props) {
   );
 }
 
-function Separator({ className, ...props }: Autocomplete.Separator.Props) {
+function Separator({ className, ...props }: Command.Separator.Props) {
   return (
     <Autocomplete.Separator
       className={clsx(styles.separator, className)}
@@ -169,64 +160,68 @@ namespace Command {
     export type Props = BaseDialog.Trigger.Props;
   }
   export namespace DialogPopup {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+    export type Props = Omit<BaseDialog.Popup.Props, "className"> & {
       className?: string;
-      children?: React.ReactNode;
-    }
+    };
   }
   export namespace Input {
-    export interface Props extends Autocomplete.Input.Props {
+    export interface Props extends Omit<Autocomplete.Input.Props, "className"> {
+      className?: string;
       endAddon?: React.ReactNode;
     }
   }
   export namespace List {
-    export type Props = Autocomplete.List.Props;
+    export type Props = Omit<Autocomplete.List.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = Autocomplete.Item.Props;
+    export type Props = Omit<Autocomplete.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = Autocomplete.Item.State;
   }
   export namespace Empty {
-    export type Props = Autocomplete.Empty.Props;
+    export type Props = Omit<Autocomplete.Empty.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
-    export type Props = Autocomplete.Group.Props;
+    export type Props = Omit<Autocomplete.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace GroupLabel {
-    export type Props = Autocomplete.GroupLabel.Props;
+    export type Props = Omit<Autocomplete.GroupLabel.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Separator {
-    export type Props = Autocomplete.Separator.Props;
+    export type Props = Omit<Autocomplete.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Shortcut {
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"kbd">;
   }
   export namespace Toolbar {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Panel {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Collection {
-    export type Props = React.ComponentProps<typeof Autocomplete.Collection>;
+    export type Props = Autocomplete.Collection.Props;
   }
 }
 
 export default Command;
 ```
 
-### command.module.scss
+### Command.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -237,6 +232,16 @@ export default Command;
         opacity: 0.7;
         position: fixed;
         inset: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .dialogPopup {
@@ -244,8 +249,9 @@ export default Command;
         position: fixed;
         left: 50%;
         top: 50%;
+        box-sizing: border-box;
         width: 90vw;
-        min-width: 384px;
+        min-width: min(384px, 90vw);
         max-width: 640px;
         max-height: 85vh;
         transform: translate(-50%, -55%);
@@ -256,6 +262,19 @@ export default Command;
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        transition:
+            opacity 150ms ease-out,
+            transform 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: translate(-50%, -55%) scale(0.95);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .inputWrapper {
@@ -326,7 +345,7 @@ export default Command;
         padding: $devie__spacing__x1 $devie__spacing__x2;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         outline: none;
         user-select: none;
         transition: none;
@@ -379,7 +398,8 @@ export default Command;
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
-        font-weight: 500;
+        font-weight: 400;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         padding: 0;
     }
@@ -547,7 +567,7 @@ const items = [
 
 ### With toolbar filters
 
-Use `Command.Toolbar` between the input and list to add filter chips, toggles, or any controls. It renders a styled `<div>` with a bottom border, so you can compose whatever filter UI you need inside it.
+Use `Command.Toolbar` between the input and list to add filter chips, toggles, or other controls.
 
 ```tsx
 const [filter, setFilter] = useState<string>("all");
@@ -616,7 +636,7 @@ const filterLabels = { all: "All", docs: "Docs", pages: "Pages" };
 
 ### With keyboard trigger and footer
 
-Wire a global keyboard shortcut (e.g. `⌘J`) to toggle the command palette. Use `Command.Footer` to display navigation hints with `Kbd` keys.
+Wire a global keyboard shortcut such as `⌘J` to toggle the command palette. Pass `endAddon` to `Command.Input` and use `Command.Footer` to show hints with `Kbd` keys.
 
 ```tsx
 const [open, setOpen] = useState(false);
@@ -648,7 +668,10 @@ useEffect(() => {
   </Command.DialogTrigger>
   <Command.DialogPopup>
     <Command.Root items={items}>
-      <Command.Input placeholder="Type a command..." />
+      <Command.Input
+        placeholder="Type a command..."
+        endAddon={<Kbd.Root>Esc</Kbd.Root>}
+      />
       <Command.List>
         {(item) => (
           <Command.Item key={item} value={item}>
@@ -678,7 +701,7 @@ useEffect(() => {
 
 ### Standalone (without dialog)
 
-Use `Command.Panel` to render the command palette inline without a dialog wrapper. Useful for building search experiences embedded directly in a page.
+Use `Command.Panel` to render the command palette inline without a dialog, for a search embedded in a page.
 
 ```tsx
 const items = ["Calendar", "Search Emoji", "Calculator", "Launch Pad", "Manage Windows"];

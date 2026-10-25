@@ -1,7 +1,7 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection, ResetCredit } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/date";
@@ -31,6 +31,7 @@ export default function ResetCredits({
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<ResetCredit>();
   const [busy, setBusy] = useState(false);
+  const submitting = useRef(false);
   const overlay = open || pending !== undefined;
   useEffect(() => {
     onOverlayChange?.(overlay);
@@ -40,7 +41,8 @@ export default function ResetCredits({
   if (credits.length === 0) return null;
 
   async function confirm() {
-    if (!pending) return;
+    if (!pending || submitting.current) return;
+    submitting.current = true;
     setBusy(true);
     try {
       if (await onUseReset(connection.id, pending.id)) {
@@ -48,6 +50,7 @@ export default function ResetCredits({
         setOpen(false);
       }
     } finally {
+      submitting.current = false;
       setBusy(false);
     }
   }
@@ -56,7 +59,7 @@ export default function ResetCredits({
     <>
       <Popover.Root onOpenChange={setOpen} open={open}>
         <Popover.Trigger
-          render={<Badge as="button" variant="primary" />}
+          render={<Badge render={<button type="button" />} variant="primary" />}
           className={styles.trigger}
           aria-label={t("Quota.ResetCredits.Available", {
             count: credits.length,
@@ -119,13 +122,13 @@ export default function ResetCredits({
       >
         <AlertDialog.Portal>
           <AlertDialog.Backdrop />
-          <AlertDialog.Popup>
+          <AlertDialog.Popup data-app-dialog>
             <AlertDialog.Header>
               <AlertDialog.Title>
                 {t("Quota.ResetCredits.ConfirmTitle")}
               </AlertDialog.Title>
             </AlertDialog.Header>
-            <AlertDialog.Body>
+            <AlertDialog.Body data-app-dialog-body>
               <AlertDialog.Description>
                 {t("Quota.ResetCredits.ConfirmDescription", {
                   account: accountLabel(connection),

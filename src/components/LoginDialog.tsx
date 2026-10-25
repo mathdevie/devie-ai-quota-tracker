@@ -130,7 +130,7 @@ export default function LoginDialog({
     <Dialog.Root onOpenChange={onOpenChange} open={open} size="sm">
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup>
+        <Dialog.Popup data-app-dialog>
           <Dialog.Header>
             <Dialog.Title>
               <span className={styles.title}>
@@ -141,7 +141,7 @@ export default function LoginDialog({
               </span>
             </Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>
+          <Dialog.Body data-app-dialog-body>
             <div className={styles.body}>
               {phase === "starting" && (
                 <p className={styles.status}>

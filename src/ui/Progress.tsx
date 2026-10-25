@@ -5,23 +5,19 @@ import { Progress as BaseProgress } from "@base-ui/react/progress";
 import clsx from "clsx";
 import styles from "./Progress.module.scss";
 
-function Root({ className, children, ...props }: BaseProgress.Root.Props) {
+function Root({ className, ...props }: Progress.Root.Props) {
   return (
-    <BaseProgress.Root className={clsx(styles.root, className)} {...props}>
-      {children}
-    </BaseProgress.Root>
+    <BaseProgress.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Track({ className, children, ...props }: BaseProgress.Track.Props) {
+function Track({ className, ...props }: Progress.Track.Props) {
   return (
-    <BaseProgress.Track className={clsx(styles.track, className)} {...props}>
-      {children}
-    </BaseProgress.Track>
+    <BaseProgress.Track className={clsx(styles.track, className)} {...props} />
   );
 }
 
-function Indicator({ className, ...props }: BaseProgress.Indicator.Props) {
+function Indicator({ className, ...props }: Progress.Indicator.Props) {
   return (
     <BaseProgress.Indicator
       className={clsx(styles.indicator, className)}
@@ -30,19 +26,15 @@ function Indicator({ className, ...props }: BaseProgress.Indicator.Props) {
   );
 }
 
-function Label({ className, children, ...props }: BaseProgress.Label.Props) {
+function Label({ className, ...props }: Progress.Label.Props) {
   return (
-    <BaseProgress.Label className={clsx(styles.label, className)} {...props}>
-      {children}
-    </BaseProgress.Label>
+    <BaseProgress.Label className={clsx(styles.label, className)} {...props} />
   );
 }
 
-function Value({ className, children, ...props }: BaseProgress.Value.Props) {
+function Value({ className, ...props }: Progress.Value.Props) {
   return (
-    <BaseProgress.Value className={clsx(styles.value, className)} {...props}>
-      {children}
-    </BaseProgress.Value>
+    <BaseProgress.Value className={clsx(styles.value, className)} {...props} />
   );
 }
 
@@ -56,20 +48,30 @@ const Progress = {
 
 namespace Progress {
   export namespace Root {
-    export type Props = BaseProgress.Root.Props;
+    export type Props = Omit<BaseProgress.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseProgress.Root.State;
   }
   export namespace Track {
-    export type Props = BaseProgress.Track.Props;
+    export type Props = Omit<BaseProgress.Track.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Indicator {
-    export type Props = BaseProgress.Indicator.Props;
+    export type Props = Omit<BaseProgress.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Label {
-    export type Props = BaseProgress.Label.Props;
+    export type Props = Omit<BaseProgress.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Value {
-    export type Props = BaseProgress.Value.Props;
+    export type Props = Omit<BaseProgress.Value.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

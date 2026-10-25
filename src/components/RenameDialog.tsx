@@ -40,7 +40,7 @@ export default function RenameDialog({
     >
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup>
+        <Dialog.Popup data-app-dialog>
           <form
             className={styles.form}
             onSubmit={(event) => {
@@ -57,7 +57,7 @@ export default function RenameDialog({
                 </Dialog.Description>
               )}
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body data-app-dialog-body>
               <Field.Root>
                 <Field.Label>{t("Rename.Label")}</Field.Label>
                 <Field.Control

@@ -6,21 +6,21 @@ import clsx from "clsx";
 import styles from "./Field.module.scss";
 import Input from "./Input";
 
-function Root({ className, ...props }: BaseField.Root.Props) {
+function Root({ className, ...props }: Field.Root.Props) {
   return <BaseField.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Label({ className, ...props }: BaseField.Label.Props) {
+function Label({ className, ...props }: Field.Label.Props) {
   return (
     <BaseField.Label className={clsx(styles.label, className)} {...props} />
   );
 }
 
-function Control(props: BaseField.Control.Props) {
+function Control(props: Field.Control.Props) {
   return <Input {...props} />;
 }
 
-function Description({ className, ...props }: BaseField.Description.Props) {
+function Description({ className, ...props }: Field.Description.Props) {
   return (
     <BaseField.Description
       className={clsx(styles.description, className)}
@@ -29,11 +29,11 @@ function Description({ className, ...props }: BaseField.Description.Props) {
   );
 }
 
-function Item({ className, ...props }: BaseField.Item.Props) {
+function Item({ className, ...props }: Field.Item.Props) {
   return <BaseField.Item className={clsx(styles.item, className)} {...props} />;
 }
 
-function ErrorField({ className, ...props }: BaseField.Error.Props) {
+function ErrorField({ className, ...props }: Field.Error.Props) {
   return (
     <BaseField.Error className={clsx(styles.error, className)} {...props} />
   );
@@ -51,23 +51,35 @@ const Field = {
 
 namespace Field {
   export namespace Root {
-    export type Props = BaseField.Root.Props;
+    export type Props = Omit<BaseField.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseField.Root.State;
   }
   export namespace Label {
-    export type Props = BaseField.Label.Props;
+    export type Props = Omit<BaseField.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Control {
-    export type Props = BaseField.Control.Props;
+    export type Props = Omit<BaseField.Control.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseField.Description.Props;
+    export type Props = Omit<BaseField.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = BaseField.Item.Props;
+    export type Props = Omit<BaseField.Item.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Error {
-    export type Props = BaseField.Error.Props;
+    export type Props = Omit<BaseField.Error.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Validity {
     export type Props = BaseField.Validity.Props;

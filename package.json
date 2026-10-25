@@ -32,7 +32,7 @@
     "i18n:verify": "run-s i18n:lint i18n:check i18n:check:undefined i18n:check:unused"
   },
   "dependencies": {
-    "@base-ui/react": "^1.8.0",
+    "@base-ui/react": "^1.9.0",
     "@tauri-apps/api": "2.11.1",
     "@tauri-apps/plugin-notification": "^2.3.3",
     "@tauri-apps/plugin-positioner": "^2.3.1",

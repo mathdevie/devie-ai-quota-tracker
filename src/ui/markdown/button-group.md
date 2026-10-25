@@ -4,13 +4,13 @@ A component that joins several buttons into one control. This is a custom compon
 
 ## Installation
 
-### button-group.tsx
+### ButtonGroup.tsx
 
 ```tsx
 // https://devie-ui.com/components/button-group
 
 import clsx from "clsx";
-import type { ComponentProps } from "react";
+import type React from "react";
 import styles from "./ButtonGroup.module.scss";
 
 function ButtonGroup({ className, ...props }: ButtonGroup.Props) {
@@ -18,18 +18,21 @@ function ButtonGroup({ className, ...props }: ButtonGroup.Props) {
 }
 
 namespace ButtonGroup {
-  export interface Props extends ComponentProps<"fieldset"> {
-    className?: string;
-  }
+  export type Props = React.ComponentProps<"fieldset">;
 }
 
 export default ButtonGroup;
 ```
 
-### button-group.module.scss
+### ButtonGroup.module.scss
 
 ```scss
 @use './_devie.scss' as *;
+
+// Skips the hidden spans Base UI inserts around an open popup trigger
+$item: ':not([data-base-ui-focus-guard], [aria-owns])';
+$first: ':nth-child(1 of #{$item})';
+$last: ':nth-last-child(1 of #{$item})';
 
 @layer devie {
     .group {
@@ -41,38 +44,49 @@ export default ButtonGroup;
         min-width: 0;
         isolation: isolate;
 
-        // :nth-child(n) outranks the child's own radius and height rules
+        // :nth-child(n) outranks the child's own height rule
         > :nth-child(n) {
             position: relative;
             height: auto;
-            border-radius: 0;
-
-            &:focus-visible {
-                z-index: 1;
-            }
+            // Clips each child's ring and shadow at the seams so they do not stack
+            clip-path: inset(-4px 0);
         }
 
-        > :first-child {
-            border-top-left-radius: $devie__radius;
-            border-bottom-left-radius: $devie__radius;
-        }
-
-        > :last-child {
-            border-top-right-radius: $devie__radius;
-            border-bottom-right-radius: $devie__radius;
-        }
-
-        > * + * {
+        > #{$item}:not(#{$first}) {
             margin-inline-start: -1px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
 
             &::before {
                 content: "";
                 position: absolute;
                 inset-block: 0;
-                inset-inline-start: -1px;
+                inset-inline-start: 0;
                 width: 1px;
                 background: $devie__color__line;
             }
+        }
+
+        > #{$item}:not(#{$last}) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        > #{$first} {
+            clip-path: inset(-4px 0 -4px -4px);
+        }
+
+        > #{$last} {
+            clip-path: inset(-4px -4px -4px 0);
+        }
+
+        > #{$first}#{$last} {
+            clip-path: none;
+        }
+
+        > :nth-child(n):focus-visible {
+            z-index: 1;
+            clip-path: none;
         }
     }
 }
@@ -156,10 +170,10 @@ Set the same `size` on every button in a group.
   <Button variant="secondary" size="md">Month</Button>
 </ButtonGroup>
 
-<ButtonGroup aria-label="Extra large">
-  <Button variant="secondary" size="xl">Day</Button>
-  <Button variant="secondary" size="xl">Week</Button>
-  <Button variant="secondary" size="xl">Month</Button>
+<ButtonGroup aria-label="Large">
+  <Button variant="secondary" size="lg">Day</Button>
+  <Button variant="secondary" size="lg">Week</Button>
+  <Button variant="secondary" size="lg">Month</Button>
 </ButtonGroup>
 ```
 

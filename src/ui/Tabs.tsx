@@ -20,13 +20,11 @@ function List({ className, variant = "underline", ...props }: Tabs.List.Props) {
   );
 }
 
-const tabStyles = styles.tab;
-
-function Tab({ className, ...props }: BaseTabs.Tab.Props) {
-  return <BaseTabs.Tab className={clsx(tabStyles, className)} {...props} />;
+function Tab({ className, ...props }: Tabs.Tab.Props) {
+  return <BaseTabs.Tab className={clsx(styles.tab, className)} {...props} />;
 }
 
-function Indicator({ className, ...props }: BaseTabs.Indicator.Props) {
+function Indicator({ className, ...props }: Tabs.Indicator.Props) {
   return (
     <BaseTabs.Indicator
       className={clsx(styles.indicator, className)}
@@ -35,7 +33,7 @@ function Indicator({ className, ...props }: BaseTabs.Indicator.Props) {
   );
 }
 
-function Panel({ className, ...props }: BaseTabs.Panel.Props) {
+function Panel({ className, ...props }: Tabs.Panel.Props) {
   return (
     <BaseTabs.Panel className={clsx(styles.panel, className)} {...props} />
   );
@@ -56,19 +54,26 @@ namespace Tabs {
   }
   export namespace List {
     export type Variant = "underline" | "segmented";
-    export interface Props extends BaseTabs.List.Props {
+    export interface Props extends Omit<BaseTabs.List.Props, "className"> {
+      className?: string;
       variant?: Variant;
     }
   }
   export namespace Tab {
-    export type Props = BaseTabs.Tab.Props;
+    export type Props = Omit<BaseTabs.Tab.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseTabs.Tab.State;
   }
   export namespace Indicator {
-    export type Props = BaseTabs.Indicator.Props;
+    export type Props = Omit<BaseTabs.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Panel {
-    export type Props = BaseTabs.Panel.Props;
+    export type Props = Omit<BaseTabs.Panel.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

@@ -1,12 +1,12 @@
 # <Toggle />
 
-A two-state button that can be on or off. The Toggle component extends [ Base UI's Toggle ](https://base-ui.com/react/components/toggle) . It's a two-state button that can be on (pressed) or off. Perfect for favorite buttons, formatting options, or any binary state.
+A two-state button that can be on or off. The Toggle component extends [Base UI's Toggle](https://base-ui.com/react/components/toggle). It adds a `variant` prop.
 
 Built on [Base UI](https://base-ui.com/react/components/toggle).
 
 ## Installation
 
-### toggle.tsx
+### Toggle.tsx
 
 ```tsx
 // https://devie-ui.com/components/toggle
@@ -15,8 +15,6 @@ Built on [Base UI](https://base-ui.com/react/components/toggle).
 import { Toggle as BaseToggle } from "@base-ui/react/toggle";
 import clsx from "clsx";
 import styles from "./Toggle.module.scss";
-
-type Variant = "secondary" | "naked";
 
 function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
   return (
@@ -33,7 +31,9 @@ function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
 }
 
 namespace Toggle {
-  export interface Props extends BaseToggle.Props {
+  export type Variant = "secondary" | "naked";
+  export interface Props extends Omit<BaseToggle.Props, "className"> {
+    className?: string;
     variant?: Variant;
   }
   export type State = BaseToggle.State;
@@ -43,7 +43,7 @@ namespace Toggle {
 export default Toggle;
 ```
 
-### toggle.module.scss
+### Toggle.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -68,6 +68,10 @@ export default Toggle;
 
         &:focus-visible {
             @include devie-focus-ring(2px);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 
@@ -138,7 +142,7 @@ export default Toggle;
 
 ### Simple toggle
 
-A basic toggle button that switches between pressed and unpressed states. The `data-pressed` attribute is applied when active.
+Give an icon-only toggle an `aria-label` that names the action.
 
 ```tsx
 <Toggle aria-label="Favorite">
@@ -158,9 +162,22 @@ const [starred, setStarred] = useState(false);
 </Toggle>
 ```
 
+### Variants
+
+Set `variant` to `secondary` or `naked`. The default is `secondary`.
+
+```tsx
+<Toggle aria-label="Bold">
+  <Bold size={16} />
+</Toggle>
+<Toggle variant="naked" aria-label="Bold">
+  <Bold size={16} />
+</Toggle>
+```
+
 ### With text
 
-Toggle buttons can include text labels alongside icons.
+Place a text label after the icon. With a visible label, the toggle needs no `aria-label`.
 
 ```tsx
 const [muted, setMuted] = useState(false);

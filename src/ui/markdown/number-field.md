@@ -1,12 +1,12 @@
 # <NumberField />
 
-A numeric input with increment and decrement buttons, and a scrub area. The NumberField component extends [ Base UI's NumberField ](https://base-ui.com/react/components/number-field) . It provides a numeric input with increment and decrement buttons, supporting min/max constraints, step values, and a scrub area for mouse drag interactions.
+A numeric input with increment and decrement buttons, and a scrub area. The NumberField component extends [Base UI's NumberField](https://base-ui.com/react/components/number-field). It provides a numeric input with increment and decrement buttons, supporting min/max constraints, step values, and a scrub area for mouse drag interactions.
 
 Built on [Base UI](https://base-ui.com/react/components/number-field).
 
 ## Installation
 
-### number-field.tsx
+### NumberField.tsx
 
 ```tsx
 // https://devie-ui.com/components/number-field
@@ -15,15 +15,16 @@ Built on [Base UI](https://base-ui.com/react/components/number-field).
 import { NumberField as BaseNumberField } from "@base-ui/react/number-field";
 import clsx from "clsx";
 import { Minus, Plus } from "lucide-react";
+import type React from "react";
 import styles from "./NumberField.module.scss";
 
-function Root({ className, ...props }: BaseNumberField.Root.Props) {
+function Root({ className, ...props }: NumberField.Root.Props) {
   return (
     <BaseNumberField.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Group({ className, ...props }: BaseNumberField.Group.Props) {
+function Group({ className, ...props }: NumberField.Group.Props) {
   return (
     <BaseNumberField.Group
       className={clsx(styles.group, className)}
@@ -32,7 +33,7 @@ function Group({ className, ...props }: BaseNumberField.Group.Props) {
   );
 }
 
-function Input({ className, ...props }: BaseNumberField.Input.Props) {
+function Input({ className, ...props }: NumberField.Input.Props) {
   return (
     <BaseNumberField.Input
       className={clsx(styles.input, className)}
@@ -45,7 +46,7 @@ function Increment({
   className,
   children,
   ...props
-}: BaseNumberField.Increment.Props) {
+}: NumberField.Increment.Props) {
   return (
     <BaseNumberField.Increment
       className={clsx(styles.increment, className)}
@@ -60,7 +61,7 @@ function Decrement({
   className,
   children,
   ...props
-}: BaseNumberField.Decrement.Props) {
+}: NumberField.Decrement.Props) {
   return (
     <BaseNumberField.Decrement
       className={clsx(styles.decrement, className)}
@@ -71,7 +72,7 @@ function Decrement({
   );
 }
 
-function ScrubArea({ className, ...props }: BaseNumberField.ScrubArea.Props) {
+function ScrubArea({ className, ...props }: NumberField.ScrubArea.Props) {
   return (
     <BaseNumberField.ScrubArea
       className={clsx(styles.scrubArea, className)}
@@ -87,7 +88,6 @@ function ScrubCursorIcon(props: React.ComponentProps<"svg">) {
       height="14"
       viewBox="0 0 24 14"
       fill="currentColor"
-      stroke="white"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       {...props}
@@ -101,7 +101,7 @@ function ScrubAreaCursor({
   className,
   children,
   ...props
-}: BaseNumberField.ScrubAreaCursor.Props) {
+}: NumberField.ScrubAreaCursor.Props) {
   return (
     <BaseNumberField.ScrubAreaCursor
       className={clsx(styles.scrubAreaCursor, className)}
@@ -124,34 +124,49 @@ const NumberField = {
 
 namespace NumberField {
   export namespace Root {
-    export type Props = BaseNumberField.Root.Props;
+    export type Props = Omit<BaseNumberField.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseNumberField.Root.State;
     export type ChangeEventDetails = BaseNumberField.Root.ChangeEventDetails;
   }
   export namespace Group {
-    export type Props = BaseNumberField.Group.Props;
+    export type Props = Omit<BaseNumberField.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Input {
-    export type Props = BaseNumberField.Input.Props;
+    export type Props = Omit<BaseNumberField.Input.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Increment {
-    export type Props = BaseNumberField.Increment.Props;
+    export type Props = Omit<BaseNumberField.Increment.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Decrement {
-    export type Props = BaseNumberField.Decrement.Props;
+    export type Props = Omit<BaseNumberField.Decrement.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ScrubArea {
-    export type Props = BaseNumberField.ScrubArea.Props;
+    export type Props = Omit<BaseNumberField.ScrubArea.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ScrubAreaCursor {
-    export type Props = BaseNumberField.ScrubAreaCursor.Props;
+    export type Props = Omit<
+      BaseNumberField.ScrubAreaCursor.Props,
+      "className"
+    > & { className?: string };
   }
 }
 
 export default NumberField;
 ```
 
-### number-field.module.scss
+### NumberField.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -165,12 +180,20 @@ export default NumberField;
 
     .group {
         display: flex;
+        border-radius: $devie__radius;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
+
+        &[data-disabled] {
+            box-shadow: none;
+        }
     }
 
     .input {
         box-sizing: border-box;
         margin: 0;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        font-family: inherit;
+        font-size: inherit;
         line-height: $devie__spacing__x3;
         border-radius: 0;
         border: 1px solid $devie__color__line;
@@ -179,7 +202,6 @@ export default NumberField;
         text-align: center;
         font-variant-numeric: tabular-nums;
         width: 6rem;
-
 
         &:focus-visible {
             z-index: 1;
@@ -258,6 +280,10 @@ export default NumberField;
 
     .scrubAreaCursor {
         filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+
+        > svg {
+            stroke: $devie__color__background;
+        }
     }
 }
 ```

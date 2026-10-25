@@ -1,31 +1,33 @@
 # Get values in JSX
 
-Devie UI themes are powered by CSS variables. Most of the time you should use those tokens directly in CSS. But sometimes you need the actual value in JavaScript. Here's how you can do it.
+Devie UI themes are CSS variables. Use the tokens in CSS whenever possible, and read them in JavaScript only when you need the actual value.
 
 ## Simple Version
 
-You can read a CSS variable within React with `getComputedStyle` inside an effect:
+Read a CSS variable with `getComputedStyle` at the moment you need it, for example in an event handler:
 
 **Using getComputedStyle**
 
 ```tsx
-useEffect(() => {
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue("--devie__color__primary")
+function readToken(name: string): string {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
     .trim();
+}
 
-  setPrimary(value || null);
-}, []);
+function handleExport() {
+  const primary = readToken("--devie__color__primary");
+  exportChart({ color: primary });
 }
 ```
 
 ## useThemeColor Hook
 
-If you need these values in multiple places (or you need them to update when the user switches themes), it's worth extracting a hook that reads the tokens and subscribes to theme changes.
+To render the values and update them when the user switches themes, use a hook that reads the tokens and subscribes to theme changes.
 
 **hooks/useThemeColor.ts**
 
-```tsx
+```ts
 import { useSyncExternalStore } from "react";
 
 export interface ThemeColors {
@@ -33,7 +35,7 @@ export interface ThemeColors {
   textSub: string | null;
   line: string | null;
   background: string | null;
-  backgroundSub: string | null;
+  backgroundSunken: string | null;
   primary: string | null;
   primaryLabel: string | null;
   danger: string | null;
@@ -58,7 +60,7 @@ const CSS_VARIABLES: Record<keyof ThemeColors, string> = {
   textSub: "--devie__color__text-sub",
   line: "--devie__color__line",
   background: "--devie__color__background",
-  backgroundSub: "--devie__color__background-sunken",
+  backgroundSunken: "--devie__color__background-sunken",
   primary: "--devie__color__primary",
   primaryLabel: "--devie__color__primary-label",
   danger: "--devie__color__danger",
@@ -78,129 +80,95 @@ const CSS_VARIABLES: Record<keyof ThemeColors, string> = {
   literalRed: "--devie__color__literal-red",
 };
 
-const NULL_COLORS: ThemeColors = {
-  text: null,
-  textSub: null,
-  line: null,
-  background: null,
-  backgroundSub: null,
-  primary: null,
-  primaryLabel: null,
-  danger: null,
-  dangerLabel: null,
-  success: null,
-  successLabel: null,
-  warning: null,
-  warningLabel: null,
-  literalGray: null,
-  literalBrown: null,
-  literalOrange: null,
-  literalYellow: null,
-  literalGreen: null,
-  literalBlue: null,
-  literalPurple: null,
-  literalPink: null,
-  literalRed: null,
-};
+const KEYS = Object.keys(CSS_VARIABLES) as (keyof ThemeColors)[];
 
-// Cache for the snapshot to avoid creating new objects unnecessarily
-let cachedSnapshot: ThemeColors = NULL_COLORS;
-let cachedSnapshotHash: string = "";
+const NULL_COLORS = {} as ThemeColors;
+for (const key of KEYS) NULL_COLORS[key] = null;
 
-let probe: HTMLElement | null = null;
+const WATCHED_ATTRIBUTES = [
+  "data-devie-theme",
+  "data-desktop-preview",
+  "data-desktop-appearance",
+];
 
-// Resolves a color keyword such as AccentColor to rgb().
-function resolveColor(value: string): string {
-  if (/^(#|rgb|hsl|oklch|oklab|color\()/i.test(value)) return value;
-  if (!probe) {
-    probe = document.createElement("span");
-    probe.hidden = true;
-    document.body.append(probe);
-  }
-  probe.style.color = "";
-  probe.style.color = value;
-  const resolved = getComputedStyle(probe).color;
-  return resolved || value;
-}
+const COLOR_VALUE = /^(#|rgb|hsl|oklch|oklab|color\()/i;
 
-function computeThemeColors(): ThemeColors {
-  if (typeof document === "undefined") return NULL_COLORS;
+let snapshot = NULL_COLORS;
+let stopWatching: (() => void) | null = null;
+const listeners = new Set<() => void>();
 
-  const computedStyle = getComputedStyle(document.documentElement);
-  const colors: Partial<ThemeColors> = {};
+function readThemeColors(): ThemeColors {
+  const style = getComputedStyle(document.documentElement);
+  const colors = { ...NULL_COLORS };
+  let probe: HTMLSpanElement | null = null;
 
-  for (const [key, cssVar] of Object.entries(CSS_VARIABLES)) {
-    const value = computedStyle.getPropertyValue(cssVar).trim();
-    colors[key as keyof ThemeColors] = value ? resolveColor(value) : null;
+  for (const key of KEYS) {
+    const value = style.getPropertyValue(CSS_VARIABLES[key]).trim();
+    if (!value || COLOR_VALUE.test(value)) {
+      colors[key] = value || null;
+      continue;
+    }
+    // light-dark() and keywords such as AccentColor only resolve on an element.
+    probe ??= document.body.appendChild(document.createElement("span"));
+    probe.style.color = value;
+    colors[key] = getComputedStyle(probe).color || value;
   }
 
-  return colors as ThemeColors;
+  probe?.remove();
+  return colors;
 }
 
-function getThemeColorsSnapshot(): ThemeColors {
-  if (typeof document === "undefined") return NULL_COLORS;
-
-  const newColors = computeThemeColors();
-
-  // Create a hash string for comparison
-  const hash = JSON.stringify(newColors);
-
-  // Only return a new object if values actually changed
-  if (cachedSnapshotHash === hash) {
-    return cachedSnapshot;
-  }
-
-  // Update cache
-  cachedSnapshot = newColors;
-  cachedSnapshotHash = hash;
-  return newColors;
+function refresh() {
+  const next = readThemeColors();
+  if (KEYS.some((key) => next[key] !== snapshot[key])) snapshot = next;
 }
 
-function subscribeToThemeChanges(callback: () => void): () => void {
-  if (typeof document === "undefined") return () => {};
+function notify() {
+  refresh();
+  for (const listener of listeners) listener();
+}
 
-  // Watch the data-devie-theme attribute on documentElement (where ThemeProvider applies the theme)
-  const observer = new MutationObserver(() => {
-    // Clear cache when mutations occur so next getSnapshot call will recompute
-    cachedSnapshot = NULL_COLORS;
-    cachedSnapshotHash = "";
-    callback();
-  });
-
+function watchTheme(): () => void {
+  const observer = new MutationObserver(notify);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["data-devie-theme"],
+    attributeFilter: WATCHED_ATTRIBUTES,
   });
-
   const scheme = window.matchMedia("(prefers-color-scheme: dark)");
-  const onSchemeChange = () => {
-    cachedSnapshot = NULL_COLORS;
-    cachedSnapshotHash = "";
-    callback();
-  };
-  scheme.addEventListener("change", onSchemeChange);
+  scheme.addEventListener("change", notify);
 
   return () => {
     observer.disconnect();
-    scheme.removeEventListener("change", onSchemeChange);
+    scheme.removeEventListener("change", notify);
   };
 }
 
-/**
- * Returns all theme color values from CSS variables.
- * Updates automatically when the theme changes.
- *
- * Note: Watches the `data-devie-theme` attribute on `document.documentElement`
- * (the `<html>` element) since that's where the ThemeProvider applies the theme.
- *
- * @returns ThemeColors object with string values for available colors, null for unavailable ones
- */
+function subscribe(listener: () => void): () => void {
+  if (listeners.size === 0) {
+    refresh();
+    stopWatching = watchTheme();
+  }
+  listeners.add(listener);
+
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0) {
+      stopWatching?.();
+      stopWatching = null;
+    }
+  };
+}
+
+function getSnapshot(): ThemeColors {
+  return snapshot;
+}
+
+function getServerSnapshot(): ThemeColors {
+  return NULL_COLORS;
+}
+
 export function useThemeColor(): ThemeColors {
-  return useSyncExternalStore(
-    subscribeToThemeChanges,
-    getThemeColorsSnapshot,
-    () => NULL_COLORS, // Server-side snapshot
-  );
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 ```
 

@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-alpine-snow"] {
     color-scheme: light;
-    --devie__theme-name: Alpine Snow;
     --devie__color__text: #0f172a;
     --devie__color__text-sub: #475569;
     --devie__color__line: #cbd5e1;
@@ -16,9 +15,5 @@
     --devie__color__success-label: #ffffff;
     --devie__color__warning: #d97706;
     --devie__color__warning-label: #ffffff;
-    --devie__font-family:
-      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
-      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol", sans-serif;
   }
 }

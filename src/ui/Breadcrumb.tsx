@@ -5,52 +5,61 @@ import { ChevronRight, MoreHorizontal } from "lucide-react";
 import type React from "react";
 import styles from "./Breadcrumb.module.scss";
 
-const Root = ({ ...props }: React.ComponentProps<"nav">) => (
-  <nav aria-label="breadcrumb" {...props} />
-);
+function Root(props: Breadcrumb.Root.Props) {
+  return <nav aria-label="breadcrumb" {...props} />;
+}
 
-const List = ({ className, ...props }: Breadcrumb.List.Props) => (
-  <ol className={clsx(styles.list, className)} {...props} />
-);
+function List({ className, ...props }: Breadcrumb.List.Props) {
+  return <ol className={clsx(styles.list, className)} {...props} />;
+}
 
-const Item = ({ className, ...props }: Breadcrumb.Item.Props) => (
-  <li className={clsx(styles.item, className)} {...props} />
-);
+function Item({ className, ...props }: Breadcrumb.Item.Props) {
+  return <li className={clsx(styles.item, className)} {...props} />;
+}
 
-const StyledSpan = ({ className, ...props }: Breadcrumb.Span.Props) => (
-  <span className={clsx(styles.span, className)} {...props} />
-);
+function Page({ className, ...props }: Breadcrumb.Page.Props) {
+  return (
+    <span
+      aria-current="page"
+      className={clsx(styles.span, className)}
+      {...props}
+    />
+  );
+}
 
-const Page = ({
+function Separator({
+  className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan aria-disabled="true" aria-current="page" {...props}>
-    {children}
-  </StyledSpan>
-);
+}: Breadcrumb.Separator.Props) {
+  return (
+    <li
+      role="presentation"
+      aria-hidden="true"
+      className={clsx(styles.span, className)}
+      {...props}
+    >
+      {children ?? <ChevronRight size={16} strokeWidth={1} />}
+    </li>
+  );
+}
 
-const Separator = ({
+function Ellipsis({
+  className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan role="presentation" aria-hidden="true" {...props}>
-    {children ?? (
-      <ChevronRight style={{ width: 16, height: 16 }} strokeWidth={1} />
-    )}
-  </StyledSpan>
-);
-
-const Ellipsis = ({
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan role="presentation" aria-hidden="true" {...props}>
-    {children ?? (
-      <MoreHorizontal style={{ width: 16, height: 16 }} strokeWidth={1} />
-    )}
-  </StyledSpan>
-);
+}: Breadcrumb.Ellipsis.Props) {
+  return (
+    <span
+      role="presentation"
+      aria-hidden="true"
+      className={clsx(styles.span, className)}
+      {...props}
+    >
+      {children ?? <MoreHorizontal size={16} strokeWidth={1} />}
+    </span>
+  );
+}
 
 const Breadcrumb = { Root, List, Item, Separator, Ellipsis, Page };
 
@@ -59,28 +68,19 @@ namespace Breadcrumb {
     export type Props = React.ComponentProps<"nav">;
   }
   export namespace List {
-    export interface Props extends React.ComponentProps<"ol"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"ol">;
   }
   export namespace Item {
-    export interface Props extends React.ComponentProps<"li"> {
-      className?: string;
-    }
-  }
-  export namespace Span {
-    export interface Props extends React.ComponentPropsWithoutRef<"span"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"li">;
   }
   export namespace Page {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"span">;
   }
   export namespace Separator {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"li">;
   }
   export namespace Ellipsis {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"span">;
   }
 }
 

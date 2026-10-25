@@ -2,10 +2,11 @@
 
 @layer devie {
     .label {
-        font-size: $devie__font-size__small;
         line-height: $devie__spacing__x3;
-        font-weight: 600;
-        color: $devie__color__text;
+
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
     }
 
     .trigger {
@@ -15,8 +16,11 @@
         background-color: $devie__color__background;
         border-radius: $devie__radius;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        font-family: inherit;
+        font-size: inherit;
         line-height: $devie__spacing__x3;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         box-sizing: border-box;
         gap: $devie__spacing__x1;
         color: $devie__color__text;
@@ -27,6 +31,7 @@
 
         &:focus-visible {
             border-color: $devie__color__primary;
+            outline: 0;
         }
 
         &[data-popup-open] {
@@ -36,6 +41,7 @@
         &[data-disabled] {
             cursor: not-allowed;
             border-color: #{devie-disabled-color($devie__color__line)};
+            box-shadow: none;
             color: #{devie-disabled-color($devie__color__text)};
         }
     }
@@ -62,16 +68,15 @@
         [data-disabled] & {
             color: #{devie-disabled-color($devie__color__text-sub)};
         }
-    }
 
-    .contentLike {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x1;
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
-        line-height: $devie__spacing__x3;
+        outline: 0;
+        line-height: $devie__spacing__x2;
         box-sizing: border-box;
         background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
@@ -98,13 +103,13 @@
         align-items: center;
         justify-content: space-between;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
         min-width: var(--anchor-width);
         scroll-margin-block: $devie__spacing__x05;
         outline: 0;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         user-select: none;
 
         &:hover:not([data-disabled]),
@@ -138,35 +143,42 @@
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
     }
 
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
+    }
+
     .scrollArrow {
         width: 100%;
-        background: canvas;
+        background: $devie__color__background-raised;
         z-index: 1;
         text-align: center;
         cursor: default;

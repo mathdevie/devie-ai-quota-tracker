@@ -1,26 +1,22 @@
 # <Callout />
 
-A contextual message block for a section of the interface. It supports different variants to convey different types of information: **success**, **danger**, **warning**, **primary**, and **sub**.
-
-The component uses a compound pattern with `Callout.Icon` and `Callout.Content` subcomponents, allowing you to customize the icon or omit it entirely.
+A contextual message block for a section of the interface. This is a custom component with no Base UI primitive. Devie adds the `Callout.Icon` and `Callout.Content` subcomponents, a [variant](#variants) prop on `Callout.Root`, and a [title](#simple) prop on `Callout.Content`.
 
 ## Installation
 
-### callout.tsx
+### Callout.tsx
 
 ```tsx
 // https://devie-ui.com/components/callout
-
-"use client";
 
 import clsx from "clsx";
 import type React from "react";
 import styles from "./Callout.module.scss";
 
-type Variant = "success" | "danger" | "warning" | "primary" | "sub";
+type CalloutVariant = "success" | "danger" | "warning" | "primary" | "sub";
 
 function Root({
-  variant = "success",
+  variant = "sub",
   children,
   className,
   ...props
@@ -43,13 +39,18 @@ function Root({
   );
 }
 
-function Icon({ children }: Callout.Icon.Props) {
-  return <div className={styles.icon}>{children}</div>;
+function Icon({ className, ...props }: Callout.Icon.Props) {
+  return <div className={clsx(styles.icon, className)} {...props} />;
 }
 
-function Content({ title, children }: Callout.Content.Props) {
+function Content({
+  title,
+  children,
+  className,
+  ...props
+}: Callout.Content.Props) {
   return (
-    <div className={styles.content}>
+    <div className={clsx(styles.content, className)} {...props}>
       {title && <div className={styles.title}>{title}</div>}
       <div className={styles.text}>{children}</div>
     </div>
@@ -63,20 +64,21 @@ const Callout = {
 };
 
 namespace Callout {
+  export type Variant = CalloutVariant;
   export namespace Root {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+    export interface Props extends React.ComponentProps<"div"> {
       variant?: Variant;
       children: React.ReactNode;
     }
   }
   export namespace Icon {
-    export interface Props {
+    export interface Props extends React.ComponentProps<"div"> {
       children: React.ReactElement;
     }
   }
   export namespace Content {
-    export interface Props {
-      title?: string;
+    export interface Props extends Omit<React.ComponentProps<"div">, "title"> {
+      title?: React.ReactNode;
       children: React.ReactNode;
     }
   }
@@ -85,7 +87,7 @@ namespace Callout {
 export default Callout;
 ```
 
-### callout.module.scss
+### Callout.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -208,9 +210,30 @@ export default Callout;
 
 ## Use Cases
 
-### Callout Variants
+### Simple callout
 
-Callouts come in five variants: success, danger, warning, primary, and sub. Each variant has distinct colors suitable for different types of messaging.
+Pass `title` to `Callout.Content` to show a heading above the text. `Callout.Icon` is optional.
+
+```tsx
+<Callout.Root>
+  <Callout.Icon>
+    <Info />
+  </Callout.Icon>
+  <Callout.Content title="Scheduled maintenance">
+    The workspace is read-only on Sunday from 02:00 to 03:00 UTC.
+  </Callout.Content>
+</Callout.Root>
+
+<Callout.Root>
+  <Callout.Content>
+    Invited members join with the Viewer role.
+  </Callout.Content>
+</Callout.Root>
+```
+
+### Variants
+
+Set `variant` on `Callout.Root` to `success`, `danger`, `warning`, `primary`, or `sub`. The default is `sub`.
 
 ```tsx
 <div>

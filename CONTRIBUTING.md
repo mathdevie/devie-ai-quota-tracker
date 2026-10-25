@@ -70,18 +70,21 @@ first mouse-move event.
 ## Project rules
 
 - `src/ui` is a byte-identical mirror of the `src/ui` folder from
-  [Devie UI](https://www.devie-ui.com/). Never edit or delete files inside
-  it; a sync is a plain rsync. Customizations belong in `src/components`,
+  [Devie UI](https://www.devie-ui.com/). Never customize files inside
+  it; a sync replaces the full tree, including upstream deletes/renames. Customizations belong in `src/components`,
   `src/theme`, and `src/app`.
   The sole sync exception is the API-key example in
   `src/ui/markdown/input-group.md`: use `example-api-key` because GitHub
   push protection rejects the upstream Stripe-shaped placeholder.
   Last synced from `mathdevie/devie-ui.com` at
-  `de78af98ffee31774f76b50cdd54c4b1e2440d30` (`origin/main`, 2026-09-28).
+  `e0ef2ed996bab08110fae9c45b6938eb53aaab24` (reviewed target, 2026-10-25).
   Import the default tokens before the desktop preset and the color themes.
   The desktop preset supplies typography and sizing; the app keeps SF Pro
   across all themes in `src/app/globals.scss`. Use the upstream Badge,
-  InputGroup, and ButtonGroup instead of copying their styles.
+  and InputGroup instead of copying their styles. Keep the tray refresh and
+  settings as separate borderless `icon-naked` buttons (PR #31); do not
+  reintroduce ButtonGroup. PRs #32/#33 own native activation and second-click
+  close/reopen; UI syncs must preserve that behavior.
   The app root uses `--devie__zoom`; the library scales portaled overlays.
   Keep viewport sizing on that root and measure native popover content in
   rendered pixels so both surfaces can follow the same scale.
@@ -92,6 +95,83 @@ first mouse-move event.
 - Rust owns network requests, SQLite, and the menu bar. The webview
   receives normalized connection and quota values only; provider tokens
   never enter it.
+
+### Devie UI integration contract
+
+This section is the canonical integration guide. The complete `src/ui` tree
+includes components, SCSS, tokens, theme assets and Markdown, even when unused.
+The sole byte exception is the Stripe-shaped example in
+`src/ui/markdown/input-group.md`, replaced with `example-api-key`. Do not import
+the upstream docs site's package manifest or dependencies. Base UI is currently
+`^1.9.0`, resolved to 1.9.0 in `bun.lock`.
+
+Entry points and app-owned overrides (maintainer owner: mathdevie):
+
+- `src/app/layout.tsx` imports default tokens, upstream desktop sizing, app
+  light/dark themes and upstream custom themes, then global/app desktop overrides.
+  Its pre-hydration script validates saved themes and migrates
+  `theme-default` to `theme-light` and `theme-catpuccin-latte` to
+  `theme-catppuccin-latte`, persisting the canonical value before paint.
+- `src/theme/ThemeContext.tsx` retains the same migrations for runtime and storage
+  events across windows. `src/theme/registry.ts` owns translated display names,
+  System/light/dark choices and native appearance metadata. System maps to native
+  `null`; custom themes map to their appearance. Keep these outside the mirror.
+  Remove migration aliases only when old persisted preferences are unsupported.
+- `src/app/globals.scss` keeps SF Pro, the app reset, and isolated `.appRoot`
+  with `--devie__zoom` and inverse viewport width/height. `Toaster` is a sibling
+  outside that isolation; upstream overlays supply their own zoom. Moving it
+  inside can put failure toasts behind dialogs. App dialogs carry
+  `data-app-dialog`; global inverse-zoom viewport bounds keep independently
+  zoomed portals inside constrained windows. `data-app-dialog-body` prevents
+  flex children from shrinking and hiding options instead of scrolling. Remove that correction when
+  upstream viewport sizing accounts for zoom. Failure calls in
+  `src/components/AppShell.tsx` use `danger` for the upstream icon/color contract.
+  Remove these overrides only when upstream covers the native integration.
+- `src/theme/desktop.scss` keeps vibrancy tint, native semantic colors and
+  `light-dark()` fallbacks for macOS 12/older WebKit. Remove fallbacks only after
+  the minimum supported WebKit supports the relevant CSS.
+- `src/components/PopoverSurface.tsx` measures header/content bounding rectangles
+  in rendered pixels, scales frame spacing and caps native window height.
+  Its `ResizeObserver` and `ScrollArea` viewport/content layout are coupled;
+  preserve scrolling after the cap. `PopoverSurface.module.scss` retains native
+  material, flat rows and separate tray actions. `QuotaFilters.module.scss`
+  retains compact text-only filters; upstream defaults must not enlarge them.
+  Remove overrides only after an equivalent native design is approved.
+- `src/components/ResetCredits.tsx` composes the upstream Badge render API with a
+  real `button type="button"` inside Popover.Trigger, retaining forwarded trigger
+  props/ref, keyboard behavior, confirmation and busy-state guards. Keep
+  app-specific behavior here until an equivalent upstream API replaces it.
+
+Update checklist:
+
+1. Verify origin, current main, open/recent merged PRs and existing local work.
+   Compare the installed full tree to its documented baseline before edits;
+   reconcile drift and pin an explicitly reviewed commit, never floating main.
+2. Replace the entire `src/ui` tree from that commit, removing stale paths;
+   reapply only the documented example substitution. Run
+   `bun scripts/verify-ui-mirror.ts` (requires the pinned commit in local Git).
+3. Upgrade only required dependencies, regenerate `bun.lock`, and adapt consumers
+   outside the mirror. Review theme imports, both migration paths, render/ref
+   composition, toast types, small icons, ScrollArea and constrained overlays.
+4. Run the commands below. Exercise main and tray surfaces in browser and native
+   WKWebView: light/dark/custom themes, 100%/125% zoom, legacy preference before
+   hydration/reload and across windows, constrained dialogs, sign-in InputGroup,
+   keyboard reset confirmation/dismissal, disabled refresh, separate actions,
+   native second-click close/reopen and danger toasts above open dialogs.
+   Record screenshots/results and exact blockers; typechecking is not visual QA.
+5. Update this baseline and guide with reasons, owner and removal criteria for
+   any new overrides. Never patch the mirror to fix an app-only integration.
+
+```sh
+bun install --frozen-lockfile
+bun scripts/verify-ui-mirror.ts
+bun test tests/theme-migration.test.ts
+bun run check
+bun run build
+bun run build:desktop-frontend
+bun run i18n:verify
+(cd src-desktop && cargo fmt --check && cargo test --locked)
+```
 
 ## Languages
 

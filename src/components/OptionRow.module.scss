@@ -6,6 +6,7 @@
 
 // The Alerts and Quota Optimizer dialogs: a little wider than the small size.
 .dialog {
+  --app__dialog-width: 460px;
   width: 460px;
   max-width: 90vw;
 }

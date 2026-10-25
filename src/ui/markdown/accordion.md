@@ -1,12 +1,12 @@
 # <Accordion />
 
-A component that displays a set of collapsible panels with headings. The Accordion component extends the [ Base UI Accordion ](https://base-ui.com/react/components/accordion) with polished default styles and an additional `Accordion.Content` subcomponent for consistent content padding. We also replaced the default chevron icon with the Lucide icon for better visual consistency across the design system.
+A component that displays a set of collapsible panels with headings. The Accordion component extends the [Base UI Accordion](https://base-ui.com/react/components/accordion). It adds the `Accordion.Content` subcomponent for content padding and a Lucide chevron icon.
 
 Built on [Base UI](https://base-ui.com/react/components/accordion).
 
 ## Installation
 
-### accordion.tsx
+### Accordion.tsx
 
 ```tsx
 // https://devie-ui.com/components/accordion
@@ -15,22 +15,22 @@ Built on [Base UI](https://base-ui.com/react/components/accordion).
 import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
-import type { ReactNode } from "react";
+import type React from "react";
 import styles from "./Accordion.module.scss";
 
-function Root({ className, ...props }: BaseAccordion.Root.Props) {
+function Root({ className, ...props }: Accordion.Root.Props) {
   return (
     <BaseAccordion.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Item({ className, ...props }: BaseAccordion.Item.Props) {
+function Item({ className, ...props }: Accordion.Item.Props) {
   return (
     <BaseAccordion.Item className={clsx(styles.item, className)} {...props} />
   );
 }
 
-function Header({ className, ...props }: BaseAccordion.Header.Props) {
+function Header({ className, ...props }: Accordion.Header.Props) {
   return (
     <BaseAccordion.Header
       className={clsx(styles.header, className)}
@@ -39,11 +39,7 @@ function Header({ className, ...props }: BaseAccordion.Header.Props) {
   );
 }
 
-function Trigger({
-  className,
-  children,
-  ...props
-}: BaseAccordion.Trigger.Props) {
+function Trigger({ className, children, ...props }: Accordion.Trigger.Props) {
   return (
     <BaseAccordion.Trigger
       className={clsx(styles.trigger, className)}
@@ -55,14 +51,14 @@ function Trigger({
   );
 }
 
-function Panel({ className, ...props }: BaseAccordion.Panel.Props) {
+function Panel({ className, ...props }: Accordion.Panel.Props) {
   return (
     <BaseAccordion.Panel className={clsx(styles.panel, className)} {...props} />
   );
 }
 
-function Content({ className, children }: Accordion.Content.Props) {
-  return <div className={clsx(styles.content, className)}>{children}</div>;
+function Content({ className, ...props }: Accordion.Content.Props) {
+  return <div className={clsx(styles.content, className)} {...props} />;
 }
 
 const Accordion = {
@@ -76,35 +72,42 @@ const Accordion = {
 
 namespace Accordion {
   export namespace Root {
-    export type Props = BaseAccordion.Root.Props;
+    export type Props = Omit<BaseAccordion.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseAccordion.Root.State;
   }
   export namespace Item {
-    export type Props = BaseAccordion.Item.Props;
+    export type Props = Omit<BaseAccordion.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseAccordion.Item.State;
   }
   export namespace Header {
-    export type Props = BaseAccordion.Header.Props;
+    export type Props = Omit<BaseAccordion.Header.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Trigger {
-    export type Props = BaseAccordion.Trigger.Props;
+    export type Props = Omit<BaseAccordion.Trigger.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Panel {
-    export type Props = BaseAccordion.Panel.Props;
+    export type Props = Omit<BaseAccordion.Panel.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseAccordion.Panel.State;
   }
   export namespace Content {
-    export interface Props {
-      className?: string;
-      children?: ReactNode;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 
 export default Accordion;
 ```
 
-### accordion.module.scss
+### Accordion.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -196,6 +199,10 @@ export default Accordion;
         .trigger[data-disabled] & {
             color: #{devie-disabled-color($devie__color__text)};
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .panel {
@@ -207,6 +214,10 @@ export default Accordion;
         &[data-starting-style],
         &[data-ending-style] {
             height: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 

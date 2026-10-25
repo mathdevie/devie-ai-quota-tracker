@@ -2,9 +2,17 @@
 
 "use client";
 
-import { CheckCircle, Info, X, XCircle } from "lucide-react";
-import Toast from "@/ui/Toast";
+import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
+import type React from "react";
+import Toast from "./Toast";
 import styles from "./Toaster.module.scss";
+
+const icons: Record<string, React.ReactNode> = {
+  info: <Info size={16} strokeWidth={1.5} />,
+  success: <CheckCircle size={16} strokeWidth={1.5} />,
+  warning: <AlertTriangle size={16} strokeWidth={1.5} />,
+  danger: <XCircle size={16} strokeWidth={1.5} />,
+} satisfies Record<Toast.Type, React.ReactNode>;
 
 export function Toaster() {
   const { toasts } = Toast.useToastManager();
@@ -15,13 +23,7 @@ export function Toaster() {
         const type = toast.type || "info";
         return (
           <Toast.Root key={toast.id} toast={toast} data-type={type}>
-            <div className={styles.iconContainer}>
-              {type === "info" && <Info size={16} strokeWidth={1.5} />}
-              {type === "success" && (
-                <CheckCircle size={16} strokeWidth={1.5} />
-              )}
-              {type === "error" && <XCircle size={16} strokeWidth={1.5} />}
-            </div>
+            <div className={styles.iconContainer}>{icons[type]}</div>
             <div className={styles.contentContainer}>
               {toast.title && <Toast.Title>{toast.title}</Toast.Title>}
               {toast.description && (

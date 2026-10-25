@@ -1,10 +1,10 @@
 # <Breadcrumb />
 
-A navigation trail that shows the current location in a site hierarchy. It's built as a compound component with subcomponents for flexible composition.
+A navigation trail that shows the current location in a site hierarchy. This is a custom component with no Base UI primitive. Devie adds the `Breadcrumb.Root`, `Breadcrumb.List`, `Breadcrumb.Item`, `Breadcrumb.Separator`, `Breadcrumb.Page`, and [Breadcrumb.Ellipsis](#ellipsis) subcomponents.
 
 ## Installation
 
-### breadcrumb.tsx
+### Breadcrumb.tsx
 
 ```tsx
 // https://devie-ui.com/components/breadcrumb
@@ -14,52 +14,61 @@ import { ChevronRight, MoreHorizontal } from "lucide-react";
 import type React from "react";
 import styles from "./Breadcrumb.module.scss";
 
-const Root = ({ ...props }: React.ComponentProps<"nav">) => (
-  <nav aria-label="breadcrumb" {...props} />
-);
+function Root(props: Breadcrumb.Root.Props) {
+  return <nav aria-label="breadcrumb" {...props} />;
+}
 
-const List = ({ className, ...props }: Breadcrumb.List.Props) => (
-  <ol className={clsx(styles.list, className)} {...props} />
-);
+function List({ className, ...props }: Breadcrumb.List.Props) {
+  return <ol className={clsx(styles.list, className)} {...props} />;
+}
 
-const Item = ({ className, ...props }: Breadcrumb.Item.Props) => (
-  <li className={clsx(styles.item, className)} {...props} />
-);
+function Item({ className, ...props }: Breadcrumb.Item.Props) {
+  return <li className={clsx(styles.item, className)} {...props} />;
+}
 
-const StyledSpan = ({ className, ...props }: Breadcrumb.Span.Props) => (
-  <span className={clsx(styles.span, className)} {...props} />
-);
+function Page({ className, ...props }: Breadcrumb.Page.Props) {
+  return (
+    <span
+      aria-current="page"
+      className={clsx(styles.span, className)}
+      {...props}
+    />
+  );
+}
 
-const Page = ({
+function Separator({
+  className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan aria-disabled="true" aria-current="page" {...props}>
-    {children}
-  </StyledSpan>
-);
+}: Breadcrumb.Separator.Props) {
+  return (
+    <li
+      role="presentation"
+      aria-hidden="true"
+      className={clsx(styles.span, className)}
+      {...props}
+    >
+      {children ?? <ChevronRight size={16} strokeWidth={1} />}
+    </li>
+  );
+}
 
-const Separator = ({
+function Ellipsis({
+  className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan role="presentation" aria-hidden="true" {...props}>
-    {children ?? (
-      <ChevronRight style={{ width: 16, height: 16 }} strokeWidth={1} />
-    )}
-  </StyledSpan>
-);
-
-const Ellipsis = ({
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<"span">) => (
-  <StyledSpan role="presentation" aria-hidden="true" {...props}>
-    {children ?? (
-      <MoreHorizontal style={{ width: 16, height: 16 }} strokeWidth={1} />
-    )}
-  </StyledSpan>
-);
+}: Breadcrumb.Ellipsis.Props) {
+  return (
+    <span
+      role="presentation"
+      aria-hidden="true"
+      className={clsx(styles.span, className)}
+      {...props}
+    >
+      {children ?? <MoreHorizontal size={16} strokeWidth={1} />}
+    </span>
+  );
+}
 
 const Breadcrumb = { Root, List, Item, Separator, Ellipsis, Page };
 
@@ -68,85 +77,76 @@ namespace Breadcrumb {
     export type Props = React.ComponentProps<"nav">;
   }
   export namespace List {
-    export interface Props extends React.ComponentProps<"ol"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"ol">;
   }
   export namespace Item {
-    export interface Props extends React.ComponentProps<"li"> {
-      className?: string;
-    }
-  }
-  export namespace Span {
-    export interface Props extends React.ComponentPropsWithoutRef<"span"> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"li">;
   }
   export namespace Page {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"span">;
   }
   export namespace Separator {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"li">;
   }
   export namespace Ellipsis {
-    export type Props = React.ComponentPropsWithoutRef<"span">;
+    export type Props = React.ComponentProps<"span">;
   }
 }
 
 export default Breadcrumb;
 ```
 
-### breadcrumb.module.scss
+### Breadcrumb.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-  .list {
-    display: flex;
-    align-items: center;
-    gap: $devie__spacing__x1;
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-    list-style: none;
-  }
-
-  .item {
-    display: flex;
-    align-items: center;
-    gap: $devie__spacing__x1;
-    color: $devie__color__text;
-    font-size: $devie__font-size__normal;
-    line-height: $devie__spacing__x3;
-    font-family: $devie__font-family;
-
-    a {
-      color: inherit;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
+    .list {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+        list-style: none;
     }
 
-    [aria-current="page"] {
-      font-weight: 600;
-    }
-  }
+    .item {
+        display: flex;
+        align-items: center;
+        gap: $devie__spacing__x1;
+        color: $devie__color__text;
+        font-size: $devie__font-size__normal;
+        line-height: $devie__spacing__x3;
+        font-family: $devie__font-family;
 
-  .span {
-    display: inline-flex;
-    align-items: flex-end;
-  }
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        [aria-current="page"] {
+            font-weight: 600;
+        }
+    }
+
+    .span {
+        display: inline-flex;
+        align-items: flex-end;
+    }
 }
 ```
 
 ## Use Cases
 
-### Breadcrumb with links
+### Simple breadcrumb
 
-A typical breadcrumb navigation with clickable links for each level in the hierarchy. The current page is marked with `aria-current="page"` for accessibility.
+Put a link in each `Breadcrumb.Item` and wrap the current page in `Breadcrumb.Page`, which sets `aria-current`.
 
 ```tsx
 <Breadcrumb.Root>
@@ -170,9 +170,9 @@ A typical breadcrumb navigation with clickable links for each level in the hiera
 </Breadcrumb.Root>
 ```
 
-### Breadcrumb with ellipsis
+### With ellipsis
 
-For deep navigation paths, use the `Ellipsis` component to truncate intermediate levels while keeping the first and last items visible.
+Replace the middle levels of a deep path with `Breadcrumb.Ellipsis`.
 
 ```tsx
 <Breadcrumb.Root>

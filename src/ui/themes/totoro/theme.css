@@ -1,7 +1,6 @@
 @layer devie {
   [data-devie-theme="theme-totoro"] {
     color-scheme: light;
-    --devie__theme-name: Totoro;
     --devie__color__text: #4a4036;
     --devie__color__text-sub: #948c85;
     --devie__color__line: #dcd6cc;
@@ -16,9 +15,5 @@
     --devie__color__success-label: #ffffff;
     --devie__color__warning: #e6b655;
     --devie__color__warning-label: #ffffff;
-    --devie__font-family:
-      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
-      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol", sans-serif;
   }
 }

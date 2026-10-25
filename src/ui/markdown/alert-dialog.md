@@ -1,12 +1,12 @@
 # <AlertDialog />
 
-A dialog that requires a user response to proceed. The AlertDialog component extends [ Base UI's Alert Dialog ](https://base-ui.com/react/components/alert-dialog) . It adds the `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` subcomponents and a `size` prop on `AlertDialog.Root`. The `disableInteractions` prop makes the popup inert during an async action.
+A dialog that requires a user response to proceed. The AlertDialog component extends [Base UI's Alert Dialog](https://base-ui.com/react/components/alert-dialog). It adds the `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` subcomponents and a `size` prop on `AlertDialog.Root`. The `disableInteractions` prop makes the popup inert during an async action.
 
 Built on [Base UI](https://base-ui.com/react/components/alert-dialog).
 
 ## Installation
 
-### alert-dialog.tsx
+### AlertDialog.tsx
 
 ```tsx
 // https://devie-ui.com/components/alert-dialog
@@ -16,15 +16,14 @@ Built on [Base UI](https://base-ui.com/react/components/alert-dialog).
 
 import { AlertDialog as BaseAlertDialog } from "@base-ui/react/alert-dialog";
 import clsx from "clsx";
-import * as React from "react";
+import type React from "react";
+import { createContext, useContext } from "react";
 import styles from "./AlertDialog.module.scss";
-import type { DialogSize } from "./Dialog";
 
-export type { DialogSize };
+type DialogSize = "sm" | "md" | "lg" | "xl";
 
-const AlertDialogInteractionContext = React.createContext<boolean | null>(null);
-
-const AlertDialogSizeContext = React.createContext<DialogSize>("md");
+const AlertDialogInteractionContext = createContext<boolean | null>(null);
+const AlertDialogSizeContext = createContext<DialogSize>("md");
 
 function Root({
   disableInteractions,
@@ -41,30 +40,16 @@ function Root({
     </AlertDialogSizeContext.Provider>
   );
 }
+
 const createHandle = BaseAlertDialog.createHandle;
 
-function Trigger({ className, ...props }: BaseAlertDialog.Trigger.Props) {
-  return (
-    <BaseAlertDialog.Trigger
-      className={clsx(styles.trigger, className)}
-      {...props}
-    />
-  );
-}
+const Trigger = BaseAlertDialog.Trigger;
 
 const Portal = BaseAlertDialog.Portal;
 
-function Close({ className, render, ...props }: BaseAlertDialog.Close.Props) {
-  return (
-    <BaseAlertDialog.Close
-      className={clsx(!render && styles.close, className)}
-      render={render}
-      {...props}
-    />
-  );
-}
+const Close = BaseAlertDialog.Close;
 
-function Backdrop({ className, ...props }: BaseAlertDialog.Backdrop.Props) {
+function Backdrop({ className, ...props }: AlertDialog.Backdrop.Props) {
   return (
     <BaseAlertDialog.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -78,10 +63,8 @@ function Popup({
   disableInteractions,
   ...props
 }: AlertDialog.Popup.Props) {
-  const size = React.useContext(AlertDialogSizeContext);
-  const contextDisableInteractions = React.useContext(
-    AlertDialogInteractionContext,
-  );
+  const size = useContext(AlertDialogSizeContext);
+  const contextDisableInteractions = useContext(AlertDialogInteractionContext);
   const resolvedDisableInteractions =
     disableInteractions ?? contextDisableInteractions ?? false;
 
@@ -96,14 +79,13 @@ function Popup({
         resolvedDisableInteractions && styles.popupNonInteractive,
         className,
       )}
-      aria-busy={resolvedDisableInteractions ? true : undefined}
       inert={resolvedDisableInteractions ? true : undefined}
       {...props}
     />
   );
 }
 
-function Title({ className, ...props }: BaseAlertDialog.Title.Props) {
+function Title({ className, ...props }: AlertDialog.Title.Props) {
   return (
     <BaseAlertDialog.Title
       className={clsx(styles.title, className)}
@@ -114,10 +96,7 @@ function Title({ className, ...props }: BaseAlertDialog.Title.Props) {
   );
 }
 
-function Description({
-  className,
-  ...props
-}: BaseAlertDialog.Description.Props) {
+function Description({ className, ...props }: AlertDialog.Description.Props) {
   return (
     <BaseAlertDialog.Description
       className={clsx(styles.description, className)}
@@ -138,7 +117,6 @@ function Body({ className, ...props }: AlertDialog.Body.Props) {
   return <div className={clsx(styles.body, className)} {...props} />;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: merged with `namespace AlertDialog` for compound export
 const AlertDialog = {
   Root,
   createHandle,
@@ -155,6 +133,7 @@ const AlertDialog = {
 };
 
 namespace AlertDialog {
+  export type Size = DialogSize;
   export namespace Root {
     export interface Props extends BaseAlertDialog.Root.Props {
       disableInteractions?: boolean;
@@ -171,40 +150,42 @@ namespace AlertDialog {
     export type Props = BaseAlertDialog.Close.Props;
   }
   export namespace Backdrop {
-    export type Props = BaseAlertDialog.Backdrop.Props;
+    export type Props = Omit<BaseAlertDialog.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export interface Props extends BaseAlertDialog.Popup.Props {
+    export interface Props
+      extends Omit<BaseAlertDialog.Popup.Props, "className"> {
+      className?: string;
       disableInteractions?: boolean;
     }
   }
   export namespace Title {
-    export type Props = BaseAlertDialog.Title.Props;
+    export type Props = Omit<BaseAlertDialog.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseAlertDialog.Description.Props;
+    export type Props = Omit<BaseAlertDialog.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Header {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Body {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 
 export default AlertDialog;
 ```
 
-### alert-dialog.module.scss
+### AlertDialog.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -218,12 +199,25 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         opacity: $dialog-backdrop-opacity;
         position: fixed;
         inset: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
         position: fixed;
         left: 50%;
         top: 50%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
         width: 90vw;
         max-height: 95vh;
         transform: translate(-50%, -50%);
@@ -232,11 +226,20 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
         overflow: hidden;
-        transition: filter 150ms ease-out, transform 150ms ease-out;
+        transition:
+            opacity 150ms ease-out,
+            transform 150ms ease-out,
+            filter 150ms ease-out;
 
         &[data-nested-dialog-open] {
             filter: brightness($dialog-backdrop-brightness);
             transform: translate(-50%, -50%) scale(calc(1 - 0.04 * var(--nested-dialogs)));
+        }
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.95);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -245,22 +248,22 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .popupSm {
-        min-width: 288px;
+        min-width: min(288px, 90vw);
         max-width: 384px;
     }
 
     .popupMd {
-        min-width: 384px;
+        min-width: min(384px, 90vw);
         max-width: 640px;
     }
 
     .popupLg {
-        min-width: 512px;
+        min-width: min(512px, 90vw);
         max-width: 832px;
     }
 
     .popupXl {
-        min-width: 768px;
+        min-width: min(768px, 90vw);
         max-width: 1152px;
     }
 
@@ -283,6 +286,8 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .body {
+        min-height: 0;
+        overflow-y: auto;
         padding: $devie__spacing__x3 $devie__spacing__x3;
         display: flex;
         flex-direction: column;
@@ -291,7 +296,7 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
     .title {
         font-size: $devie__font-size__title3;
-        line-height: $devie__spacing__x4;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text;
         margin: 0;
     }
@@ -711,8 +716,7 @@ Omit `AlertDialog.Header`, `AlertDialog.Body`, and `AlertDialog.Footer` for a sh
         Welcome!
       </AlertDialog.Title>
       <AlertDialog.Description>
-        This is a minimal alert dialog without Header or Footer components.
-        Just a centered message with a close icon.
+        Your workspace is ready. Invite your team to start collaborating.
       </AlertDialog.Description>
       <AlertDialog.Close
         render={(props) => (

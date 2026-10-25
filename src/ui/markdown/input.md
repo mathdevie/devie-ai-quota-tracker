@@ -1,12 +1,12 @@
 # <Input />
 
-A native text input that works inside a Field. The Input component extends [ Base UI's Input ](https://base-ui.com/react/components/input) . It styles the native text control, and [Field.Control](/components/field) renders it, so both share one look.
+A native text input that works inside a Field. The Input component extends [Base UI's Input](https://base-ui.com/react/components/input). It styles the native text control, and [Field.Control](/components/field) renders it, so both share one look.
 
 Built on [Base UI](https://base-ui.com/react/components/input).
 
 ## Installation
 
-### input.tsx
+### Input.tsx
 
 ```tsx
 // https://devie-ui.com/components/input
@@ -21,7 +21,9 @@ function Input({ className, ...props }: Input.Props) {
 }
 
 namespace Input {
-  export type Props = BaseInput.Props;
+  export type Props = Omit<BaseInput.Props, "className"> & {
+    className?: string;
+  };
   export type State = BaseInput.State;
   export type ChangeEventDetails = BaseInput.ChangeEventDetails;
 }
@@ -29,7 +31,7 @@ namespace Input {
 export default Input;
 ```
 
-### input.module.scss
+### Input.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -40,6 +42,7 @@ export default Input;
         border-radius: $devie__radius;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         box-sizing: border-box;
         min-width: 200px;
         width: 100%;
@@ -70,6 +73,7 @@ export default Input;
             cursor: not-allowed;
             background: #{devie-disabled-color($devie__color__background)};
             border-color: #{devie-disabled-color($devie__color__line)};
+            box-shadow: none;
             color: #{devie-disabled-color($devie__color__text)};
 
             &::placeholder {

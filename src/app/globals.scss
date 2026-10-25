@@ -70,3 +70,16 @@
     background: color-mix(in srgb, $devie__color__primary 24%, transparent);
   }
 }
+
+// Portals zoom independently of appRoot; viewport units need the same inverse
+// scale as appRoot so constrained dialogs stay inside the rendered window.
+[data-app-dialog][role] {
+  width: min(var(--app__dialog-width, 90vw), calc(90vw / $devie__zoom));
+  min-width: 0;
+  max-height: calc(95vh / $devie__zoom);
+}
+
+// Scroll the body rather than shrinking and clipping its option groups.
+[data-app-dialog-body] > * {
+  flex-shrink: 0;
+}

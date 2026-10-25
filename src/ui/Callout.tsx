@@ -1,15 +1,13 @@
 // https://devie-ui.com/components/callout
 
-"use client";
-
 import clsx from "clsx";
 import type React from "react";
 import styles from "./Callout.module.scss";
 
-type Variant = "success" | "danger" | "warning" | "primary" | "sub";
+type CalloutVariant = "success" | "danger" | "warning" | "primary" | "sub";
 
 function Root({
-  variant = "success",
+  variant = "sub",
   children,
   className,
   ...props
@@ -32,13 +30,18 @@ function Root({
   );
 }
 
-function Icon({ children }: Callout.Icon.Props) {
-  return <div className={styles.icon}>{children}</div>;
+function Icon({ className, ...props }: Callout.Icon.Props) {
+  return <div className={clsx(styles.icon, className)} {...props} />;
 }
 
-function Content({ title, children }: Callout.Content.Props) {
+function Content({
+  title,
+  children,
+  className,
+  ...props
+}: Callout.Content.Props) {
   return (
-    <div className={styles.content}>
+    <div className={clsx(styles.content, className)} {...props}>
       {title && <div className={styles.title}>{title}</div>}
       <div className={styles.text}>{children}</div>
     </div>
@@ -52,20 +55,21 @@ const Callout = {
 };
 
 namespace Callout {
+  export type Variant = CalloutVariant;
   export namespace Root {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+    export interface Props extends React.ComponentProps<"div"> {
       variant?: Variant;
       children: React.ReactNode;
     }
   }
   export namespace Icon {
-    export interface Props {
+    export interface Props extends React.ComponentProps<"div"> {
       children: React.ReactElement;
     }
   }
   export namespace Content {
-    export interface Props {
-      title?: string;
+    export interface Props extends Omit<React.ComponentProps<"div">, "title"> {
+      title?: React.ReactNode;
       children: React.ReactNode;
     }
   }

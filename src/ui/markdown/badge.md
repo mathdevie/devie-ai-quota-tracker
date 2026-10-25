@@ -1,16 +1,16 @@
 # <Badge />
 
-A tinted chip for a label, a tag, or a status. This is a custom component with no Base UI primitive. The `variant` prop sets the tone, and `as` sets the rendered element.
+A tinted chip for a label, a tag, or a status. This is a custom component with no Base UI primitive. The `variant` prop sets the tone, and `render` replaces the rendered element.
 
 ## Installation
 
-### badge.tsx
+### Badge.tsx
 
 ```tsx
 // https://devie-ui.com/components/badge
 
+import { useRender } from "@base-ui/react/use-render";
 import clsx from "clsx";
-import React from "react";
 import styles from "./Badge.module.scss";
 
 type BadgeVariant =
@@ -19,66 +19,60 @@ type BadgeVariant =
   | "danger"
   | "success"
   | "warning"
-  | "literalGray"
-  | "literalBrown"
-  | "literalOrange"
-  | "literalYellow"
-  | "literalGreen"
-  | "literalBlue"
-  | "literalPurple"
-  | "literalPink"
-  | "literalRed";
+  | "literal-gray"
+  | "literal-brown"
+  | "literal-orange"
+  | "literal-yellow"
+  | "literal-green"
+  | "literal-blue"
+  | "literal-purple"
+  | "literal-pink"
+  | "literal-red";
+
+const variantClassNames: Record<BadgeVariant, string> = {
+  primary: styles.primary,
+  outline: styles.outline,
+  danger: styles.danger,
+  success: styles.success,
+  warning: styles.warning,
+  "literal-gray": styles.literalGray,
+  "literal-brown": styles.literalBrown,
+  "literal-orange": styles.literalOrange,
+  "literal-yellow": styles.literalYellow,
+  "literal-green": styles.literalGreen,
+  "literal-blue": styles.literalBlue,
+  "literal-purple": styles.literalPurple,
+  "literal-pink": styles.literalPink,
+  "literal-red": styles.literalRed,
+};
 
 function Badge({
   variant = "outline",
-  children,
   className,
-  as: Component = "div",
+  render,
   ...props
 }: Badge.Props) {
-  const badgeClassName = clsx(
-    styles.badge,
-    {
-      [styles.primary]: variant === "primary",
-      [styles.outline]: variant === "outline",
-      [styles.danger]: variant === "danger",
-      [styles.success]: variant === "success",
-      [styles.warning]: variant === "warning",
-      [styles.literalGray]: variant === "literalGray",
-      [styles.literalBrown]: variant === "literalBrown",
-      [styles.literalOrange]: variant === "literalOrange",
-      [styles.literalYellow]: variant === "literalYellow",
-      [styles.literalGreen]: variant === "literalGreen",
-      [styles.literalBlue]: variant === "literalBlue",
-      [styles.literalPurple]: variant === "literalPurple",
-      [styles.literalPink]: variant === "literalPink",
-      [styles.literalRed]: variant === "literalRed",
-    },
-
-    className,
-  );
-
-  return React.createElement(
-    Component,
-    {
-      className: badgeClassName,
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: {
       ...props,
+      className: clsx(styles.badge, variantClassNames[variant], className),
     },
-    children,
-  );
+  });
 }
 
 namespace Badge {
-  export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-    variant?: BadgeVariant;
-    as?: React.ElementType;
+  export type Variant = BadgeVariant;
+  export interface Props extends useRender.ComponentProps<"div"> {
+    variant?: Variant;
   }
 }
 
 export default Badge;
 ```
 
-### badge.module.scss
+### Badge.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -153,7 +147,7 @@ $badge-literal-colors: (
 
 ### Variants
 
-Set `variant` to `primary`, `outline`, `danger`, `success`, `warning`, or one of the literal colors such as `literalBlue`.
+Set `variant` to `primary`, `outline`, `danger`, `success`, `warning`, or one of the literal colors such as `literal-blue`.
 
 ```tsx
 <div>
@@ -184,20 +178,12 @@ Place an icon before the label.
 
 ### Clickable badges
 
-Wrap the badge in an anchor, or set `as="button"`. The hover style applies in both cases.
+Wrap the badge in an anchor, or pass a `<button type="button" />` element to `render`. The hover style applies in both cases.
 
 ```tsx
 <a href="/">
   <Badge variant="primary">Clickable Badge (hover me)</Badge>
 </a>
-```
-
-### Additional Examples
-
-#### Simple
-
-```tsx
-<Badge variant="outline">Badge</Badge>
 ```
 
 ---

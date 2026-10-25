@@ -1,12 +1,12 @@
 # <Separator />
 
-A separator line that is accessible to screen readers. The Separator component is built on top of the [ Base UI Separator ](https://base-ui.com/react/components/separator) component. It supports all Base UI props including `orientation`, plus an additional [text](#text) prop for displaying text in the middle of horizontal separators.
+A separator line that is accessible to screen readers. The Separator component extends [Base UI's Separator](https://base-ui.com/react/components/separator). It adds a [text](#text) prop for a label in the middle of the separator.
 
 Built on [Base UI](https://base-ui.com/react/components/separator).
 
 ## Installation
 
-### separator.tsx
+### Separator.tsx
 
 ```tsx
 // https://devie-ui.com/components/separator
@@ -16,43 +16,31 @@ import { Separator as BaseSeparator } from "@base-ui/react/separator";
 import clsx from "clsx";
 import styles from "./Separator.module.scss";
 
-function Separator({
-  text,
-  orientation = "horizontal",
-  className,
-  style,
-  ...props
-}: Separator.Props) {
-  if (text && orientation === "horizontal") {
+function Separator({ text, className, ...props }: Separator.Props) {
+  if (text) {
     return (
-      <div className={styles.withTextContainer} style={style}>
-        <BaseSeparator
-          orientation="horizontal"
-          className={clsx(styles.separator, className)}
-          {...props}
-        />
-        <span className={styles.text}>{text}</span>
-        <BaseSeparator
-          orientation="horizontal"
-          className={clsx(styles.separator, className)}
-          {...props}
-        />
-      </div>
+      <BaseSeparator
+        aria-label={text}
+        className={clsx(styles.withTextContainer, className)}
+        {...props}
+      >
+        <span className={styles.line} />
+        <span className={styles.text} aria-hidden="true">
+          {text}
+        </span>
+        <span className={styles.line} />
+      </BaseSeparator>
     );
   }
 
   return (
-    <BaseSeparator
-      orientation={orientation}
-      className={clsx(styles.separator, className)}
-      style={style}
-      {...props}
-    />
+    <BaseSeparator className={clsx(styles.separator, className)} {...props} />
   );
 }
 
 namespace Separator {
-  export interface Props extends BaseSeparator.Props {
+  export interface Props extends Omit<BaseSeparator.Props, "className"> {
+    className?: string;
     text?: string;
   }
 }
@@ -60,7 +48,7 @@ namespace Separator {
 export default Separator;
 ```
 
-### separator.module.scss
+### Separator.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -88,12 +76,32 @@ export default Separator;
         width: 100%;
         gap: $devie__spacing__x05;
         margin: $devie__spacing__x05 0;
+
+        &[data-orientation="vertical"] {
+            flex-direction: column;
+            width: auto;
+            height: 100%;
+            margin: 0;
+        }
+    }
+
+    .line {
+        flex: 1;
+        background-color: $devie__color__line;
+
+        [data-orientation="horizontal"] > & {
+            height: 1px;
+        }
+
+        [data-orientation="vertical"] > & {
+            width: 1px;
+        }
     }
 
     .text {
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         font-family: $devie__font-family;
         padding: 0 $devie__spacing__x05;
     }
@@ -102,25 +110,25 @@ export default Separator;
 
 ## Use Cases
 
-### Horizontal and vertical separators
+### Simple separator
 
-The Separator component supports both horizontal and vertical orientations. Use the `orientation` prop with `horizontal` (default) or `vertical` to control the separator direction.
+Place a `Separator` between two blocks of content. The default `orientation` is `horizontal`.
 
 ```tsx
 <Separator />
 ```
 
-### Separator with text
+### With text
 
-For horizontal separators, you can add text in the middle using the `text` prop. This is useful for "or" dividers or section labels.
+Set `text` to show a label in the middle, such as "Or". The text also becomes the separator's accessible name.
 
 ```tsx
 <Separator text="Or" />
 ```
 
-### Vertical separator
+### Vertical orientation
 
-Vertical separators can be used to divide content horizontally, such as in navigation bars or between columns.
+Set `orientation` to `vertical`. The line fills the height of its parent.
 
 ```tsx
 <div>

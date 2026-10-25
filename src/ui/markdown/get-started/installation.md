@@ -4,11 +4,11 @@
 
 At the very least, you need **React**.
 
-> Components are tested with React 19+, and include the "use client" directive when client-side JS is required. If you are on lower version of React, you can try to use Devie UI by removing the unsupported directives.
+> Components are tested with React 19+ and include the "use client" directive when they need client-side JS. On older React versions, remove the unsupported directives.
 
 ## 2. Install Dependencies
 
-Devie UI components are based on [ Base UI ](https://base-ui.com/) primitives. **clsx** is used for constructing classNames.
+Devie UI components are based on [Base UI](https://base-ui.com/) primitives. **clsx** is used for constructing classNames.
 
 ```terminal
 # bun
@@ -24,7 +24,7 @@ pnpm add @base-ui/react clsx
 yarn add @base-ui/react clsx
 ```
 
-Icons used throughout the examples are from the [ Lucide ](https://lucide.dev/) icon library.
+Icons used throughout the examples are from the [Lucide](https://lucide.dev/) icon library.
 
 ```terminal
 # bun
@@ -40,7 +40,7 @@ pnpm add lucide-react
 yarn add lucide-react
 ```
 
-> If you prefer to use your own icon, you can skip the installation of Lucide, and substitute any icons to the solution of your choice when adding Devie UI components in your project global styles.
+> To use another icon library, skip the Lucide installation and replace the icons when you add Devie UI components to your project.
 
 Both Base UI and Lucide are tree-shakeable, so your app bundle will contain only the components that you actually use.
 
@@ -48,9 +48,7 @@ Both Base UI and Lucide are tree-shakeable, so your app bundle will contain only
 
 All components are styled using a set of CSS Variables.
 
-Load Figtree as the default font. In Next.js, import Figtree from `next/font/google`. Set its `variable` option to `"--font-figtree"` and apply its variable class to the `html` element. In other apps, load the font with the family name `Figtree`.
-
-Define these variables in your project. For desktop typography, add the global overrides from [ Design for desktop ](/how-to/design-for-desktop-native) .
+Define these variables in your project. The font is the system font of each platform, so there is nothing to load. For desktop typography, add the global overrides from [Design for desktop](/how-to/design-for-desktop-native).
 
 ```css
 @layer devie {
@@ -63,7 +61,7 @@ Define these variables in your project. For desktop typography, add the global o
     --devie__color__background: #ffffff;
     --devie__color__background-sunken: #f5f5f5;
     --devie__color__background-raised: #ffffff;
-    --devie__color__primary: #5739da;
+    --devie__color__primary: #543fd6;
     --devie__color__primary-label: #ffffff;
     --devie__color__danger: #df5449;
     --devie__color__danger-label: #ffffff;
@@ -74,14 +72,14 @@ Define these variables in your project. For desktop typography, add the global o
 
     /* Font Tokens */
     --devie__font-family:
-      var(--font-figtree, "Figtree"), -apple-system, BlinkMacSystemFont,
-      Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol", sans-serif;
-    --devie__font-size__title1: 32px;
-    --devie__font-size__title2: 24px;
-    --devie__font-size__title3: 20.5px;
-    --devie__font-size__normal: 16px;
-    --devie__font-size__small: 14px;
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --devie__font-size__title1: 24px;
+    --devie__font-size__title2: 20px;
+    --devie__font-size__title3: 16px;
+    --devie__font-size__normal: 14px;
+    --devie__font-size__small: 12px;
 
     /* Interface Tokens */
     --devie__zoom: 1;
@@ -95,7 +93,7 @@ Define these variables in your project. For desktop typography, add the global o
       0px 10px 30px -16px rgba(0, 0, 0, 0.1),
       0px 4px 10px -6px rgba(0, 0, 0, 0.25);
 
-    /* Litteral Colors Tokens */
+    /* Literal Color Tokens */
     --devie__color__literal-gray: #6b7280;
     --devie__color__literal-brown: #a16207;
     --devie__color__literal-orange: #ea580c;
@@ -135,6 +133,8 @@ Define these variables in your project. For desktop typography, add the global o
 ```
 
 Learn how to customize your theme(s) by visiting the [Theming](/theming) section.
+
+> If you copy `src/ui/themes/`, configure SVGR or an equivalent loader: `registry.ts` imports each `thumbnail.svg` as a React component.
 
 ## 4. Set Up SCSS Variable
 
@@ -192,7 +192,6 @@ $devie__spacing__x8: var(--devie__spacing__x8);
 
 $devie__zoom: var(--devie__zoom);
 
-
 @function devie-hover-color($color) {
     @return string.unquote("oklch(from #{$color} calc(l * (1 - var(--devie__effect__hover-intensity))) c h)"
     );
@@ -210,11 +209,11 @@ $devie__zoom: var(--devie__zoom);
 
 This file serves as the shared foundation for all the component stylesheets.
 
-## 5. (Optional) Define an Isolated Stacking Context
+## 5. Define an Isolated Stacking Context
 
-Devie UI (and Base UI) components do not use a list of `z-index` values. Instead, elements that visually need to be rendered above the rest of the application use portals at the end of the `<body>`. This offers the flexibility and simplicity of not having to fight against `z-index` values.
+This step is optional. Devie UI and Base UI components do not use a list of `z-index` values. Elements that render above the rest of the application use portals at the end of the `<body>`.
 
-For this to work properly, your application needs to define a new [ stacking context ](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context) :
+For this to work, your application needs to define a new [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context):
 
 ```tsx
 <body>
@@ -228,7 +227,7 @@ See the [Stack without z-index](/how-to/z-index-and-stacking) guide for the full
 
 ## 6. All Set
 
-You can now browse the Components and add the ones needed to your project.
+Browse the components and add the ones your project needs.
 
 ---
 

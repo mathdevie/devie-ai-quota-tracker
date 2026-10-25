@@ -2,7 +2,7 @@
 
 Most design systems ship a `z-index` ladder: modal at 1000, toast at 1400, tooltip at 1500. Any consumer can break it with `z-index: 9999` on their own element, and the library can only escalate its numbers.
 
-Devie UI has no `z-index` scale, like Base UI and Radix Themes. Overlays render in **portals** outside your app root. When that root is an isolated [ stacking context ](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context) , every `z-index` inside it is sandboxed and cannot appear above the portals.
+Devie UI has no `z-index` scale, like Base UI and Radix Themes. Overlays render in **portals** outside your app root. When that root is an isolated [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context), every `z-index` inside it is sandboxed and cannot appear above the portals.
 
 ## How isolation works
 

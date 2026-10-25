@@ -1,12 +1,12 @@
 # <Menu />
 
-A list of actions in a popup, with keyboard navigation. The Menu component extends [ Base UI's Menu ](https://base-ui.com/react/components/menu) with polished default styles and full keyboard navigation. We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
+A list of actions in a popup, with keyboard navigation. The Menu component extends [Base UI's Menu](https://base-ui.com/react/components/menu). We added custom subcomponents: `SubmenuChevron` for submenu trigger icons, and `Shortcut` for displaying keyboard shortcuts alongside menu items.
 
 Built on [Base UI](https://base-ui.com/react/components/menu).
 
 ## Installation
 
-### menu.tsx
+### Menu.tsx
 
 ```tsx
 // https://devie-ui.com/components/menu
@@ -20,54 +20,40 @@ import styles from "./Menu.module.scss";
 
 const Root = BaseMenu.Root;
 
-function Trigger({ className, ...props }: BaseMenu.Trigger.Props) {
-  return (
-    <BaseMenu.Trigger className={clsx(styles.trigger, className)} {...props} />
-  );
-}
+const Trigger = BaseMenu.Trigger;
 
 const Portal = BaseMenu.Portal;
 
 const Backdrop = BaseMenu.Backdrop;
 
-function Positioner({ className, ...props }: BaseMenu.Positioner.Props) {
-  return (
-    <BaseMenu.Positioner
-      className={clsx(styles.positioner, className)}
-      {...props}
-    />
-  );
-}
+const Positioner = BaseMenu.Positioner;
 
-function Popup({ className, ...props }: BaseMenu.Popup.Props) {
+function Popup({ className, ...props }: Menu.Popup.Props) {
   return (
     <BaseMenu.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function Viewport({ className, ...props }: BaseMenu.Viewport.Props) {
+function Viewport({ className, ...props }: Menu.Viewport.Props) {
   return (
-    <BaseMenu.Viewport className={clsx(styles.viewport, className)} {...props} />
+    <BaseMenu.Viewport
+      className={clsx(styles.viewport, className)}
+      {...props}
+    />
   );
 }
 
-function Arrow({ className, ...props }: BaseMenu.Arrow.Props) {
-  return (
-    <BaseMenu.Arrow className={clsx(styles.arrow, className)} {...props} />
-  );
-}
-
-function Item({ className, ...props }: BaseMenu.Item.Props) {
+function Item({ className, ...props }: Menu.Item.Props) {
   return <BaseMenu.Item className={clsx(styles.item, className)} {...props} />;
 }
 
-function LinkItem({ className, ...props }: BaseMenu.LinkItem.Props) {
+function LinkItem({ className, ...props }: Menu.LinkItem.Props) {
   return (
     <BaseMenu.LinkItem className={clsx(styles.item, className)} {...props} />
   );
 }
 
-function Separator({ className, ...props }: BaseMenu.Separator.Props) {
+function Separator({ className, ...props }: Menu.Separator.Props) {
   return (
     <BaseMenu.Separator
       className={clsx(styles.separator, className)}
@@ -76,13 +62,9 @@ function Separator({ className, ...props }: BaseMenu.Separator.Props) {
   );
 }
 
-function Group({ className, ...props }: BaseMenu.Group.Props) {
-  return (
-    <BaseMenu.Group className={clsx(styles.group, className)} {...props} />
-  );
-}
+const Group = BaseMenu.Group;
 
-function GroupLabel({ className, ...props }: BaseMenu.GroupLabel.Props) {
+function GroupLabel({ className, ...props }: Menu.GroupLabel.Props) {
   return (
     <BaseMenu.GroupLabel
       className={clsx(styles.groupLabel, className)}
@@ -91,16 +73,9 @@ function GroupLabel({ className, ...props }: BaseMenu.GroupLabel.Props) {
   );
 }
 
-function RadioGroup({ className, ...props }: BaseMenu.RadioGroup.Props) {
-  return (
-    <BaseMenu.RadioGroup
-      className={clsx(styles.radioGroup, className)}
-      {...props}
-    />
-  );
-}
+const RadioGroup = BaseMenu.RadioGroup;
 
-function RadioItem({ className, ...props }: BaseMenu.RadioItem.Props) {
+function RadioItem({ className, ...props }: Menu.RadioItem.Props) {
   return (
     <BaseMenu.RadioItem
       className={clsx(styles.item, styles.radioItem, className)}
@@ -113,7 +88,7 @@ function RadioItemIndicator({
   className,
   children,
   ...props
-}: BaseMenu.RadioItemIndicator.Props) {
+}: Menu.RadioItemIndicator.Props) {
   return (
     <BaseMenu.RadioItemIndicator
       className={clsx(styles.itemIndicator, className)}
@@ -124,7 +99,7 @@ function RadioItemIndicator({
   );
 }
 
-function CheckboxItem({ className, ...props }: BaseMenu.CheckboxItem.Props) {
+function CheckboxItem({ className, ...props }: Menu.CheckboxItem.Props) {
   return (
     <BaseMenu.CheckboxItem
       className={clsx(styles.item, styles.checkboxItem, className)}
@@ -137,7 +112,7 @@ function CheckboxItemIndicator({
   className,
   children,
   ...props
-}: BaseMenu.CheckboxItemIndicator.Props) {
+}: Menu.CheckboxItemIndicator.Props) {
   return (
     <BaseMenu.CheckboxItemIndicator
       className={clsx(styles.itemIndicator, className)}
@@ -150,28 +125,28 @@ function CheckboxItemIndicator({
 
 const SubmenuRoot = BaseMenu.SubmenuRoot;
 
-function SubmenuTrigger({
-  className,
-  ...props
-}: BaseMenu.SubmenuTrigger.Props) {
+function SubmenuTrigger({ className, ...props }: Menu.SubmenuTrigger.Props) {
   return (
     <BaseMenu.SubmenuTrigger
-      className={clsx(styles.item, styles.submenuTrigger, className)}
+      className={clsx(styles.item, className)}
       {...props}
     />
   );
 }
 
-interface SubmenuChevronProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string;
-  children?: React.ReactNode;
+function Arrow({ className, children, ...props }: Menu.Arrow.Props) {
+  return (
+    <BaseMenu.Arrow className={clsx(styles.arrow, className)} {...props}>
+      {children || <ArrowSvg />}
+    </BaseMenu.Arrow>
+  );
 }
 
 function SubmenuChevron({
   className,
   children,
   ...props
-}: SubmenuChevronProps) {
+}: Menu.SubmenuChevron.Props) {
   return (
     <div className={clsx(styles.submenuChevron, className)} {...props}>
       {children || <ChevronRight size={16} />}
@@ -179,11 +154,7 @@ function SubmenuChevron({
   );
 }
 
-interface ShortcutProps extends React.HTMLAttributes<HTMLElement> {
-  className?: string;
-}
-
-function Shortcut({ className, ...props }: ShortcutProps) {
+function Shortcut({ className, ...props }: Menu.Shortcut.Props) {
   return <kbd className={clsx(styles.shortcut, className)} {...props} />;
 }
 
@@ -232,80 +203,125 @@ namespace Menu {
     export type State = BaseMenu.Positioner.State;
   }
   export namespace Popup {
-    export type Props = BaseMenu.Popup.Props;
+    export type Props = Omit<BaseMenu.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Viewport {
-    export type Props = BaseMenu.Viewport.Props;
+    export type Props = Omit<BaseMenu.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = BaseMenu.Item.Props;
+    export type Props = Omit<BaseMenu.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseMenu.Item.State;
   }
   export namespace LinkItem {
-    export type Props = BaseMenu.LinkItem.Props;
+    export type Props = Omit<BaseMenu.LinkItem.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseMenu.LinkItem.State;
   }
   export namespace Separator {
-    export type Props = BaseMenu.Separator.Props;
+    export type Props = Omit<BaseMenu.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
     export type Props = BaseMenu.Group.Props;
   }
   export namespace GroupLabel {
-    export type Props = BaseMenu.GroupLabel.Props;
+    export type Props = Omit<BaseMenu.GroupLabel.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace RadioGroup {
     export type Props = BaseMenu.RadioGroup.Props;
     export type ChangeEventDetails = BaseMenu.RadioGroup.ChangeEventDetails;
   }
   export namespace RadioItem {
-    export type Props = BaseMenu.RadioItem.Props;
+    export type Props = Omit<BaseMenu.RadioItem.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseMenu.RadioItem.State;
   }
   export namespace RadioItemIndicator {
-    export type Props = BaseMenu.RadioItemIndicator.Props;
+    export type Props = Omit<BaseMenu.RadioItemIndicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace CheckboxItem {
-    export type Props = BaseMenu.CheckboxItem.Props;
+    export type Props = Omit<BaseMenu.CheckboxItem.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseMenu.CheckboxItem.State;
   }
   export namespace CheckboxItemIndicator {
-    export type Props = BaseMenu.CheckboxItemIndicator.Props;
+    export type Props = Omit<
+      BaseMenu.CheckboxItemIndicator.Props,
+      "className"
+    > & {
+      className?: string;
+    };
   }
   export namespace SubmenuRoot {
     export type Props = BaseMenu.SubmenuRoot.Props;
   }
   export namespace SubmenuTrigger {
-    export type Props = BaseMenu.SubmenuTrigger.Props;
+    export type Props = Omit<BaseMenu.SubmenuTrigger.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseMenu.SubmenuTrigger.State;
   }
   export namespace Arrow {
-    export type Props = BaseMenu.Arrow.Props;
+    export type Props = Omit<BaseMenu.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace SubmenuChevron {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-      children?: React.ReactNode;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Shortcut {
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"kbd">;
   }
 }
 
 export default Menu;
+
+function ArrowSvg(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        className={styles.arrowFill}
+      />
+      <path
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        className={styles.arrowInnerStroke}
+      />
+    </svg>
+  );
+}
 ```
 
-### menu.module.scss
+### Menu.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
     .popup {
-        line-height: $devie__spacing__x3;
+        outline: 0;
+        line-height: $devie__spacing__x2;
         min-width: 180px;
         background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
@@ -323,11 +339,11 @@ export default Menu;
         display: flex;
         align-items: center;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         user-select: none;
         outline: none;
         color: $devie__color__text;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         transition: none;
 
@@ -389,7 +405,37 @@ export default Menu;
     }
 
     .arrow {
+        display: flex;
+        z-index: 1;
+
+        &[data-side='top'] {
+            bottom: calc(-1 * $devie__spacing__x1);
+            rotate: 180deg;
+        }
+
+        &[data-side='bottom'] {
+            top: calc(-1 * $devie__spacing__x1);
+            rotate: 0deg;
+        }
+
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
+        &[data-side='left'] {
+            right: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: -90deg;
+        }
+    }
+
+    .arrowFill {
         fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .submenuChevron {
@@ -406,6 +452,7 @@ export default Menu;
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
+        font-weight: 400;
         line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         background: none;

@@ -14,11 +14,11 @@
   </defs>
   <g clip-path="url(#clip-default)">
     <rect width="120" height="120" fill="#ffffff"/>
-    <ellipse cx="100" cy="100" rx="70" ry="65" fill="#473ae4" filter="url(#blur-default)"/>
-    <ellipse cx="65" cy="75" rx="45" ry="40" fill="#473ae4" filter="url(#blur-default)"/>
-    <ellipse cx="45" cy="55" rx="35" ry="30" fill="#877fed" filter="url(#blur-default)"/>
-    <ellipse cx="115" cy="115" rx="40" ry="35" fill="#352cab" filter="url(#blur-default)"/>
+    <ellipse cx="100" cy="100" rx="70" ry="65" fill="#543fd6" filter="url(#blur-default)"/>
+    <ellipse cx="65" cy="75" rx="45" ry="40" fill="#543fd6" filter="url(#blur-default)"/>
+    <ellipse cx="45" cy="55" rx="35" ry="30" fill="#9082e4" filter="url(#blur-default)"/>
+    <ellipse cx="115" cy="115" rx="40" ry="35" fill="#3f2fa1" filter="url(#blur-default)"/>
     <rect width="120" height="120" fill="#ffffff" filter="url(#grain-default)" opacity="0.1"/>
   </g>
-  <rect width="120" height="120" rx="16" ry="16" fill="none" stroke="#473ae4" stroke-width="0.5" stroke-opacity="0.15"/>
+  <rect width="120" height="120" rx="16" ry="16" fill="none" stroke="#543fd6" stroke-width="0.5" stroke-opacity="0.15"/>
 </svg>

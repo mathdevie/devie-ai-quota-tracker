@@ -1,38 +1,28 @@
 # <Toast />
 
-A component that generates notifications. The Toast component extends [ Base UI's Toast ](https://base-ui.com/react/components/toast) . Toasts display brief, non-intrusive notifications that appear temporarily and auto-dismiss. They're ideal for confirming actions, showing status updates, or providing feedback without interrupting the user's workflow.
+A component that generates notifications. The Toast component extends [Base UI's Toast](https://base-ui.com/react/components/toast). It adds the `Toaster` component, which renders active toasts with an icon for their `type`.
 
-The implementation consists of two parts: `Toast` provides the styled primitives (Viewport, Root, Title, Description, Close), while `Toaster` is a ready-to-use component that renders all active toasts with appropriate icons based on their type. Note that `Toast.Provider` must be imported directly from Base UI in your layout due to React context limitations.
+Wrap your layout in `Toast.Provider`, and render `Toaster` inside it.
 
 Built on [Base UI](https://base-ui.com/react/components/toast).
 
 ## Installation
 
-### toast.tsx
+### Toast.tsx
 
 ```tsx
 // https://devie-ui.com/components/toast
 // https://base-ui.com/react/components/toast
 
-"use client";
-
 import { Toast as BaseToast } from "@base-ui/react/toast";
 import clsx from "clsx";
 import styles from "./Toast.module.scss";
 
-/**
- * NOTE: Toast.Provider must be imported directly from '@base-ui/react/toast'
- * in your layout because React context can't be properly re-exported.
- *
- * Usage:
- * 1. In layout.tsx: import { Toast } from '@base-ui/react/toast';
- * 2. Elsewhere: import Toast from '@/ui/Toast';
- */
+const Provider = BaseToast.Provider;
 
-// Base UI v1.3.0 extends the manager API with close-all support.
 const useToastManager = BaseToast.useToastManager;
 
-function Viewport({ className, ...props }: BaseToast.Viewport.Props) {
+function Viewport({ className, ...props }: Toast.Viewport.Props) {
   return (
     <BaseToast.Viewport
       className={clsx(styles.viewport, className)}
@@ -41,17 +31,17 @@ function Viewport({ className, ...props }: BaseToast.Viewport.Props) {
   );
 }
 
-function Root({ className, ...props }: BaseToast.Root.Props) {
+function Root({ className, ...props }: Toast.Root.Props) {
   return <BaseToast.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Title({ className, ...props }: BaseToast.Title.Props) {
+function Title({ className, ...props }: Toast.Title.Props) {
   return (
     <BaseToast.Title className={clsx(styles.title, className)} {...props} />
   );
 }
 
-function Description({ className, ...props }: BaseToast.Description.Props) {
+function Description({ className, ...props }: Toast.Description.Props) {
   return (
     <BaseToast.Description
       className={clsx(styles.description, className)}
@@ -60,19 +50,20 @@ function Description({ className, ...props }: BaseToast.Description.Props) {
   );
 }
 
-function Action({ className, ...props }: BaseToast.Action.Props) {
+function Action({ className, ...props }: Toast.Action.Props) {
   return (
     <BaseToast.Action className={clsx(styles.action, className)} {...props} />
   );
 }
 
-function Close({ className, ...props }: BaseToast.Close.Props) {
+function Close({ className, ...props }: Toast.Close.Props) {
   return (
     <BaseToast.Close className={clsx(styles.close, className)} {...props} />
   );
 }
 
 const Toast = {
+  Provider,
   useToastManager,
   Viewport,
   Root,
@@ -83,31 +74,47 @@ const Toast = {
 };
 
 namespace Toast {
+  export type Type = "info" | "success" | "warning" | "danger";
+  export namespace Provider {
+    export type Props = BaseToast.Provider.Props;
+  }
   export namespace Viewport {
-    export type Props = BaseToast.Viewport.Props;
+    export type Props = Omit<BaseToast.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Root {
-    export type Props = BaseToast.Root.Props;
+    export type Props = Omit<BaseToast.Root.Props, "className"> & {
+      className?: string;
+    };
     export type ToastObject = BaseToast.Root.ToastObject;
   }
   export namespace Title {
-    export type Props = BaseToast.Title.Props;
+    export type Props = Omit<BaseToast.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseToast.Description.Props;
+    export type Props = Omit<BaseToast.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Action {
-    export type Props = BaseToast.Action.Props;
+    export type Props = Omit<BaseToast.Action.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Close {
-    export type Props = BaseToast.Close.Props;
+    export type Props = Omit<BaseToast.Close.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Toast;
 ```
 
-### toast.module.scss
+### Toast.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -131,7 +138,12 @@ export default Toast;
             border-color: $devie__color__success;
         }
 
-        &[data-type="error"] {
+        &[data-type="warning"] {
+            background-color: color-mix(in srgb, $devie__color__warning 5%, $devie__color__background-raised 95%);
+            border-color: $devie__color__warning;
+        }
+
+        &[data-type="danger"] {
             background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background-raised 95%);
             border-color: $devie__color__danger;
         }
@@ -157,13 +169,11 @@ export default Toast;
             transform: translateX(calc(-100% - $devie__spacing__x4));
         }
 
-        @keyframes toastHide {
-            from {
-                opacity: 1;
-            }
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
 
-            to {
-                opacity: 0;
+            &[data-starting-style] {
+                animation: none;
             }
         }
 
@@ -210,11 +220,16 @@ export default Toast;
         border: none;
         border-radius: $devie__radius;
         padding: $devie__spacing__x1 $devie__spacing__x2;
+        font-family: inherit;
         font-size: $devie__font-size__small;
         line-height: $devie__spacing__x2;
 
         &:hover {
             background: #{devie-hover-color($devie__color__primary)};
+        }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
         }
     }
 
@@ -234,20 +249,32 @@ export default Toast;
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
         }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
     }
 }
 ```
 
-### toaster.tsx
+### Toaster.tsx
 
 ```tsx
 // https://devie-ui.com/components/toast
 
 "use client";
 
-import { CheckCircle, Info, X, XCircle } from "lucide-react";
-import Toast from "@/ui/Toast";
+import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
+import type React from "react";
+import Toast from "./Toast";
 import styles from "./Toaster.module.scss";
+
+const icons: Record<string, React.ReactNode> = {
+  info: <Info size={16} strokeWidth={1.5} />,
+  success: <CheckCircle size={16} strokeWidth={1.5} />,
+  warning: <AlertTriangle size={16} strokeWidth={1.5} />,
+  danger: <XCircle size={16} strokeWidth={1.5} />,
+} satisfies Record<Toast.Type, React.ReactNode>;
 
 export function Toaster() {
   const { toasts } = Toast.useToastManager();
@@ -258,13 +285,7 @@ export function Toaster() {
         const type = toast.type || "info";
         return (
           <Toast.Root key={toast.id} toast={toast} data-type={type}>
-            <div className={styles.iconContainer}>
-              {type === "info" && <Info size={16} strokeWidth={1.5} />}
-              {type === "success" && (
-                <CheckCircle size={16} strokeWidth={1.5} />
-              )}
-              {type === "error" && <XCircle size={16} strokeWidth={1.5} />}
-            </div>
+            <div className={styles.iconContainer}>{icons[type]}</div>
             <div className={styles.contentContainer}>
               {toast.title && <Toast.Title>{toast.title}</Toast.Title>}
               {toast.description && (
@@ -283,36 +304,40 @@ export function Toaster() {
 }
 ```
 
-### toaster.module.scss
+### Toaster.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-  .iconContainer {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: $devie__spacing__x05;
-    color: $devie__color__primary;
+    .iconContainer {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: $devie__spacing__x05;
+        color: $devie__color__primary;
 
-    [data-type="success"] & {
-      color: $devie__color__success;
+        [data-type="success"] & {
+            color: $devie__color__success;
+        }
+
+        [data-type="warning"] & {
+            color: $devie__color__warning;
+        }
+
+        [data-type="danger"] & {
+            color: $devie__color__danger;
+        }
     }
 
-    [data-type="error"] & {
-      color: $devie__color__danger;
+    .contentContainer {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+        flex: 1;
+        min-width: 0;
     }
-  }
-
-  .contentContainer {
-    display: flex;
-    flex-direction: column;
-    gap: $devie__spacing__x1;
-    flex: 1;
-    min-width: 0;
-  }
 }
 ```
 
@@ -340,7 +365,7 @@ const showToast = () => {
 
 ### Simple toast
 
-For quick confirmations, you can show a toast with just a description and no title.
+Pass only a `description` to `toastManager.add()` for a quick confirmation.
 
 ```tsx
 const toastManager = Toast.useToastManager();
@@ -359,7 +384,7 @@ const showSimpleToast = () => {
 
 ### Toast types
 
-Toasts support three types: `info` (default), `success`, and `error`. Each type displays a different icon and border color to communicate the message's nature.
+Set `type` in `toastManager.add()` to `info`, `success`, `warning`, or `danger`. The default is `info`.
 
 ```tsx
 const toastManager = Toast.useToastManager();
@@ -380,11 +405,19 @@ const showSuccessToast = () => {
   });
 };
 
-const showErrorToast = () => {
+const showWarningToast = () => {
+  toastManager.add({
+    title: "Storage almost full",
+    description: "You have used 90% of your storage quota.",
+    type: "warning",
+  });
+};
+
+const showDangerToast = () => {
   toastManager.add({
     title: "Connection failed",
     description: "Unable to reach the server. Please try again.",
-    type: "error",
+    type: "danger",
   });
 };
 
@@ -395,8 +428,11 @@ const showErrorToast = () => {
   <Button variant="secondary" onClick={showSuccessToast}>
     Open Toast (Success)
   </Button>
-  <Button variant="secondary" onClick={showErrorToast}>
-    Open Toast (Error)
+  <Button variant="secondary" onClick={showWarningToast}>
+    Open Toast (Warning)
+  </Button>
+  <Button variant="secondary" onClick={showDangerToast}>
+    Open Toast (Danger)
   </Button>
 </div>
 ```

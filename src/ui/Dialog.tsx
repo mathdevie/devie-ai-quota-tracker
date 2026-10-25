@@ -5,13 +5,14 @@
 
 import { Dialog as BaseDialog } from "@base-ui/react/dialog";
 import clsx from "clsx";
-import * as React from "react";
+import type React from "react";
+import { createContext, useContext } from "react";
 import styles from "./Dialog.module.scss";
 
-export type DialogSize = "sm" | "md" | "lg" | "xl";
+type DialogSize = "sm" | "md" | "lg" | "xl";
 
-const DialogInteractionContext = React.createContext<boolean | null>(null);
-const DialogSizeContext = React.createContext<DialogSize>("md");
+const DialogInteractionContext = createContext<boolean | null>(null);
+const DialogSizeContext = createContext<DialogSize>("md");
 
 function Root({
   disableInteractions,
@@ -29,28 +30,13 @@ function Root({
 
 const createHandle = BaseDialog.createHandle;
 
-function Trigger({ className, ...props }: BaseDialog.Trigger.Props) {
-  return (
-    <BaseDialog.Trigger
-      className={clsx(styles.trigger, className)}
-      {...props}
-    />
-  );
-}
+const Trigger = BaseDialog.Trigger;
 
 const Portal = BaseDialog.Portal;
 
-function Close({ className, render, ...props }: BaseDialog.Close.Props) {
-  return (
-    <BaseDialog.Close
-      className={clsx(!render && styles.close, className)}
-      render={render}
-      {...props}
-    />
-  );
-}
+const Close = BaseDialog.Close;
 
-function Backdrop({ className, ...props }: BaseDialog.Backdrop.Props) {
+function Backdrop({ className, ...props }: Dialog.Backdrop.Props) {
   return (
     <BaseDialog.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -64,8 +50,8 @@ function Popup({
   disableInteractions,
   ...props
 }: Dialog.Popup.Props) {
-  const size = React.useContext(DialogSizeContext);
-  const contextDisableInteractions = React.useContext(DialogInteractionContext);
+  const size = useContext(DialogSizeContext);
+  const contextDisableInteractions = useContext(DialogInteractionContext);
   const resolvedDisableInteractions =
     disableInteractions ?? contextDisableInteractions ?? false;
 
@@ -80,14 +66,13 @@ function Popup({
         resolvedDisableInteractions && styles.popupNonInteractive,
         className,
       )}
-      aria-busy={resolvedDisableInteractions ? true : undefined}
       inert={resolvedDisableInteractions ? true : undefined}
       {...props}
     />
   );
 }
 
-function Title({ className, ...props }: BaseDialog.Title.Props) {
+function Title({ className, ...props }: Dialog.Title.Props) {
   return (
     <BaseDialog.Title
       className={clsx(styles.title, className)}
@@ -98,7 +83,7 @@ function Title({ className, ...props }: BaseDialog.Title.Props) {
   );
 }
 
-function Description({ className, ...props }: BaseDialog.Description.Props) {
+function Description({ className, ...props }: Dialog.Description.Props) {
   return (
     <BaseDialog.Description
       className={clsx(styles.description, className)}
@@ -135,6 +120,7 @@ const Dialog = {
 };
 
 namespace Dialog {
+  export type Size = DialogSize;
   export namespace Root {
     export interface Props extends BaseDialog.Root.Props {
       disableInteractions?: boolean;
@@ -151,33 +137,34 @@ namespace Dialog {
     export type Props = BaseDialog.Close.Props;
   }
   export namespace Backdrop {
-    export type Props = BaseDialog.Backdrop.Props;
+    export type Props = Omit<BaseDialog.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export interface Props extends BaseDialog.Popup.Props {
+    export interface Props extends Omit<BaseDialog.Popup.Props, "className"> {
+      className?: string;
       disableInteractions?: boolean;
     }
   }
   export namespace Title {
-    export type Props = BaseDialog.Title.Props;
+    export type Props = Omit<BaseDialog.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseDialog.Description.Props;
+    export type Props = Omit<BaseDialog.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Header {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Body {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 

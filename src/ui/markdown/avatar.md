@@ -1,12 +1,12 @@
 # <Avatar />
 
-A component that shows a user image with a text fallback. The Avatar component extends [ Base UI's Avatar ](https://base-ui.com/react/components/avatar) . It's a simple component displaying an image, and a fallback to text if the image is not present. We use the new squircle shape property to have something a bit more original.
+A component that shows a user image with a text fallback. The Avatar component extends [Base UI's Avatar](https://base-ui.com/react/components/avatar). It adds a squircle shape and fallback text that scales with the avatar size.
 
 Built on [Base UI](https://base-ui.com/react/components/avatar).
 
 ## Installation
 
-### avatar.tsx
+### Avatar.tsx
 
 ```tsx
 // https://devie-ui.com/components/avatar
@@ -16,19 +16,19 @@ import { Avatar as BaseAvatar } from "@base-ui/react/avatar";
 import clsx from "clsx";
 import styles from "./Avatar.module.scss";
 
-function Root({ className, ...props }: BaseAvatar.Root.Props) {
+function Root({ className, ...props }: Avatar.Root.Props) {
   return (
     <BaseAvatar.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Image({ className, ...props }: BaseAvatar.Image.Props) {
+function Image({ className, ...props }: Avatar.Image.Props) {
   return (
     <BaseAvatar.Image className={clsx(styles.image, className)} {...props} />
   );
 }
 
-function Fallback({ className, ...props }: BaseAvatar.Fallback.Props) {
+function Fallback({ className, ...props }: Avatar.Fallback.Props) {
   return (
     <BaseAvatar.Fallback
       className={clsx(styles.fallback, className)}
@@ -45,20 +45,26 @@ const Avatar = {
 
 namespace Avatar {
   export namespace Root {
-    export type Props = BaseAvatar.Root.Props;
+    export type Props = Omit<BaseAvatar.Root.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Image {
-    export type Props = BaseAvatar.Image.Props;
+    export type Props = Omit<BaseAvatar.Image.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Fallback {
-    export type Props = BaseAvatar.Fallback.Props;
+    export type Props = Omit<BaseAvatar.Fallback.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Avatar;
 ```
 
-### avatar.module.scss
+### Avatar.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -94,6 +100,7 @@ export default Avatar;
         color: $devie__color__primary-label;
         font-size: 40cqi;
         font-weight: 600;
+        line-height: $devie__spacing__x3;
         text-transform: uppercase;
     }
 }
@@ -101,9 +108,9 @@ export default Avatar;
 
 ## Use Cases
 
-### Simple avatar with image
+### Simple avatar
 
-The basic usage shows an avatar with an image. The `Avatar.Image` component handles loading the image, while `Avatar.Fallback` is displayed while the image loads or if it fails.
+Place `Avatar.Image` and `Avatar.Fallback` inside `Avatar.Root`. The fallback shows while the image loads or if it fails.
 
 ```tsx
 <Avatar.Root>
@@ -115,9 +122,9 @@ The basic usage shows an avatar with an image. The `Avatar.Image` component hand
 </Avatar.Root>
 ```
 
-### Avatar with fallback
+### With fallback
 
-When the image fails to load or isn't provided, the fallback content is displayed. This is typically used to show user initials.
+Put the user's initials in `Avatar.Fallback`. It replaces the image when the image fails or `Avatar.Image` is omitted.
 
 ```tsx
 <Avatar.Root>
@@ -135,7 +142,7 @@ When the image fails to load or isn't provided, the fallback content is displaye
 
 ### Custom sizes
 
-The default avatar size is 48×48px. You can customize the size by passing inline styles or a custom className to the `Avatar.Root` component. The fallback text automatically scales thanks to CSS container queries.
+Set `width` and `height` on `Avatar.Root` with `style` or a `className`. The default is 48px, and the fallback text scales with the avatar.
 
 ```tsx
 <Avatar.Root style={{ width: 32, height: 32 }}>

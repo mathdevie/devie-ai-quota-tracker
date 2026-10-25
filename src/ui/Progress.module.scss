@@ -1,55 +1,63 @@
 @use './_devie.scss' as *;
 
 @layer devie {
-  .root {
-    display: flex;
-    flex-direction: column;
-    gap: $devie__spacing__x1;
-    width: 100%;
-    font-family: $devie__font-family;
-  }
-
-  .track {
-    position: relative;
-    height: 8px;
-    width: 100%;
-    overflow: hidden;
-    border-radius: $devie__radius;
-    background-color: $devie__color__background-sunken;
-  }
-
-  .indicator {
-    height: 100%;
-    background-color: $devie__color__primary;
-    border-radius: $devie__radius;
-    transition: width 0.3s ease-out;
-
-    &[data-indeterminate] {
-      width: 30% !important;
-      animation: indeterminate 1.5s ease-in-out infinite;
-    }
-  }
-
-  @keyframes indeterminate {
-    0% {
-      transform: translateX(-100%);
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+        width: 100%;
+        font-family: $devie__font-family;
     }
 
-    100% {
-      transform: translateX(400%);
+    .track {
+        position: relative;
+        height: $devie__spacing__x1;
+        width: 100%;
+        overflow: hidden;
+        border-radius: $devie__radius;
+        background-color: $devie__color__background-sunken;
     }
-  }
 
-  .label {
-    font-size: $devie__font-size__small;
-    line-height: $devie__spacing__x3;
-    color: $devie__color__text;
-  }
+    .indicator {
+        height: 100%;
+        background-color: $devie__color__primary;
+        border-radius: $devie__radius;
+        transition: width 0.3s ease-out;
 
-  .value {
-    font-size: $devie__font-size__small;
-    line-height: $devie__spacing__x3;
-    color: $devie__color__text-sub;
-    font-variant-numeric: tabular-nums;
-  }
+        &[data-indeterminate] {
+            width: 30%;
+            animation: indeterminate 1.5s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+
+            &[data-indeterminate] {
+                animation-duration: 4s;
+            }
+        }
+    }
+
+    @keyframes indeterminate {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(400%);
+        }
+    }
+
+    .label {
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text;
+    }
+
+    .value {
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        font-variant-numeric: tabular-nums;
+    }
 }

@@ -1,12 +1,12 @@
 # <Radio />
 
-A set of radio buttons for choosing one option. The Radio component extends [ Base UI's Radio ](https://base-ui.com/react/components/radio) . Radio buttons allow users to select a single option from a set of mutually exclusive choices. The `RadioGroup` component provides shared state management for a series of radio buttons.
+A set of radio buttons for choosing one option. The Radio component extends [Base UI's Radio](https://base-ui.com/react/components/radio). Radio buttons allow users to select a single option from a set of mutually exclusive choices. The `RadioGroup` component provides shared state management for a series of radio buttons.
 
 Built on [Base UI](https://base-ui.com/react/components/radio).
 
 ## Installation
 
-### radio.tsx
+### Radio.tsx
 
 ```tsx
 // https://devie-ui.com/components/radio
@@ -16,15 +16,11 @@ import { Radio as BaseRadio } from "@base-ui/react/radio";
 import clsx from "clsx";
 import styles from "./Radio.module.scss";
 
-function Root({ className, ...props }: BaseRadio.Root.Props) {
+function Root({ className, ...props }: Radio.Root.Props) {
   return <BaseRadio.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Indicator({
-  className,
-  children,
-  ...props
-}: BaseRadio.Indicator.Props) {
+function Indicator({ className, children, ...props }: Radio.Indicator.Props) {
   return (
     <BaseRadio.Indicator
       className={clsx(styles.indicator, className)}
@@ -46,18 +42,22 @@ const Radio = {
 
 namespace Radio {
   export namespace Root {
-    export type Props = BaseRadio.Root.Props;
+    export type Props = Omit<BaseRadio.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseRadio.Root.State;
   }
   export namespace Indicator {
-    export type Props = BaseRadio.Indicator.Props;
+    export type Props = Omit<BaseRadio.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Radio;
 ```
 
-### radio.module.scss
+### Radio.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -66,8 +66,8 @@ export default Radio;
     .root {
         box-sizing: border-box;
         display: flex;
-        width: 1.25rem;
-        height: 1.25rem;
+        width: calc($devie__spacing__x2 + $devie__spacing__x05);
+        height: calc($devie__spacing__x2 + $devie__spacing__x05);
         align-items: center;
         justify-content: center;
         border-radius: 50%;
@@ -127,8 +127,8 @@ export default Radio;
     }
 
     .dot {
-        width: 0.5rem;
-        height: 0.5rem;
+        width: $devie__spacing__x1;
+        height: $devie__spacing__x1;
         border-radius: 50%;
         background-color: $devie__color__primary-label;
         flex-shrink: 0;
@@ -140,7 +140,7 @@ export default Radio;
 }
 ```
 
-### radio-group.tsx
+### RadioGroup.tsx
 
 ```tsx
 // https://devie-ui.com/components/radio-group
@@ -150,12 +150,14 @@ import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
 import clsx from "clsx";
 import styles from "./RadioGroup.module.scss";
 
-function RadioGroup({ className, ...props }: BaseRadioGroup.Props) {
+function RadioGroup({ className, ...props }: RadioGroup.Props) {
   return <BaseRadioGroup className={clsx(styles.root, className)} {...props} />;
 }
 
 namespace RadioGroup {
-  export type Props = BaseRadioGroup.Props;
+  export type Props = Omit<BaseRadioGroup.Props, "className"> & {
+    className?: string;
+  };
   export type State = BaseRadioGroup.State;
   export type ChangeEventDetails = BaseRadioGroup.ChangeEventDetails;
 }
@@ -163,7 +165,7 @@ namespace RadioGroup {
 export default RadioGroup;
 ```
 
-### radio-group.module.scss
+### RadioGroup.module.scss
 
 ```scss
 @use './_devie.scss' as *;
