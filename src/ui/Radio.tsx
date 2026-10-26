@@ -5,15 +5,11 @@ import { Radio as BaseRadio } from "@base-ui/react/radio";
 import clsx from "clsx";
 import styles from "./Radio.module.scss";
 
-function Root({ className, ...props }: BaseRadio.Root.Props) {
+function Root({ className, ...props }: Radio.Root.Props) {
   return <BaseRadio.Root className={clsx(styles.root, className)} {...props} />;
 }
 
-function Indicator({
-  className,
-  children,
-  ...props
-}: BaseRadio.Indicator.Props) {
+function Indicator({ className, children, ...props }: Radio.Indicator.Props) {
   return (
     <BaseRadio.Indicator
       className={clsx(styles.indicator, className)}
@@ -35,11 +31,15 @@ const Radio = {
 
 namespace Radio {
   export namespace Root {
-    export type Props = BaseRadio.Root.Props;
+    export type Props = Omit<BaseRadio.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseRadio.Root.State;
   }
   export namespace Indicator {
-    export type Props = BaseRadio.Indicator.Props;
+    export type Props = Omit<BaseRadio.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

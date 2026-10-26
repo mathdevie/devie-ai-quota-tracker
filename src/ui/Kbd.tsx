@@ -30,15 +30,12 @@ namespace Kbd {
   export namespace Root {
     export type Variant = "badge" | "naked";
 
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
+    export interface Props extends React.ComponentProps<"kbd"> {
       variant?: Variant;
     }
   }
   export namespace Group {
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"kbd">;
   }
 }
 

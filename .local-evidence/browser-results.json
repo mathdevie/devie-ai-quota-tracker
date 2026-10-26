@@ -1,0 +1,239 @@
+{
+  "reset": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"dialogs\":[{\"bodyOverflow\":\"auto\",\"rect\":{\"bottom\":512.0999755859375,\"height\":224.19998168945312},\"text\":\"Reset Codex limits?\\n\\nUse 1 reset credit for Codex CLI · Default. Every quota window resets now. This cannot be undone. Credits left after: 0.\\n\\nCancel\\nReset limits\"}],\"focus\":\"Cancel\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "dialogs": [
+          {
+            "bodyOverflow": "auto",
+            "rect": {
+              "bottom": 512.0999755859375,
+              "height": 224.19998168945312
+            },
+            "text": "Reset Codex limits?\n\nUse 1 reset credit for Codex CLI · Default. Every quota window resets now. This cannot be undone. Credits left after: 0.\n\nCancel\nReset limits"
+          }
+        ],
+        "focus": "Cancel"
+      }
+    },
+    "isError": false
+  },
+  "theme": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"background\":\"rgba(0, 0, 0, 0)\",\"saved\":\"theme-catppuccin-latte\",\"theme\":\"theme-catppuccin-latte\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "background": "rgba(0, 0, 0, 0)",
+        "saved": "theme-catppuccin-latte",
+        "theme": "theme-catppuccin-latte"
+      }
+    },
+    "isError": false
+  },
+  "toast": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"color\":\"rgb(230, 69, 83)\",\"icon\":\"lucide lucide-circle-x lucide-x-circle\",\"modalOpen\":true,\"outsideRoot\":true,\"toast\":\"Local regression failure toast\",\"topElement\":\"danger\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "color": "rgb(230, 69, 83)",
+        "icon": "lucide lucide-circle-x lucide-x-circle",
+        "modalOpen": true,
+        "outsideRoot": true,
+        "toast": "Local regression failure toast",
+        "topElement": "danger"
+      }
+    },
+    "isError": false
+  },
+  "crossWindow": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"saved\":\"theme-catppuccin-latte\",\"theme\":\"theme-catppuccin-latte\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "saved": "theme-catppuccin-latte",
+        "theme": "theme-catppuccin-latte"
+      }
+    },
+    "isError": false
+  },
+  "tray": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/?surface=popover\"},\"value\":{\"buttons\":[{\"aria\":\"Provider\",\"classes\":\"Select-module-scss-module__YbNQPW__trigger QuotaFilters-module-scss-module__vX_YGG__trigger QuotaFilters-module-scss-module__vX_YGG__compact\",\"h\":24,\"text\":\"All\",\"w\":47.671875},{\"aria\":\"Sort\",\"classes\":\"Select-module-scss-module__YbNQPW__trigger QuotaFilters-module-scss-module__vX_YGG__trigger QuotaFilters-module-scss-module__vX_YGG__compact\",\"h\":24,\"text\":\"Expiring first\",\"w\":102.8125},{\"aria\":\"Refresh quotas\",\"classes\":\"Button-module-scss-module__JfZQna__button Button-module-scss-module__JfZQna__variantNaked Button-module-scss-module__JfZQna__icon Button-module-scss-module__JfZQna__sizeSm\",\"h\":24,\"text\":\"\",\"w\":24},{\"aria\":\"Open Dashboard\",\"classes\":\"Button-module-scss-module__JfZQna__button Button-module-scss-module__JfZQna__variantNaked Button-module-scss-module__JfZQna__icon Button-module-scss-module__JfZQna__sizeSm\",\"h\":24,\"text\":\"\",\"w\":24}],\"saved\":\"theme-catppuccin-latte\",\"theme\":\"theme-catppuccin-latte\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/?surface=popover"
+      },
+      "value": {
+        "buttons": [
+          {
+            "aria": "Provider",
+            "classes": "Select-module-scss-module__YbNQPW__trigger QuotaFilters-module-scss-module__vX_YGG__trigger QuotaFilters-module-scss-module__vX_YGG__compact",
+            "h": 24,
+            "text": "All",
+            "w": 47.671875
+          },
+          {
+            "aria": "Sort",
+            "classes": "Select-module-scss-module__YbNQPW__trigger QuotaFilters-module-scss-module__vX_YGG__trigger QuotaFilters-module-scss-module__vX_YGG__compact",
+            "h": 24,
+            "text": "Expiring first",
+            "w": 102.8125
+          },
+          {
+            "aria": "Refresh quotas",
+            "classes": "Button-module-scss-module__JfZQna__button Button-module-scss-module__JfZQna__variantNaked Button-module-scss-module__JfZQna__icon Button-module-scss-module__JfZQna__sizeSm",
+            "h": 24,
+            "text": "",
+            "w": 24
+          },
+          {
+            "aria": "Open Dashboard",
+            "classes": "Button-module-scss-module__JfZQna__button Button-module-scss-module__JfZQna__variantNaked Button-module-scss-module__JfZQna__icon Button-module-scss-module__JfZQna__sizeSm",
+            "h": 24,
+            "text": "",
+            "w": 24
+          }
+        ],
+        "saved": "theme-catppuccin-latte",
+        "theme": "theme-catppuccin-latte"
+      }
+    },
+    "isError": false
+  },
+  "constrained": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"body\":{\"clientHeight\":203,\"overflow\":\"auto\",\"scrollHeight\":203},\"dialog\":{\"height\":406.125,\"width\":448.875,\"x\":-14.4375,\"y\":-23.0625},\"viewport\":{\"h\":360,\"w\":420},\"zoom\":\"1.25\"}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "body": {
+          "clientHeight": 203,
+          "overflow": "auto",
+          "scrollHeight": 203
+        },
+        "dialog": {
+          "height": 406.125,
+          "width": 448.875,
+          "x": -14.4375,
+          "y": -23.0625
+        },
+        "viewport": {
+          "h": 360,
+          "w": 420
+        },
+        "zoom": "1.25"
+      }
+    },
+    "isError": false
+  },
+  "signin": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/\"},\"value\":{\"dialogs\":[{\"groups\":1,\"inputs\":[{\"placeholder\":\"code#state\",\"type\":\"text\"}],\"rect\":{\"bottom\":351,\"height\":342,\"left\":21,\"right\":399,\"top\":9,\"width\":378,\"x\":21,\"y\":9},\"text\":\"Sign in again to Claude Code\\n\\nUse the account team@example.com. Another account is added as a new account.\\n\\nSign in to Claude in the browser. The app receives the result on this Mac.\\n\\nWaiting for Claude Code…\\n\\nOpen the page again\\nOr paste the code from the page\\nUse code\\nCancel\"}]}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/"
+      },
+      "value": {
+        "dialogs": [
+          {
+            "groups": 1,
+            "inputs": [
+              {
+                "placeholder": "code#state",
+                "type": "text"
+              }
+            ],
+            "rect": {
+              "bottom": 351,
+              "height": 342,
+              "left": 21,
+              "right": 399,
+              "top": 9,
+              "width": 378,
+              "x": 21,
+              "y": 9
+            },
+            "text": "Sign in again to Claude Code\n\nUse the account team@example.com. Another account is added as a new account.\n\nSign in to Claude in the browser. The app receives the result on this Mac.\n\nWaiting for Claude Code…\n\nOpen the page again\nOr paste the code from the page\nUse code\nCancel"
+          }
+        ]
+      }
+    },
+    "isError": false
+  },
+  "refresh": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"toolIcon\":{\"_tag\":\"website\",\"pageUrl\":\"http://localhost:3002/?surface=popover\"},\"value\":{\"ariaBusy\":null,\"disabled\":true,\"scroll\":[{\"h\":325,\"sh\":1203}],\"separate\":true}}"
+      }
+    ],
+    "structuredContent": {
+      "toolIcon": {
+        "_tag": "website",
+        "pageUrl": "http://localhost:3002/?surface=popover"
+      },
+      "value": {
+        "ariaBusy": null,
+        "disabled": true,
+        "scroll": [
+          {
+            "h": 325,
+            "sh": 1203
+          }
+        ],
+        "separate": true
+      }
+    },
+    "isError": false
+  }
+}

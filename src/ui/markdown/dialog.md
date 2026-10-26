@@ -1,12 +1,12 @@
 # <Dialog />
 
-A dialog that opens on top of the entire page. The Dialog component extends [ Base UI's Dialog ](https://base-ui.com/react/components/dialog) . It adds the `Dialog.Header`, `Dialog.Body`, and `Dialog.Footer` subcomponents and a `size` prop on `Dialog.Root`. For a confirmation that needs an explicit answer, use [AlertDialog](/components/alert-dialog).
+A dialog that opens on top of the entire page. The Dialog component extends [Base UI's Dialog](https://base-ui.com/react/components/dialog). It adds the `Dialog.Header`, `Dialog.Body`, and `Dialog.Footer` subcomponents and a `size` prop on `Dialog.Root`, and a `disableInteractions` prop on `Dialog.Root` and `Dialog.Popup`. For a confirmation that needs an explicit answer, use [AlertDialog](/components/alert-dialog).
 
 Built on [Base UI](https://base-ui.com/react/components/dialog).
 
 ## Installation
 
-### dialog.tsx
+### Dialog.tsx
 
 ```tsx
 // https://devie-ui.com/components/dialog
@@ -16,13 +16,14 @@ Built on [Base UI](https://base-ui.com/react/components/dialog).
 
 import { Dialog as BaseDialog } from "@base-ui/react/dialog";
 import clsx from "clsx";
-import * as React from "react";
+import type React from "react";
+import { createContext, useContext } from "react";
 import styles from "./Dialog.module.scss";
 
-export type DialogSize = "sm" | "md" | "lg" | "xl";
+type DialogSize = "sm" | "md" | "lg" | "xl";
 
-const DialogInteractionContext = React.createContext<boolean | null>(null);
-const DialogSizeContext = React.createContext<DialogSize>("md");
+const DialogInteractionContext = createContext<boolean | null>(null);
+const DialogSizeContext = createContext<DialogSize>("md");
 
 function Root({
   disableInteractions,
@@ -40,28 +41,13 @@ function Root({
 
 const createHandle = BaseDialog.createHandle;
 
-function Trigger({ className, ...props }: BaseDialog.Trigger.Props) {
-  return (
-    <BaseDialog.Trigger
-      className={clsx(styles.trigger, className)}
-      {...props}
-    />
-  );
-}
+const Trigger = BaseDialog.Trigger;
 
 const Portal = BaseDialog.Portal;
 
-function Close({ className, render, ...props }: BaseDialog.Close.Props) {
-  return (
-    <BaseDialog.Close
-      className={clsx(!render && styles.close, className)}
-      render={render}
-      {...props}
-    />
-  );
-}
+const Close = BaseDialog.Close;
 
-function Backdrop({ className, ...props }: BaseDialog.Backdrop.Props) {
+function Backdrop({ className, ...props }: Dialog.Backdrop.Props) {
   return (
     <BaseDialog.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -75,8 +61,8 @@ function Popup({
   disableInteractions,
   ...props
 }: Dialog.Popup.Props) {
-  const size = React.useContext(DialogSizeContext);
-  const contextDisableInteractions = React.useContext(DialogInteractionContext);
+  const size = useContext(DialogSizeContext);
+  const contextDisableInteractions = useContext(DialogInteractionContext);
   const resolvedDisableInteractions =
     disableInteractions ?? contextDisableInteractions ?? false;
 
@@ -91,14 +77,13 @@ function Popup({
         resolvedDisableInteractions && styles.popupNonInteractive,
         className,
       )}
-      aria-busy={resolvedDisableInteractions ? true : undefined}
       inert={resolvedDisableInteractions ? true : undefined}
       {...props}
     />
   );
 }
 
-function Title({ className, ...props }: BaseDialog.Title.Props) {
+function Title({ className, ...props }: Dialog.Title.Props) {
   return (
     <BaseDialog.Title
       className={clsx(styles.title, className)}
@@ -109,7 +94,7 @@ function Title({ className, ...props }: BaseDialog.Title.Props) {
   );
 }
 
-function Description({ className, ...props }: BaseDialog.Description.Props) {
+function Description({ className, ...props }: Dialog.Description.Props) {
   return (
     <BaseDialog.Description
       className={clsx(styles.description, className)}
@@ -130,7 +115,6 @@ function Body({ className, ...props }: Dialog.Body.Props) {
   return <div className={clsx(styles.body, className)} {...props} />;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: merged with `namespace Dialog` for compound export
 const Dialog = {
   Root,
   createHandle,
@@ -147,6 +131,7 @@ const Dialog = {
 };
 
 namespace Dialog {
+  export type Size = DialogSize;
   export namespace Root {
     export interface Props extends BaseDialog.Root.Props {
       disableInteractions?: boolean;
@@ -163,40 +148,41 @@ namespace Dialog {
     export type Props = BaseDialog.Close.Props;
   }
   export namespace Backdrop {
-    export type Props = BaseDialog.Backdrop.Props;
+    export type Props = Omit<BaseDialog.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export interface Props extends BaseDialog.Popup.Props {
+    export interface Props extends Omit<BaseDialog.Popup.Props, "className"> {
+      className?: string;
       disableInteractions?: boolean;
     }
   }
   export namespace Title {
-    export type Props = BaseDialog.Title.Props;
+    export type Props = Omit<BaseDialog.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BaseDialog.Description.Props;
+    export type Props = Omit<BaseDialog.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Header {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Body {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 
 export default Dialog;
 ```
 
-### dialog.module.scss
+### Dialog.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -210,12 +196,25 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         opacity: $dialog-backdrop-opacity;
         position: fixed;
         inset: 0;
+        transition: opacity 150ms ease-out;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
         position: fixed;
         left: 50%;
         top: 50%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
         width: 90vw;
         max-height: 95vh;
         transform: translate(-50%, -50%);
@@ -224,11 +223,20 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
         overflow: hidden;
-        transition: filter 150ms ease-out, transform 150ms ease-out;
+        transition:
+            opacity 150ms ease-out,
+            transform 150ms ease-out,
+            filter 150ms ease-out;
 
         &[data-nested-dialog-open] {
             filter: brightness($dialog-backdrop-brightness);
             transform: translate(-50%, -50%) scale(calc(1 - 0.04 * var(--nested-dialogs)));
+        }
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.95);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -237,22 +245,22 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .popupSm {
-        min-width: 288px;
+        min-width: min(288px, 90vw);
         max-width: 384px;
     }
 
     .popupMd {
-        min-width: 384px;
+        min-width: min(384px, 90vw);
         max-width: 640px;
     }
 
     .popupLg {
-        min-width: 512px;
+        min-width: min(512px, 90vw);
         max-width: 832px;
     }
 
     .popupXl {
-        min-width: 768px;
+        min-width: min(768px, 90vw);
         max-width: 1152px;
     }
 
@@ -275,6 +283,8 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
     }
 
     .body {
+        min-height: 0;
+        overflow-y: auto;
         padding: $devie__spacing__x3 $devie__spacing__x3;
         display: flex;
         flex-direction: column;
@@ -283,7 +293,7 @@ $dialog-backdrop-brightness: 1 - $dialog-backdrop-opacity;
 
     .title {
         font-size: $devie__font-size__title3;
-        line-height: $devie__spacing__x4;
+        line-height: $devie__spacing__x3;
         color: $devie__color__text;
         margin: 0;
     }
@@ -394,7 +404,7 @@ const [open, setOpen] = useState(false);
 
 ### Nested dialogs
 
-Place a child `Dialog.Root` inside the parent and give it a smaller `size`. Base UI renders [ no second backdrop ](https://base-ui.com/react/components/dialog#nested-dialogs) . Instead, the parent popup is dimmed and shrinks while the child is open. Keep the stack to two levels, and use [AlertDialog](/components/alert-dialog) for an irreversible confirmation.
+Place a child `Dialog.Root` inside the parent and give it a smaller `size`. Base UI renders [no second backdrop](https://base-ui.com/react/components/dialog#nested-dialogs). Instead, the parent popup is dimmed and shrinks while the child is open. Keep the stack to two levels, and use [AlertDialog](/components/alert-dialog) for an irreversible confirmation.
 
 ```tsx
 <Dialog.Root size="lg">
@@ -471,6 +481,61 @@ Place a child `Dialog.Root` inside the parent and give it a smaller `size`. Base
             <Button {...props}>Save changes</Button>
           )}
         />
+      </Dialog.Footer>
+    </Dialog.Popup>
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+### Async action
+
+Set `disableInteractions` on `Dialog.Popup` while an action is pending. The popup stays inert until the action completes.
+
+```tsx
+const [open, setOpen] = useState(false);
+const [isSaving, setIsSaving] = useState(false);
+
+const handleSave = async () => {
+  setIsSaving(true);
+  // Simulate an API call
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  setIsSaving(false);
+  setOpen(false);
+};
+
+<Dialog.Root open={open} onOpenChange={setOpen}>
+  <Dialog.Trigger
+    render={(props) => (
+      <Button {...props} variant="secondary">
+        {props.children}
+      </Button>
+    )}
+  >
+    Rename project
+  </Dialog.Trigger>
+  <Dialog.Portal>
+    <Dialog.Backdrop />
+    <Dialog.Popup disableInteractions={isSaving}>
+      <Dialog.Header>
+        <Dialog.Title>Rename project</Dialog.Title>
+      </Dialog.Header>
+      <Dialog.Body>
+        <Field.Root name="project">
+          <Field.Label>Project name</Field.Label>
+          <Field.Control defaultValue="Quarterly report" />
+        </Field.Root>
+      </Dialog.Body>
+      <Dialog.Footer>
+        <Dialog.Close
+          render={(props) => (
+            <Button {...props} variant="secondary">
+              Cancel
+            </Button>
+          )}
+        />
+        <Button isLoading={isSaving} onClick={handleSave}>
+          Save
+        </Button>
       </Dialog.Footer>
     </Dialog.Popup>
   </Dialog.Portal>

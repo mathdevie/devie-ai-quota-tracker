@@ -29,24 +29,17 @@ function Root(props: Command.Root.Props) {
 
 const Dialog = BaseDialog.Root;
 
-function DialogTrigger({ className, ...props }: BaseDialog.Trigger.Props) {
-  return <BaseDialog.Trigger className={className} {...props} />;
-}
+const DialogTrigger = BaseDialog.Trigger;
 
-function DialogPopup({
-  className,
-  children,
-  ...props
-}: Command.DialogPopup.Props) {
+function DialogPopup({ className, ...props }: Command.DialogPopup.Props) {
   return (
     <BaseDialog.Portal>
       <BaseDialog.Backdrop className={styles.backdrop} />
       <BaseDialog.Popup
+        aria-label="Command palette"
         className={clsx(styles.dialogPopup, className)}
         {...props}
-      >
-        {children}
-      </BaseDialog.Popup>
+      />
     </BaseDialog.Portal>
   );
 }
@@ -64,7 +57,7 @@ function Input({ className, endAddon, ...props }: Command.Input.Props) {
   );
 }
 
-function List({ className, ...props }: Autocomplete.List.Props) {
+function List({ className, ...props }: Command.List.Props) {
   return (
     <div className={styles.listScroller}>
       <Autocomplete.List className={clsx(styles.list, className)} {...props} />
@@ -72,25 +65,25 @@ function List({ className, ...props }: Autocomplete.List.Props) {
   );
 }
 
-function Item({ className, ...props }: Autocomplete.Item.Props) {
+function Item({ className, ...props }: Command.Item.Props) {
   return (
     <Autocomplete.Item className={clsx(styles.item, className)} {...props} />
   );
 }
 
-function Empty({ className, ...props }: Autocomplete.Empty.Props) {
+function Empty({ className, ...props }: Command.Empty.Props) {
   return (
     <Autocomplete.Empty className={clsx(styles.empty, className)} {...props} />
   );
 }
 
-function Group({ className, ...props }: Autocomplete.Group.Props) {
+function Group({ className, ...props }: Command.Group.Props) {
   return (
     <Autocomplete.Group className={clsx(styles.group, className)} {...props} />
   );
 }
 
-function GroupLabel({ className, ...props }: Autocomplete.GroupLabel.Props) {
+function GroupLabel({ className, ...props }: Command.GroupLabel.Props) {
   return (
     <Autocomplete.GroupLabel
       className={clsx(styles.groupLabel, className)}
@@ -99,7 +92,7 @@ function GroupLabel({ className, ...props }: Autocomplete.GroupLabel.Props) {
   );
 }
 
-function Separator({ className, ...props }: Autocomplete.Separator.Props) {
+function Separator({ className, ...props }: Command.Separator.Props) {
   return (
     <Autocomplete.Separator
       className={clsx(styles.separator, className)}
@@ -156,57 +149,61 @@ namespace Command {
     export type Props = BaseDialog.Trigger.Props;
   }
   export namespace DialogPopup {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+    export type Props = Omit<BaseDialog.Popup.Props, "className"> & {
       className?: string;
-      children?: React.ReactNode;
-    }
+    };
   }
   export namespace Input {
-    export interface Props extends Autocomplete.Input.Props {
+    export interface Props extends Omit<Autocomplete.Input.Props, "className"> {
+      className?: string;
       endAddon?: React.ReactNode;
     }
   }
   export namespace List {
-    export type Props = Autocomplete.List.Props;
+    export type Props = Omit<Autocomplete.List.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = Autocomplete.Item.Props;
+    export type Props = Omit<Autocomplete.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = Autocomplete.Item.State;
   }
   export namespace Empty {
-    export type Props = Autocomplete.Empty.Props;
+    export type Props = Omit<Autocomplete.Empty.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
-    export type Props = Autocomplete.Group.Props;
+    export type Props = Omit<Autocomplete.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace GroupLabel {
-    export type Props = Autocomplete.GroupLabel.Props;
+    export type Props = Omit<Autocomplete.GroupLabel.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Separator {
-    export type Props = Autocomplete.Separator.Props;
+    export type Props = Omit<Autocomplete.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Shortcut {
-    export interface Props extends React.HTMLAttributes<HTMLElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"kbd">;
   }
   export namespace Toolbar {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Footer {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Panel {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Collection {
-    export type Props = React.ComponentProps<typeof Autocomplete.Collection>;
+    export type Props = Autocomplete.Collection.Props;
   }
 }
 

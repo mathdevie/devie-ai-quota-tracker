@@ -5,44 +5,31 @@ import { Separator as BaseSeparator } from "@base-ui/react/separator";
 import clsx from "clsx";
 import styles from "./Separator.module.scss";
 
-function Separator({
-  text,
-  orientation = "horizontal",
-  className,
-  style,
-  ...props
-}: Separator.Props) {
-  if (text && orientation === "horizontal") {
-    const containerStyle = typeof style === "function" ? undefined : style;
+function Separator({ text, className, ...props }: Separator.Props) {
+  if (text) {
     return (
-      <div className={styles.withTextContainer} style={containerStyle}>
-        <BaseSeparator
-          orientation="horizontal"
-          className={clsx(styles.separator, className)}
-          {...props}
-        />
-        <span className={styles.text}>{text}</span>
-        <BaseSeparator
-          orientation="horizontal"
-          className={clsx(styles.separator, className)}
-          {...props}
-        />
-      </div>
+      <BaseSeparator
+        aria-label={text}
+        className={clsx(styles.withTextContainer, className)}
+        {...props}
+      >
+        <span className={styles.line} />
+        <span className={styles.text} aria-hidden="true">
+          {text}
+        </span>
+        <span className={styles.line} />
+      </BaseSeparator>
     );
   }
 
   return (
-    <BaseSeparator
-      orientation={orientation}
-      className={clsx(styles.separator, className)}
-      style={style}
-      {...props}
-    />
+    <BaseSeparator className={clsx(styles.separator, className)} {...props} />
   );
 }
 
 namespace Separator {
-  export interface Props extends BaseSeparator.Props {
+  export interface Props extends Omit<BaseSeparator.Props, "className"> {
+    className?: string;
     text?: string;
   }
 }

@@ -21,6 +21,10 @@
         &:focus-visible {
             @include devie-focus-ring(2px);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .variantSecondary {

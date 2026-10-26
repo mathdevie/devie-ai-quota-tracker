@@ -29,7 +29,10 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 const DEFAULT_THEME = SYSTEM_THEME;
 const STORAGE_KEY = "devie-quota-theme:v1";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
-const LEGACY_THEMES: Record<string, string> = { "theme-default": LIGHT_THEME };
+const LEGACY_THEMES: Record<string, string> = {
+  "theme-default": LIGHT_THEME,
+  "theme-catpuccin-latte": "theme-catppuccin-latte",
+};
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 function getStoredTheme(): string | null {
@@ -38,7 +41,11 @@ function getStoredTheme(): string | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     const storedTheme = raw ? (LEGACY_THEMES[raw] ?? raw) : null;
-    return storedTheme && ALLOWED_THEMES.has(storedTheme) ? storedTheme : null;
+    if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
+      if (storedTheme !== raw) persistTheme(storedTheme);
+      return storedTheme;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -111,8 +118,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     function handleStorageChange(event: StorageEvent) {
       if (event.key !== STORAGE_KEY) return;
-      const nextTheme = event.newValue;
+      const raw = event.newValue;
+      const nextTheme = raw ? (LEGACY_THEMES[raw] ?? raw) : null;
       if (nextTheme && ALLOWED_THEMES.has(nextTheme)) {
+        if (nextTheme !== raw) persistTheme(nextTheme);
         setSelectedTheme(nextTheme);
         setPreviewedTheme(null);
       }

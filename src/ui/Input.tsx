@@ -10,7 +10,9 @@ function Input({ className, ...props }: Input.Props) {
 }
 
 namespace Input {
-  export type Props = BaseInput.Props;
+  export type Props = Omit<BaseInput.Props, "className"> & {
+    className?: string;
+  };
   export type State = BaseInput.State;
   export type ChangeEventDetails = BaseInput.ChangeEventDetails;
 }

@@ -1,12 +1,12 @@
 # <Form />
 
-A form with consolidated error handling. The Form component extends [ Base UI's Form ](https://base-ui.com/react/components/form) . It validates every [Field](/components/field), [Checkbox](/components/checkbox), and [CheckboxGroup](/components/checkbox-group) before it calls `onFormSubmit`, and it displays server errors with the `errors` prop.
+A form with consolidated error handling. The Form component extends [Base UI's Form](https://base-ui.com/react/components/form). It validates every [Field](/components/field), [Checkbox](/components/checkbox), and [CheckboxGroup](/components/checkbox-group) before it calls `onFormSubmit`, and it displays server errors with the `errors` prop.
 
 Built on [Base UI](https://base-ui.com/react/components/form).
 
 ## Installation
 
-### form.tsx
+### Form.tsx
 
 ```tsx
 // https://devie-ui.com/components/form
@@ -16,12 +16,14 @@ import { Form as BaseForm } from "@base-ui/react/form";
 import clsx from "clsx";
 import styles from "./Form.module.scss";
 
-function Form({ className, ...props }: BaseForm.Props) {
+function Form({ className, ...props }: Form.Props) {
   return <BaseForm className={clsx(styles.form, className)} {...props} />;
 }
 
 namespace Form {
-  export type Props = BaseForm.Props;
+  export type Props = Omit<BaseForm.Props, "className"> & {
+    className?: string;
+  };
   export type State = BaseForm.State;
   export type Values = BaseForm.Values;
   export type SubmitEventDetails = BaseForm.SubmitEventDetails;
@@ -30,7 +32,7 @@ namespace Form {
 export default Form;
 ```
 
-### form.module.scss
+### Form.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -160,7 +162,7 @@ async function handleSubmit(formValues: Form.Values) {
 
 ### With Zod
 
-Define the [ Zod ](https://zod.dev) schema with custom messages. Call `safeParse`, then `error.flatten()` to build the `errors` object.
+Define the [Zod](https://zod.dev) schema with custom messages. Call `safeParse`, then `error.flatten()` to build the `errors` object.
 
 ```tsx
 const ProjectSchema = z.object({
@@ -205,29 +207,7 @@ async function handleSubmit(formValues: Form.Values) {
 
 ### Other form libraries
 
-Base UI also documents [ TanStack Form ](https://base-ui.com/react/handbook/forms#tanstack-form) and [ React Hook Form ](https://base-ui.com/react/handbook/forms#react-hook-form) .
-
-### Additional Examples
-
-#### Simple
-
-```tsx
-<Form onSubmit={(event) => event.preventDefault()}>
-  <Field.Root>
-    <Field.Label>Name</Field.Label>
-    <Field.Control placeholder="Enter your name" />
-  </Field.Root>
-  <Field.Root>
-    <Field.Label>Email</Field.Label>
-    <Field.Control type="email" placeholder="you@example.com" />
-  </Field.Root>
-  <Field.Root>
-    <Field.Label>Message</Field.Label>
-    <Field.Control render={<textarea rows={3} />} placeholder="Your message..." />
-  </Field.Root>
-  <button type="submit">Send</button>
-</Form>
-```
+Base UI also documents [TanStack Form](https://base-ui.com/react/handbook/forms#tanstack-form) and [React Hook Form](https://base-ui.com/react/handbook/forms#react-hook-form).
 
 ---
 

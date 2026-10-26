@@ -3,25 +3,20 @@
 
 import { Tooltip as BaseTooltip } from "@base-ui/react/tooltip";
 import clsx from "clsx";
+import type React from "react";
 import styles from "./Tooltip.module.scss";
 
-function Trigger({
-  className,
-  delay = 100,
-  render,
-  ...props
-}: BaseTooltip.Trigger.Props) {
+function Trigger({ className, render, ...props }: Tooltip.Trigger.Props) {
   return (
     <BaseTooltip.Trigger
       className={clsx(!render && styles.trigger, className)}
-      delay={delay}
       render={render}
       {...props}
     />
   );
 }
 
-function Arrow({ className, children, ...props }: BaseTooltip.Arrow.Props) {
+function Arrow({ className, children, ...props }: Tooltip.Arrow.Props) {
   return (
     <BaseTooltip.Arrow className={clsx(styles.arrow, className)} {...props}>
       {children || <ArrowSvg />}
@@ -29,26 +24,19 @@ function Arrow({ className, children, ...props }: BaseTooltip.Arrow.Props) {
   );
 }
 
-function Popup({ className, ...props }: BaseTooltip.Popup.Props) {
+function Popup({ className, ...props }: Tooltip.Popup.Props) {
   return (
     <BaseTooltip.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function Provider({ delay = 100, ...props }: BaseTooltip.Provider.Props) {
+function Provider({ delay = 100, ...props }: Tooltip.Provider.Props) {
   return <BaseTooltip.Provider delay={delay} {...props} />;
 }
 
 const Portal = BaseTooltip.Portal;
 
-function Positioner({ className, ...props }: BaseTooltip.Positioner.Props) {
-  return (
-    <BaseTooltip.Positioner
-      className={clsx(styles.positioner, className)}
-      {...props}
-    />
-  );
-}
+const Positioner = BaseTooltip.Positioner;
 
 const Root = BaseTooltip.Root;
 
@@ -70,13 +58,19 @@ namespace Tooltip {
     export type Props = BaseTooltip.Root.Props;
   }
   export namespace Trigger {
-    export type Props = BaseTooltip.Trigger.Props;
+    export type Props = Omit<BaseTooltip.Trigger.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Popup {
-    export type Props = BaseTooltip.Popup.Props;
+    export type Props = Omit<BaseTooltip.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Arrow {
-    export type Props = BaseTooltip.Arrow.Props;
+    export type Props = Omit<BaseTooltip.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Portal {
     export type Props = BaseTooltip.Portal.Props;
@@ -91,8 +85,14 @@ export default Tooltip;
 
 function ArrowSvg(props: React.ComponentProps<"svg">) {
   return (
-    <svg width="20" height="10" viewBox="0 0 20 10" fill="none" {...props}>
-      <title>Tooltip arrow</title>
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
       <path
         d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
         className={styles.arrowFill}

@@ -4,17 +4,17 @@ import clsx from "clsx";
 import type React from "react";
 import styles from "./TreeLine.module.scss";
 
-type Variant =
+type TreeLineVariant =
   | "horizontal"
   | "vertical"
-  | "cornerTopLeft"
-  | "cornerTopRight"
-  | "cornerBottomLeft"
-  | "cornerBottomRight"
-  | "branchRight"
-  | "branchLeft"
-  | "branchDown"
-  | "branchUp";
+  | "corner-top-left"
+  | "corner-top-right"
+  | "corner-bottom-left"
+  | "corner-bottom-right"
+  | "branch-right"
+  | "branch-left"
+  | "branch-down"
+  | "branch-up";
 
 function TreeLine({ variant, className, ...props }: TreeLine.Props) {
   return (
@@ -23,14 +23,14 @@ function TreeLine({ variant, className, ...props }: TreeLine.Props) {
         styles.treeLine,
         variant === "horizontal" && styles.horizontal,
         variant === "vertical" && styles.vertical,
-        variant === "cornerTopLeft" && styles.cornerTopLeft,
-        variant === "cornerTopRight" && styles.cornerTopRight,
-        variant === "cornerBottomLeft" && styles.cornerBottomLeft,
-        variant === "cornerBottomRight" && styles.cornerBottomRight,
-        variant === "branchRight" && styles.branchRight,
-        variant === "branchLeft" && styles.branchLeft,
-        variant === "branchDown" && styles.branchDown,
-        variant === "branchUp" && styles.branchUp,
+        variant === "corner-top-left" && styles.cornerTopLeft,
+        variant === "corner-top-right" && styles.cornerTopRight,
+        variant === "corner-bottom-left" && styles.cornerBottomLeft,
+        variant === "corner-bottom-right" && styles.cornerBottomRight,
+        variant === "branch-right" && styles.branchRight,
+        variant === "branch-left" && styles.branchLeft,
+        variant === "branch-down" && styles.branchDown,
+        variant === "branch-up" && styles.branchUp,
         className,
       )}
       {...props}
@@ -39,7 +39,8 @@ function TreeLine({ variant, className, ...props }: TreeLine.Props) {
 }
 
 namespace TreeLine {
-  export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+  export type Variant = TreeLineVariant;
+  export interface Props extends React.ComponentProps<"div"> {
     variant: Variant;
   }
 }

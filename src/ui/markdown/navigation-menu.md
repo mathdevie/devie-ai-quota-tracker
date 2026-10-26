@@ -1,12 +1,12 @@
 # <NavigationMenu />
 
-A collection of links and menus for website navigation. The NavigationMenu component extends [ Base UI's NavigationMenu ](https://base-ui.com/react/components/navigation-menu) . It provides a collection of links and menus for website navigation, with support for hover-triggered dropdowns, keyboard navigation, and accessibility features.
+A collection of links and menus for website navigation. The NavigationMenu component extends [Base UI's NavigationMenu](https://base-ui.com/react/components/navigation-menu). It provides a collection of links and menus for website navigation, with support for hover-triggered dropdowns, keyboard navigation, and accessibility features.
 
 Built on [Base UI](https://base-ui.com/react/components/navigation-menu).
 
 ## Installation
 
-### navigation-menu.tsx
+### NavigationMenu.tsx
 
 ```tsx
 // https://devie-ui.com/components/navigation-menu
@@ -20,10 +20,7 @@ import styles from "./NavigationMenu.module.scss";
 
 const Root = BaseNavigationMenu.Root;
 
-function List({
-  className,
-  ...props
-}: React.ComponentProps<typeof BaseNavigationMenu.List>) {
+function List({ className, ...props }: NavigationMenu.List.Props) {
   return (
     <BaseNavigationMenu.List
       className={clsx(styles.list, className)}
@@ -32,10 +29,7 @@ function List({
   );
 }
 
-function Item({
-  className,
-  ...props
-}: React.ComponentProps<typeof BaseNavigationMenu.Item>) {
+function Item({ className, ...props }: NavigationMenu.Item.Props) {
   return (
     <BaseNavigationMenu.Item
       className={clsx(styles.item, className)}
@@ -48,7 +42,7 @@ function Trigger({
   className,
   render,
   ...props
-}: React.ComponentProps<typeof BaseNavigationMenu.Trigger>) {
+}: NavigationMenu.Trigger.Props) {
   return (
     <BaseNavigationMenu.Trigger
       className={clsx(!render && styles.trigger, className)}
@@ -58,11 +52,7 @@ function Trigger({
   );
 }
 
-function Icon({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof BaseNavigationMenu.Icon>) {
+function Icon({ className, children, ...props }: NavigationMenu.Icon.Props) {
   return (
     <BaseNavigationMenu.Icon
       className={clsx(styles.icon, className)}
@@ -73,7 +63,7 @@ function Icon({
   );
 }
 
-function Content({ className, ...props }: BaseNavigationMenu.Content.Props) {
+function Content({ className, ...props }: NavigationMenu.Content.Props) {
   return (
     <BaseNavigationMenu.Content
       className={clsx(styles.content, className)}
@@ -82,7 +72,7 @@ function Content({ className, ...props }: BaseNavigationMenu.Content.Props) {
   );
 }
 
-function Link({ className, ...props }: BaseNavigationMenu.Link.Props) {
+function Link({ className, ...props }: NavigationMenu.Link.Props) {
   return (
     <BaseNavigationMenu.Link
       className={clsx(styles.link, className)}
@@ -91,7 +81,7 @@ function Link({ className, ...props }: BaseNavigationMenu.Link.Props) {
   );
 }
 
-function Backdrop({ className, ...props }: BaseNavigationMenu.Backdrop.Props) {
+function Backdrop({ className, ...props }: NavigationMenu.Backdrop.Props) {
   return (
     <BaseNavigationMenu.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -102,10 +92,7 @@ function Backdrop({ className, ...props }: BaseNavigationMenu.Backdrop.Props) {
 
 const Portal = BaseNavigationMenu.Portal;
 
-function Positioner({
-  className,
-  ...props
-}: BaseNavigationMenu.Positioner.Props) {
+function Positioner({ className, ...props }: NavigationMenu.Positioner.Props) {
   return (
     <BaseNavigationMenu.Positioner
       className={clsx(styles.positioner, className)}
@@ -114,7 +101,7 @@ function Positioner({
   );
 }
 
-function Popup({ className, ...props }: BaseNavigationMenu.Popup.Props) {
+function Popup({ className, ...props }: NavigationMenu.Popup.Props) {
   return (
     <BaseNavigationMenu.Popup
       className={clsx(styles.popup, className)}
@@ -123,7 +110,7 @@ function Popup({ className, ...props }: BaseNavigationMenu.Popup.Props) {
   );
 }
 
-function Viewport({ className, ...props }: BaseNavigationMenu.Viewport.Props) {
+function Viewport({ className, ...props }: NavigationMenu.Viewport.Props) {
   return (
     <BaseNavigationMenu.Viewport
       className={clsx(styles.viewport, className)}
@@ -132,12 +119,14 @@ function Viewport({ className, ...props }: BaseNavigationMenu.Viewport.Props) {
   );
 }
 
-function Arrow({ className, ...props }: BaseNavigationMenu.Arrow.Props) {
+function Arrow({ className, children, ...props }: NavigationMenu.Arrow.Props) {
   return (
     <BaseNavigationMenu.Arrow
       className={clsx(styles.arrow, className)}
       {...props}
-    />
+    >
+      {children || <ArrowSvg />}
+    </BaseNavigationMenu.Arrow>
   );
 }
 
@@ -162,47 +151,92 @@ namespace NavigationMenu {
     export type Props = BaseNavigationMenu.Root.Props;
   }
   export namespace List {
-    export type Props = React.ComponentProps<typeof BaseNavigationMenu.List>;
+    export type Props = Omit<BaseNavigationMenu.List.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = React.ComponentProps<typeof BaseNavigationMenu.Item>;
+    export type Props = Omit<BaseNavigationMenu.Item.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Trigger {
-    export type Props = React.ComponentProps<typeof BaseNavigationMenu.Trigger>;
+    export type Props = Omit<BaseNavigationMenu.Trigger.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Icon {
-    export type Props = React.ComponentProps<typeof BaseNavigationMenu.Icon>;
+    export type Props = Omit<BaseNavigationMenu.Icon.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Content {
-    export type Props = BaseNavigationMenu.Content.Props;
+    export type Props = Omit<BaseNavigationMenu.Content.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Link {
-    export type Props = BaseNavigationMenu.Link.Props;
+    export type Props = Omit<BaseNavigationMenu.Link.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Backdrop {
-    export type Props = BaseNavigationMenu.Backdrop.Props;
+    export type Props = Omit<BaseNavigationMenu.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Portal {
     export type Props = BaseNavigationMenu.Portal.Props;
   }
   export namespace Positioner {
-    export type Props = BaseNavigationMenu.Positioner.Props;
+    export type Props = Omit<
+      BaseNavigationMenu.Positioner.Props,
+      "className"
+    > & { className?: string };
   }
   export namespace Popup {
-    export type Props = BaseNavigationMenu.Popup.Props;
+    export type Props = Omit<BaseNavigationMenu.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Viewport {
-    export type Props = BaseNavigationMenu.Viewport.Props;
+    export type Props = Omit<BaseNavigationMenu.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Arrow {
-    export type Props = BaseNavigationMenu.Arrow.Props;
+    export type Props = Omit<BaseNavigationMenu.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default NavigationMenu;
+
+function ArrowSvg(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        className={styles.arrowFill}
+      />
+      <path
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        className={styles.arrowInnerStroke}
+      />
+    </svg>
+  );
+}
 ```
 
-### navigation-menu.module.scss
+### NavigationMenu.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -259,6 +293,10 @@ export default NavigationMenu;
         [data-popup-open]>& {
             transform: rotate(180deg);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .content {
@@ -292,19 +330,15 @@ export default NavigationMenu;
     .backdrop {
         position: fixed;
         inset: 0;
-        background: transparent;
-        opacity: 1;
-        transition: opacity 200ms ease;
-
-        &[data-starting-style],
-        &[data-ending-style] {
-            opacity: 0;
-        }
     }
 
     .positioner {
         &:not([data-instant]) {
             transition: left 300ms ease;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 
@@ -313,9 +347,6 @@ export default NavigationMenu;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
-        overflow: hidden;
-        opacity: 1;
-        transform: scale(1);
         transform-origin: var(--transform-origin);
         transition:
             opacity 200ms ease,
@@ -330,35 +361,63 @@ export default NavigationMenu;
             opacity: 0;
             transform: scale(0.96);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .viewport {
         overflow: hidden;
-        // Animate viewport size changes when switching between menu items
         transition:
             width 300ms ease,
             height 300ms ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &:not([data-instant]) {
             transition: left 300ms ease;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
+
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
+        &[data-side='left'] {
+            right: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: -90deg;
+        }
+    }
+
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 }
 ```

@@ -49,7 +49,6 @@ $devie__spacing__x8: var(--devie__spacing__x8);
 
 $devie__zoom: var(--devie__zoom);
 
-
 @function devie-hover-color($color) {
     @return string.unquote("oklch(from #{$color} calc(l * (1 - var(--devie__effect__hover-intensity))) c h)"
     );

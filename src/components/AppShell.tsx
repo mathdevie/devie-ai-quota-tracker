@@ -93,7 +93,7 @@ function Shell() {
 
   const showError = useCallback(
     (reason: unknown) =>
-      toasts.add({ type: "error", description: errorMessage(reason) }),
+      toasts.add({ type: "danger", description: errorMessage(reason) }),
     [toasts],
   );
 

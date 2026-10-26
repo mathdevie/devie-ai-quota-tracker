@@ -6,7 +6,7 @@ terms that apply to it.
 
 ## Devie UI (`src/ui`)
 
-`src/ui` is a vendored subset of [Devie UI](https://www.devie-ui.com/)
+`src/ui` is a vendored full-tree mirror of [Devie UI](https://www.devie-ui.com/)
 (components, tokens, and themes), copyright the Devie AI Quota Tracker author, and
 is covered by this repository's MIT license.
 

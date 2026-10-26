@@ -1,0 +1,47 @@
+@use './_devie.scss' as *;
+
+@layer devie {
+    .skeletonLine {
+        position: relative;
+        overflow: hidden;
+        width: var(--skeleton-line-width, 100%);
+        height: $devie__spacing__x1;
+        border-radius: $devie__radius;
+        background-color: $devie__color__background-sunken;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                color-mix(in srgb, $devie__color__text 8%, transparent) 50%,
+                transparent 100%
+            );
+            animation: skeletonShimmer var(--skeleton-line-duration, 1.5s)
+                ease-in-out var(--skeleton-line-delay, 0s) infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &::after {
+                animation: none;
+            }
+        }
+    }
+
+    @keyframes skeletonShimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    .block {
+        display: flex;
+        align-items: center;
+    }
+}

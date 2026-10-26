@@ -4,7 +4,7 @@ A card that floats on a shell with a matching corner radius. This is a custom co
 
 ## Installation
 
-### layer-card.tsx
+### LayerCard.tsx
 
 ```tsx
 // https://devie-ui.com/components/layer-card
@@ -13,20 +13,12 @@ import clsx from "clsx";
 import type React from "react";
 import styles from "./LayerCard.module.scss";
 
-function Root({ className, children, ...props }: LayerCard.Root.Props) {
-  return (
-    <div className={clsx(styles.root, className)} {...props}>
-      {children}
-    </div>
-  );
+function Root({ className, ...props }: LayerCard.Root.Props) {
+  return <div className={clsx(styles.root, className)} {...props} />;
 }
 
-function Inner({ className, children, ...props }: LayerCard.Inner.Props) {
-  return (
-    <div className={clsx(styles.inner, className)} {...props}>
-      {children}
-    </div>
-  );
+function Inner({ className, ...props }: LayerCard.Inner.Props) {
+  return <div className={clsx(styles.inner, className)} {...props} />;
 }
 
 const LayerCard = {
@@ -36,21 +28,17 @@ const LayerCard = {
 
 namespace LayerCard {
   export namespace Root {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
   export namespace Inner {
-    export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-      className?: string;
-    }
+    export type Props = React.ComponentProps<"div">;
   }
 }
 
 export default LayerCard;
 ```
 
-### layer-card.module.scss
+### LayerCard.module.scss
 
 ```scss
 @use './_devie.scss' as *;

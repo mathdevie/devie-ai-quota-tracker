@@ -1,7 +1,7 @@
 // https://devie-ui.com/components/badge
 
+import { useRender } from "@base-ui/react/use-render";
 import clsx from "clsx";
-import type React from "react";
 import styles from "./Badge.module.scss";
 
 type BadgeVariant =
@@ -10,41 +10,53 @@ type BadgeVariant =
   | "danger"
   | "success"
   | "warning"
-  | "literalGray"
-  | "literalBrown"
-  | "literalOrange"
-  | "literalYellow"
-  | "literalGreen"
-  | "literalBlue"
-  | "literalPurple"
-  | "literalPink"
-  | "literalRed";
+  | "literal-gray"
+  | "literal-brown"
+  | "literal-orange"
+  | "literal-yellow"
+  | "literal-green"
+  | "literal-blue"
+  | "literal-purple"
+  | "literal-pink"
+  | "literal-red";
+
+const variantClassNames: Record<BadgeVariant, string> = {
+  primary: styles.primary,
+  outline: styles.outline,
+  danger: styles.danger,
+  success: styles.success,
+  warning: styles.warning,
+  "literal-gray": styles.literalGray,
+  "literal-brown": styles.literalBrown,
+  "literal-orange": styles.literalOrange,
+  "literal-yellow": styles.literalYellow,
+  "literal-green": styles.literalGreen,
+  "literal-blue": styles.literalBlue,
+  "literal-purple": styles.literalPurple,
+  "literal-pink": styles.literalPink,
+  "literal-red": styles.literalRed,
+};
 
 function Badge({
   variant = "outline",
-  children,
   className,
-  as = "div",
+  render,
   ...props
 }: Badge.Props) {
-  // Badge.Props types the rendered element with div attributes, whatever tag `as` is
-  const Component = as as React.ElementType<
-    React.HTMLAttributes<HTMLDivElement>
-  >;
-  return (
-    <Component
-      className={clsx(styles.badge, styles[variant], className)}
-      {...props}
-    >
-      {children}
-    </Component>
-  );
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: {
+      ...props,
+      className: clsx(styles.badge, variantClassNames[variant], className),
+    },
+  });
 }
 
 namespace Badge {
-  export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-    variant?: BadgeVariant;
-    as?: React.ElementType;
+  export type Variant = BadgeVariant;
+  export interface Props extends useRender.ComponentProps<"div"> {
+    variant?: Variant;
   }
 }
 

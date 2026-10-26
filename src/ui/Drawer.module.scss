@@ -16,19 +16,26 @@
         transform-origin: center top;
         transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         min-height: 100vh;
-        
+
         &[data-active] {
             border-radius: $devie__radius-strong;
             transform: scale(0.95);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 
     .backdrop {
         background-color: #000000;
-        --backdrop-opacity: 0.6;
+        --backdrop-opacity: 0.7;
         opacity: calc(var(--backdrop-opacity) * (1 - var(--drawer-swipe-progress, 0)));
         position: fixed;
         inset: 0;
+        transition-duration: 400ms;
+        transition-property: opacity;
+        transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 
         &[data-starting-style],
         &[data-ending-style] {
@@ -37,16 +44,17 @@
 
         &[data-ending-style] {
             transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
-        transition-duration: 400ms;
-        transition-property: opacity;
-        transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-        
         &[data-swiping] {
             transition-duration: 0ms;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            &[data-ending-style] {
+                transition-duration: 0ms;
+            }
         }
     }
 
@@ -70,6 +78,8 @@
         transition-duration: 400ms;
         transition-property: transform;
         transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        border: 1px solid $devie__color__line;
+        box-shadow: $devie__shadow__menu;
 
         &[data-ending-style] {
             transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
@@ -79,8 +89,12 @@
             transition-duration: 0ms;
         }
 
-        border: 1px solid $devie__color__line;
-        box-shadow: $devie__shadow__menu;
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            &[data-ending-style] {
+                transition-duration: 0ms;
+            }
+        }
 
         &[data-swipe-direction='down'] {
             margin-top: auto;
@@ -91,6 +105,7 @@
             border-bottom: none;
             transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px))) scale(var(--stack-scale));
         }
+
         &[data-ending-style][data-swipe-direction='down'],
         &[data-starting-style][data-swipe-direction='down'] {
             transform: translateY(100%);
@@ -106,6 +121,7 @@
             border-right: none;
             transform: translateX(var(--drawer-swipe-movement-x, 0px));
         }
+
         &[data-ending-style][data-swipe-direction='right'],
         &[data-starting-style][data-swipe-direction='right'] {
             transform: translateX(100%);
@@ -121,6 +137,7 @@
             border-left: none;
             transform: translateX(var(--drawer-swipe-movement-x, 0px));
         }
+
         &[data-ending-style][data-swipe-direction='left'],
         &[data-starting-style][data-swipe-direction='left'] {
             transform: translateX(-100%);
@@ -135,6 +152,7 @@
             border-top: none;
             transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px))) scale(var(--stack-scale));
         }
+
         &[data-ending-style][data-swipe-direction='up'],
         &[data-starting-style][data-swipe-direction='up'] {
             transform: translateY(-100%);
@@ -148,19 +166,24 @@
         display: flex;
         flex-direction: column;
         gap: $devie__spacing__x2;
-
         transition: opacity 300ms;
+
         .popup[data-nested-drawer-open] & {
             opacity: 0;
         }
+
         .popup[data-nested-drawer-open][data-nested-drawer-swiping] & {
             opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 
     .handle {
-        width: 32px;
-        height: 5px;
+        width: $devie__spacing__x4;
+        height: $devie__spacing__x05;
         border-radius: 9999px;
         background-color: $devie__color__line;
         margin: $devie__spacing__x2 auto $devie__spacing__x1;
@@ -169,7 +192,7 @@
 
     .title {
         font-size: $devie__font-size__title3;
-        line-height: $devie__spacing__x4;
+        line-height: $devie__spacing__x3;
         font-weight: 600;
         color: $devie__color__text;
         margin: 0;

@@ -1,26 +1,45 @@
 # Changelog
 
+## 2026-10-25
+
+- Breaking: multi-word variants are kebab-case, such as `literal-gray` on [Badge](/components/badge) and `corner-top-left` on [TreeLine](/components/tree-line)
+- Breaking: the `xl` size of [Button](/components/button) is renamed `lg`
+- Breaking: [CheckboxGroup](/components/checkbox-group) is a single component, `<CheckboxGroup>` instead of `<CheckboxGroup.Root>`
+- Breaking: [Badge](/components/badge) takes a `render` prop instead of `as`
+- Breaking: [Callout](/components/callout) defaults to the `sub` variant
+- New `warning` type for [Toast](/components/toast)
+- Popup arrows render for Menu, ContextMenu, Select, Combobox, Autocomplete, NavigationMenu and Popover
+- [Dialog](/components/dialog) and AlertDialog fit small screens and scroll tall content
+
+## 2026-10-12
+
+- Update to [Base UI 1.9.0](https://base-ui.com/react/overview/releases/v1-9-0)
+
+## 2026-10-07
+
+- New [SkeletonLine](/components/skeleton-line) component
+
 ## 2026-09-20
 
 - New [Input](/components/input) component
-- New segmented variant for [Tabs](/components/tabs#segmented)
+- New `segmented` variant for [Tabs](/components/tabs#segmented)
 - New [ButtonGroup](/components/button-group) and [InputGroup](/components/input-group) components for joined controls
 
 ## 2026-09-07
 
-- Update to [ Base UI 1.8.0 ](https://base-ui.com/react/overview/releases/v1-8-0)
-- Breaking: --devie__color__background-sub is renamed --devie__color__background-sunken.
-- New --devie__color__background-raised
+- Update to [Base UI 1.8.0](https://base-ui.com/react/overview/releases/v1-8-0)
+- Breaking: `--devie__color__background-sub` is renamed `--devie__color__background-sunken`.
+- New `--devie__color__background-raised`
 - New guides: [Design for desktop](/how-to/design-for-desktop-native) and [UI scaling](/how-to/scale-the-interface)
 
 ## 2026-08-18
 
-- Update to [ Base UI 1.7.0 ](https://base-ui.com/react/overview/releases/v1-7-0)
+- Update to [Base UI 1.7.0](https://base-ui.com/react/overview/releases/v1-7-0)
 - Change the default font for the documentation site
 
 ## 2026-06-01
 
-- Update to [ Base UI 1.5.0 ](https://base-ui.com/react/overview/releases/v1-5-0)
+- Update to [Base UI 1.5.0](https://base-ui.com/react/overview/releases/v1-5-0)
 
 ## 2026-05-16
 
@@ -28,15 +47,15 @@
 
 ## 2026-04-19
 
-- New [stacking strategy](/how-to/z-index-and-stacking) with no portal z-index, based on an isolated stacking-context root
+- New [stacking strategy](/how-to/z-index-and-stacking) with no portal `z-index`, based on an isolated stacking-context root
 
 ## 2026-04-16
 
-- New theme persistence with a static-friendly boot script, data-devie-theme attribute and cross-tab sync
+- New theme persistence with a static-friendly boot script, `data-devie-theme` attribute and cross-tab sync
 
 ## 2026-04-15
 
-- Update to [ Base UI 1.4.0 ](https://base-ui.com/react/overview/releases/v1-4-0)
+- Update to [Base UI 1.4.0](https://base-ui.com/react/overview/releases/v1-4-0)
 
 ## 2026-04-09
 
@@ -46,19 +65,19 @@
 
 ## 2026-03-13
 
-- Update to [ Base UI 1.3.0 ](https://base-ui.com/react/overview/releases/v1-3-0)
+- Update to [Base UI 1.3.0](https://base-ui.com/react/overview/releases/v1-3-0)
 
 ## 2026-02-14
 
-- Update to [ Base UI 1.2.0 ](https://base-ui.com/react/overview/releases/v1-2-0)
+- Update to [Base UI 1.2.0](https://base-ui.com/react/overview/releases/v1-2-0)
 
 ## 2026-02-08
 
-- Re-exports of Base UI [ TypeScript namespaces ](https://base-ui.com/react/handbook/typescript) (Props, State, Events, Values)
+- Re-exports of Base UI [TypeScript namespaces](https://base-ui.com/react/handbook/typescript) (Props, State, Events, Values)
 
 ## 2026-01-18
 
-- Update to [ Base UI 1.1.0 ](https://base-ui.com/react/overview/releases#v1.1.0)
+- Update to [Base UI 1.1.0](https://base-ui.com/react/overview/releases#v1.1.0)
 
 ---
 

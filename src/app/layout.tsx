@@ -16,7 +16,7 @@ import "@/ui/themes/sharingan/theme.css";
 import "@/ui/themes/alpine-snow/theme.css";
 import "@/ui/themes/command-prompt/theme.css";
 import "@/ui/themes/totoro/theme.css";
-import "@/ui/themes/catpuccin-latte/theme.css";
+import "@/ui/themes/catppuccin-latte/theme.css";
 import "./globals.scss";
 import "@/theme/desktop.scss";
 
@@ -34,6 +34,8 @@ const themeBootScript = `(() => {
       : "theme-light";
     let saved = localStorage.getItem(key);
     if (saved === "theme-default") saved = "theme-light";
+    if (saved === "theme-catpuccin-latte") saved = "theme-catppuccin-latte";
+    if (allowed.has(saved)) localStorage.setItem(key, saved);
     if (!allowed.has(saved)) {
       saved = "system";
       localStorage.setItem(key, saved);

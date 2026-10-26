@@ -1,6 +1,6 @@
 # Add Dark Mode
 
-CSS provides a built-in solution to implement dark mode using the `prefers-color-scheme` directive. You can define two sets of variables based on the user's browser preference.
+CSS implements dark mode with the `prefers-color-scheme` media feature. Define two sets of variables based on the user's browser preference.
 
 **globals.scss**
 
@@ -13,7 +13,7 @@ CSS provides a built-in solution to implement dark mode using the `prefers-color
   --devie__color__background: #ffffff;
   --devie__color__background-sunken: #f5f5f5;
   --devie__color__line: #d7d7d7;
-  --devie__color__primary: #5739da;
+  --devie__color__primary: #543fd6;
   --devie__color__primary-label: #ffffff;
   /* ... other tokens */
 }
@@ -36,12 +36,12 @@ CSS provides a built-in solution to implement dark mode using the `prefers-color
 
 This approach is performant because the decision is made in CSS before hydration, avoiding a flash of the wrong theme and keeping runtime work at zero.
 
-However, this approach has a couple limitations:
+This approach has two limitations:
 
 - No support for user-controlled theme switching
 - Only two modes supported (light and dark)
 
-For more advanced theme management, you can check our guide on how to [Manage More Themes](/how-to/manage-multiple-themes).
+For user-controlled themes, see [Manage More Themes](/how-to/manage-multiple-themes).
 
 ---
 

@@ -5,7 +5,7 @@ import { ScrollArea as BaseScrollArea } from "@base-ui/react/scroll-area";
 import clsx from "clsx";
 import styles from "./ScrollArea.module.scss";
 
-function Root({ className, children, ...props }: BaseScrollArea.Root.Props) {
+function Root({ className, children, ...props }: ScrollArea.Root.Props) {
   return (
     <BaseScrollArea.Root className={clsx(styles.root, className)} {...props}>
       {children}
@@ -17,7 +17,7 @@ function Viewport({
   className,
   children,
   ...props
-}: BaseScrollArea.Viewport.Props) {
+}: ScrollArea.Viewport.Props) {
   return (
     <BaseScrollArea.Viewport
       className={clsx(styles.viewport, className)}
@@ -28,11 +28,7 @@ function Viewport({
   );
 }
 
-function Content({
-  className,
-  children,
-  ...props
-}: BaseScrollArea.Content.Props) {
+function Content({ className, children, ...props }: ScrollArea.Content.Props) {
   return (
     <BaseScrollArea.Content
       className={clsx(styles.content, className)}
@@ -48,7 +44,7 @@ function Scrollbar({
   children,
   orientation = "vertical",
   ...props
-}: BaseScrollArea.Scrollbar.Props) {
+}: ScrollArea.Scrollbar.Props) {
   return (
     <BaseScrollArea.Scrollbar
       className={clsx(styles.scrollbar, className)}
@@ -60,7 +56,7 @@ function Scrollbar({
   );
 }
 
-function Thumb({ className, ...props }: BaseScrollArea.Thumb.Props) {
+function Thumb({ className, ...props }: ScrollArea.Thumb.Props) {
   return (
     <BaseScrollArea.Thumb
       className={clsx(styles.thumb, className)}
@@ -69,7 +65,7 @@ function Thumb({ className, ...props }: BaseScrollArea.Thumb.Props) {
   );
 }
 
-function Corner({ className, ...props }: BaseScrollArea.Corner.Props) {
+function Corner({ className, ...props }: ScrollArea.Corner.Props) {
   return (
     <BaseScrollArea.Corner
       className={clsx(styles.corner, className)}
@@ -89,22 +85,34 @@ const ScrollArea = {
 
 namespace ScrollArea {
   export namespace Root {
-    export type Props = BaseScrollArea.Root.Props;
+    export type Props = Omit<BaseScrollArea.Root.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Viewport {
-    export type Props = BaseScrollArea.Viewport.Props;
+    export type Props = Omit<BaseScrollArea.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Content {
-    export type Props = BaseScrollArea.Content.Props;
+    export type Props = Omit<BaseScrollArea.Content.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Scrollbar {
-    export type Props = BaseScrollArea.Scrollbar.Props;
+    export type Props = Omit<BaseScrollArea.Scrollbar.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Thumb {
-    export type Props = BaseScrollArea.Thumb.Props;
+    export type Props = Omit<BaseScrollArea.Thumb.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Corner {
-    export type Props = BaseScrollArea.Corner.Props;
+    export type Props = Omit<BaseScrollArea.Corner.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 

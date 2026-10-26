@@ -2,7 +2,8 @@
 
 @layer devie {
     .popup {
-        line-height: $devie__spacing__x3;
+        outline: 0;
+        line-height: $devie__spacing__x2;
         min-width: 180px;
         background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
@@ -20,11 +21,11 @@
         display: flex;
         align-items: center;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         user-select: none;
         outline: none;
         color: $devie__color__text;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         transition: none;
 
@@ -86,7 +87,37 @@
     }
 
     .arrow {
+        display: flex;
+        z-index: 1;
+
+        &[data-side='top'] {
+            bottom: calc(-1 * $devie__spacing__x1);
+            rotate: 180deg;
+        }
+
+        &[data-side='bottom'] {
+            top: calc(-1 * $devie__spacing__x1);
+            rotate: 0deg;
+        }
+
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
+        &[data-side='left'] {
+            right: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: 90deg;
+        }
+
+        &[data-side='right'] {
+            left: calc(-1 * $devie__spacing__x1 - 5px);
+            rotate: -90deg;
+        }
+    }
+
+    .arrowFill {
         fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .submenuChevron {
@@ -103,6 +134,7 @@
         flex-shrink: 0;
         font-family: $devie__font-family;
         font-size: $devie__font-size__small;
+        font-weight: 400;
         line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
         background: none;

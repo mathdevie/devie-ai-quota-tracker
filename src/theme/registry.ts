@@ -5,7 +5,7 @@ import LightThumbnail from "@/theme/light/thumbnail.svg";
 import SystemThumbnail from "@/theme/system/thumbnail.svg";
 import AlpineSnowThumbnail from "@/ui/themes/alpine-snow/thumbnail.svg";
 import AuroraGreenThumbnail from "@/ui/themes/aurora-green/thumbnail.svg";
-import CatpuccinLatteThumbnail from "@/ui/themes/catpuccin-latte/thumbnail.svg";
+import CatppuccinLatteThumbnail from "@/ui/themes/catppuccin-latte/thumbnail.svg";
 import CommandPromptThumbnail from "@/ui/themes/command-prompt/thumbnail.svg";
 import CopperSunsetThumbnail from "@/ui/themes/copper-sunset/thumbnail.svg";
 import MidnightInkThumbnail from "@/ui/themes/midnight-ink/thumbnail.svg";
@@ -265,26 +265,26 @@ export const CUSTOM_THEMES: ThemeOption[] = [
     },
   },
   {
-    nameKey: "catpuccin-latte",
-    className: "theme-catpuccin-latte",
-    thumbnailSrc: CatpuccinLatteThumbnail,
+    nameKey: "catppuccin-latte",
+    className: "theme-catppuccin-latte",
+    thumbnailSrc: CatppuccinLatteThumbnail,
     appearance: "light",
     displayName: {
-      "en-US": "Catpuccin Latte",
-      "en-GB": "Catpuccin Latte",
-      "fr-FR": "Catpuccin Latte",
-      "de-DE": "Catpuccin Latte",
-      "it-IT": "Catpuccin Latte",
-      "ja-JP": "Catpuccin Latte",
-      "es-ES": "Catpuccin Latte",
-      "es-419": "Catpuccin Latte",
-      "pt-BR": "Catpuccin Latte",
-      "fi-FI": "Catpuccin Latte",
-      "da-DK": "Catpuccin Latte",
-      "nl-NL": "Catpuccin Latte",
-      "nb-NO": "Catpuccin Latte",
-      "sv-SE": "Catpuccin Latte",
-      "zh-CN": "Catpuccin Latte",
+      "en-US": "Catppuccin Latte",
+      "en-GB": "Catppuccin Latte",
+      "fr-FR": "Catppuccin Latte",
+      "de-DE": "Catppuccin Latte",
+      "it-IT": "Catppuccin Latte",
+      "ja-JP": "Catppuccin Latte",
+      "es-ES": "Catppuccin Latte",
+      "es-419": "Catppuccin Latte",
+      "pt-BR": "Catppuccin Latte",
+      "fi-FI": "Catppuccin Latte",
+      "da-DK": "Catppuccin Latte",
+      "nl-NL": "Catppuccin Latte",
+      "nb-NO": "Catppuccin Latte",
+      "sv-SE": "Catppuccin Latte",
+      "zh-CN": "Catppuccin Latte",
     },
   },
 ];

@@ -1,12 +1,12 @@
 # <Select />
 
-A control for choosing one predefined value from a popup list. It extends [ Base UI's Select ](https://base-ui.com/react/components/select) with consistent styling that matches the design system.
+A control for choosing one predefined value from a popup list. It extends [Base UI's Select](https://base-ui.com/react/components/select) with consistent styling that matches the design system.
 
 Built on [Base UI](https://base-ui.com/react/components/select).
 
 ## Installation
 
-### select.tsx
+### Select.tsx
 
 ```tsx
 // https://devie-ui.com/components/select
@@ -20,11 +20,13 @@ import styles from "./Select.module.scss";
 
 const Root = BaseSelect.Root;
 
-function Label({ className, ...props }: BaseSelect.Label.Props) {
-  return <BaseSelect.Label className={clsx(styles.label, className)} {...props} />;
+function Label({ className, ...props }: Select.Label.Props) {
+  return (
+    <BaseSelect.Label className={clsx(styles.label, className)} {...props} />
+  );
 }
 
-function Trigger({ className, ...props }: BaseSelect.Trigger.Props) {
+function Trigger({ className, ...props }: Select.Trigger.Props) {
   return (
     <BaseSelect.Trigger
       className={clsx(styles.trigger, className)}
@@ -33,13 +35,13 @@ function Trigger({ className, ...props }: BaseSelect.Trigger.Props) {
   );
 }
 
-function Value({ className, ...props }: BaseSelect.Value.Props) {
+function Value({ className, ...props }: Select.Value.Props) {
   return (
     <BaseSelect.Value className={clsx(styles.value, className)} {...props} />
   );
 }
 
-function Icon({ className, children, ...props }: BaseSelect.Icon.Props) {
+function Icon({ className, children, ...props }: Select.Icon.Props) {
   return (
     <BaseSelect.Icon className={clsx(styles.icon, className)} {...props}>
       {children || <ChevronDown size={16} />}
@@ -49,28 +51,21 @@ function Icon({ className, children, ...props }: BaseSelect.Icon.Props) {
 
 const Portal = BaseSelect.Portal;
 
-function Positioner({ className, ...props }: BaseSelect.Positioner.Props) {
-  return (
-    <BaseSelect.Positioner
-      className={clsx(styles.positioner, className)}
-      {...props}
-    />
-  );
-}
+const Positioner = BaseSelect.Positioner;
 
-function Popup({ className, ...props }: BaseSelect.Popup.Props) {
+function Popup({ className, ...props }: Select.Popup.Props) {
   return (
     <BaseSelect.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function List({ className, ...props }: BaseSelect.List.Props) {
+function List({ className, ...props }: Select.List.Props) {
   return (
     <BaseSelect.List className={clsx(styles.list, className)} {...props} />
   );
 }
 
-function Item({ className, ...props }: BaseSelect.Item.Props) {
+function Item({ className, ...props }: Select.Item.Props) {
   return (
     <BaseSelect.Item className={clsx(styles.item, className)} {...props} />
   );
@@ -80,7 +75,7 @@ function ItemIndicator({
   className,
   children,
   ...props
-}: BaseSelect.ItemIndicator.Props) {
+}: Select.ItemIndicator.Props) {
   return (
     <BaseSelect.ItemIndicator
       className={clsx(styles.itemIndicator, className)}
@@ -91,7 +86,7 @@ function ItemIndicator({
   );
 }
 
-function ItemText({ className, ...props }: BaseSelect.ItemText.Props) {
+function ItemText({ className, ...props }: Select.ItemText.Props) {
   return (
     <BaseSelect.ItemText
       className={clsx(styles.itemText, className)}
@@ -100,16 +95,15 @@ function ItemText({ className, ...props }: BaseSelect.ItemText.Props) {
   );
 }
 
-function Arrow({ className, ...props }: BaseSelect.Arrow.Props) {
+function Arrow({ className, children, ...props }: Select.Arrow.Props) {
   return (
-    <BaseSelect.Arrow className={clsx(styles.arrow, className)} {...props} />
+    <BaseSelect.Arrow className={clsx(styles.arrow, className)} {...props}>
+      {children || <ArrowSvg />}
+    </BaseSelect.Arrow>
   );
 }
 
-function ScrollUpArrow({
-  className,
-  ...props
-}: BaseSelect.ScrollUpArrow.Props) {
+function ScrollUpArrow({ className, ...props }: Select.ScrollUpArrow.Props) {
   return (
     <BaseSelect.ScrollUpArrow
       className={clsx(styles.scrollArrow, className)}
@@ -121,7 +115,7 @@ function ScrollUpArrow({
 function ScrollDownArrow({
   className,
   ...props
-}: BaseSelect.ScrollDownArrow.Props) {
+}: Select.ScrollDownArrow.Props) {
   return (
     <BaseSelect.ScrollDownArrow
       className={clsx(styles.scrollArrow, className)}
@@ -132,13 +126,13 @@ function ScrollDownArrow({
 
 const Backdrop = BaseSelect.Backdrop;
 
-function Group({ className, ...props }: BaseSelect.Group.Props) {
+function Group({ className, ...props }: Select.Group.Props) {
   return (
     <BaseSelect.Group className={clsx(styles.group, className)} {...props} />
   );
 }
 
-function GroupLabel({ className, ...props }: BaseSelect.GroupLabel.Props) {
+function GroupLabel({ className, ...props }: Select.GroupLabel.Props) {
   return (
     <BaseSelect.GroupLabel
       className={clsx(styles.groupLabel, className)}
@@ -147,7 +141,7 @@ function GroupLabel({ className, ...props }: BaseSelect.GroupLabel.Props) {
   );
 }
 
-function Separator({ className, ...props }: BaseSelect.Separator.Props) {
+function Separator({ className, ...props }: Select.Separator.Props) {
   return (
     <BaseSelect.Separator
       className={clsx(styles.separator, className)}
@@ -185,17 +179,25 @@ namespace Select {
     export type ChangeEventReason = BaseSelect.Root.ChangeEventReason;
   }
   export namespace Label {
-    export type Props = BaseSelect.Label.Props;
+    export type Props = Omit<BaseSelect.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Trigger {
-    export type Props = BaseSelect.Trigger.Props;
+    export type Props = Omit<BaseSelect.Trigger.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseSelect.Trigger.State;
   }
   export namespace Value {
-    export type Props = React.ComponentProps<typeof BaseSelect.Value>;
+    export type Props = Omit<BaseSelect.Value.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Icon {
-    export type Props = BaseSelect.Icon.Props;
+    export type Props = Omit<BaseSelect.Icon.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Portal {
     export type Props = BaseSelect.Portal.Props;
@@ -208,55 +210,100 @@ namespace Select {
     export type State = BaseSelect.Positioner.State;
   }
   export namespace Popup {
-    export type Props = BaseSelect.Popup.Props;
+    export type Props = Omit<BaseSelect.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace List {
-    export type Props = BaseSelect.List.Props;
+    export type Props = Omit<BaseSelect.List.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Arrow {
-    export type Props = BaseSelect.Arrow.Props;
+    export type Props = Omit<BaseSelect.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ScrollUpArrow {
-    export type Props = BaseSelect.ScrollUpArrow.Props;
+    export type Props = Omit<BaseSelect.ScrollUpArrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ScrollDownArrow {
-    export type Props = BaseSelect.ScrollDownArrow.Props;
+    export type Props = Omit<BaseSelect.ScrollDownArrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Item {
-    export type Props = BaseSelect.Item.Props;
+    export type Props = Omit<BaseSelect.Item.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseSelect.Item.State;
   }
   export namespace ItemIndicator {
-    export type Props = BaseSelect.ItemIndicator.Props;
+    export type Props = Omit<BaseSelect.ItemIndicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace ItemText {
-    export type Props = BaseSelect.ItemText.Props;
+    export type Props = Omit<BaseSelect.ItemText.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Group {
-    export type Props = BaseSelect.Group.Props;
+    export type Props = Omit<BaseSelect.Group.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace GroupLabel {
-    export type Props = BaseSelect.GroupLabel.Props;
+    export type Props = Omit<BaseSelect.GroupLabel.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Separator {
-    export type Props = BaseSelect.Separator.Props;
+    export type Props = Omit<BaseSelect.Separator.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Select;
+
+function ArrowSvg(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        className={styles.arrowFill}
+      />
+      <path
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        className={styles.arrowInnerStroke}
+      />
+    </svg>
+  );
+}
 ```
 
-### select.module.scss
+### Select.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
     .label {
-        font-size: $devie__font-size__small;
         line-height: $devie__spacing__x3;
-        font-weight: 600;
-        color: $devie__color__text;
+
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
     }
 
     .trigger {
@@ -266,8 +313,11 @@ export default Select;
         background-color: $devie__color__background;
         border-radius: $devie__radius;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        font-family: inherit;
+        font-size: inherit;
         line-height: $devie__spacing__x3;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         box-sizing: border-box;
         gap: $devie__spacing__x1;
         color: $devie__color__text;
@@ -278,6 +328,7 @@ export default Select;
 
         &:focus-visible {
             border-color: $devie__color__primary;
+            outline: 0;
         }
 
         &[data-popup-open] {
@@ -287,6 +338,7 @@ export default Select;
         &[data-disabled] {
             cursor: not-allowed;
             border-color: #{devie-disabled-color($devie__color__line)};
+            box-shadow: none;
             color: #{devie-disabled-color($devie__color__text)};
         }
     }
@@ -313,16 +365,15 @@ export default Select;
         [data-disabled] & {
             color: #{devie-disabled-color($devie__color__text-sub)};
         }
-    }
 
-    .contentLike {
-        display: flex;
-        align-items: center;
-        gap: $devie__spacing__x1;
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
-        line-height: $devie__spacing__x3;
+        outline: 0;
+        line-height: $devie__spacing__x2;
         box-sizing: border-box;
         background-color: $devie__color__background-raised;
         border: 1px solid $devie__color__line;
@@ -349,13 +400,13 @@ export default Select;
         align-items: center;
         justify-content: space-between;
         gap: $devie__spacing__x1;
-        padding: $devie__spacing__x05 $devie__spacing__x1;
+        padding: $devie__spacing__x1;
         border-radius: calc($devie__radius - $devie__spacing__x05);
         color: $devie__color__text;
         min-width: var(--anchor-width);
         scroll-margin-block: $devie__spacing__x05;
         outline: 0;
-        font-size: $devie__font-size__small;
+        font-size: $devie__font-size__normal;
         user-select: none;
 
         &:hover:not([data-disabled]),
@@ -389,35 +440,42 @@ export default Select;
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
-            bottom: -8px;
+            bottom: calc(-1 * $devie__spacing__x1);
             rotate: 180deg;
         }
 
         &[data-side='bottom'] {
-            top: -8px;
+            top: calc(-1 * $devie__spacing__x1);
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
     }
 
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
+    }
+
     .scrollArrow {
         width: 100%;
-        background: canvas;
+        background: $devie__color__background-raised;
         z-index: 1;
         text-align: center;
         cursor: default;

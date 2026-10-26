@@ -1,12 +1,12 @@
 # <Slider />
 
-A slider that works like a range input. The Slider component extends [ Base UI's Slider ](https://base-ui.com/react/components/slider) . It provides a user control for selecting a value or a range of values from a specified range.
+A slider that works like a range input. The Slider component extends [Base UI's Slider](https://base-ui.com/react/components/slider). It provides a user control for selecting a value or a range of values from a specified range.
 
 Built on [Base UI](https://base-ui.com/react/components/slider).
 
 ## Installation
 
-### slider.tsx
+### Slider.tsx
 
 ```tsx
 // https://devie-ui.com/components/slider
@@ -16,17 +16,19 @@ import { Slider as BaseSlider } from "@base-ui/react/slider";
 import clsx from "clsx";
 import styles from "./Slider.module.scss";
 
-function Label({ className, ...props }: BaseSlider.Label.Props) {
-  return <BaseSlider.Label className={clsx(styles.label, className)} {...props} />;
+function Label({ className, ...props }: Slider.Label.Props) {
+  return (
+    <BaseSlider.Label className={clsx(styles.label, className)} {...props} />
+  );
 }
 
-function Root({ className, ...props }: BaseSlider.Root.Props) {
+function Root({ className, ...props }: Slider.Root.Props) {
   return (
     <BaseSlider.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Control({ className, ...props }: BaseSlider.Control.Props) {
+function Control({ className, ...props }: Slider.Control.Props) {
   return (
     <BaseSlider.Control
       className={clsx(styles.control, className)}
@@ -35,13 +37,13 @@ function Control({ className, ...props }: BaseSlider.Control.Props) {
   );
 }
 
-function Track({ className, ...props }: BaseSlider.Track.Props) {
+function Track({ className, ...props }: Slider.Track.Props) {
   return (
     <BaseSlider.Track className={clsx(styles.track, className)} {...props} />
   );
 }
 
-function Indicator({ className, ...props }: BaseSlider.Indicator.Props) {
+function Indicator({ className, ...props }: Slider.Indicator.Props) {
   return (
     <BaseSlider.Indicator
       className={clsx(styles.indicator, className)}
@@ -50,13 +52,13 @@ function Indicator({ className, ...props }: BaseSlider.Indicator.Props) {
   );
 }
 
-function Thumb({ className, ...props }: BaseSlider.Thumb.Props) {
+function Thumb({ className, ...props }: Slider.Thumb.Props) {
   return (
     <BaseSlider.Thumb className={clsx(styles.thumb, className)} {...props} />
   );
 }
 
-function Value({ className, ...props }: BaseSlider.Value.Props) {
+function Value({ className, ...props }: Slider.Value.Props) {
   return (
     <BaseSlider.Value className={clsx(styles.value, className)} {...props} />
   );
@@ -74,154 +76,173 @@ const Slider = {
 
 namespace Slider {
   export namespace Label {
-    export type Props = BaseSlider.Label.Props;
+    export type Props = Omit<BaseSlider.Label.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Root {
-    export type Props = BaseSlider.Root.Props;
+    export type Props = Omit<BaseSlider.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseSlider.Root.State;
     export type ChangeEventDetails = BaseSlider.Root.ChangeEventDetails;
   }
   export namespace Control {
-    export type Props = BaseSlider.Control.Props;
+    export type Props = Omit<BaseSlider.Control.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Track {
-    export type Props = BaseSlider.Track.Props;
+    export type Props = Omit<BaseSlider.Track.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Indicator {
-    export type Props = BaseSlider.Indicator.Props;
+    export type Props = Omit<BaseSlider.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Thumb {
-    export type Props = BaseSlider.Thumb.Props;
+    export type Props = Omit<BaseSlider.Thumb.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseSlider.Thumb.State;
   }
   export namespace Value {
-    export type Props = BaseSlider.Value.Props;
+    export type Props = Omit<BaseSlider.Value.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Slider;
 ```
 
-### slider.module.scss
+### Slider.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-  .label {
-    font-size: $devie__font-size__small;
-    line-height: $devie__spacing__x3;
-    font-weight: 600;
-    color: $devie__color__text;
-  }
+    .label {
+        line-height: $devie__spacing__x3;
 
-  .root {
-    display: flex;
-    flex-direction: column;
-    gap: $devie__spacing__x1;
-    width: 200px;
-
-    &[data-orientation='vertical'] {
-      height: 200px;
-      width: auto;
-    }
-  }
-
-  .control {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: $devie__spacing__x3;
-    touch-action: none;
-
-    &[data-orientation='vertical'] {
-      width: $devie__spacing__x3;
-      height: 100%;
-      flex-direction: column;
+        &[data-invalid] {
+            color: $devie__color__danger;
+        }
     }
 
-    &[data-disabled] {
-      cursor: not-allowed;
-    }
-  }
+    .root {
+        display: flex;
+        flex-direction: column;
+        gap: $devie__spacing__x1;
+        width: 200px;
 
-  .track {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 4px;
-    border-radius: 999px;
-    background-color: $devie__color__line;
-
-    [data-orientation='vertical'] & {
-      height: 100%;
-      width: 4px;
-      flex-direction: column;
+        &[data-orientation='vertical'] {
+            height: 200px;
+            width: auto;
+        }
     }
 
-    [data-disabled] & {
-      background-color: #{devie-disabled-color($devie__color__line)};
-    }
-  }
+    .control {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: $devie__spacing__x3;
+        touch-action: none;
 
-  .indicator {
-    border-radius: 999px;
-    background-color: $devie__color__primary;
+        &[data-orientation='vertical'] {
+            width: $devie__spacing__x3;
+            height: 100%;
+            flex-direction: column;
+        }
 
-    [data-orientation='horizontal'] & {
-      height: 100%;
-    }
-
-    [data-orientation='vertical'] & {
-      width: 100%;
-    }
-
-    [data-disabled] & {
-      background-color: #{devie-disabled-color($devie__color__primary)};
-    }
-  }
-
-  .thumb {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 999px;
-    background-color: $devie__color__background;
-    border: 2px solid $devie__color__primary;
-    box-shadow: 0 1px 3px rgb(9 9 11 / 15%);
-    outline: none;
-    transition: box-shadow 150ms ease, border-color 150ms ease;
-
-    &:hover:not([data-disabled]) {
-      border-color: $devie__color__primary;
-      box-shadow: 0 2px 4px rgb(9 9 11 / 20%);
+        &[data-disabled] {
+            cursor: not-allowed;
+        }
     }
 
-    &:focus-visible {
-      @include devie-focus-ring(2px);
+    .track {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 4px;
+        border-radius: 999px;
+        background-color: $devie__color__line;
+
+        [data-orientation='vertical'] & {
+            height: 100%;
+            width: 4px;
+            flex-direction: column;
+        }
+
+        [data-disabled] & {
+            background-color: #{devie-disabled-color($devie__color__line)};
+        }
     }
 
-    &[data-dragging] {
-      box-shadow: 0 2px 6px rgb(9 9 11 / 25%);
+    .indicator {
+        border-radius: 999px;
+        background-color: $devie__color__primary;
+
+        [data-orientation='horizontal'] & {
+            height: 100%;
+        }
+
+        [data-orientation='vertical'] & {
+            width: 100%;
+        }
+
+        [data-disabled] & {
+            background-color: #{devie-disabled-color($devie__color__primary)};
+        }
     }
 
-    [data-disabled] & {
-      cursor: not-allowed;
-      background-color: #{devie-disabled-color($devie__color__background)};
-      border-color: #{devie-disabled-color($devie__color__primary)};
-      box-shadow: none;
-    }
-  }
+    .thumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: $devie__spacing__x2;
+        height: $devie__spacing__x2;
+        border-radius: 999px;
+        background-color: $devie__color__background;
+        border: 2px solid $devie__color__primary;
+        box-shadow: 0 1px 3px rgb(9 9 11 / 15%);
+        outline: none;
+        transition: box-shadow 150ms ease, border-color 150ms ease;
 
-  .value {
-    font-size: $devie__font-size__small;
-    line-height: $devie__spacing__x3;
-    color: $devie__color__text-sub;
-    font-family: $devie__font-family;
-  }
+        &:hover:not([data-disabled]) {
+            box-shadow: 0 2px 4px rgb(9 9 11 / 20%);
+        }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
+
+        &[data-dragging] {
+            box-shadow: 0 2px 6px rgb(9 9 11 / 25%);
+        }
+
+        [data-disabled] & {
+            cursor: not-allowed;
+            background-color: #{devie-disabled-color($devie__color__background)};
+            border-color: #{devie-disabled-color($devie__color__primary)};
+            box-shadow: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    .value {
+        font-size: $devie__font-size__small;
+        line-height: $devie__spacing__x2;
+        color: $devie__color__text-sub;
+        font-family: $devie__font-family;
+    }
 }
 ```
 

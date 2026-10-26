@@ -19,7 +19,12 @@
             border-color: $devie__color__success;
         }
 
-        &[data-type="error"] {
+        &[data-type="warning"] {
+            background-color: color-mix(in srgb, $devie__color__warning 5%, $devie__color__background-raised 95%);
+            border-color: $devie__color__warning;
+        }
+
+        &[data-type="danger"] {
             background-color: color-mix(in srgb, $devie__color__danger 5%, $devie__color__background-raised 95%);
             border-color: $devie__color__danger;
         }
@@ -45,13 +50,11 @@
             transform: translateX(calc(-100% - $devie__spacing__x4));
         }
 
-        @keyframes toastHide {
-            from {
-                opacity: 1;
-            }
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
 
-            to {
-                opacity: 0;
+            &[data-starting-style] {
+                animation: none;
             }
         }
 
@@ -98,11 +101,16 @@
         border: none;
         border-radius: $devie__radius;
         padding: $devie__spacing__x1 $devie__spacing__x2;
+        font-family: inherit;
         font-size: $devie__font-size__small;
         line-height: $devie__spacing__x2;
 
         &:hover {
             background: #{devie-hover-color($devie__color__primary)};
+        }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
         }
     }
 
@@ -121,6 +129,10 @@
 
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
+        }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
         }
     }
 }

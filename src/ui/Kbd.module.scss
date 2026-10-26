@@ -7,10 +7,10 @@
         justify-content: center;
         box-sizing: border-box;
         font-family: $devie__font-family;
-        font-size: 13px;
+        font-size: $devie__font-size__small;
         font-weight: 500;
-        line-height: 14px;
-        height: 16px;
+        line-height: $devie__spacing__x2;
+        height: $devie__spacing__x2;
         color: $devie__color__text-sub;
     }
 

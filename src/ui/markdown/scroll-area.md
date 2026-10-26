@@ -1,12 +1,12 @@
 # <ScrollArea />
 
-A native scroll container with custom scrollbars. The ScrollArea component extends [ Base UI's Scroll Area ](https://base-ui.com/react/components/scroll-area) . It provides a native scroll container with custom-styled scrollbars that appear on hover or when scrolling.
+A native scroll container with custom scrollbars. The ScrollArea component extends [Base UI's Scroll Area](https://base-ui.com/react/components/scroll-area). It styles the `ScrollArea.Scrollbar`, `ScrollArea.Thumb`, and `ScrollArea.Corner` subcomponents, with scrollbars that appear on hover or while scrolling.
 
 Built on [Base UI](https://base-ui.com/react/components/scroll-area).
 
 ## Installation
 
-### scroll-area.tsx
+### ScrollArea.tsx
 
 ```tsx
 // https://devie-ui.com/components/scroll-area
@@ -16,7 +16,7 @@ import { ScrollArea as BaseScrollArea } from "@base-ui/react/scroll-area";
 import clsx from "clsx";
 import styles from "./ScrollArea.module.scss";
 
-function Root({ className, children, ...props }: BaseScrollArea.Root.Props) {
+function Root({ className, children, ...props }: ScrollArea.Root.Props) {
   return (
     <BaseScrollArea.Root className={clsx(styles.root, className)} {...props}>
       {children}
@@ -28,7 +28,7 @@ function Viewport({
   className,
   children,
   ...props
-}: BaseScrollArea.Viewport.Props) {
+}: ScrollArea.Viewport.Props) {
   return (
     <BaseScrollArea.Viewport
       className={clsx(styles.viewport, className)}
@@ -39,11 +39,7 @@ function Viewport({
   );
 }
 
-function Content({
-  className,
-  children,
-  ...props
-}: BaseScrollArea.Content.Props) {
+function Content({ className, children, ...props }: ScrollArea.Content.Props) {
   return (
     <BaseScrollArea.Content
       className={clsx(styles.content, className)}
@@ -59,7 +55,7 @@ function Scrollbar({
   children,
   orientation = "vertical",
   ...props
-}: BaseScrollArea.Scrollbar.Props) {
+}: ScrollArea.Scrollbar.Props) {
   return (
     <BaseScrollArea.Scrollbar
       className={clsx(styles.scrollbar, className)}
@@ -71,7 +67,7 @@ function Scrollbar({
   );
 }
 
-function Thumb({ className, ...props }: BaseScrollArea.Thumb.Props) {
+function Thumb({ className, ...props }: ScrollArea.Thumb.Props) {
   return (
     <BaseScrollArea.Thumb
       className={clsx(styles.thumb, className)}
@@ -80,7 +76,7 @@ function Thumb({ className, ...props }: BaseScrollArea.Thumb.Props) {
   );
 }
 
-function Corner({ className, ...props }: BaseScrollArea.Corner.Props) {
+function Corner({ className, ...props }: ScrollArea.Corner.Props) {
   return (
     <BaseScrollArea.Corner
       className={clsx(styles.corner, className)}
@@ -100,138 +96,158 @@ const ScrollArea = {
 
 namespace ScrollArea {
   export namespace Root {
-    export type Props = BaseScrollArea.Root.Props;
+    export type Props = Omit<BaseScrollArea.Root.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Viewport {
-    export type Props = BaseScrollArea.Viewport.Props;
+    export type Props = Omit<BaseScrollArea.Viewport.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Content {
-    export type Props = BaseScrollArea.Content.Props;
+    export type Props = Omit<BaseScrollArea.Content.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Scrollbar {
-    export type Props = BaseScrollArea.Scrollbar.Props;
+    export type Props = Omit<BaseScrollArea.Scrollbar.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Thumb {
-    export type Props = BaseScrollArea.Thumb.Props;
+    export type Props = Omit<BaseScrollArea.Thumb.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Corner {
-    export type Props = BaseScrollArea.Corner.Props;
+    export type Props = Omit<BaseScrollArea.Corner.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default ScrollArea;
 ```
 
-### scroll-area.module.scss
+### ScrollArea.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-  .root {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .viewport {
-    height: 100%;
-    overscroll-behavior: contain;
-    border-radius: $devie__radius;
-    outline: 1px solid $devie__color__line;
-    outline-offset: -1px;
-
-    &:focus-visible {
-      @include devie-focus-ring(-2px);
-    }
-  }
-
-  .content {
-    display: block;
-  }
-
-  .scrollbar {
-    display: flex;
-    background-color: transparent;
-    border-radius: $devie__radius;
-    opacity: 0;
-    transition: opacity 150ms;
-    pointer-events: none;
-
-    &[data-orientation="vertical"] {
-      position: absolute;
-      top: 0;
-      right: $devie__spacing__x05;
-      bottom: 0;
-      width: 6px;
-      flex-direction: column;
+    .root {
+        position: relative;
+        overflow: hidden;
     }
 
-    &[data-orientation="horizontal"] {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: $devie__spacing__x05;
-      height: 6px;
-      flex-direction: row;
+    .viewport {
+        height: 100%;
+        overscroll-behavior: contain;
+        border-radius: $devie__radius;
+        outline: 1px solid $devie__color__line;
+        outline-offset: -1px;
+
+        &:focus-visible {
+            @include devie-focus-ring(-2px);
+        }
     }
 
-    &::before {
-      content: '';
-      position: absolute;
+    .content {
+        display: block;
     }
 
-    &[data-orientation="vertical"]::before {
-      top: 0;
-      bottom: 0;
-      left: -8px;
-      right: -4px;
+    .scrollbar {
+        display: flex;
+        background-color: transparent;
+        border-radius: $devie__radius;
+        opacity: 0;
+        transition: opacity 150ms;
+        pointer-events: none;
+
+        &[data-orientation="vertical"] {
+            position: absolute;
+            top: 0;
+            right: $devie__spacing__x05;
+            bottom: 0;
+            width: 6px;
+            flex-direction: column;
+        }
+
+        &[data-orientation="horizontal"] {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: $devie__spacing__x05;
+            height: 6px;
+            flex-direction: row;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+        }
+
+        &[data-orientation="vertical"]::before {
+            top: 0;
+            bottom: 0;
+            left: -8px;
+            right: -4px;
+        }
+
+        &[data-orientation="horizontal"]::before {
+            left: 0;
+            right: 0;
+            top: -8px;
+            bottom: -4px;
+        }
+
+        &[data-scrolling] {
+            transition-duration: 0ms;
+        }
+
+        &[data-hovering],
+        &[data-scrolling] {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
-    &[data-orientation="horizontal"]::before {
-      left: 0;
-      right: 0;
-      top: -8px;
-      bottom: -4px;
+    .thumb {
+        border-radius: inherit;
+        background-color: $devie__color__text-sub;
+        transition: background-color 150ms;
+
+        &:hover {
+            background-color: $devie__color__text;
+        }
+
+        &[data-orientation="vertical"] {
+            width: 100%;
+        }
+
+        &[data-orientation="horizontal"] {
+            height: 100%;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
-    &[data-scrolling] {
-      transition-duration: 0ms;
+    .corner {
+        position: absolute;
+        right: $devie__spacing__x05;
+        bottom: 0;
+        width: 8px;
+        height: calc(8px + #{$devie__spacing__x05});
+        background-color: transparent;
+        border-radius: $devie__radius;
     }
-
-    &[data-hovering],
-    &[data-scrolling] {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  .thumb {
-    border-radius: inherit;
-    background-color: $devie__color__text-sub;
-    transition: background-color 150ms;
-
-    &:hover {
-      background-color: $devie__color__text;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 100%;
-    }
-
-    &[data-orientation="horizontal"] {
-      height: 100%;
-    }
-  }
-
-  .corner {
-    position: absolute;
-    right: $devie__spacing__x05;
-    bottom: 0;
-    width: 8px;
-    height: calc(8px + #{$devie__spacing__x05});
-    background-color: transparent;
-    border-radius: $devie__radius;
-  }
 }
 ```
 
@@ -239,7 +255,7 @@ export default ScrollArea;
 
 ### Simple scroll area
 
-A basic scroll area with vertical scrolling. The custom scrollbar appears when hovering over the container or when actively scrolling.
+Give `ScrollArea.Root` a height, then nest `ScrollArea.Viewport` and `ScrollArea.Content`. Add a `ScrollArea.Scrollbar` with a `ScrollArea.Thumb`.
 
 ```tsx
 <ScrollArea.Root>
@@ -256,7 +272,7 @@ A basic scroll area with vertical scrolling. The custom scrollbar appears when h
 
 ### Both scrollbars
 
-When content overflows in both directions, use two `ScrollArea.Scrollbar` components with different orientations and a `ScrollArea.Corner` to prevent them from overlapping.
+Add a second `ScrollArea.Scrollbar` with `orientation` set to `horizontal`, and a `ScrollArea.Corner` where the two scrollbars meet.
 
 ```tsx
 <ScrollArea.Root>
@@ -281,7 +297,7 @@ When content overflows in both directions, use two `ScrollArea.Scrollbar` compon
 
 ### Long code block
 
-A practical example showing how to wrap long code content in a fixed-height scroll area. This pattern is useful for documentation sites, code editors, or anywhere you need to display lengthy code snippets without taking up too much vertical space.
+Wrap a `pre` element in a scroll area with both scrollbars to keep long code at a fixed height.
 
 ```tsx
 const longCodeContent = `function example() {

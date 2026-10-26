@@ -1,12 +1,12 @@
 # <Switch />
 
-A switch that indicates whether a setting is on or off. The Switch component extends [ Base UI's Switch ](https://base-ui.com/react/components/switch) . It provides a toggle control for binary on/off states, commonly used for settings and preferences.
+A switch that indicates whether a setting is on or off. The Switch component extends [Base UI's Switch](https://base-ui.com/react/components/switch). It provides a toggle control for binary on/off states, commonly used for settings and preferences.
 
 Built on [Base UI](https://base-ui.com/react/components/switch).
 
 ## Installation
 
-### switch.tsx
+### Switch.tsx
 
 ```tsx
 // https://devie-ui.com/components/switch
@@ -16,13 +16,13 @@ import { Switch as BaseSwitch } from "@base-ui/react/switch";
 import clsx from "clsx";
 import styles from "./Switch.module.scss";
 
-function Root({ className, ...props }: BaseSwitch.Root.Props) {
+function Root({ className, ...props }: Switch.Root.Props) {
   return (
     <BaseSwitch.Root className={clsx(styles.root, className)} {...props} />
   );
 }
 
-function Thumb({ className, ...props }: BaseSwitch.Thumb.Props) {
+function Thumb({ className, ...props }: Switch.Thumb.Props) {
   return (
     <BaseSwitch.Thumb className={clsx(styles.thumb, className)} {...props} />
   );
@@ -35,19 +35,23 @@ const Switch = {
 
 namespace Switch {
   export namespace Root {
-    export type Props = BaseSwitch.Root.Props;
+    export type Props = Omit<BaseSwitch.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseSwitch.Root.State;
     export type ChangeEventDetails = BaseSwitch.Root.ChangeEventDetails;
   }
   export namespace Thumb {
-    export type Props = BaseSwitch.Thumb.Props;
+    export type Props = Omit<BaseSwitch.Thumb.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Switch;
 ```
 
-### switch.module.scss
+### Switch.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -66,6 +70,10 @@ export default Switch;
         background-color: $devie__color__background;
         padding: 2px;
         transition: background-color 150ms ease, border-color 150ms ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
 
         &[data-checked] {
             background-color: $devie__color__primary;
@@ -109,6 +117,10 @@ export default Switch;
 
         [data-disabled][data-checked] & {
             background-color: #{devie-disabled-color($devie__color__primary-label)};
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
         }
     }
 }

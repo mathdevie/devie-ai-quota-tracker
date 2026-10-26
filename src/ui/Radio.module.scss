@@ -4,8 +4,8 @@
     .root {
         box-sizing: border-box;
         display: flex;
-        width: 1.25rem;
-        height: 1.25rem;
+        width: calc($devie__spacing__x2 + $devie__spacing__x05);
+        height: calc($devie__spacing__x2 + $devie__spacing__x05);
         align-items: center;
         justify-content: center;
         border-radius: 50%;
@@ -65,8 +65,8 @@
     }
 
     .dot {
-        width: 0.5rem;
-        height: 0.5rem;
+        width: $devie__spacing__x1;
+        height: $devie__spacing__x1;
         border-radius: 50%;
         background-color: $devie__color__primary-label;
         flex-shrink: 0;

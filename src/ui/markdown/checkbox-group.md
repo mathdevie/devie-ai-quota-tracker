@@ -1,12 +1,12 @@
 # <CheckboxGroup />
 
-A component that provides shared state for a series of checkboxes. The CheckboxGroup component extends [ Base UI's CheckboxGroup ](https://base-ui.com/react/components/checkbox-group) . It provides shared state to a series of checkboxes, making it easy to manage multiple selections and implement "select all" patterns.
+A component that provides shared state for a series of checkboxes. The CheckboxGroup component extends [Base UI's CheckboxGroup](https://base-ui.com/react/components/checkbox-group). It provides shared state to a series of checkboxes, making it easy to manage multiple selections and implement "select all" patterns.
 
 Built on [Base UI](https://base-ui.com/react/components/checkbox-group).
 
 ## Installation
 
-### checkbox-group.tsx
+### CheckboxGroup.tsx
 
 ```tsx
 // https://devie-ui.com/components/checkbox-group
@@ -16,28 +16,24 @@ import { CheckboxGroup as BaseCheckboxGroup } from "@base-ui/react/checkbox-grou
 import clsx from "clsx";
 import styles from "./CheckboxGroup.module.scss";
 
-function Root({ className, ...props }: BaseCheckboxGroup.Props) {
+function CheckboxGroup({ className, ...props }: CheckboxGroup.Props) {
   return (
     <BaseCheckboxGroup className={clsx(styles.root, className)} {...props} />
   );
 }
 
-const CheckboxGroup = {
-  Root,
-};
-
 namespace CheckboxGroup {
-  export namespace Root {
-    export type Props = BaseCheckboxGroup.Props;
-    export type State = BaseCheckboxGroup.State;
-    export type ChangeEventDetails = BaseCheckboxGroup.ChangeEventDetails;
-  }
+  export type Props = Omit<BaseCheckboxGroup.Props, "className"> & {
+    className?: string;
+  };
+  export type State = BaseCheckboxGroup.State;
+  export type ChangeEventDetails = BaseCheckboxGroup.ChangeEventDetails;
 }
 
 export default CheckboxGroup;
 ```
 
-### checkbox-group.module.scss
+### CheckboxGroup.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -60,7 +56,7 @@ Use `value` and `onValueChange` to control the group state. Each checkbox needs 
 ```tsx
 const [value, setValue] = useState<string[]>(["email"]);
 
-<CheckboxGroup.Root value={value} onValueChange={setValue}>
+<CheckboxGroup value={value} onValueChange={setValue}>
   <label>
     <Checkbox.Root name="notifications" value="email">
       <Checkbox.Indicator />
@@ -81,7 +77,7 @@ const [value, setValue] = useState<string[]>(["email"]);
     </Checkbox.Root>
     Push notifications
   </label>
-</CheckboxGroup.Root>
+</CheckboxGroup>
 ```
 
 ### Parent checkbox
@@ -92,7 +88,7 @@ Add the `parent` prop to a checkbox to make it control all other checkboxes in t
 const allValues = ["read", "write", "delete"];
 const [value, setValue] = useState<string[]>([]);
 
-<CheckboxGroup.Root
+<CheckboxGroup
   value={value}
   onValueChange={setValue}
   allValues={allValues}
@@ -126,7 +122,7 @@ const [value, setValue] = useState<string[]>([]);
       Delete
     </label>
   </div>
-</CheckboxGroup.Root>
+</CheckboxGroup>
 ```
 
 ---

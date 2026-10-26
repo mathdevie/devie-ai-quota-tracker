@@ -9,12 +9,20 @@
 
     .group {
         display: flex;
+        border-radius: $devie__radius;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
+
+        &[data-disabled] {
+            box-shadow: none;
+        }
     }
 
     .input {
         box-sizing: border-box;
         margin: 0;
         padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x1;
+        font-family: inherit;
+        font-size: inherit;
         line-height: $devie__spacing__x3;
         border-radius: 0;
         border: 1px solid $devie__color__line;
@@ -23,7 +31,6 @@
         text-align: center;
         font-variant-numeric: tabular-nums;
         width: 6rem;
-
 
         &:focus-visible {
             z-index: 1;
@@ -102,5 +109,9 @@
 
     .scrubAreaCursor {
         filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+
+        > svg {
+            stroke: $devie__color__background;
+        }
     }
 }

@@ -5,8 +5,6 @@ import { Toggle as BaseToggle } from "@base-ui/react/toggle";
 import clsx from "clsx";
 import styles from "./Toggle.module.scss";
 
-type Variant = "secondary" | "naked";
-
 function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
   return (
     <BaseToggle
@@ -22,7 +20,9 @@ function Toggle({ className, variant = "secondary", ...props }: Toggle.Props) {
 }
 
 namespace Toggle {
-  export interface Props extends BaseToggle.Props {
+  export type Variant = "secondary" | "naked";
+  export interface Props extends Omit<BaseToggle.Props, "className"> {
+    className?: string;
     variant?: Variant;
   }
   export type State = BaseToggle.State;

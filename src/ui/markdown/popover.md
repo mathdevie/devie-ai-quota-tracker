@@ -1,12 +1,12 @@
 # <Popover />
 
-An accessible popup anchored to a trigger. The Popover component extends [ Base UI's Popover ](https://base-ui.com/react/components/popover) . It provides a floating panel that appears relative to a trigger element, useful for displaying supplementary content, tooltips with rich content, or contextual actions.
+An accessible popup anchored to a trigger. The Popover component extends [Base UI's Popover](https://base-ui.com/react/components/popover). It styles the `Popover.Popup`, `Popover.Arrow`, `Popover.Title`, `Popover.Description`, and `Popover.Backdrop` subcomponents, and gives `Popover.Close` a default icon.
 
 Built on [Base UI](https://base-ui.com/react/components/popover).
 
 ## Installation
 
-### popover.tsx
+### Popover.tsx
 
 ```tsx
 // https://devie-ui.com/components/popover
@@ -15,19 +15,16 @@ Built on [Base UI](https://base-ui.com/react/components/popover).
 import { Popover as BasePopover } from "@base-ui/react/popover";
 import clsx from "clsx";
 import { X } from "lucide-react";
+import type React from "react";
 import styles from "./Popover.module.scss";
 
 const Root = BasePopover.Root;
 
-function Trigger({ className, render, ...props }: BasePopover.Trigger.Props) {
-  return (
-    <BasePopover.Trigger className={className} render={render} {...props} />
-  );
-}
+const Trigger = BasePopover.Trigger;
 
 const Portal = BasePopover.Portal;
 
-function Backdrop({ className, ...props }: BasePopover.Backdrop.Props) {
+function Backdrop({ className, ...props }: Popover.Backdrop.Props) {
   return (
     <BasePopover.Backdrop
       className={clsx(styles.backdrop, className)}
@@ -36,34 +33,29 @@ function Backdrop({ className, ...props }: BasePopover.Backdrop.Props) {
   );
 }
 
-function Positioner({ className, ...props }: BasePopover.Positioner.Props) {
-  return (
-    <BasePopover.Positioner
-      className={clsx(styles.positioner, className)}
-      {...props}
-    />
-  );
-}
+const Positioner = BasePopover.Positioner;
 
-function Popup({ className, ...props }: BasePopover.Popup.Props) {
+function Popup({ className, ...props }: Popover.Popup.Props) {
   return (
     <BasePopover.Popup className={clsx(styles.popup, className)} {...props} />
   );
 }
 
-function Arrow({ className, ...props }: BasePopover.Arrow.Props) {
+function Arrow({ className, children, ...props }: Popover.Arrow.Props) {
   return (
-    <BasePopover.Arrow className={clsx(styles.arrow, className)} {...props} />
+    <BasePopover.Arrow className={clsx(styles.arrow, className)} {...props}>
+      {children || <ArrowSvg />}
+    </BasePopover.Arrow>
   );
 }
 
-function Title({ className, ...props }: BasePopover.Title.Props) {
+function Title({ className, ...props }: Popover.Title.Props) {
   return (
     <BasePopover.Title className={clsx(styles.title, className)} {...props} />
   );
 }
 
-function Description({ className, ...props }: BasePopover.Description.Props) {
+function Description({ className, ...props }: Popover.Description.Props) {
   return (
     <BasePopover.Description
       className={clsx(styles.description, className)}
@@ -72,20 +64,21 @@ function Description({ className, ...props }: BasePopover.Description.Props) {
   );
 }
 
-function Close({
-  className,
-  render,
-  children,
-  ...props
-}: BasePopover.Close.Props) {
+function Close({ className, render, children, ...props }: Popover.Close.Props) {
   if (render) {
     return (
-      <BasePopover.Close className={className} render={render} {...props} />
+      <BasePopover.Close className={className} render={render} {...props}>
+        {children}
+      </BasePopover.Close>
     );
   }
 
   return (
-    <BasePopover.Close className={clsx(styles.close, className)} {...props}>
+    <BasePopover.Close
+      aria-label={children ? undefined : "Close"}
+      className={clsx(styles.close, className)}
+      {...props}
+    >
       {children ?? <X size={16} />}
     </BasePopover.Close>
   );
@@ -116,39 +109,72 @@ namespace Popover {
     export type Props = BasePopover.Portal.Props;
   }
   export namespace Backdrop {
-    export type Props = BasePopover.Backdrop.Props;
+    export type Props = Omit<BasePopover.Backdrop.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Positioner {
     export type Props = BasePopover.Positioner.Props;
     export type State = BasePopover.Positioner.State;
   }
   export namespace Popup {
-    export type Props = BasePopover.Popup.Props;
+    export type Props = Omit<BasePopover.Popup.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Arrow {
-    export type Props = BasePopover.Arrow.Props;
+    export type Props = Omit<BasePopover.Arrow.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Title {
-    export type Props = BasePopover.Title.Props;
+    export type Props = Omit<BasePopover.Title.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Description {
-    export type Props = BasePopover.Description.Props;
+    export type Props = Omit<BasePopover.Description.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Close {
-    export type Props = BasePopover.Close.Props;
+    export type Props = Omit<BasePopover.Close.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Popover;
+
+function ArrowSvg(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="20"
+      height="10"
+      viewBox="0 0 20 10"
+      fill="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M9.66437 2.60207L4.80758 6.97318C4.07308 7.63423 3.11989 8 2.13172 8V10H18.5349V8C17.5468 8 16.5936 7.63423 15.8591 6.97318L11.0023 2.60207C10.622 2.2598 10.0447 2.25979 9.66437 2.60207Z"
+        className={styles.arrowFill}
+      />
+      <path
+        d="M10.3333 3.34539L5.47654 7.71648C4.55842 8.54279 3.36693 9 2.13172 9V8C3.11989 8 4.07308 7.63423 4.80758 6.97318L9.66437 2.60207C10.0447 2.25979 10.622 2.2598 11.0023 2.60207L15.8591 6.97318C16.5936 7.63423 17.5468 8 18.5349 8V9C17.2998 9 16.1083 8.54278 15.1901 7.71648L10.3333 3.34539Z"
+        className={styles.arrowInnerStroke}
+      />
+    </svg>
+  );
+}
 ```
 
-### popover.module.scss
+### Popover.module.scss
 
 ```scss
 @use './_devie.scss' as *;
 
 @layer devie {
-
     .backdrop {
         position: fixed;
         inset: 0;
@@ -164,17 +190,20 @@ export default Popover;
         &[data-ending-style] {
             opacity: 0;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .popup {
+        outline: 0;
         background-color: $devie__color__background-raised;
         border-radius: $devie__radius;
         box-shadow: $devie__shadow__menu;
         border: 1px solid $devie__color__line;
-        overflow: hidden;
         min-width: 200px;
         max-width: var(--available-width, 90vw);
-        max-height: 80vh;
         transform-origin: var(--transform-origin);
         transition:
             transform 150ms ease-out,
@@ -193,12 +222,14 @@ export default Popover;
         &[data-instant] {
             transition: none;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     .arrow {
-        fill: $devie__color__background-raised;
-        stroke: $devie__color__line;
-        stroke-width: 1px;
+        display: flex;
         z-index: 1;
 
         &[data-side='top'] {
@@ -211,15 +242,24 @@ export default Popover;
             rotate: 0deg;
         }
 
+        // The extra 5px recentres the 20x10 ArrowSvg after its 90deg rotation
         &[data-side='left'] {
-            right: -13px;
+            right: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: 90deg;
         }
 
         &[data-side='right'] {
-            left: -13px;
+            left: calc(-1 * $devie__spacing__x1 - 5px);
             rotate: -90deg;
         }
+    }
+
+    .arrowFill {
+        fill: $devie__color__background-raised;
+    }
+
+    .arrowInnerStroke {
+        fill: $devie__color__line;
     }
 
     .title {
@@ -233,7 +273,7 @@ export default Popover;
     .description {
         margin: 0;
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         color: $devie__color__text-sub;
     }
 
@@ -251,6 +291,10 @@ export default Popover;
         &:hover {
             background: #{devie-hover-color($devie__color__background)};
         }
+
+        &:focus-visible {
+            @include devie-focus-ring(2px);
+        }
     }
 }
 ```
@@ -259,7 +303,7 @@ export default Popover;
 
 ### Simple popover
 
-A basic popover with a title, description, close button, and arrow. The popover positions itself relative to the trigger and includes smooth scale and opacity animations.
+Use `Popover.Title`, `Popover.Description`, `Popover.Close`, and `Popover.Arrow` inside the Popup.
 
 ```tsx
 <Popover.Root>
@@ -288,34 +332,7 @@ A basic popover with a title, description, close button, and arrow. The popover 
 
 ### Open on hover
 
-The popover can be configured to open on hover using the `openOnHover` prop. Use `delay` to specify how long to wait (in milliseconds) before opening, and `closeDelay` for how long before closing.
-
-### Modal mode
-
-Set `modal` to `true` to lock page scroll and disable interactions outside the popover. Use `Popover.Backdrop` to add a visible overlay. This is useful for confirmation dialogs or actions that require user attention.
-
-### Rich content with controlled state
-
-A more complex example showing a notifications panel with custom header, list items, and footer actions. This demonstrates using controlled state via `open` and `onOpenChange` props, custom styling via `className`, and structured layouts within the popup.
-
-### Additional Examples
-
-#### Hover Scss
-
-```scss
-.hoverPopup {
-  width: 280px !important;
-}
-
-.hoverContent {
-  padding: $devie__spacing__x2;
-  display: flex;
-  flex-direction: column;
-  gap: $devie__spacing__x1;
-}
-```
-
-#### Hover Tsx
+Set `openOnHover` on `Popover.Trigger`. On the same trigger, set `delay` and `closeDelay` in milliseconds to wait before opening and closing.
 
 ```tsx
 <Popover.Root>
@@ -341,7 +358,51 @@ A more complex example showing a notifications panel with custom header, list it
 </Popover.Root>
 ```
 
-#### Modal Scss
+```scss
+.hoverPopup {
+  width: 280px !important;
+}
+
+.hoverContent {
+  padding: $devie__spacing__x2;
+  display: flex;
+  flex-direction: column;
+  gap: $devie__spacing__x1;
+}
+```
+
+### Modal mode
+
+Set `modal` on `Popover.Root` to `true` to lock page scroll and block interactions outside the popover. Add `Popover.Backdrop` for a visible overlay.
+
+```tsx
+<Popover.Root modal>
+  <Popover.Trigger
+    render={<Button variant="secondary">Open Popover (Modal Mode)</Button>}
+  />
+  <Popover.Portal>
+    <Popover.Backdrop />
+    <Popover.Positioner side="bottom" sideOffset={8}>
+      <Popover.Popup className={styles.modalPopup}>
+        <div className={styles.modalContent}>
+          <div className={styles.modalIcon}>
+            <AlertTriangle size={24} />
+          </div>
+          <Popover.Title>Delete your account?</Popover.Title>
+          <Popover.Description>
+            This action cannot be undone. All your data will be permanently
+            removed from our servers.
+          </Popover.Description>
+          <div className={styles.modalActions}>
+            <Popover.Close render={<Button variant="secondary">Cancel</Button>} />
+            <Popover.Close render={<Button variant="danger">Yes, delete</Button>} />
+          </div>
+        </div>
+      </Popover.Popup>
+    </Popover.Positioner>
+  </Popover.Portal>
+</Popover.Root>
+```
 
 ```scss
 .modalPopup {
@@ -375,38 +436,100 @@ A more complex example showing a notifications panel with custom header, list it
 }
 ```
 
-#### Modal Tsx
+### Controlled with state
+
+Use `open` and `onOpenChange` on `Popover.Root` to control the popover. Pass a `className` to `Popover.Popup` to lay out a header, a list, and footer actions.
 
 ```tsx
-<Popover.Root modal>
+const NOTIFICATIONS = [
+  {
+    id: 1,
+    icon: MessageSquare,
+    title: "New comment on your post",
+    time: "2 minutes ago",
+    unread: true,
+  },
+  {
+    id: 2,
+    icon: Calendar,
+    title: "Meeting reminder: Team sync",
+    time: "1 hour ago",
+    unread: true,
+  },
+  {
+    id: 3,
+    icon: Check,
+    title: "Your settings were updated",
+    time: "Yesterday",
+    unread: false,
+  },
+];
+
+const [isOpen, setIsOpen] = useState(false);
+const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
+
+<Popover.Root open={isOpen} onOpenChange={setIsOpen}>
   <Popover.Trigger
-    render={<Button variant="secondary">Open Popover (Modal Mode)</Button>}
-  />
+    render={<Button variant="naked" className={styles.triggerWithBadge} />}
+  >
+    <Bell size={16} />
+    Notifications
+    {unreadCount > 0 && <span className={styles.badge}>{unreadCount}</span>}
+  </Popover.Trigger>
   <Popover.Portal>
-    <Popover.Backdrop />
-    <Popover.Positioner side="bottom" sideOffset={8}>
-      <Popover.Popup className={styles.modalPopup}>
-        <div className={styles.modalContent}>
-          <div className={styles.modalIcon}>
-            <AlertTriangle size={24} />
+    <Popover.Positioner side="top" align="start" sideOffset={8}>
+      <Popover.Popup className={styles.richPopup}>
+        <div className={styles.richHeader}>
+          <div className={styles.richHeaderLeft}>
+            <Bell size={16} />
+            <Popover.Title className={styles.richTitle}>
+              Notifications
+            </Popover.Title>
           </div>
-          <Popover.Title>Delete your account?</Popover.Title>
-          <Popover.Description>
-            This action cannot be undone. All your data will be permanently
-            removed from our servers.
-          </Popover.Description>
-          <div className={styles.modalActions}>
-            <Popover.Close render={<Button variant="secondary">Cancel</Button>} />
-            <Popover.Close render={<Button variant="danger">Yes, delete</Button>} />
-          </div>
+          <Popover.Close className={styles.richClose}>
+            <X size={16} />
+          </Popover.Close>
+        </div>
+
+        <div className={styles.richContent}>
+          {NOTIFICATIONS.map((notification) => (
+            <div
+              key={notification.id}
+              className={styles.notificationItem}
+              data-unread={notification.unread}
+            >
+              <div className={styles.notificationIcon}>
+                <notification.icon size={14} />
+              </div>
+              <div className={styles.notificationText}>
+                <div className={styles.notificationTitle}>
+                  {notification.title}
+                </div>
+                <div className={styles.notificationTime}>
+                  {notification.time}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.richFooter}>
+          <Button variant="naked" size="sm" onClick={() => setIsOpen(false)}>
+            Mark all as read
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsOpen(false)}
+          >
+            View all
+          </Button>
         </div>
       </Popover.Popup>
     </Popover.Positioner>
   </Popover.Portal>
 </Popover.Root>
 ```
-
-#### Rich Content Scss
 
 ```scss
 .triggerWithBadge {
@@ -537,99 +660,6 @@ A more complex example showing a notifications panel with custom header, list it
   padding: $devie__spacing__x1 $devie__spacing__x2;
   border-top: 1px solid $devie__color__line;
 }
-```
-
-#### Rich Content Tsx
-
-```tsx
-const NOTIFICATIONS = [
-  {
-    id: 1,
-    icon: MessageSquare,
-    title: "New comment on your post",
-    time: "2 minutes ago",
-    unread: true,
-  },
-  {
-    id: 2,
-    icon: Calendar,
-    title: "Meeting reminder: Team sync",
-    time: "1 hour ago",
-    unread: true,
-  },
-  {
-    id: 3,
-    icon: Check,
-    title: "Your settings were updated",
-    time: "Yesterday",
-    unread: false,
-  },
-];
-
-const [isOpen, setIsOpen] = useState(false);
-const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
-
-<Popover.Root open={isOpen} onOpenChange={setIsOpen}>
-  <Popover.Trigger
-    render={<Button variant="naked" className={styles.triggerWithBadge} />}
-  >
-    <Bell size={16} />
-    Notifications
-    {unreadCount > 0 && <span className={styles.badge}>{unreadCount}</span>}
-  </Popover.Trigger>
-  <Popover.Portal>
-    <Popover.Positioner side="top" align="start" sideOffset={8}>
-      <Popover.Popup className={styles.richPopup}>
-        <div className={styles.richHeader}>
-          <div className={styles.richHeaderLeft}>
-            <Bell size={16} />
-            <Popover.Title className={styles.richTitle}>
-              Notifications
-            </Popover.Title>
-          </div>
-          <Popover.Close className={styles.richClose}>
-            <X size={16} />
-          </Popover.Close>
-        </div>
-
-        <div className={styles.richContent}>
-          {NOTIFICATIONS.map((notification) => (
-            <div
-              key={notification.id}
-              className={styles.notificationItem}
-              data-unread={notification.unread}
-            >
-              <div className={styles.notificationIcon}>
-                <notification.icon size={14} />
-              </div>
-              <div className={styles.notificationText}>
-                <div className={styles.notificationTitle}>
-                  {notification.title}
-                </div>
-                <div className={styles.notificationTime}>
-                  {notification.time}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.richFooter}>
-          <Button variant="naked" size="sm" onClick={() => setIsOpen(false)}>
-            Mark all as read
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsOpen(false)}
-          >
-            View all
-          </Button>
-        </div>
-      </Popover.Popup>
-    </Popover.Positioner>
-  </Popover.Portal>
-</Popover.Root>
 ```
 
 ---

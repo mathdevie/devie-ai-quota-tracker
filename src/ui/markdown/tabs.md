@@ -1,12 +1,12 @@
 # <Tabs />
 
-A component for toggling between related panels on the same page. The Tabs component extends [ Base UI's Tabs ](https://base-ui.com/react/components/tabs) . It adds an animated `Tabs.Indicator`, horizontal and vertical orientations, and a [segmented](#segmented) variant on `Tabs.List`.
+A component for toggling between related panels on the same page. The Tabs component extends [Base UI's Tabs](https://base-ui.com/react/components/tabs). It adds an animated `Tabs.Indicator`, horizontal and vertical orientations, and a [segmented](#segmented) variant on `Tabs.List`.
 
 Built on [Base UI](https://base-ui.com/react/components/tabs).
 
 ## Installation
 
-### tabs.tsx
+### Tabs.tsx
 
 ```tsx
 // https://devie-ui.com/components/tabs
@@ -31,13 +31,11 @@ function List({ className, variant = "underline", ...props }: Tabs.List.Props) {
   );
 }
 
-const tabStyles = styles.tab;
-
-function Tab({ className, ...props }: BaseTabs.Tab.Props) {
-  return <BaseTabs.Tab className={clsx(tabStyles, className)} {...props} />;
+function Tab({ className, ...props }: Tabs.Tab.Props) {
+  return <BaseTabs.Tab className={clsx(styles.tab, className)} {...props} />;
 }
 
-function Indicator({ className, ...props }: BaseTabs.Indicator.Props) {
+function Indicator({ className, ...props }: Tabs.Indicator.Props) {
   return (
     <BaseTabs.Indicator
       className={clsx(styles.indicator, className)}
@@ -46,7 +44,7 @@ function Indicator({ className, ...props }: BaseTabs.Indicator.Props) {
   );
 }
 
-function Panel({ className, ...props }: BaseTabs.Panel.Props) {
+function Panel({ className, ...props }: Tabs.Panel.Props) {
   return (
     <BaseTabs.Panel className={clsx(styles.panel, className)} {...props} />
   );
@@ -67,26 +65,33 @@ namespace Tabs {
   }
   export namespace List {
     export type Variant = "underline" | "segmented";
-    export interface Props extends BaseTabs.List.Props {
+    export interface Props extends Omit<BaseTabs.List.Props, "className"> {
+      className?: string;
       variant?: Variant;
     }
   }
   export namespace Tab {
-    export type Props = BaseTabs.Tab.Props;
+    export type Props = Omit<BaseTabs.Tab.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseTabs.Tab.State;
   }
   export namespace Indicator {
-    export type Props = BaseTabs.Indicator.Props;
+    export type Props = Omit<BaseTabs.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
   export namespace Panel {
-    export type Props = BaseTabs.Panel.Props;
+    export type Props = Omit<BaseTabs.Panel.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Tabs;
 ```
 
-### tabs.module.scss
+### Tabs.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -169,6 +174,10 @@ export default Tabs;
             box-sizing: border-box;
             border-bottom: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, width 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
 
         &[data-orientation="vertical"] {
@@ -179,6 +188,10 @@ export default Tabs;
             width: auto;
             border-right: 2px solid $devie__color__primary;
             transition: translate 200ms ease-in-out, height 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 
@@ -230,6 +243,10 @@ export default Tabs;
             background: $devie__color__background;
             box-shadow: 0 1px 2px rgb(9 9 11 / 8%);
             transition: translate 200ms ease-in-out, width 200ms ease-in-out, height 200ms ease-in-out;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 }
@@ -237,9 +254,9 @@ export default Tabs;
 
 ## Use Cases
 
-### Horizontal Tabs
+### Simple tabs
 
-Horizontal tabs with an animated underline indicator. Use `defaultValue` to set the initially selected tab, or use `value` and `onValueChange` for controlled mode.
+Set `defaultValue` on `Tabs.Root` to choose the initial tab, or use `value` and `onValueChange` to control it. Place `Tabs.Indicator` inside `Tabs.List`.
 
 ```tsx
 <Tabs.Root defaultValue="overview">
@@ -264,9 +281,9 @@ Horizontal tabs with an animated underline indicator. Use `defaultValue` to set 
 </Tabs.Root>
 ```
 
-### Vertical Tabs
+### Vertical orientation
 
-Set the `orientation` prop on the `Root` to `"vertical"` for a vertical tab layout. The indicator automatically displays as a vertical line on the right.
+Set `orientation` on `Tabs.Root` to `vertical`.
 
 ```tsx
 <Tabs.Root defaultValue="overview" orientation="vertical">
@@ -293,7 +310,7 @@ Set the `orientation` prop on the `Root` to `"vertical"` for a vertical tab layo
 
 ### Segmented control
 
-Set `variant` to `segmented` on `Tabs.List`. The indicator becomes a raised pill inside a sunken track. Works with both orientations.
+Set `variant` on `Tabs.List` to `segmented` for a raised pill inside a sunken track. The default is `underline`, and both work in either orientation.
 
 ```tsx
 <Tabs.Root defaultValue="week">
@@ -311,9 +328,9 @@ Set `variant` to `segmented` on `Tabs.List`. The indicator becomes a raised pill
 </Tabs.Root>
 ```
 
-### Custom Indicator
+### Custom indicator
 
-Override the indicator styles via `className` to create custom designs like a filled background with border and radius.
+Pass a `className` to `Tabs.Indicator` to restyle it, for example as a filled background with a border.
 
 ```tsx
 <Tabs.Root defaultValue="editor">

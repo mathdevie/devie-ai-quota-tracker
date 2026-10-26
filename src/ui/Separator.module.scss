@@ -23,12 +23,32 @@
         width: 100%;
         gap: $devie__spacing__x05;
         margin: $devie__spacing__x05 0;
+
+        &[data-orientation="vertical"] {
+            flex-direction: column;
+            width: auto;
+            height: 100%;
+            margin: 0;
+        }
+    }
+
+    .line {
+        flex: 1;
+        background-color: $devie__color__line;
+
+        [data-orientation="horizontal"] > & {
+            height: 1px;
+        }
+
+        [data-orientation="vertical"] > & {
+            width: 1px;
+        }
     }
 
     .text {
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
-        line-height: $devie__spacing__x3;
+        line-height: $devie__spacing__x2;
         font-family: $devie__font-family;
         padding: 0 $devie__spacing__x05;
     }

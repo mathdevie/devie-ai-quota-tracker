@@ -1,12 +1,12 @@
 # <Checkbox />
 
-A control for a binary or indeterminate choice. The Checkbox component extends [ Base UI's Checkbox ](https://base-ui.com/react/components/checkbox) . It's a simple component for binary or tri-state selection, supporting checked, unchecked, and indeterminate states.
+A control for a binary or indeterminate choice. The Checkbox component extends [Base UI's Checkbox](https://base-ui.com/react/components/checkbox). It's a simple component for binary or tri-state selection, supporting checked, unchecked, and indeterminate states.
 
 Built on [Base UI](https://base-ui.com/react/components/checkbox).
 
 ## Installation
 
-### checkbox.tsx
+### Checkbox.tsx
 
 ```tsx
 // https://devie-ui.com/components/checkbox
@@ -17,7 +17,7 @@ import clsx from "clsx";
 import { Check, Minus } from "lucide-react";
 import styles from "./Checkbox.module.scss";
 
-function Root({ className, ...props }: BaseCheckbox.Root.Props) {
+function Root({ className, ...props }: Checkbox.Root.Props) {
   return (
     <BaseCheckbox.Root className={clsx(styles.root, className)} {...props} />
   );
@@ -27,7 +27,7 @@ function Indicator({
   className,
   children,
   ...props
-}: BaseCheckbox.Indicator.Props) {
+}: Checkbox.Indicator.Props) {
   return (
     <BaseCheckbox.Indicator
       className={clsx(styles.indicator, className)}
@@ -56,19 +56,23 @@ const Checkbox = {
 
 namespace Checkbox {
   export namespace Root {
-    export type Props = BaseCheckbox.Root.Props;
+    export type Props = Omit<BaseCheckbox.Root.Props, "className"> & {
+      className?: string;
+    };
     export type State = BaseCheckbox.Root.State;
     export type ChangeEventDetails = BaseCheckbox.Root.ChangeEventDetails;
   }
   export namespace Indicator {
-    export type Props = BaseCheckbox.Indicator.Props;
+    export type Props = Omit<BaseCheckbox.Indicator.Props, "className"> & {
+      className?: string;
+    };
   }
 }
 
 export default Checkbox;
 ```
 
-### checkbox.module.scss
+### Checkbox.module.scss
 
 ```scss
 @use './_devie.scss' as *;
@@ -77,8 +81,8 @@ export default Checkbox;
     .root {
         box-sizing: border-box;
         display: flex;
-        width: 1.25rem;
-        height: 1.25rem;
+        width: calc($devie__spacing__x2 + $devie__spacing__x05);
+        height: calc($devie__spacing__x2 + $devie__spacing__x05);
         align-items: center;
         justify-content: center;
         border-radius: $devie__radius;
@@ -104,12 +108,12 @@ export default Checkbox;
         }
 
         &:focus-visible {
-            @include devie-focus-ring(1px);
+            @include devie-focus-ring(2px);
         }
 
         &:hover:not([data-disabled]) {
             &[data-unchecked] {
-                border-color: $devie__color__primary
+                border-color: $devie__color__primary;
             }
 
             &[data-checked] {
@@ -131,12 +135,12 @@ export default Checkbox;
 
             &[data-checked] {
                 background-color: #{devie-disabled-color($devie__color__primary)};
-                border-color: #{devie-disabled-color($devie__color__line)};
+                border-color: #{devie-disabled-color($devie__color__primary)};
             }
 
             &[data-indeterminate] {
                 background-color: #{devie-disabled-color($devie__color__primary)};
-                border-color: #{devie-disabled-color($devie__color__line)};
+                border-color: #{devie-disabled-color($devie__color__primary)};
             }
         }
     }
@@ -157,8 +161,8 @@ export default Checkbox;
     }
 
     .icon {
-        width: 0.75rem;
-        height: 0.75rem;
+        width: calc($devie__spacing__x1 + $devie__spacing__x05);
+        height: calc($devie__spacing__x1 + $devie__spacing__x05);
         flex-shrink: 0;
     }
 

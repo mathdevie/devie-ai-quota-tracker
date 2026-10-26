@@ -2,6 +2,7 @@
 
 "use client";
 
+import type React from "react";
 import {
   createContext,
   useCallback,
@@ -12,14 +13,13 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { THEMES } from "@/ui/themes/registry";
+import { DEFAULT_THEME, THEME_STORAGE_KEY, THEMES } from "./registry";
 
 interface ThemeContextType {
   selectedTheme: string;
   setTheme: (theme: string) => void;
   previewTheme: (theme: string) => void;
   clearPreviewTheme: () => void;
-  primaryColor: string;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -29,14 +29,12 @@ interface Props {
   defaultTheme?: string;
 }
 
-const DEFAULT_THEME = "theme-default";
-const STORAGE_KEY = "devie-theme";
 const CHANGE_EVENT = "devie-theme-change";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
 
 function getStoredTheme(): string | null {
   try {
-    const storedTheme = localStorage.getItem(STORAGE_KEY);
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     if (storedTheme && ALLOWED_THEMES.has(storedTheme)) {
       return storedTheme;
     }
@@ -62,7 +60,7 @@ function subscribeToStoredTheme(onChange: () => void): () => void {
 
 function persistTheme(theme: string): void {
   try {
-    localStorage.setItem(STORAGE_KEY, theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
     // Storage unavailable
   }
@@ -84,7 +82,6 @@ export function ThemeProvider({
   );
   const selectedTheme = storedTheme ?? defaultTheme;
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
-  const [primaryColor, setPrimaryColor] = useState("#7B7481");
 
   const currentTheme = previewedTheme ?? selectedTheme;
   const appliedRef = useRef(false);
@@ -94,14 +91,6 @@ export function ThemeProvider({
     if (storedTheme !== null || previewedTheme !== null || appliedRef.current) {
       applyThemeToDOM(currentTheme);
       appliedRef.current = true;
-    }
-
-    const computedColor = getComputedStyle(document.documentElement)
-      .getPropertyValue("--devie__color__primary")
-      .trim();
-
-    if (computedColor) {
-      setPrimaryColor(computedColor);
     }
   }, [currentTheme, storedTheme, previewedTheme]);
 
@@ -124,9 +113,8 @@ export function ThemeProvider({
       setTheme,
       previewTheme,
       clearPreviewTheme,
-      primaryColor,
     }),
-    [selectedTheme, setTheme, previewTheme, clearPreviewTheme, primaryColor],
+    [selectedTheme, setTheme, previewTheme, clearPreviewTheme],
   );
 
   return (

@@ -49,7 +49,7 @@ export default function AlertsDialog({
     >
       <Dialog.Portal>
         <Dialog.Backdrop />
-        <Dialog.Popup className={styles.dialog}>
+        <Dialog.Popup data-app-dialog className={styles.dialog}>
           <form
             className={styles.form}
             onSubmit={async (event) => {
@@ -69,7 +69,7 @@ export default function AlertsDialog({
                 <Dialog.Description>{fullName(connection)}</Dialog.Description>
               )}
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body data-app-dialog-body>
               <OptionRow.List>
                 <OptionRow.Row
                   checked={alerts.lowQuota}

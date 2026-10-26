@@ -30,9 +30,10 @@ Place the restore script in the document head to apply the saved value before th
 ```tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "devie-zoom";
+const CHANGE_EVENT = "devie-zoom-change";
 const MIN = 0.5;
 const MAX = 2;
 const STEP = 0.1;
@@ -46,35 +47,39 @@ function clamp(zoom: number) {
   return Math.min(MAX, Math.max(MIN, Math.round(zoom * 100) / 100));
 }
 
+function getZoom() {
+  const saved = Number.parseFloat(localStorage.getItem(STORAGE_KEY) ?? "");
+  return Number.isFinite(saved) ? clamp(saved) : 1;
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CHANGE_EVENT, onChange);
+  return () => window.removeEventListener(CHANGE_EVENT, onChange);
+}
+
+function setZoom(next: number) {
+  const zoom = clamp(next);
+  localStorage.setItem(STORAGE_KEY, String(zoom));
+  document.documentElement.style.setProperty("--devie__zoom", String(zoom));
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
 export function ZoomProvider({ children }: { children: React.ReactNode }) {
-  const [zoom, setZoomState] = useState(() => {
-    if (typeof window === "undefined") return 1;
-    const saved = Number.parseFloat(localStorage.getItem(STORAGE_KEY) ?? "");
-    return Number.isFinite(saved) ? clamp(saved) : 1;
-  });
-
-  const setZoom = (next: number) => {
-    const value = clamp(next);
-    localStorage.setItem(STORAGE_KEY, String(value));
-    setZoomState(value);
-  };
-
-  useEffect(() => {
-    document.documentElement.style.setProperty("--devie__zoom", String(zoom));
-  }, [zoom]);
+  // The server snapshot keeps hydration stable; the restore script already applied the saved zoom.
+  const zoom = useSyncExternalStore(subscribe, getZoom, () => 1);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
-      if (event.key === "=" || event.key === "+") setZoom(zoom + STEP);
-      else if (event.key === "-") setZoom(zoom - STEP);
+      if (event.key === "=" || event.key === "+") setZoom(getZoom() + STEP);
+      else if (event.key === "-") setZoom(getZoom() - STEP);
       else if (event.key === "0") setZoom(1);
       else return;
       event.preventDefault();
     };
     document.addEventListener("keydown", onKeyDown, true);
     return () => document.removeEventListener("keydown", onKeyDown, true);
-  }, [zoom]);
+  }, []);
 
   return (
     <ZoomContext.Provider value={{ zoom, setZoom }}>

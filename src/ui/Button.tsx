@@ -5,18 +5,6 @@ import { Button as BaseButton } from "@base-ui/react/button";
 import clsx from "clsx";
 import styles from "./Button.module.scss";
 
-type Variant =
-  | "primary"
-  | "secondary"
-  | "danger"
-  | "naked"
-  | "icon-primary"
-  | "icon-secondary"
-  | "icon-danger"
-  | "icon-naked";
-
-type Size = "sm" | "md" | "xl";
-
 function Button({
   variant = "primary",
   size = "md",
@@ -40,9 +28,10 @@ function Button({
         variant === "icon-naked" && [styles.variantNaked, styles.icon],
         size === "sm" && styles.sizeSm,
         size === "md" && styles.sizeMd,
-        size === "xl" && styles.sizeXl,
+        size === "lg" && styles.sizeLg,
         className,
       )}
+      aria-busy={isLoading || undefined}
       data-loading={isLoading}
       disabled={disabled || isLoading}
       focusableWhenDisabled={isLoading}
@@ -50,16 +39,27 @@ function Button({
     >
       {children}
       {isLoading && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.loader} />
-        </div>
+        <span className={styles.loadingOverlay}>
+          <span className={styles.loader} />
+        </span>
       )}
     </BaseButton>
   );
 }
 
 namespace Button {
-  export interface Props extends BaseButton.Props {
+  export type Variant =
+    | "primary"
+    | "secondary"
+    | "danger"
+    | "naked"
+    | "icon-primary"
+    | "icon-secondary"
+    | "icon-danger"
+    | "icon-naked";
+  export type Size = "sm" | "md" | "lg";
+  export interface Props extends Omit<BaseButton.Props, "className"> {
+    className?: string;
     variant?: Variant;
     size?: Size;
     isLoading?: boolean;

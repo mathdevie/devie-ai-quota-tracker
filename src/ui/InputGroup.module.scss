@@ -1,5 +1,11 @@
 @use './_devie.scss' as *;
 
+// Skips the hidden spans Base UI inserts around an open popup trigger
+$item: ':not([data-base-ui-focus-guard], [aria-owns])';
+$guard: '[data-base-ui-focus-guard]';
+$first: ':nth-child(1 of #{$item})';
+$last: ':nth-last-child(1 of #{$item})';
+
 @layer devie {
     .root {
         display: flex;
@@ -12,13 +18,11 @@
             position: relative;
             height: auto;
             border-radius: 0;
+            // Clips each child's shadow at the seams so they do not stack
+            clip-path: inset(-4px 0);
 
             &:not(:focus-visible) {
                 outline-offset: -1px;
-            }
-
-            &:focus-visible {
-                z-index: 1;
             }
         }
 
@@ -28,26 +32,39 @@
             width: auto;
         }
 
-        > :first-child {
+        > #{$first} {
             border-top-left-radius: $devie__radius;
             border-bottom-left-radius: $devie__radius;
+            clip-path: inset(-4px 0 -4px -4px);
         }
 
-        > :last-child {
+        > #{$last} {
             border-top-right-radius: $devie__radius;
             border-bottom-right-radius: $devie__radius;
+            clip-path: inset(-4px -4px -4px 0);
         }
 
-        > :not(:last-child) {
+        > #{$first}#{$last} {
+            clip-path: none;
+        }
+
+        > #{$item}:not(#{$last}) {
             border-right-width: 0;
         }
 
-        > button + * {
+        > button + #{$item},
+        > button + #{$guard} + #{$item} {
             border-left-width: 0;
         }
 
-        > button + button {
+        > button + button,
+        > button + #{$guard} + button {
             margin-inline-start: -1px;
+        }
+
+        > :nth-child(n):focus-visible {
+            z-index: 1;
+            clip-path: none;
         }
     }
 
@@ -57,6 +74,7 @@
         box-sizing: border-box;
         padding: 0 $devie__spacing__x1;
         border: 1px solid $devie__color__line;
+        box-shadow: 0 1px 2px 0 rgb(9 9 11 / 12%);
         background-color: $devie__color__background-sunken;
         color: $devie__color__text-sub;
         font-size: $devie__font-size__small;
