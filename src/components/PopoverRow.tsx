@@ -47,16 +47,9 @@ export default function PopoverRow({
         />
         <StatusBadge connection={connection} />
       </header>
-      {connection.provider === "codex" && (
-        <CodexResetsNews className={styles.news} />
-      )}
+      {connection.provider === "codex" && <CodexResetsNews className={styles.news} />}
       {windows.length > 0 ? (
-        <QuotaBars
-          onPin={onPin}
-          pinnedKey={pinnedKey}
-          size="sm"
-          windows={windows}
-        />
+        <QuotaBars onPin={onPin} pinnedKey={pinnedKey} size="sm" windows={windows} />
       ) : (
         <p className={styles.empty}>
           {connection.windows.length > 0

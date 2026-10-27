@@ -37,11 +37,8 @@ export function readFilters(scope: FilterScope): Filters {
   try {
     // The popover starts from the main filters: both shared one key before.
     const saved =
-      localStorage.getItem(STORAGE_KEYS[scope]) ??
-      localStorage.getItem(STORAGE_KEYS.main);
-    return saved
-      ? { ...DEFAULT_FILTERS, ...JSON.parse(saved) }
-      : DEFAULT_FILTERS;
+      localStorage.getItem(STORAGE_KEYS[scope]) ?? localStorage.getItem(STORAGE_KEYS.main);
+    return saved ? { ...DEFAULT_FILTERS, ...JSON.parse(saved) } : DEFAULT_FILTERS;
   } catch {
     return DEFAULT_FILTERS;
   }
@@ -65,17 +62,12 @@ function nextReset(connection: ProviderConnection): number {
 
 /** The lowest remaining percent across the shown windows, or 101 without data. */
 function leastLeft(connection: ProviderConnection): number {
-  const windows = visibleWindows(connection).filter(
-    (w) => !w.paid && !w.unlimited,
-  );
+  const windows = visibleWindows(connection).filter((w) => !w.paid && !w.unlimited);
   if (windows.length === 0) return 101;
   return 100 - Math.max(...windows.map((w) => w.usedPercent));
 }
 
-const SORTERS: Record<
-  Sort,
-  (a: ProviderConnection, b: ProviderConnection) => number
-> = {
+const SORTERS: Record<Sort, (a: ProviderConnection, b: ProviderConnection) => number> = {
   expiring: (a, b) => nextReset(a) - nextReset(b),
   "least-left": (a, b) => leastLeft(a) - leastLeft(b),
   "most-left": (a, b) => leastLeft(b) - leastLeft(a),
@@ -92,9 +84,6 @@ export function applyFilters(
 ): ProviderConnection[] {
   return connections
     .filter((connection) => connection.enabled)
-    .filter(
-      (connection) =>
-        filters.provider === "all" || connection.provider === filters.provider,
-    )
+    .filter((connection) => filters.provider === "all" || connection.provider === filters.provider)
     .sort(SORTERS[filters.sort]);
 }

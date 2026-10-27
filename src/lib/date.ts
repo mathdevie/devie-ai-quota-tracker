@@ -15,11 +15,7 @@ export function formatDate(value: string | Date, locale: string): string {
 }
 
 /** "45 minutes ago", "5 hours ago", or "yesterday", in the interface language. */
-export function formatAgo(
-  value: string | Date,
-  locale: string,
-  now: number = Date.now(),
-): string {
+export function formatAgo(value: string | Date, locale: string, now: number = Date.now()): string {
   const minutes = Math.max(0, (now - new Date(value).getTime()) / 60_000);
   if (minutes < 60) {
     const format = new Intl.RelativeTimeFormat(locale, { numeric: "always" });

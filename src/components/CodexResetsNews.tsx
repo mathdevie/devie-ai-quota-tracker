@@ -6,11 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CodexResetsStatus } from "@/lib/contracts";
 import { formatAgo } from "@/lib/date";
-import {
-  getCodexResetsStatus,
-  onCodexResetsStatus,
-  openExternalUrl,
-} from "@/lib/desktop";
+import { getCodexResetsStatus, onCodexResetsStatus, openExternalUrl } from "@/lib/desktop";
 import Callout from "@/ui/Callout";
 import styles from "./CodexResetsNews.module.scss";
 import IconTip from "./IconTip";
@@ -49,9 +45,7 @@ function loadStatus(): Promise<CodexResetsStatus> {
 function storeStatus(value: CodexResetsStatus) {
   const fetchedAt = new Date(value.fetchedAt).getTime();
   cache.value = value;
-  cache.at = Number.isFinite(fetchedAt)
-    ? Math.min(fetchedAt, Date.now())
-    : Date.now();
+  cache.at = Number.isFinite(fetchedAt) ? Math.min(fetchedAt, Date.now()) : Date.now();
 }
 
 /** The one piece of news the banner shows. */
@@ -66,10 +60,7 @@ interface NewsItem {
 }
 
 /** The newest item: an active forecast, or a recent reset. Told apart by time: a forecast has no id. */
-export function latestNews(
-  status: CodexResetsStatus,
-  now = Date.now(),
-): NewsItem | undefined {
+export function latestNews(status: CodexResetsStatus, now = Date.now()): NewsItem | undefined {
   const items: NewsItem[] = [];
   const watch = status.activeWatch;
   if (watch && new Date(watch.expiresAt).getTime() > now) {

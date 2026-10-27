@@ -67,16 +67,10 @@ export default function ResetCredits({
           title={t("Quota.ResetCredits.Available", { count: credits.length })}
         >
           <RotateCcw size={12} />
-          {compact
-            ? credits.length
-            : t("Quota.ResetCredits.Available", { count: credits.length })}
+          {compact ? credits.length : t("Quota.ResetCredits.Available", { count: credits.length })}
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Positioner
-            align={compact ? "end" : "start"}
-            side="bottom"
-            sideOffset={6}
-          >
+          <Popover.Positioner align={compact ? "end" : "start"} side="bottom" sideOffset={6}>
             <Popover.Popup className={styles.popup}>
               <Popover.Title className={styles.title}>
                 {t("Quota.ResetCredits.Title")}
@@ -91,19 +85,12 @@ export default function ResetCredits({
                       <span className={styles.creditExpiry}>
                         {credit.expiresAt
                           ? t("Quota.ResetCredits.Expires", {
-                              date: formatDateTime(
-                                credit.expiresAt,
-                                i18n.language,
-                              ),
+                              date: formatDateTime(credit.expiresAt, i18n.language),
                             })
                           : t("Quota.ResetCredits.NoExpiry")}
                       </span>
                     </div>
-                    <Button
-                      onClick={() => setPending(credit)}
-                      size="sm"
-                      variant="secondary"
-                    >
+                    <Button onClick={() => setPending(credit)} size="sm" variant="secondary">
                       {t("Quota.ResetCredits.Use")}
                     </Button>
                   </li>
@@ -124,9 +111,7 @@ export default function ResetCredits({
           <AlertDialog.Backdrop />
           <AlertDialog.Popup data-app-dialog>
             <AlertDialog.Header>
-              <AlertDialog.Title>
-                {t("Quota.ResetCredits.ConfirmTitle")}
-              </AlertDialog.Title>
+              <AlertDialog.Title>{t("Quota.ResetCredits.ConfirmTitle")}</AlertDialog.Title>
             </AlertDialog.Header>
             <AlertDialog.Body data-app-dialog-body>
               <AlertDialog.Description>

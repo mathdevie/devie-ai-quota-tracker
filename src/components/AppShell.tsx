@@ -92,8 +92,7 @@ function Shell() {
   const providerPage = page.provider;
 
   const showError = useCallback(
-    (reason: unknown) =>
-      toasts.add({ type: "danger", description: errorMessage(reason) }),
+    (reason: unknown) => toasts.add({ type: "danger", description: errorMessage(reason) }),
     [toasts],
   );
 
@@ -115,10 +114,8 @@ function Shell() {
     void load();
     if (isDesktop()) {
       void import("@tauri-apps/api/event").then(({ listen }) =>
-        listen<DashboardState>("quota:updated", (event) =>
-          setState(event.payload),
-        ).then((stop) => {
-          if (cancelled) void stop();
+        listen<DashboardState>("quota:updated", (event) => setState(event.payload)).then((stop) => {
+          if (cancelled) stop();
           else cleanup = stop;
         }),
       );
@@ -150,11 +147,9 @@ function Shell() {
   );
 
   const handleRefresh = () => run(refreshAll, setRefreshing);
-  const withBusyId = (id: string) => (busy: boolean) =>
-    setBusyId(busy ? id : undefined);
+  const withBusyId = (id: string) => (busy: boolean) => setBusyId(busy ? id : undefined);
 
-  const onRefresh = (id: string) =>
-    void run(() => refreshConnection(id), withBusyId(id));
+  const onRefresh = (id: string) => void run(() => refreshConnection(id), withBusyId(id));
   const onSignIn = (connection: ProviderConnection) =>
     setLogin({ open: true, provider: connection.provider, renew: connection });
   const actions = {
@@ -166,8 +161,7 @@ function Shell() {
     onAutoPing: setAutoPingFor,
     onEnabledChange: (id: string, enabled: boolean) =>
       void run(() => setConnectionEnabled(id, enabled), withBusyId(id)),
-    onRemove: (id: string) =>
-      void run(() => removeConnection(id), withBusyId(id)),
+    onRemove: (id: string) => void run(() => removeConnection(id), withBusyId(id)),
     onUseReset: (id: string, creditId: string) =>
       run(() => spendResetCredit(id, creditId), withBusyId(id)),
   };
@@ -188,10 +182,7 @@ function Shell() {
     }
   }
 
-  async function handleAlertsSubmit(
-    id: string,
-    alerts: ConnectionAlerts,
-  ): Promise<boolean> {
+  async function handleAlertsSubmit(id: string, alerts: ConnectionAlerts): Promise<boolean> {
     const anyEnabled = Object.values(alerts).some(Boolean);
     if (anyEnabled && !(await ensureNotificationPermission())) {
       showError(t("Alerts.PermissionRequired"));
@@ -297,15 +288,10 @@ function Shell() {
               <SettingsView
                 busy={settingsBusy}
                 onMenuBarItemChange={(visible) =>
-                  void run(
-                    () => setMenuBarItemVisible(visible),
-                    setSettingsBusy,
-                  )
+                  void run(() => setMenuBarItemVisible(visible), setSettingsBusy)
                 }
                 onClose={() => setPage({ view: "quota" })}
-                onOpenProvider={(provider) =>
-                  setPage({ view: "settings", provider })
-                }
+                onOpenProvider={(provider) => setPage({ view: "settings", provider })}
                 onTelemetryChange={(enabled) =>
                   void run(() => setTelemetryEnabled(enabled), setSettingsBusy)
                 }
@@ -324,9 +310,7 @@ function Shell() {
         {login.provider && (
           <LoginDialog
             onConnected={handleConnected}
-            onOpenChange={(open) =>
-              setLogin((current) => ({ ...current, open }))
-            }
+            onOpenChange={(open) => setLogin((current) => ({ ...current, open }))}
             open={login.open}
             provider={login.provider}
             renew={login.renew}
@@ -343,9 +327,7 @@ function Shell() {
         <QuotaBarsDialog
           connection={barsFor}
           onOpenChange={(open) => !open && setBarsFor(undefined)}
-          onSubmit={(id, hiddenKeys) =>
-            run(() => setHiddenWindows(id, hiddenKeys), withBusyId(id))
-          }
+          onSubmit={(id, hiddenKeys) => run(() => setHiddenWindows(id, hiddenKeys), withBusyId(id))}
         />
         <AlertsDialog
           connection={alertsFor}
@@ -356,9 +338,7 @@ function Shell() {
         <AutoPingDialog
           connection={autoPingFor}
           onOpenChange={(open) => !open && setAutoPingFor(undefined)}
-          onSubmit={(id, enabled) =>
-            run(() => setAutoPing(id, enabled), withBusyId(id))
-          }
+          onSubmit={(id, enabled) => run(() => setAutoPing(id, enabled), withBusyId(id))}
         />
       </div>
     </AppUpdaterProvider>

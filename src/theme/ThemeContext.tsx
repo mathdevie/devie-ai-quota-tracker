@@ -1,20 +1,8 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { isDesktop } from "@/lib/desktop";
-import {
-  DARK_THEME,
-  LIGHT_THEME,
-  SYSTEM_THEME,
-  THEMES,
-} from "@/theme/registry";
+import { DARK_THEME, LIGHT_THEME, SYSTEM_THEME, THEMES } from "@/theme/registry";
 
 interface ThemeContextType {
   selectedTheme: string;
@@ -73,9 +61,7 @@ function applyThemeToDOM(theme: string): void {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [selectedTheme, setSelectedTheme] = useState(
-    () => getStoredTheme() ?? DEFAULT_THEME,
-  );
+  const [selectedTheme, setSelectedTheme] = useState(() => getStoredTheme() ?? DEFAULT_THEME);
   const [previewedTheme, setPreviewedTheme] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState("#007aff");
   const [prefersDark, setPrefersDark] = useState(systemPrefersDark);
@@ -106,8 +92,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const nativeTheme =
       activeTheme === SYSTEM_THEME
         ? null
-        : (THEMES.find((theme) => theme.className === resolvedTheme)
-            ?.appearance ?? "light");
+        : (THEMES.find((theme) => theme.className === resolvedTheme)?.appearance ?? "light");
     void import("@tauri-apps/api/window")
       .then(({ getCurrentWindow }) => getCurrentWindow().setTheme(nativeTheme))
       .catch(() => {
@@ -155,9 +140,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [selectedTheme, setTheme, previewTheme, clearPreviewTheme, primaryColor],
   );
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

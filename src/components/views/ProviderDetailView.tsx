@@ -1,10 +1,6 @@
 import { ArrowLeft, Plus, TriangleAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type {
-  DashboardState,
-  Provider,
-  ProviderConnection,
-} from "@/lib/contracts";
+import type { DashboardState, Provider, ProviderConnection } from "@/lib/contracts";
 import { accountLabel, isUnofficial, PROVIDER_NAMES } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
@@ -37,17 +33,13 @@ function ProviderStatus({
     if (onSignIn) {
       return <SignInButton connection={connection} onSignIn={onSignIn} />;
     }
-    return (
-      <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>
-    );
+    return <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>;
   }
   return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
 
 function detailText(connection: ProviderConnection): string | undefined {
-  const name = connection.customLabel
-    ? connection.identity?.displayName
-    : undefined;
+  const name = connection.customLabel ? connection.identity?.displayName : undefined;
   const plan = connection.identity?.plan;
   if (name && plan) return `${name} (${plan})`;
   if (plan) return `(${plan})`;
@@ -69,19 +61,12 @@ export default function ProviderDetailView({
   onBack: () => void;
 } & ConnectionActions) {
   const { t } = useTranslation();
-  const connections = state.connections.filter(
-    (connection) => connection.provider === provider,
-  );
+  const connections = state.connections.filter((connection) => connection.provider === provider);
   const name = PROVIDER_NAMES[provider];
 
   return (
     <section className={styles.page}>
-      <Button
-        className={styles.pageBack}
-        onClick={onBack}
-        size="sm"
-        variant="naked"
-      >
+      <Button className={styles.pageBack} onClick={onBack} size="sm" variant="naked">
         <ArrowLeft size={14} />
         {t("Providers.BackToSettings")}
       </Button>
@@ -122,22 +107,15 @@ export default function ProviderDetailView({
               </div>
             </div>
             <div className={styles.rowActions}>
-              <ProviderStatus
-                connection={connection}
-                onSignIn={actions.onSignIn}
-              />
+              <ProviderStatus connection={connection} onSignIn={actions.onSignIn} />
               <Switch.Root
                 aria-label={t(
-                  connection.enabled
-                    ? "Providers.DisableAccount"
-                    : "Providers.EnableAccount",
+                  connection.enabled ? "Providers.DisableAccount" : "Providers.EnableAccount",
                   { name: accountLabel(connection) },
                 )}
                 checked={connection.enabled}
                 disabled={busyId === connection.id}
-                onCheckedChange={(checked) =>
-                  actions.onEnabledChange?.(connection.id, checked)
-                }
+                onCheckedChange={(checked) => actions.onEnabledChange?.(connection.id, checked)}
               >
                 <Switch.Thumb />
               </Switch.Root>

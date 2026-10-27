@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The interface is now built with Vite instead of a Next.js static export.
-  The app looks and behaves the same.
+- The interface is now built with Vite+ instead of a Next.js static export,
+  and compiled with the React Compiler. The app looks and behaves the same.
 - Provider requests now verify certificates with the macOS trust store, so
   certificates you trust in Keychain, such as a company proxy's, also work.
 - Updated Tauri to 2.12 and the other app dependencies.

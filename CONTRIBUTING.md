@@ -6,7 +6,7 @@ welcome.
 ## Prerequisites
 
 - macOS 12 or newer on an Apple silicon Mac.
-- [Bun](https://bun.sh/).
+- [Bun](https://bun.sh/) and Node.js LTS (`.nvmrc`; Vite+ runs on Node).
 - A stable Rust toolchain (`rust-toolchain.toml` pins the channel).
 - The [Tauri macOS prerequisites](https://v2.tauri.app/start/prerequisites/).
 
@@ -36,8 +36,9 @@ real provider login or use native provider data.
 Run the frontend checks and Rust tests:
 
 ```sh
-bun run check
-bun run build      # TypeScript check + Vite static bundle in out/
+bun run check      # Vite+: oxfmt, oxlint and the TypeScript check
+bun run test       # Vitest
+bun run build      # Vite static bundle in out/
 cd src-desktop
 cargo fmt --check
 cargo test --locked
@@ -167,10 +168,9 @@ Update checklist:
 ```sh
 bun install --frozen-lockfile
 bun scripts/verify-ui-mirror.ts
-bun test tests/theme-migration.test.ts
+bun run test
 bun run check
 bun run build
-bun run build:desktop-frontend
 bun run i18n:verify
 (cd src-desktop && cargo fmt --check && cargo test --locked)
 ```
@@ -191,14 +191,14 @@ before you open a pull request.
 
 ## Provider integrations
 
-| Provider | Sign-in | Quota source |
-| --- | --- | --- |
-| Claude | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code) | `api.anthropic.com/api/oauth/usage` |
-| Codex | Codex CLI OAuth client, PKCE, callback on `localhost:1455` | `chatgpt.com/backend-api/wham/usage` |
-| Gemini CLI | Gemini CLI OAuth client and a dynamic loopback callback | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota` |
-| Antigravity (Unofficial) | OAuth client of the Antigravity IDE and a dynamic loopback callback; app-owned refresh tokens | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`, falling back to `fetchAvailableModels` |
-| GitHub Copilot | GitHub device code flow with the Copilot client id | `api.github.com/copilot_internal/user` |
-| Cursor | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary` |
+| Provider                 | Sign-in                                                                                                               | Quota source                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Claude                   | Claude Code OAuth client, PKCE, callback on `localhost:54545` (or a pasted code)                                      | `api.anthropic.com/api/oauth/usage`                                                                             |
+| Codex                    | Codex CLI OAuth client, PKCE, callback on `localhost:1455`                                                            | `chatgpt.com/backend-api/wham/usage`                                                                            |
+| Gemini CLI               | Gemini CLI OAuth client and a dynamic loopback callback                                                               | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota`                                                      |
+| Antigravity (Unofficial) | OAuth client of the Antigravity IDE and a dynamic loopback callback; app-owned refresh tokens                         | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`, falling back to `fetchAvailableModels` |
+| GitHub Copilot           | GitHub device code flow with the Copilot client id                                                                    | `api.github.com/copilot_internal/user`                                                                          |
+| Cursor                   | Cursor desktop PKCE deep link (`cursor.com/loginDeepControl`), polled on `api2.cursor.sh/auth/poll`, no callback port | `cursor.com/api/usage-summary`                                                                                  |
 
 Antigravity is unofficial: it has no documented quota API, so the app
 reproduces how the closed-source IDE reads the quota, with the IDE's OAuth
@@ -256,7 +256,8 @@ query an updater feed it cannot publish to.
 - Open an issue first for large changes, so the direction is agreed before
   the work.
 - Keep a pull request focused on one change.
-- Make sure `bun run check`, `bun run build`, `bun run i18n:verify`, and
+- Make sure `bun run check`, `bun run test`, `bun run build`,
+  `bun run i18n:verify`, and
   `cargo test --locked` (in `src-desktop/`) pass.
 - Releases are cut by the maintainer on demand: `bun run bump X.Y.Z`
   updates every version file, and a manual dispatch of the

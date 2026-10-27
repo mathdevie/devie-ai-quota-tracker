@@ -74,16 +74,12 @@ export default function AutoPingDialog({
                   plain
                 />
                 {connection?.autoPing.lastError && (
-                  <OptionRow.Note tone="danger">
-                    {connection.autoPing.lastError}
-                  </OptionRow.Note>
+                  <OptionRow.Note tone="danger">{connection.autoPing.lastError}</OptionRow.Note>
                 )}
                 {connection?.autoPing.lastPingAt && (
                   <OptionRow.Note>
                     {t("AutoPing.LastRequest", {
-                      date: new Date(
-                        connection.autoPing.lastPingAt,
-                      ).toLocaleString(i18n.language),
+                      date: new Date(connection.autoPing.lastPingAt).toLocaleString(i18n.language),
                     })}
                   </OptionRow.Note>
                 )}

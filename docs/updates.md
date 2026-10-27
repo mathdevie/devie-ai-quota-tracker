@@ -8,8 +8,9 @@ replaces it. A click on the badge checks once more, downloads a newer release
 if one shipped since, then installs and restarts. So the app restarts into
 the latest release once.
 
-Updates run only in packaged builds. `tauri dev` never reads the update feed
-(`VITE_IS_DESKTOP_BUILD` is set by `beforeBuildCommand` only).
+Updates run only in production builds inside Tauri. The frontend checks
+`import.meta.env.PROD` and the Tauri runtime; `tauri dev` and browser previews
+never read the update feed.
 
 ## Channels
 
@@ -48,6 +49,7 @@ its nightly version until a stable release with a higher version ships.
    - Store the private key as `TAURI_SIGNING_PRIVATE_KEY` and its password as
      `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` in the `Release` environment.
    - Keep a local backup of the private key and its password.
+
 3. Keep the Apple signing secrets from `docs/macos-signing.md`.
 
 ## Release

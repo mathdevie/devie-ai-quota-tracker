@@ -105,10 +105,15 @@ The server no longer sends `seven_day_fable`. Every `seven_day_<model>` field
 arrives as `null`. The same limit now comes in a `limits` array:
 
 ```json
-{"kind":"weekly_scoped","group":"weekly","percent":25,"severity":"normal",
- "resets_at":"2026-09-02T10:00:00Z",
- "scope":{"model":{"id":null,"display_name":"Fable"},"surface":null},
- "is_active":true}
+{
+  "kind": "weekly_scoped",
+  "group": "weekly",
+  "percent": 25,
+  "severity": "normal",
+  "resets_at": "2026-09-02T10:00:00Z",
+  "scope": { "model": { "id": null, "display_name": "Fable" }, "surface": null },
+  "is_active": true
+}
 ```
 
 The array also repeats the session and plan-wide weekly windows as `session`

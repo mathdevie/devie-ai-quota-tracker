@@ -3,12 +3,7 @@
 import { Check, Copy, ExternalLink, LoaderCircle } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type {
-  DashboardState,
-  LoginStart,
-  Provider,
-  ProviderConnection,
-} from "@/lib/contracts";
+import type { DashboardState, LoginStart, Provider, ProviderConnection } from "@/lib/contracts";
 import { cancelLogin, finishLogin, startLogin } from "@/lib/desktop";
 import { accountLabel, PROVIDER_NAMES } from "@/lib/labels";
 import Button from "@/ui/Button";
@@ -135,9 +130,7 @@ export default function LoginDialog({
             <Dialog.Title>
               <span className={styles.title}>
                 <ProviderIcon provider={provider} size={18} />
-                {renew
-                  ? t("Login.RenewTitle", { name })
-                  : t("Login.Title", { name })}
+                {renew ? t("Login.RenewTitle", { name }) : t("Login.Title", { name })}
               </span>
             </Dialog.Title>
           </Dialog.Header>
@@ -172,12 +165,7 @@ export default function LoginDialog({
                     <LoaderCircle className={styles.spinning} size={16} />
                     {t("Login.WaitingFor", { name })}
                   </p>
-                  <a
-                    className={styles.link}
-                    href={start.url}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
+                  <a className={styles.link} href={start.url} rel="noreferrer" target="_blank">
                     <ExternalLink size={13} />
                     {t("Login.OpenPageAgain")}
                   </a>
@@ -221,11 +209,7 @@ export default function LoginDialog({
           <Dialog.Footer>
             {phase === "error" ? (
               <>
-                <Button
-                  onClick={() => onOpenChange(false)}
-                  size="sm"
-                  variant="naked"
-                >
+                <Button onClick={() => onOpenChange(false)} size="sm" variant="naked">
                   {t("Common.Close")}
                 </Button>
                 <Button

@@ -10,9 +10,7 @@ interface I18nProviderProps {
 }
 
 function syncMetaDescription(i18n: I18nInstance) {
-  let description = document.querySelector<HTMLMetaElement>(
-    'meta[name="description"]',
-  );
+  let description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
   if (!description) {
     description = document.createElement("meta");
     description.name = "description";
@@ -45,10 +43,7 @@ export default function I18nProvider({ children }: I18nProviderProps) {
     // Both windows share localStorage; the storage event carries a change across.
     const syncFromStorage = (event: StorageEvent) => {
       if (event.key !== LANGUAGE_STORAGE_KEY) return;
-      if (
-        isSupportedLocale(event.newValue) &&
-        event.newValue !== i18n.language
-      ) {
+      if (isSupportedLocale(event.newValue) && event.newValue !== i18n.language) {
         void i18n.changeLanguage(event.newValue);
       }
     };

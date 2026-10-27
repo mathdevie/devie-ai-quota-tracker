@@ -31,18 +31,18 @@ provider changes local to one module.
 
 ## 2. Requirement assessment
 
-| Requirement | Verdict | Notes |
-|---|---|---|
-| Tauri desktop application | Feasible | Tauri officially supports Next.js static exports and tray applications. |
-| Proven desktop architecture | Feasible | The earlier app uses Next.js 16, React 19, Bun, Biome, Devie UI, and Tauri 2. |
-| Devie UI | Feasible | Devie UI ships 41 themed Base UI components under `src/ui/`. They can be copied with their SCSS tokens and themes. |
-| No product account | Feasible | The app needs no app login, cloud database, telemetry service, or backend. |
-| All product data is local | Feasible | Settings and history stay local. Quota checks still contact each provider directly. |
-| AIUsage-like quota dashboard | Feasible | Quotas, account groups, history, alerts, and local usage statistics fit the design. Proxy and gateway features stay out of scope. |
-| macOS menu bar | Feasible | Tauri supports tray icons, titles, click events, and tray-relative window positioning. |
-| Multiple connections per provider | Feasible | The data model treats each credential or CLI directory as a separate connection. |
-| Multiple Claude subscriptions | Feasible | Claude officially supports side-by-side accounts through separate `CLAUDE_CONFIG_DIR` values. |
-| Claude, Codex, and Copilot first | Feasible | Each provider needs a separate source plan and parser. The shared quota model supports later providers. |
+| Requirement                       | Verdict  | Notes                                                                                                                             |
+| --------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Tauri desktop application         | Feasible | Tauri officially supports Next.js static exports and tray applications.                                                           |
+| Proven desktop architecture       | Feasible | The earlier app uses Next.js 16, React 19, Bun, Biome, Devie UI, and Tauri 2.                                                     |
+| Devie UI                          | Feasible | Devie UI ships 41 themed Base UI components under `src/ui/`. They can be copied with their SCSS tokens and themes.                |
+| No product account                | Feasible | The app needs no app login, cloud database, telemetry service, or backend.                                                        |
+| All product data is local         | Feasible | Settings and history stay local. Quota checks still contact each provider directly.                                               |
+| AIUsage-like quota dashboard      | Feasible | Quotas, account groups, history, alerts, and local usage statistics fit the design. Proxy and gateway features stay out of scope. |
+| macOS menu bar                    | Feasible | Tauri supports tray icons, titles, click events, and tray-relative window positioning.                                            |
+| Multiple connections per provider | Feasible | The data model treats each credential or CLI directory as a separate connection.                                                  |
+| Multiple Claude subscriptions     | Feasible | Claude officially supports side-by-side accounts through separate `CLAUDE_CONFIG_DIR` values.                                     |
+| Claude, Codex, and Copilot first  | Feasible | Each provider needs a separate source plan and parser. The shared quota model supports later providers.                           |
 
 ## 3. Evidence and confidence levels
 
@@ -170,13 +170,13 @@ POC validation:
 
 The source audit used these revisions:
 
-| Project | Revision | Useful design |
-|---|---|---|
-| Earlier desktop app | `a3a54c8` | Next.js static export, Tauri shell, Devie UI, Bun, Biome, updater, and project conventions. |
-| AIUsage | `ab859f8` | Wide provider scope, multi-account dashboard, local statistics, and menu-bar presentation. |
-| CodexBar | `f10b605` | Mature source planning, CLI delegation, stale data, account reconciliation, keychain gates, and tolerant quota parsing. |
-| usage4claude | `25bdf2b` | Compact Claude and Codex menu-bar presentation and multi-account settings. |
-| 9router | `699edac` | A practical connection schema, normalized quotas, token refresh isolation, caching, and cooldowns. |
+| Project             | Revision  | Useful design                                                                                                           |
+| ------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Earlier desktop app | `a3a54c8` | Next.js static export, Tauri shell, Devie UI, Bun, Biome, updater, and project conventions.                             |
+| AIUsage             | `ab859f8` | Wide provider scope, multi-account dashboard, local statistics, and menu-bar presentation.                              |
+| CodexBar            | `f10b605` | Mature source planning, CLI delegation, stale data, account reconciliation, keychain gates, and tolerant quota parsing. |
+| usage4claude        | `25bdf2b` | Compact Claude and Codex menu-bar presentation and multi-account settings.                                              |
+| 9router             | `699edac` | A practical connection schema, normalized quotas, token refresh isolation, caching, and cooldowns.                      |
 
 Recommended reuse by concept:
 
@@ -349,19 +349,19 @@ response and parser information.
 
 ## 7. Main risks
 
-| Risk | Impact | Control |
-|---|---|---|
-| Anthropic credential policy | High | Use passive data and the unmodified CLI first. Do not read Claude OAuth tokens in the default POC. |
-| Undocumented HTTP endpoints | High | Isolate each endpoint, use tolerant parsers, keep fixtures, and retain stale snapshots. |
-| CLI output changes | Medium | Version parsers, test fixtures, and show a clear parser error. |
-| Token refresh races | High | Never refresh CLI-owned tokens. Let the owning CLI update its store. |
-| macOS Keychain prompts | Medium | Prefer CLI delegation. Request keychain access only after a clear user action. |
-| Claude settings changes | Medium | Make the wrapper opt-in. Preserve, chain, and restore the existing status line. |
-| Wrong account grouping | High | Keep connections separate. Group only by verified remote identity fields. |
-| Rate limits on quota checks | Medium | Use source-specific minimum intervals, jitter, caching, and 429 cooldowns. |
-| Tray focus and placement | Medium | Test multiple monitors, Spaces, full-screen apps, and menu-bar auto-hide. |
-| Cross-platform differences | Medium | Ship a macOS POC first. Keep the provider core platform-neutral. |
-| Local privacy | High | Keep tokens in native code, redact logs, and make diagnostics explicit. |
+| Risk                        | Impact | Control                                                                                            |
+| --------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
+| Anthropic credential policy | High   | Use passive data and the unmodified CLI first. Do not read Claude OAuth tokens in the default POC. |
+| Undocumented HTTP endpoints | High   | Isolate each endpoint, use tolerant parsers, keep fixtures, and retain stale snapshots.            |
+| CLI output changes          | Medium | Version parsers, test fixtures, and show a clear parser error.                                     |
+| Token refresh races         | High   | Never refresh CLI-owned tokens. Let the owning CLI update its store.                               |
+| macOS Keychain prompts      | Medium | Prefer CLI delegation. Request keychain access only after a clear user action.                     |
+| Claude settings changes     | Medium | Make the wrapper opt-in. Preserve, chain, and restore the existing status line.                    |
+| Wrong account grouping      | High   | Keep connections separate. Group only by verified remote identity fields.                          |
+| Rate limits on quota checks | Medium | Use source-specific minimum intervals, jitter, caching, and 429 cooldowns.                         |
+| Tray focus and placement    | Medium | Test multiple monitors, Spaces, full-screen apps, and menu-bar auto-hide.                          |
+| Cross-platform differences  | Medium | Ship a macOS POC first. Keep the provider core platform-neutral.                                   |
+| Local privacy               | High   | Keep tokens in native code, redact logs, and make diagnostics explicit.                            |
 
 ### 7.1 Anthropic policy decision
 
@@ -423,20 +423,20 @@ and the Xcode Command Line Tools are installed.
 
 Recommended defaults appear in the second column.
 
-| Decision | Recommended POC default | Alternative |
-|---|---|---|
-| Claude quota source | Passive status line plus official CLI `/usage` | Direct OAuth usage endpoint with explicit risk acceptance |
-| Codex quota source | Local records plus official CLI `/status` | Direct undocumented HTTP endpoint |
-| App-owned logins | No; import local CLI connections | Add Copilot device flow during the POC |
-| Scope | Quota tracking only | Include proxies, gateways, or CLI account switching |
-| Platforms | macOS first | Build Windows and Linux during the POC |
-| Connection behavior | Keep every connection separate | Merge connections with matching identities |
-| Tray | One icon and one popover | One tray item per connection |
-| Tray metric | Lowest remaining short window | A pinned provider or weekly window |
-| Popover technology | Standard Tauri window | Native macOS `NSPanel` bridge |
-| History | SQLite from the first POC | Settings store only |
-| Token and cost statistics | Phase 2 | Include local JSONL analysis in the POC |
-| Product identity | Name `Devie AI Quota Tracker`, bundle `com.devie.quota` | A different name and bundle identifier |
+| Decision                  | Recommended POC default                                 | Alternative                                               |
+| ------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
+| Claude quota source       | Passive status line plus official CLI `/usage`          | Direct OAuth usage endpoint with explicit risk acceptance |
+| Codex quota source        | Local records plus official CLI `/status`               | Direct undocumented HTTP endpoint                         |
+| App-owned logins          | No; import local CLI connections                        | Add Copilot device flow during the POC                    |
+| Scope                     | Quota tracking only                                     | Include proxies, gateways, or CLI account switching       |
+| Platforms                 | macOS first                                             | Build Windows and Linux during the POC                    |
+| Connection behavior       | Keep every connection separate                          | Merge connections with matching identities                |
+| Tray                      | One icon and one popover                                | One tray item per connection                              |
+| Tray metric               | Lowest remaining short window                           | A pinned provider or weekly window                        |
+| Popover technology        | Standard Tauri window                                   | Native macOS `NSPanel` bridge                             |
+| History                   | SQLite from the first POC                               | Settings store only                                       |
+| Token and cost statistics | Phase 2                                                 | Include local JSONL analysis in the POC                   |
+| Product identity          | Name `Devie AI Quota Tracker`, bundle `com.devie.quota` | A different name and bundle identifier                    |
 
 The POC should not start until the Claude source policy, scope, platform, and
 connection behavior are approved.

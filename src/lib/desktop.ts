@@ -20,10 +20,6 @@ export function isDesktop(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
 }
 
-/** Packaged builds only: `tauri dev` must not read the update feed or install over itself. */
-export const IS_DESKTOP_BUILD =
-  import.meta.env.VITE_IS_DESKTOP_BUILD === "true";
-
 async function call<T>(command: string, args?: Record<string, unknown>) {
   const { invoke } = await import("@tauri-apps/api/core");
   return invoke<T>(command, args);
@@ -46,9 +42,7 @@ export async function refreshAll(): Promise<DashboardState> {
   return call("refresh_all");
 }
 
-export async function refreshConnection(
-  connectionId: string,
-): Promise<DashboardState> {
+export async function refreshConnection(connectionId: string): Promise<DashboardState> {
   if (!isDesktop()) {
     await delay(300);
     return previewState;
@@ -70,10 +64,7 @@ export async function startLogin(provider: Provider): Promise<LoginStart> {
   return call("start_login", { provider });
 }
 
-export async function finishLogin(
-  sessionId: string,
-  code?: string,
-): Promise<DashboardState> {
+export async function finishLogin(sessionId: string, code?: string): Promise<DashboardState> {
   if (!isDesktop()) {
     await delay(1200);
     throw new Error("The browser preview cannot complete a provider sign-in.");
@@ -86,15 +77,11 @@ export async function cancelLogin(sessionId: string): Promise<void> {
   await call("cancel_login", { sessionId });
 }
 
-export async function removeConnection(
-  connectionId: string,
-): Promise<DashboardState> {
+export async function removeConnection(connectionId: string): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
-      connections: previewState.connections.filter(
-        (connection) => connection.id !== connectionId,
-      ),
+      connections: previewState.connections.filter((connection) => connection.id !== connectionId),
     };
   }
   return call("remove_connection", { connectionId });
@@ -108,9 +95,7 @@ export async function setConnectionEnabled(
     return {
       ...previewState,
       connections: previewState.connections.map((connection) =>
-        connection.id === connectionId
-          ? { ...connection, enabled }
-          : connection,
+        connection.id === connectionId ? { ...connection, enabled } : connection,
       ),
     };
   }
@@ -142,9 +127,7 @@ function withConnection(
   return {
     ...previewState,
     connections: previewState.connections.map((connection) =>
-      connection.id === connectionId
-        ? { ...connection, ...patch(connection) }
-        : connection,
+      connection.id === connectionId ? { ...connection, ...patch(connection) } : connection,
     ),
   };
 }
@@ -158,9 +141,7 @@ export async function setConnectionAlerts(
 }
 
 /** Shows a sample notification so the user can check the macOS permission. */
-export async function sendTestNotification(
-  connectionId: string,
-): Promise<void> {
+export async function sendTestNotification(connectionId: string): Promise<void> {
   if (!isDesktop()) return;
   await call("send_test_notification", { connectionId });
 }
@@ -178,10 +159,7 @@ export async function setHiddenWindows(
   return call("set_hidden_windows", { connectionId, windowKeys });
 }
 
-export async function setAutoPing(
-  connectionId: string,
-  enabled: boolean,
-): Promise<DashboardState> {
+export async function setAutoPing(connectionId: string, enabled: boolean): Promise<DashboardState> {
   if (!isDesktop()) {
     return withConnection(connectionId, (connection) => ({
       autoPing: { ...connection.autoPing, enabled },
@@ -198,9 +176,7 @@ export async function spendResetCredit(
   if (!isDesktop()) {
     await delay(600);
     return withConnection(connectionId, (connection) => ({
-      resetCredits: connection.resetCredits?.filter(
-        (credit) => credit.id !== creditId,
-      ),
+      resetCredits: connection.resetCredits?.filter((credit) => credit.id !== creditId),
       windows: connection.windows.map((window) => ({
         ...window,
         usedPercent: 0,
@@ -210,9 +186,7 @@ export async function spendResetCredit(
   return call("use_reset_credit", { connectionId, creditId });
 }
 
-export async function setTraySummary(
-  summary: TraySummary | null,
-): Promise<DashboardState> {
+export async function setTraySummary(summary: TraySummary | null): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -224,17 +198,13 @@ export async function setTraySummary(
 
 export async function ensureNotificationPermission(): Promise<boolean> {
   if (!isDesktop()) return true;
-  const state = await call<"granted" | "denied" | "prompt">(
-    "notification_permission_state",
-  );
+  const state = await call<"granted" | "denied" | "prompt">("notification_permission_state");
   if (state === "granted") return true;
   if (state === "denied") return false;
   return call<boolean>("request_notification_permission");
 }
 
-export async function setMenuBarItemVisible(
-  visible: boolean,
-): Promise<DashboardState> {
+export async function setMenuBarItemVisible(visible: boolean): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -263,9 +233,7 @@ export async function setLaunchAtLogin(enabled: boolean): Promise<boolean> {
 }
 
 /** Picks which release channel updates come from. */
-export async function setUpdateChannel(
-  channel: UpdateChannel,
-): Promise<DashboardState> {
+export async function setUpdateChannel(channel: UpdateChannel): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -276,9 +244,7 @@ export async function setUpdateChannel(
 }
 
 /** Turns anonymous usage events and crash reports on or off. */
-export async function setTelemetryEnabled(
-  enabled: boolean,
-): Promise<DashboardState> {
+export async function setTelemetryEnabled(enabled: boolean): Promise<DashboardState> {
   if (!isDesktop()) {
     return {
       ...previewState,
@@ -304,19 +270,17 @@ export async function getCodexResetsStatus(): Promise<CodexResetsStatus> {
 }
 
 /** Listens for the reset news the core fetches on a manual refresh. Returns a stop function. */
-export function onCodexResetsStatus(
-  handler: (status: CodexResetsStatus) => void,
-): () => void {
+export function onCodexResetsStatus(handler: (status: CodexResetsStatus) => void): () => void {
   if (!isDesktop()) return () => {};
   let cancelled = false;
   let stop: (() => void) | undefined;
   void import("@tauri-apps/api/event").then(({ listen }) =>
-    listen<CodexResetsStatus>("codex-resets:updated", (event) =>
-      handler(event.payload),
-    ).then((unlisten) => {
-      if (cancelled) void unlisten();
-      else stop = unlisten;
-    }),
+    listen<CodexResetsStatus>("codex-resets:updated", (event) => handler(event.payload)).then(
+      (unlisten) => {
+        if (cancelled) unlisten();
+        else stop = unlisten;
+      },
+    ),
   );
   return () => {
     cancelled = true;
@@ -346,10 +310,6 @@ export async function hidePopover(): Promise<void> {
 /** Fits the popover window to its content. The width stays as it is. */
 export async function resizePopover(height: number): Promise<void> {
   if (!isDesktop()) return;
-  const { getCurrentWindow, LogicalSize } = await import(
-    "@tauri-apps/api/window"
-  );
-  await getCurrentWindow().setSize(
-    new LogicalSize(window.innerWidth, Math.round(height)),
-  );
+  const { getCurrentWindow, LogicalSize } = await import("@tauri-apps/api/window");
+  await getCurrentWindow().setSize(new LogicalSize(window.innerWidth, Math.round(height)));
 }

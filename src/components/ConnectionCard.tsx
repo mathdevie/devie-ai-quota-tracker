@@ -13,12 +13,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProviderConnection } from "@/lib/contracts";
 import { formatAgo } from "@/lib/date";
-import {
-  accountLabel,
-  fullName,
-  PROVIDER_NAMES,
-  visibleWindows,
-} from "@/lib/labels";
+import { accountLabel, fullName, PROVIDER_NAMES, visibleWindows } from "@/lib/labels";
 import Badge from "@/ui/Badge";
 import Button from "@/ui/Button";
 import Menu from "@/ui/Menu";
@@ -42,8 +37,7 @@ function StaleTip({ updatedAt }: { updatedAt: string }) {
 export function StaleBadge({ connection }: { connection: ProviderConnection }) {
   const { t } = useTranslation();
   const label = t("Connection.Status.Stale");
-  if (!connection.lastUpdatedAt)
-    return <Badge variant="warning">{label}</Badge>;
+  if (!connection.lastUpdatedAt) return <Badge variant="warning">{label}</Badge>;
   return (
     <IconTip label={<StaleTip updatedAt={connection.lastUpdatedAt} />}>
       <Badge tabIndex={0} variant="warning">
@@ -63,10 +57,7 @@ export function SignInButton({
 }) {
   const { t } = useTranslation();
   return (
-    <IconTip
-      label={connection.lastError ?? t("Connection.SignInNeededTip")}
-      side="top"
-    >
+    <IconTip label={connection.lastError ?? t("Connection.SignInNeededTip")} side="top">
       <Button
         aria-label={t("Connection.SignInTo", { name: fullName(connection) })}
         onClick={() => onSignIn(connection)}
@@ -97,9 +88,7 @@ export function StatusBadge({
     if (onSignIn) {
       return <SignInButton connection={connection} onSignIn={onSignIn} />;
     }
-    return (
-      <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>
-    );
+    return <Badge variant="warning">{t("Connection.Status.SignInNeeded")}</Badge>;
   }
   return <Badge variant="danger">{t("Connection.Status.Error")}</Badge>;
 }
@@ -247,24 +236,15 @@ export function ConnectionMenu({
               </Menu.Item>
             )}
             {onEnabledChange && (
-              <Menu.Item
-                onClick={() =>
-                  onEnabledChange(connection.id, !connection.enabled)
-                }
-              >
+              <Menu.Item onClick={() => onEnabledChange(connection.id, !connection.enabled)}>
                 <Power size={14} />
-                {connection.enabled
-                  ? t("Connection.Menu.Disable")
-                  : t("Connection.Menu.Enable")}
+                {connection.enabled ? t("Connection.Menu.Disable") : t("Connection.Menu.Enable")}
               </Menu.Item>
             )}
             {onRemove && (
               <>
                 <Menu.Separator />
-                <Menu.Item
-                  className={styles.dangerItem}
-                  onClick={() => onRemove(connection.id)}
-                >
+                <Menu.Item className={styles.dangerItem} onClick={() => onRemove(connection.id)}>
                   <Trash2 size={14} />
                   {t("Connection.Menu.Remove")}
                 </Menu.Item>
@@ -309,20 +289,13 @@ export default function ConnectionCard({
           onAlerts={actions.onAlerts}
           onAutoPing={actions.onAutoPing}
         />
-        {hasActions && (
-          <ConnectionMenu busy={busy} connection={connection} {...actions} />
-        )}
+        {hasActions && <ConnectionMenu busy={busy} connection={connection} {...actions} />}
       </header>
 
-      {connection.provider === "codex" && (
-        <CodexResetsNews className={styles.news} />
-      )}
+      {connection.provider === "codex" && <CodexResetsNews className={styles.news} />}
       {actions.onUseReset && (connection.resetCredits?.length ?? 0) > 0 && (
         <div className={styles.credits}>
-          <ResetCredits
-            connection={connection}
-            onUseReset={actions.onUseReset}
-          />
+          <ResetCredits connection={connection} onUseReset={actions.onUseReset} />
         </div>
       )}
       <div className={styles.body}>

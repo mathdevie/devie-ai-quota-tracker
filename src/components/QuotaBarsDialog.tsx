@@ -31,9 +31,7 @@ export default function QuotaBarsDialog({
   }, [connection]);
 
   const setShown = (key: string, shown: boolean) =>
-    setHidden((current) =>
-      shown ? current.filter((item) => item !== key) : [...current, key],
-    );
+    setHidden((current) => (shown ? current.filter((item) => item !== key) : [...current, key]));
 
   /** "37% left · resets in 4h 13m", or "Unlimited" for an uncapped window. */
   const describe = (window: ProviderConnection["windows"][number]) => {
@@ -74,9 +72,7 @@ export default function QuotaBarsDialog({
           >
             <Dialog.Header>
               <Dialog.Title>{t("Bars.Title")}</Dialog.Title>
-              {connection && (
-                <Dialog.Description>{fullName(connection)}</Dialog.Description>
-              )}
+              {connection && <Dialog.Description>{fullName(connection)}</Dialog.Description>}
             </Dialog.Header>
             <Dialog.Body data-app-dialog-body>
               <div className={styles.group}>

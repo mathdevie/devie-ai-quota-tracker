@@ -49,18 +49,8 @@ function List({ children }: { children: ReactNode }) {
   return <div className={styles.options}>{children}</div>;
 }
 
-function Note({
-  children,
-  tone = "sub",
-}: {
-  children: ReactNode;
-  tone?: "sub" | "danger";
-}) {
-  return (
-    <p className={tone === "danger" ? styles.error : styles.status}>
-      {children}
-    </p>
-  );
+function Note({ children, tone = "sub" }: { children: ReactNode; tone?: "sub" | "danger" }) {
+  return <p className={tone === "danger" ? styles.error : styles.status}>{children}</p>;
 }
 
 const OptionRow = { Row, List, Note };

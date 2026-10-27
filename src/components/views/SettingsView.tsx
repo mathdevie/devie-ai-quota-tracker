@@ -31,23 +31,16 @@ function ProviderCard({
   onOpen: (provider: Provider) => void;
 }) {
   const { t } = useTranslation();
-  const connections = state.connections.filter(
-    (connection) => connection.provider === provider,
-  );
+  const connections = state.connections.filter((connection) => connection.provider === provider);
   const connected = connections.filter(
     (connection) => connection.enabled && connection.status !== "error",
   ).length;
   const attention = connections.filter(
     (connection) =>
-      connection.enabled &&
-      (connection.status === "needs_login" || connection.status === "error"),
+      connection.enabled && (connection.status === "needs_login" || connection.status === "error"),
   ).length;
   return (
-    <button
-      className={styles.providerCard}
-      onClick={() => onOpen(provider)}
-      type="button"
-    >
+    <button className={styles.providerCard} onClick={() => onOpen(provider)} type="button">
       <span className={styles.providerCardHeader}>
         <ProviderIcon provider={provider} size={28} />
         <span className={styles.providerCardTitle}>
@@ -58,14 +51,10 @@ function ProviderCard({
       {(connected > 0 || attention > 0) && (
         <span className={styles.providerBadges}>
           {connected > 0 && (
-            <Badge variant="success">
-              {t("Providers.Connected", { total: connected })}
-            </Badge>
+            <Badge variant="success">{t("Providers.Connected", { total: connected })}</Badge>
           )}
           {attention > 0 && (
-            <Badge variant="warning">
-              {t("Providers.Attention", { total: attention })}
-            </Badge>
+            <Badge variant="warning">{t("Providers.Attention", { total: attention })}</Badge>
           )}
         </span>
       )}
@@ -84,20 +73,12 @@ function ProvidersGroup({
   const active = PROVIDERS.filter((provider) =>
     state.connections.some((connection) => connection.provider === provider),
   );
-  const ordered = [
-    ...active,
-    ...PROVIDERS.filter((provider) => !active.includes(provider)),
-  ];
+  const ordered = [...active, ...PROVIDERS.filter((provider) => !active.includes(provider))];
   return (
     <SettingRow.Group plain title={t("Nav.Providers")}>
       <div className={styles.providerGrid}>
         {ordered.map((provider) => (
-          <ProviderCard
-            key={provider}
-            onOpen={onOpen}
-            provider={provider}
-            state={state}
-          />
+          <ProviderCard key={provider} onOpen={onOpen} provider={provider} state={state} />
         ))}
       </div>
     </SettingRow.Group>
@@ -107,15 +88,8 @@ function ProvidersGroup({
 function UpdateRow() {
   const { t } = useTranslation();
   const toasts = Toast.useToastManager();
-  const {
-    enabled,
-    status,
-    progress,
-    info,
-    error,
-    checkForUpdates,
-    installUpdate,
-  } = useAppUpdater();
+  const { enabled, status, progress, info, error, checkForUpdates, installUpdate } =
+    useAppUpdater();
 
   // A check is quick; a toast reports when there is nothing to install.
   async function check() {
@@ -148,28 +122,19 @@ function UpdateRow() {
   return (
     <SettingRow.Row
       subtitle={
-        <span className={status === "error" ? styles.dangerText : undefined}>
-          {statusText}
-        </span>
+        <span className={status === "error" ? styles.dangerText : undefined}>{statusText}</span>
       }
       title={t("Settings.Updates.Title")}
     >
       {status === "ready" ? (
-        <Button
-          className={styles.updateAction}
-          onClick={() => void installUpdate()}
-          size="md"
-        >
+        <Button className={styles.updateAction} onClick={() => void installUpdate()} size="md">
           {t("Settings.Updates.RestartToUpdate")}
         </Button>
       ) : (
         <Button
           className={styles.updateAction}
           disabled={
-            !enabled ||
-            status === "checking" ||
-            status === "downloading" ||
-            status === "installing"
+            !enabled || status === "checking" || status === "downloading" || status === "installing"
           }
           onClick={() => void check()}
           size="md"
@@ -258,15 +223,10 @@ function ChannelRow({
     >
       <Select.Root
         disabled={busy || !enabled}
-        onValueChange={(value: UpdateChannel | null) =>
-          value && void change(value)
-        }
+        onValueChange={(value: UpdateChannel | null) => value && void change(value)}
         value={channel}
       >
-        <Select.Trigger
-          aria-label={t("Settings.Updates.Channel")}
-          className={pickerStyles.trigger}
-        >
+        <Select.Trigger aria-label={t("Settings.Updates.Channel")} className={pickerStyles.trigger}>
           <Select.Value>{labels[channel]}</Select.Value>
           <Select.Icon />
         </Select.Trigger>
@@ -309,12 +269,7 @@ export default function SettingsView({
   const { t } = useTranslation();
   return (
     <section className={styles.page} data-settings>
-      <Button
-        className={styles.pageBack}
-        onClick={onClose}
-        size="sm"
-        variant="naked"
-      >
+      <Button className={styles.pageBack} onClick={onClose} size="sm" variant="naked">
         <ArrowLeft size={14} />
         {t("Settings.BackToDashboard")}
       </Button>

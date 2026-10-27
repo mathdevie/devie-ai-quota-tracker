@@ -7,7 +7,7 @@
     "frontendDist": "../out",
     "devUrl": "http://localhost:3002",
     "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build:desktop-frontend"
+    "beforeBuildCommand": "bun run build"
   },
   "app": {
     "macOSPrivateApi": true,
@@ -32,12 +32,7 @@
     "active": true,
     "targets": ["app", "dmg"],
     "createUpdaterArtifacts": true,
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns"
-    ],
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns"],
     "macOS": {
       "minimumSystemVersion": "12.0"
     }

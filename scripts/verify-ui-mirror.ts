@@ -3,11 +3,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const baseline = "e0ef2ed996bab08110fae9c45b6938eb53aaab24";
-const files = execFileSync(
-  "git",
-  ["ls-tree", "-r", "--name-only", baseline, "src/ui"],
-  { encoding: "utf8" },
-)
+const files = execFileSync("git", ["ls-tree", "-r", "--name-only", baseline, "src/ui"], {
+  encoding: "utf8",
+})
   .trim()
   .split("\n");
 function walk(dir: string): string[] {
@@ -23,13 +21,8 @@ if (JSON.stringify(actual) !== JSON.stringify([...files].sort())) {
 for (const file of files) {
   let expected = execFileSync("git", ["show", `${baseline}:${file}`]);
   if (file === "src/ui/markdown/input-group.md") {
-    expected = Buffer.from(
-      expected.toString().replace(/sk_live_[A-Za-z0-9]+/g, "example-api-key"),
-    );
+    expected = Buffer.from(expected.toString().replace(/sk_live_[A-Za-z0-9]+/g, "example-api-key"));
   }
-  if (!readFileSync(file).equals(expected))
-    throw new Error(`UI mirror drift: ${file}`);
+  if (!readFileSync(file).equals(expected)) throw new Error(`UI mirror drift: ${file}`);
 }
-console.log(
-  `${files.length} files match ${baseline}, with only the approved example substitution`,
-);
+console.log(`${files.length} files match ${baseline}, with only the approved example substitution`);

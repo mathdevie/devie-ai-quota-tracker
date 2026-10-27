@@ -4,18 +4,13 @@ import { transform } from "@svgr/core";
 import jsx from "@svgr/plugin-jsx";
 import svgo from "@svgr/plugin-svgo";
 import react from "@vitejs/plugin-react";
-import {
-  defineConfig,
-  type Plugin,
-  runnerImport,
-  transformWithOxc,
-} from "vite";
+import { defineConfig, lazyPlugins, type Plugin, runnerImport, transformWithOxc } from "vite-plus";
 import { themeBootScript } from "./src/app/boot";
 
 // The desktop version lives in the Tauri config; Settings shows it.
-const { version } = JSON.parse(
-  readFileSync("src-desktop/tauri.conf.json", "utf8"),
-) as { version: string };
+const { version } = JSON.parse(readFileSync("src-desktop/tauri.conf.json", "utf8")) as {
+  version: string;
+};
 
 const alias = { "@": fileURLToPath(new URL("./src", import.meta.url)) };
 
@@ -55,14 +50,15 @@ function themeBoot(): Plugin {
     transformIndexHtml: {
       order: "pre",
       async handler() {
-        const { module } = await runnerImport<
-          typeof import("./src/theme/registry")
-        >("/src/theme/registry.ts", {
-          configFile: false,
-          logLevel: "silent",
-          plugins: [svgComponents()],
-          resolve: { alias },
-        });
+        const { module } = await runnerImport<typeof import("./src/theme/registry")>(
+          "/src/theme/registry.ts",
+          {
+            configFile: false,
+            logLevel: "silent",
+            plugins: [svgComponents()],
+            resolve: { alias },
+          },
+        );
         const themes = module.THEMES.map((theme) => theme.className);
         return [
           {
@@ -77,7 +73,7 @@ function themeBoot(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [svgComponents(), react(), themeBoot()],
+  plugins: lazyPlugins(() => [svgComponents(), react({ compiler: true }), themeBoot()]),
   resolve: { alias },
   define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(version) },
   server: {
@@ -92,4 +88,13 @@ export default defineConfig({
     // One local bundle loaded from disk by the webview; splitting adds nothing.
     chunkSizeWarningLimit: 1024,
   },
+  lint: {
+    // Oxlint's defaults plus React rules, which the compiler relies on.
+    plugins: ["typescript", "unicorn", "oxc", "react"],
+    jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
+    rules: { "vite-plus/prefer-vite-plus-imports": "error" },
+    options: { typeAware: true, typeCheck: true },
+  },
+  // src/ui mirrors Devie UI byte for byte; never reformat it.
+  fmt: { ignorePatterns: ["src/ui/**"] },
 });

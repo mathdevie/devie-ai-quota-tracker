@@ -10,18 +10,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { IS_DESKTOP_BUILD, isDesktop } from "@/lib/desktop";
+import { isDesktop } from "@/lib/desktop";
 
 /** Packaged build in a Tauri window. A browser preview has no updater. */
-const UPDATER_ENABLED = IS_DESKTOP_BUILD && isDesktop();
+const UPDATER_ENABLED = import.meta.env.PROD && isDesktop();
 
-export type UpdateStatus =
-  | "idle"
-  | "checking"
-  | "downloading"
-  | "ready"
-  | "installing"
-  | "error";
+export type UpdateStatus = "idle" | "checking" | "downloading" | "ready" | "installing" | "error";
 
 /** What a check found. `busy` means a download or install is in progress. */
 export type CheckResult = "ready" | "up-to-date" | "error" | "busy";
@@ -183,10 +177,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
     if (!UPDATER_ENABLED || startedRef.current) return;
     startedRef.current = true;
     void checkForUpdates();
-    const timer = window.setInterval(
-      () => void checkForUpdates(),
-      BACKGROUND_INTERVAL,
-    );
+    const timer = window.setInterval(() => void checkForUpdates(), BACKGROUND_INTERVAL);
     return () => window.clearInterval(timer);
   }, [checkForUpdates]);
 
@@ -204,11 +195,7 @@ export function AppUpdaterProvider({ children }: { children: ReactNode }) {
     [status, progress, info, error, checkForUpdates, installUpdate, recheck],
   );
 
-  return (
-    <AppUpdaterContext.Provider value={value}>
-      {children}
-    </AppUpdaterContext.Provider>
-  );
+  return <AppUpdaterContext.Provider value={value}>{children}</AppUpdaterContext.Provider>;
 }
 
 const disabled: AppUpdaterValue = {

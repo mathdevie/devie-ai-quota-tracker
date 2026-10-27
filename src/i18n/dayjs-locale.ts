@@ -34,10 +34,7 @@ const DAYJS_LOCALE: Record<SupportedLocale, string> = {
 };
 
 const DAYJS_LOCALE_BY_LANGUAGE: Record<string, string> = Object.fromEntries(
-  Object.entries(DAYJS_LOCALE).map(([locale, dayjsLocale]) => [
-    locale.split("-")[0],
-    dayjsLocale,
-  ]),
+  Object.entries(DAYJS_LOCALE).map(([locale, dayjsLocale]) => [locale.split("-")[0], dayjsLocale]),
 );
 
 /** The Day.js locale for an interface language, "en" when unknown. */

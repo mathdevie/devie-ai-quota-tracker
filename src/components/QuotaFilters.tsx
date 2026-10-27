@@ -3,12 +3,7 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  type Filters,
-  PROVIDER_FILTERS,
-  SORTS,
-  type Sort,
-} from "@/lib/filters";
+import { type Filters, PROVIDER_FILTERS, SORTS, type Sort } from "@/lib/filters";
 import { PROVIDER_NAMES } from "@/lib/labels";
 import Select from "@/ui/Select";
 import IconTip from "./IconTip";
@@ -38,10 +33,7 @@ function FilterSelect<T extends string>({
 }) {
   const selected = options.find((option) => option.value === value);
   const trigger = (
-    <Select.Trigger
-      aria-label={label}
-      className={clsx(styles.trigger, compact && styles.compact)}
-    >
+    <Select.Trigger aria-label={label} className={clsx(styles.trigger, compact && styles.compact)}>
       {compact ? (
         (selected?.shortLabel ?? selected?.label)
       ) : (
@@ -61,11 +53,7 @@ function FilterSelect<T extends string>({
     >
       {compact ? <IconTip label={label}>{trigger}</IconTip> : trigger}
       <Select.Portal>
-        <Select.Positioner
-          alignItemWithTrigger={false}
-          side="bottom"
-          sideOffset={4}
-        >
+        <Select.Positioner alignItemWithTrigger={false} side="bottom" sideOffset={4}>
           <Select.Popup>
             <Select.List>
               {options.map((option) => (
@@ -98,8 +86,7 @@ export default function QuotaFilters({
     value,
     label: value === "all" ? t("Quota.AllProviders") : PROVIDER_NAMES[value],
     shortLabel: value === "all" ? t("Quota.All") : undefined,
-    icon:
-      value === "all" ? undefined : <ProviderIcon provider={value} size={16} />,
+    icon: value === "all" ? undefined : <ProviderIcon provider={value} size={16} />,
   }));
   const sortOptions = SORTS.map((value) => ({
     value,

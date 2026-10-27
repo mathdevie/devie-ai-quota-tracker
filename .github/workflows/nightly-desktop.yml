@@ -74,6 +74,12 @@ jobs:
             src-desktop/tauri.conf.json > tauri.conf.json.tmp
           mv tauri.conf.json.tmp src-desktop/tauri.conf.json
 
+      # Vite+ runs on Node; Bun stays the package manager and script runner.
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:

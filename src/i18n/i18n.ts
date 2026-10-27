@@ -59,9 +59,7 @@ export const getStoredLanguage = (): SupportedLocale => {
 function detectSystemLanguage(): SupportedLocale {
   const supported = Object.keys(resources) as SupportedLocale[];
   for (const language of navigator.languages ?? [navigator.language]) {
-    const exact = supported.find(
-      (locale) => locale.toLowerCase() === language.toLowerCase(),
-    );
+    const exact = supported.find((locale) => locale.toLowerCase() === language.toLowerCase());
     if (exact) return exact;
     const base = language.split("-")[0].toLowerCase();
     const partial = supported.find((locale) => locale.startsWith(`${base}-`));

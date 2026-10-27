@@ -27,17 +27,11 @@ export default function RenameDialog({
   }, [connection]);
 
   const fallback = connection
-    ? connection.identity?.displayName ||
-      connection.identity?.providerUserId ||
-      connection.label
+    ? connection.identity?.displayName || connection.identity?.providerUserId || connection.label
     : "";
 
   return (
-    <Dialog.Root
-      onOpenChange={onOpenChange}
-      open={connection !== undefined}
-      size="sm"
-    >
+    <Dialog.Root onOpenChange={onOpenChange} open={connection !== undefined} size="sm">
       <Dialog.Portal>
         <Dialog.Backdrop />
         <Dialog.Popup data-app-dialog>
@@ -52,8 +46,7 @@ export default function RenameDialog({
               <Dialog.Title>{t("Rename.Title")}</Dialog.Title>
               {connection && (
                 <Dialog.Description>
-                  {PROVIDER_NAMES[connection.provider]} ·{" "}
-                  {accountLabel(connection)}
+                  {PROVIDER_NAMES[connection.provider]} · {accountLabel(connection)}
                 </Dialog.Description>
               )}
             </Dialog.Header>

@@ -46,10 +46,7 @@ export default function TitleBar({
 }) {
   return (
     <header
-      className={clsx(
-        styles.titleBar,
-        windowControlsInset && styles.windowControlsInset,
-      )}
+      className={clsx(styles.titleBar, windowControlsInset && styles.windowControlsInset)}
       data-tauri-drag-region
     >
       {leading && <IconButton action={leading} />}

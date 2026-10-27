@@ -60,10 +60,7 @@ export default function QuotaView({
           size="sm"
           variant="secondary"
         >
-          <RefreshCw
-            className={refreshing ? styles.spinning : undefined}
-            size={14}
-          />
+          <RefreshCw className={refreshing ? styles.spinning : undefined} size={14} />
           {t("Common.Refresh")}
         </Button>
       </div>

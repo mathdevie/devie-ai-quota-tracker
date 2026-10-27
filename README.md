@@ -11,7 +11,6 @@
 
 [Overview](#overview) | [Download](#download) | [Features](#features) | [Themes](#themes) | [FAQ](#faq) | [Contributing](#contributing)
 
-
 <table>
 <tr>
 <td width="52%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" /><img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" /></picture></td>
@@ -105,17 +104,17 @@ the public status feed only and never sends account data to it.
 
 This app is implemented using [Devie UI](https://devie-ui.com), a design system that natively supports multiple themes.
 
-| Theme: Light | Theme: Dark |
-| :---: | :---: |
-| <img src="docs/screenshots/theme-light.png" alt="The Light theme" /> | <img src="docs/screenshots/theme-dark.png" alt="The Dark theme" /> |
-| **Theme: Midnight Ink** | **Theme: Copper Sunset** |
-| <img src="docs/screenshots/theme-midnight.png" alt="The Midnight Ink theme" /> | <img src="docs/screenshots/theme-copper.png" alt="The Copper Sunset theme" /> |
-| **Theme: Aurora Green** | **Theme: Sharingan** |
-| <img src="docs/screenshots/theme-aurora.png" alt="The Aurora Green theme" /> | <img src="docs/screenshots/theme-sharingan.png" alt="The Sharingan theme" /> |
-| **Theme: Alpine Snow** | **Theme: Command Prompt** |
-| <img src="docs/screenshots/theme-alpine-snow.png" alt="The Alpine Snow theme" /> | <img src="docs/screenshots/theme-command.png" alt="The Command Prompt theme" /> |
-| **Theme: Totoro** | **Theme: Catpuccin Latte** |
-| <img src="docs/screenshots/theme-totoro.png" alt="The Totoro theme" /> | <img src="docs/screenshots/theme-catpuccin.png" alt="The Catpuccin Latte theme" /> |
+|                                   Theme: Light                                   |                                    Theme: Dark                                     |
+| :------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: |
+|       <img src="docs/screenshots/theme-light.png" alt="The Light theme" />       |         <img src="docs/screenshots/theme-dark.png" alt="The Dark theme" />         |
+|                             **Theme: Midnight Ink**                              |                              **Theme: Copper Sunset**                              |
+|  <img src="docs/screenshots/theme-midnight.png" alt="The Midnight Ink theme" />  |   <img src="docs/screenshots/theme-copper.png" alt="The Copper Sunset theme" />    |
+|                             **Theme: Aurora Green**                              |                                **Theme: Sharingan**                                |
+|   <img src="docs/screenshots/theme-aurora.png" alt="The Aurora Green theme" />   |    <img src="docs/screenshots/theme-sharingan.png" alt="The Sharingan theme" />    |
+|                              **Theme: Alpine Snow**                              |                             **Theme: Command Prompt**                              |
+| <img src="docs/screenshots/theme-alpine-snow.png" alt="The Alpine Snow theme" /> |  <img src="docs/screenshots/theme-command.png" alt="The Command Prompt theme" />   |
+|                                **Theme: Totoro**                                 |                             **Theme: Catpuccin Latte**                             |
+|      <img src="docs/screenshots/theme-totoro.png" alt="The Totoro theme" />      | <img src="docs/screenshots/theme-catpuccin.png" alt="The Catpuccin Latte theme" /> |
 
 ## FAQ
 
@@ -181,14 +180,13 @@ The development of this project is supported by:
 ## Thanks
 
 This application was inspired by other awesome open-source projects:
+
 - [AIUsage](https://github.com/sylearn/AIUsage)
 - [CodexBar](https://github.com/steipete/CodexBar)
 - [usage4claude](https://github.com/f-is-h/usage4claude)
 - [9router](https://github.com/decolua/9router)
- 
+
 ## License
 
-[MIT](LICENSE). 
+[MIT](LICENSE).
 Third-party notices are in [NOTICES](docs/notices.md).
-
-

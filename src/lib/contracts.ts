@@ -1,10 +1,4 @@
-export type Provider =
-  | "claude"
-  | "codex"
-  | "gemini-cli"
-  | "antigravity"
-  | "copilot"
-  | "cursor";
+export type Provider = "claude" | "codex" | "gemini-cli" | "antigravity" | "copilot" | "cursor";
 export type ConnectionStatus = "ready" | "stale" | "needs_login" | "error";
 
 export interface QuotaWindow {

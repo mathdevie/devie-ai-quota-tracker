@@ -15,15 +15,9 @@ function ResetTime({ value }: { value?: string }) {
   if (!value || !text) return <span aria-hidden className={styles.reset} />;
   return (
     <Tooltip.Root>
-      <Tooltip.Trigger render={<span className={styles.reset} />}>
-        {text}
-      </Tooltip.Trigger>
+      <Tooltip.Trigger render={<span className={styles.reset} />}>{text}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Positioner
-          className={styles.resetTooltip}
-          side="top"
-          sideOffset={6}
-        >
+        <Tooltip.Positioner className={styles.resetTooltip} side="top" sideOffset={6}>
           <Tooltip.Popup>
             {t("Quota.Reset.On", {
               date: formatDateTime(value, i18n.language),
@@ -44,8 +38,7 @@ export function untilText(t: TFunction, value?: string): string | undefined {
   const hours = Math.floor((minutes % 1440) / 60);
   const rest = minutes % 60;
   if (days > 0) return t("Quota.Reset.InDaysHours", { days, hours });
-  if (hours > 0)
-    return t("Quota.Reset.InHoursMinutes", { hours, minutes: rest });
+  if (hours > 0) return t("Quota.Reset.InHoursMinutes", { hours, minutes: rest });
   return t("Quota.Reset.InMinutes", { minutes: rest });
 }
 
@@ -53,23 +46,13 @@ export function untilText(t: TFunction, value?: string): string | undefined {
 const CENTS_PER_CREDIT = 0.01;
 
 /** "677 / 1,500 credits · +12 over ($0.12)", "$600.34 / $600.00", "$12.50 left", "12 credits left", or "$3.00 spent" without a cap. */
-function Amount({
-  amount,
-  unlimited,
-}: {
-  amount?: QuotaAmount;
-  unlimited?: boolean;
-}) {
+function Amount({ amount, unlimited }: { amount?: QuotaAmount; unlimited?: boolean }) {
   const { t, i18n } = useTranslation();
-  const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "")
-    ? amount?.unit
-    : undefined;
+  const currency = /^[A-Z]{3}$/.test(amount?.unit ?? "") ? amount?.unit : undefined;
   const format = (value: number, code = currency) =>
     new Intl.NumberFormat(
       i18n.language,
-      code
-        ? { style: "currency", currency: code }
-        : { maximumFractionDigits: 0 },
+      code ? { style: "currency", currency: code } : { maximumFractionDigits: 0 },
     ).format(value);
   const overage = amount?.overage ?? 0;
   return (
@@ -92,8 +75,7 @@ function Amount({
         <span className={styles.overage}>
           {" · "}
           {t("Quota.Overage", { overage: format(overage) })}
-          {amount?.unit === "credits" &&
-            ` (${format(overage * CENTS_PER_CREDIT, "USD")})`}
+          {amount?.unit === "credits" && ` (${format(overage * CENTS_PER_CREDIT, "USD")})`}
         </span>
       )}
     </span>
@@ -103,15 +85,10 @@ function Amount({
 export type QuotaLevel = "ok" | "warning" | "danger";
 
 /** A known status without a measurable allowance must not show a percent. */
-export function quotaStatusText(
-  t: TFunction,
-  window: QuotaWindow,
-): string | undefined {
+export function quotaStatusText(t: TFunction, window: QuotaWindow): string | undefined {
   if (window.unlimited) return t("Quota.Unlimited");
   if (isCreditStatus(window)) {
-    return window.usedPercent >= 100
-      ? t("Quota.LimitReached")
-      : t("Quota.Available");
+    return window.usedPercent >= 100 ? t("Quota.LimitReached") : t("Quota.Available");
   }
   return undefined;
 }
@@ -147,11 +124,7 @@ export default function QuotaBars({
         // Keep a short red fill when any limited allowance is fully spent.
         const empty = left === 0;
         return (
-          <div
-            className={styles.window}
-            data-level={quotaLevel(left)}
-            key={window.key}
-          >
+          <div className={styles.window} data-level={quotaLevel(left)} key={window.key}>
             <span className={styles.dot} />
             <span className={styles.label} title={window.label}>
               {window.label}
@@ -177,9 +150,7 @@ export default function QuotaBars({
                   />
                 </span>
                 <span className={styles.percent}>
-                  {window.amount?.used === undefined && window.amount
-                    ? ""
-                    : `${left}%`}
+                  {window.amount?.used === undefined && window.amount ? "" : `${left}%`}
                 </span>
                 <ResetTime value={window.resetsAt} />
                 {window.amount && <Amount amount={window.amount} />}

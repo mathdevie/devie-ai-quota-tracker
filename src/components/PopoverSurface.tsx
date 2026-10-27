@@ -109,8 +109,7 @@ export default function PopoverSurface({
 
   async function pin(summary: TraySummary) {
     const same =
-      pinned?.connectionId === summary.connectionId &&
-      pinned.windowKey === summary.windowKey;
+      pinned?.connectionId === summary.connectionId && pinned.windowKey === summary.windowKey;
     try {
       onStateChange(await setTraySummary(same ? null : summary));
     } catch (reason) {
@@ -125,18 +124,11 @@ export default function PopoverSurface({
 
   return (
     <Tooltip.Provider>
-      <main
-        className={styles.popover}
-        data-native-material={isDesktop() || undefined}
-      >
+      <main className={styles.popover} data-native-material={isDesktop() || undefined}>
         <header className={styles.header} ref={headerRef}>
           {providerCount > 1 && (
             <div className={styles.headerGroup}>
-              <QuotaFilters
-                compact
-                filters={filters}
-                onChange={updateFilters}
-              />
+              <QuotaFilters compact filters={filters} onChange={updateFilters} />
             </div>
           )}
           <div className={styles.headerActions}>
@@ -148,10 +140,7 @@ export default function PopoverSurface({
                 size="sm"
                 variant="icon-naked"
               >
-                <RefreshCw
-                  className={refreshing ? styles.spinning : undefined}
-                  size={14}
-                />
+                <RefreshCw className={refreshing ? styles.spinning : undefined} size={14} />
               </Button>
             </IconTip>
             <IconTip label={t("Popover.OpenDashboard")}>
@@ -175,15 +164,9 @@ export default function PopoverSurface({
                   connection={connection}
                   key={connection.id}
                   onOverlayChange={setOverlay}
-                  onPin={(windowKey) =>
-                    void pin({ connectionId: connection.id, windowKey })
-                  }
+                  onPin={(windowKey) => void pin({ connectionId: connection.id, windowKey })}
                   onUseReset={onUseReset}
-                  pinnedKey={
-                    pinned?.connectionId === connection.id
-                      ? pinned.windowKey
-                      : undefined
-                  }
+                  pinnedKey={pinned?.connectionId === connection.id ? pinned.windowKey : undefined}
                 />
               ))}
               {connections.length === 0 && (

@@ -65,9 +65,7 @@ export default function AlertsDialog({
           >
             <Dialog.Header>
               <Dialog.Title>{t("Alerts.Title")}</Dialog.Title>
-              {connection && (
-                <Dialog.Description>{fullName(connection)}</Dialog.Description>
-              )}
+              {connection && <Dialog.Description>{fullName(connection)}</Dialog.Description>}
             </Dialog.Header>
             <Dialog.Body data-app-dialog-body>
               <OptionRow.List>

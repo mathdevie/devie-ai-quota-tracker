@@ -1,7 +1,6 @@
-import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { test } from "node:test";
 import { runInNewContext } from "node:vm";
+import { expect, test } from "vite-plus/test";
 import { themeBootScript } from "../src/app/boot";
 
 const registry = readFileSync("src/theme/registry.ts", "utf8");
@@ -9,10 +8,7 @@ const allowed = [
   "system",
   "theme-light",
   "theme-dark",
-  ...Array.from(
-    registry.matchAll(/className: "([^"]+)"/g),
-    (match) => match[1],
-  ),
+  ...Array.from(registry.matchAll(/className: "([^"]+)"/g), (match) => match[1]),
 ];
 const boot = themeBootScript(allowed);
 
@@ -33,10 +29,10 @@ for (const dark of [false, true]) {
       matchMedia: () => ({ matches: dark }),
     };
     runInNewContext(boot, context);
-    assert.equal(saved, "theme-catppuccin-latte");
-    assert.equal(document.documentElement.dataset.devieTheme, saved);
+    expect(saved).toBe("theme-catppuccin-latte");
+    expect(document.documentElement.dataset.devieTheme).toBe(saved);
     runInNewContext(boot, context);
-    assert.equal(document.documentElement.dataset.devieTheme, saved);
+    expect(document.documentElement.dataset.devieTheme).toBe(saved);
   });
 }
 
@@ -66,9 +62,9 @@ test("runtime storage listener migrates legacy values from another window", () =
       preview = value;
     },
   });
-  assert.equal(selected, "theme-catppuccin-latte");
-  assert.equal(persisted, selected);
-  assert.equal(preview, null);
+  expect(selected).toBe("theme-catppuccin-latte");
+  expect(persisted).toBe(selected);
+  expect(preview).toBeNull();
 });
 
 for (const dark of [false, true]) {
@@ -79,9 +75,6 @@ for (const dark of [false, true]) {
       localStorage: { getItem: () => "system", setItem: () => {} },
       matchMedia: () => ({ matches: dark }),
     });
-    assert.equal(
-      document.documentElement.dataset.devieTheme,
-      dark ? "theme-dark" : "theme-light",
-    );
+    expect(document.documentElement.dataset.devieTheme).toBe(dark ? "theme-dark" : "theme-light");
   });
 }

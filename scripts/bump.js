@@ -35,11 +35,7 @@ function replaceOnce(file, pattern, replacement) {
   console.log(`${file}: ${current} -> ${next}`);
 }
 
-replaceOnce(
-  "src-desktop/tauri.conf.json",
-  `"version": "${current}"`,
-  `"version": "${next}"`,
-);
+replaceOnce("src-desktop/tauri.conf.json", `"version": "${current}"`, `"version": "${next}"`);
 replaceOnce("package.json", `"version": "${current}"`, `"version": "${next}"`);
 replaceOnce(
   "src-desktop/Cargo.toml",

@@ -1,23 +1,22 @@
 {
   "name": "devie-quota",
-  "version": "0.14.3",
+  "version": "0.15",
   "private": true,
-  "license": "MIT",
   "description": "A local macOS menu bar app for AI subscription quotas",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mathdevie/devie-ai-quota-tracker.git"
-  },
   "homepage": "https://github.com/mathdevie/devie-ai-quota-tracker",
   "bugs": {
     "url": "https://github.com/mathdevie/devie-ai-quota-tracker/issues"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mathdevie/devie-ai-quota-tracker.git"
+  },
   "scripts": {
-    "dev": "vite --port 3002",
-    "build": "tsc --noEmit && vite build",
-    "build:desktop-frontend": "VITE_IS_DESKTOP_BUILD=true vite build",
-    "check": "biome check . && tsc --noEmit",
-    "format": "biome check --write .",
+    "dev": "vp dev",
+    "build": "vp build",
+    "check": "vp check",
+    "format": "vp check --fix",
     "bump": "bun scripts/bump.js",
     "tauri": "tauri",
     "dev:desktop": "tauri dev",
@@ -30,7 +29,8 @@
     "i18n:check:unused": "i18n-check --locales src/i18n/messages --source en-US -f i18next --unused src --only unused -r summary --ignore '_Meta.*' 'Metadata.*' 'Tray.*' 'Notifications.*' 'Connection.Status.*' 'Login.Hint.*' 'Quota.Sort.*' 'Nav.Quota' 'Nav.Providers' 'Nav.Settings' 'Providers.EnableAccount' 'Providers.DisableAccount'",
     "i18n:untranslated": "bun scripts/i18n-untranslated.js",
     "i18n:verify": "run-s i18n:lint i18n:check i18n:check:undefined i18n:check:unused",
-    "preview": "vite preview --port 3002"
+    "preview": "vp preview",
+    "test": "vp test"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -47,7 +47,6 @@
     "react-i18next": "17.1.9"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.3",
     "@lingual/i18n-check": "^0.9.5",
     "@svgr/core": "8.1.0",
     "@svgr/plugin-jsx": "8.1.0",
@@ -59,8 +58,13 @@
     "@vitejs/plugin-react": "6.1.2",
     "i18next-cli": "1.80.5",
     "npm-run-all": "^4.1.5",
+    "oxc-transform-react": "0.156.0",
     "sass": "1.106.1",
     "typescript": "^7",
-    "vite": "8.3.5"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vite-plus": "1.4.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0"
   }
 }

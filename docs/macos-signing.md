@@ -9,14 +9,14 @@ workflow (`nightly-desktop.yml`) uses the same signing setup.
 
 Add these secrets to the `Release` environment:
 
-| Secret | Value |
-| --- | --- |
-| `APPLE_CERTIFICATE` | The base64 text of the exported `.p12` certificate. |
-| `APPLE_CERTIFICATE_PASSWORD` | The password used during the `.p12` export. |
-| `APPLE_SIGNING_IDENTITY` | The full Developer ID Application identity. |
-| `APPLE_ID` | The Apple account used for notarization. |
-| `APPLE_PASSWORD` | An app-specific password for that Apple account. |
-| `APPLE_TEAM_ID` | The Apple Developer team identifier. |
+| Secret                       | Value                                               |
+| ---------------------------- | --------------------------------------------------- |
+| `APPLE_CERTIFICATE`          | The base64 text of the exported `.p12` certificate. |
+| `APPLE_CERTIFICATE_PASSWORD` | The password used during the `.p12` export.         |
+| `APPLE_SIGNING_IDENTITY`     | The full Developer ID Application identity.         |
+| `APPLE_ID`                   | The Apple account used for notarization.            |
+| `APPLE_PASSWORD`             | An app-specific password for that Apple account.    |
+| `APPLE_TEAM_ID`              | The Apple Developer team identifier.                |
 
 Repository secrets cannot be read or copied through the GitHub API.
 Add the values from your own Apple Developer account.

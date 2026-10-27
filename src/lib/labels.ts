@@ -44,12 +44,7 @@ export function visibleWindows(connection: ProviderConnection): QuotaWindow[] {
 
 /** Mirrors QuotaWindow::is_credit_status in the native model. */
 export function isCreditStatus(window: QuotaWindow): boolean {
-  return (
-    window.key === "credits" &&
-    !!window.paid &&
-    !window.unlimited &&
-    !window.amount
-  );
+  return window.key === "credits" && !!window.paid && !window.unlimited && !window.amount;
 }
 
 /** "Claude Code work@example.com" for menus and accessible names. */

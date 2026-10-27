@@ -65,9 +65,7 @@ for (const locale of locales) {
   }
   const total = messages.size;
   const percent = ((identical.length / total) * 100).toFixed(1);
-  console.log(
-    `${locale}: ${identical.length}/${total} identical (${percent}%)`,
-  );
+  console.log(`${locale}: ${identical.length}/${total} identical (${percent}%)`);
 
   if (listAll || onlyLocale) {
     for (const key of identical) console.log(`  ${key} = ${source.get(key)}`);
