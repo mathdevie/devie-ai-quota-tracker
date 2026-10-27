@@ -217,9 +217,9 @@
   color: $devie__color__danger;
 }
 
+// A fixed width keeps the row still when the label changes.
 .updateAction {
   width: 164px;
-  min-height: 34px;
 }
 
 .spinning {
