@@ -804,10 +804,13 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         return;
     };
     // SAFETY: the pointer is the live NSWindow of this webview window, and
-    // NSPanel only adds behavior on top of NSWindow.
+    // NSPanel only adds behavior on top of NSWindow. tao allocated it as its
+    // `TaoWindow` subclass, which carries one extra ivar, so the object is
+    // larger than the panel class expects; that ivar stays in place for the
+    // life of the window. `object_setClass` is called directly because
+    // objc2's `set_class` asserts equal instance sizes in debug builds.
     unsafe {
-        let object = &*(pointer as *const AnyObject);
-        AnyObject::set_class(object, PopoverPanel::class());
+        objc2::ffi::object_setClass(pointer.cast::<AnyObject>(), PopoverPanel::class());
         let panel = &*(pointer as *const NSPanel);
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
