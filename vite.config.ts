@@ -78,7 +78,7 @@ export default defineConfig({
   define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(version) },
   test: {
     environment: "jsdom",
-    setupFiles: ["./tests/setup.ts"],
+    setupFiles: ["./src/tests/setup.ts"],
     env: { TZ: "UTC" },
     // `bun run test --coverage` gates the app-owned logic and components
     // with the most risk; it is not a whole-app percentage.

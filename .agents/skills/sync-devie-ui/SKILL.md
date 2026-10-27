@@ -8,7 +8,7 @@ description: Update the src/ui mirror from Devie UI (mathdevie/devie-ui.com) to 
 `src/ui` is a byte-identical copy of the `src/ui` folder in
 `mathdevie/devie-ui.com`, including components, SCSS, tokens, theme assets,
 and Markdown that the app does not use. The pinned commit is `baseline` in
-`scripts/verify-ui-mirror.ts`.
+`verify-ui-mirror.js` next to this file.
 
 The one allowed difference: in `src/ui/markdown/input-group.md`, the
 Stripe-shaped `sk_live_…` example becomes `example-api-key`, because GitHub
@@ -17,14 +17,15 @@ push protection rejects it.
 ## Steps
 
 1. Check `main`, open and recently merged pull requests, and local work.
-   Run `bun scripts/verify-ui-mirror.ts` first: drift from the current
-   baseline must be understood before replacing anything.
+   From the repository root, run
+   `bun .agents/skills/sync-devie-ui/verify-ui-mirror.js` first: drift from
+   the current baseline must be understood before replacing anything.
 2. Pick a reviewed upstream commit, never a floating `main`. Fetch it so the
    commit exists in local Git.
 3. Replace the whole `src/ui` tree from that commit, deleting stale files, and
    reapply only the example substitution above.
-4. Set `baseline` in `scripts/verify-ui-mirror.ts` to the new commit and run
-   the script.
+4. Set `baseline` in `verify-ui-mirror.js` to the new commit and run the
+   script again.
 5. Upgrade only the dependencies the new tree requires (usually
    `@base-ui/react`). Do not copy the upstream site's package manifest. Fix
    consumers outside the mirror; never patch `src/ui` to fit the app.

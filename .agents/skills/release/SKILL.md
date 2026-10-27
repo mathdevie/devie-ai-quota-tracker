@@ -11,8 +11,9 @@ them up.
 
 ## Stable
 
-1. Run `bun scripts/bump.js X.Y.Z`. It updates every version file; the
-   workflow reads the version from `src-desktop/tauri.conf.json`.
+1. From the repository root, run `bun .agents/skills/release/bump.js X.Y.Z`.
+   It updates every version file; the workflow reads the version from
+   `src-desktop/tauri.conf.json`.
 2. Move the `[Unreleased]` entries in `CHANGELOG.md` under `## [X.Y.Z] - date`.
    The workflow publishes that section as the release notes.
 3. Merge to `main`, then dispatch `Release Desktop App` from the Actions tab.

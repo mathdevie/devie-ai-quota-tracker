@@ -186,7 +186,14 @@ This application was inspired by other awesome open-source projects:
 - [usage4claude](https://github.com/f-is-h/usage4claude)
 - [9router](https://github.com/decolua/9router)
 
+## Notices
+
+Provider names and logos belong to their owners and are not covered by the
+MIT license; this project is independent and not affiliated with or endorsed
+by any provider. Sign-in uses the public OAuth clients of the official tools
+(Claude Code, Codex CLI, Gemini CLI under Apache-2.0, GitHub Copilot); they
+are not credentials of this project.
+
 ## License
 
 [MIT](LICENSE).
-Third-party notices are in [NOTICES](NOTICES.md).

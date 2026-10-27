@@ -32,16 +32,16 @@ run `bunx tauri build --debug --bundles app`; it lands in
 
 ## Tests
 
-Frontend tests live in `tests/` and run in jsdom; Rust tests sit next to their
+Frontend tests live in `src/tests/` and run in jsdom; Rust tests sit next to their
 code, plus the native tray harness in `src-desktop/tests/`. Run one file with
-`bun run test tests/filters.test.ts`, or watch with `bunx vp test`.
+`bun run test src/tests/filters.test.ts`, or watch with `bunx vp test`.
 
 `bun run test --coverage` gates the risky app-owned files listed in
 `vite.config.ts` (90% lines, 85% branches). When a file earns tests, add it
 there; never lower the thresholds or drop a file to make a run pass.
 
 - Test what a user or caller observes, not source text or snapshots.
-- Render components with `renderApp` and the factories in `tests/helpers.tsx`,
+- Render components with `renderApp` and the factories in `src/tests/helpers.tsx`,
   query by role and name, and drive them with `userEvent`.
 - Mock only the boundary (Tauri, the OS); never edit `src/ui` for a test.
 - Use deferred promises for in-flight work and a fixed clock for time; tests
@@ -58,11 +58,10 @@ those in the app.
 Step-by-step procedures for recurring tasks live in `.agents/skills/`, one
 folder per skill with a `SKILL.md`. Humans can follow them as checklists.
 
-| Skill                                                    | Use it to                                                         |
-| -------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`sync-devie-ui`](.agents/skills/sync-devie-ui/SKILL.md) | Update the `src/ui` mirror from Devie UI and verify the app       |
-| [`verify-tray`](.agents/skills/verify-tray/SKILL.md)     | Check the menu bar item after changing tray or popover activation |
-| [`release`](.agents/skills/release/SKILL.md)             | Cut a stable or nightly release, or set up its secrets            |
+| Skill                                                    | Use it to                                                   |
+| -------------------------------------------------------- | ----------------------------------------------------------- |
+| [`sync-devie-ui`](.agents/skills/sync-devie-ui/SKILL.md) | Update the `src/ui` mirror from Devie UI and verify the app |
+| [`release`](.agents/skills/release/SKILL.md)             | Cut a stable or nightly release, or set up its secrets      |
 
 A new skill gets a folder with a `SKILL.md` (a `name` and a `description` in
 its front matter) and a row in this table.

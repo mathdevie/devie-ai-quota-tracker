@@ -19,7 +19,7 @@ module.exports = {
   ],
   extract: {
     input: ["src/**/*.{ts,tsx}"],
-    ignore: ["src/i18n/messages/**", "src/ui/**", "**/*.d.ts"],
+    ignore: ["src/i18n/messages/**", "src/ui/**", "src/tests/**", "**/*.d.ts"],
     output: "src/i18n/messages/{{language}}.json",
     defaultNS: false,
     keySeparator: ".",

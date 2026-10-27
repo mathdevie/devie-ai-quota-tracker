@@ -5,12 +5,12 @@
 // version from src-desktop/tauri.conf.json and tags the shipped commit.
 //
 // Usage:
-//   bun scripts/bump.js 0.11.0
+//   bun .agents/skills/release/bump.js 0.11.0
 
 const fs = require("node:fs");
 const path = require("node:path");
 
-const ROOT = path.join(__dirname, "..");
+const ROOT = path.join(__dirname, "..", "..", "..");
 
 function fail(message) {
   console.error(`bump: ${message}`);
@@ -19,7 +19,7 @@ function fail(message) {
 
 const next = process.argv[2];
 if (!next || !/^\d+\.\d+\.\d+$/.test(next)) {
-  fail("pass the new version as X.Y.Z, for example: bun scripts/bump.js 0.11.0");
+  fail("pass the new version as X.Y.Z, for example: bun .agents/skills/release/bump.js 0.11.0");
 }
 
 const tauriConfPath = path.join(ROOT, "src-desktop", "tauri.conf.json");

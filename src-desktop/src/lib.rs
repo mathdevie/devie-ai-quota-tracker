@@ -721,6 +721,8 @@ fn toggle_popover(app: &AppHandle) {
     ));
 }
 
+/// Set `DEVIE_TRAY_TRACE=1` to log tray clicks, activation, and popover
+/// visibility to stderr when debugging the menu bar item.
 fn trace_tray(message: &str) {
     if std::env::var_os("DEVIE_TRAY_TRACE").is_some() {
         eprintln!("[tray] {message}");

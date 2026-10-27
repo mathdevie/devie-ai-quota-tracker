@@ -1,7 +1,7 @@
 import { runInNewContext } from "node:vm";
 import { expect, test } from "vite-plus/test";
-import { themeBootScript } from "../src/app/boot";
-import { THEMES } from "../src/theme/registry";
+import { themeBootScript } from "@/app/boot";
+import { THEMES } from "@/theme/registry";
 
 const allowed = THEMES.map((theme) => theme.className);
 const boot = themeBootScript(allowed);
