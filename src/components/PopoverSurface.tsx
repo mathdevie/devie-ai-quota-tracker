@@ -69,6 +69,8 @@ export default function PopoverSurface({
   }, []);
 
   // The window follows the content height, or grows for an open overlay.
+  // Bounding rectangles are rendered pixels, so the size includes the zoom.
+  // Past MAX_HEIGHT the window stops growing and the ScrollArea below scrolls.
   const headerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [overlay, setOverlay] = useState(false);
@@ -131,6 +133,7 @@ export default function PopoverSurface({
               <QuotaFilters compact filters={filters} onChange={updateFilters} />
             </div>
           )}
+          {/* Two separate borderless buttons, like native tray menus; not a ButtonGroup. */}
           <div className={styles.headerActions}>
             <IconTip label={t("Quota.RefreshQuotas")}>
               <Button

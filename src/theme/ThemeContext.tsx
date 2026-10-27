@@ -17,6 +17,8 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 const DEFAULT_THEME = SYSTEM_THEME;
 const STORAGE_KEY = "devie-quota-theme:v1";
 const ALLOWED_THEMES = new Set(THEMES.map((theme) => theme.className));
+// Same migrations as the pre-paint script in src/app/boot.ts, for storage
+// events from other windows. Drop an alias once that saved value is unsupported.
 const LEGACY_THEMES: Record<string, string> = {
   "theme-default": LIGHT_THEME,
   "theme-catpuccin-latte": "theme-catppuccin-latte",

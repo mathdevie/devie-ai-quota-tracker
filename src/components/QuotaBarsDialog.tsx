@@ -47,7 +47,7 @@ export default function QuotaBarsDialog({
   return (
     <Dialog.Root
       disableInteractions={saving}
-      onOpenChange={onOpenChange}
+      onOpenChange={(next) => !saving && onOpenChange(next)}
       open={connection !== undefined}
       size="sm"
     >
@@ -95,6 +95,7 @@ export default function QuotaBarsDialog({
             </Dialog.Body>
             <Dialog.Footer>
               <Button
+                disabled={saving}
                 onClick={() => onOpenChange(false)}
                 size="sm"
                 type="button"

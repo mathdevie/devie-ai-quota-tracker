@@ -58,6 +58,7 @@ export default function ResetCredits({
   return (
     <>
       <Popover.Root onOpenChange={setOpen} open={open}>
+        {/* A real button inside the badge keeps focus, keyboard use, and the trigger's props and ref. */}
         <Popover.Trigger
           render={<Badge render={<button type="button" />} variant="primary" />}
           className={styles.trigger}

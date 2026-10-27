@@ -2,7 +2,7 @@
 # CrabNebula Cloud.
 #
 # Trigger: manual dispatch only. The workflow reads the version from
-#   src-desktop/tauri.conf.json (bump it first with `bun run bump X.Y.Z`),
+#   src-desktop/tauri.conf.json (bump it first with `bun scripts/bump.js X.Y.Z`),
 #   refuses to run when the `v<version>` tag already exists, and tags the
 #   released commit after a successful publish.
 # Runner: GitHub-hosted macos-15 for the build, ubuntu-24.04 for the
@@ -45,7 +45,7 @@ jobs:
         run: |
           version="$(jq -er '.version' src-desktop/tauri.conf.json)"
           if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
-            echo "::error::Tag v${version} already exists. Run 'bun run bump' first."
+            echo "::error::Tag v${version} already exists. Run 'bun scripts/bump.js X.Y.Z' first."
             exit 1
           fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"

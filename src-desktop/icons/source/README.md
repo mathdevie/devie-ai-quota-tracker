@@ -28,7 +28,7 @@ contain PNG files at 16, 22, 32, 64, 128, 256, 512, and 1024px.
   the plate are transparent. The center and cuts remain white.
 - [app-icon.png](app-icon.png) is the 1024px rounded export used for the
   macOS icon set and the repository README.
-- `src/app/icon.png` is the 128px square export. It uses the full canvas
+- `public/icon.png` is the 128px square export. It uses the full canvas
   for better favicon legibility.
 
 The rounded set has transparent outer corners; it is not a transparent
@@ -39,7 +39,7 @@ cutout of the mark.
 On macOS, with Bun dependencies installed:
 
 ```sh
-python3 docs/logo/generate.py
+python3 src-desktop/icons/source/generate.py
 ```
 
 The script wraps the master in SVG for resizing and rounded clipping with

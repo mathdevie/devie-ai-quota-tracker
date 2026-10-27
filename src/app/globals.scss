@@ -7,6 +7,8 @@
     Arial, "Apple Color Emoji", sans-serif;
 }
 
+// The app scales with Devie UI's zoom; the inverse viewport size keeps it
+// filling the window. Portaled overlays apply the zoom themselves.
 .appRoot {
   isolation: isolate;
   zoom: $devie__zoom;

@@ -1,6 +1,5 @@
 {
   "_Meta": {
-    "IsoCode": "es-ES",
     "EndonymName": "Español (España)"
   },
   "Metadata": {
@@ -80,6 +79,7 @@
       "Use": "Usar",
       "Available_one": "{{count}} restablecimiento disponible",
       "Available_other": "{{count}} restablecimientos disponibles",
+      "Available_many": "{{count}} restablecimientos disponibles",
       "ConfirmTitle": "¿Restablecer los límites de Codex?",
       "ConfirmDescription": "Usar 1 crédito de restablecimiento para {{account}}. Todas las ventanas de cuota se restablecen ahora. Esta acción no se puede deshacer. Créditos restantes después: {{remaining}}.",
       "Confirm": "Restablecer límites"

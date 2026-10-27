@@ -1,6 +1,5 @@
 {
   "_Meta": {
-    "IsoCode": "it-IT",
     "EndonymName": "Italiano"
   },
   "Metadata": {
@@ -80,6 +79,7 @@
       "Use": "Usa",
       "Available_one": "{{count}} azzeramento disponibile",
       "Available_other": "{{count}} azzeramenti disponibili",
+      "Available_many": "{{count}} azzeramenti disponibili",
       "ConfirmTitle": "Azzerare i limiti Codex?",
       "ConfirmDescription": "Usa 1 credito di azzeramento per {{account}}. Tutte le finestre di quota si azzerano ora. L’operazione non può essere annullata. Crediti rimanenti dopo: {{remaining}}.",
       "Confirm": "Azzera limiti"

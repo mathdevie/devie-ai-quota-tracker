@@ -6,7 +6,7 @@ Export only clips the app plate, adds safe area, and resizes the image.
 
 Run on macOS after bun install:
 
-    python3 docs/logo/generate.py
+    python3 src-desktop/icons/source/generate.py
 """
 
 import base64
@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent
+ROOT = HERE.parents[2]
 MASTER = HERE / "master.png"
 ICON = HERE / "app-icon.png"
 DESKTOP = ROOT / "src-desktop/icons"
@@ -75,7 +75,7 @@ def export():
         )
         for name in EXPORTS:
             shutil.copyfile(directory / name, DESKTOP / name)
-        shutil.copyfile(ASSETS / "square/128x128.png", ROOT / "src/app/icon.png")
+        shutil.copyfile(ASSETS / "square/128x128.png", ROOT / "public/icon.png")
 
 
 def preview():

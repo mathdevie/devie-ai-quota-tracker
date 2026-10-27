@@ -48,7 +48,16 @@ jobs:
         run: bun run check
 
       - name: Test the frontend
-        run: bun run test
+        run: bun run test --coverage
+
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-coverage
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Build the frontend
         run: bun run build

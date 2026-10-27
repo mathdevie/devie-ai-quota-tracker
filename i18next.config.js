@@ -41,7 +41,7 @@ module.exports = {
       "sv-SE",
       "zh-CN",
     ],
-    removeUnusedKeys: false,
+    removeUnusedKeys: true,
     sort: false,
     indentation: 2,
     extractFromComments: false,
@@ -57,5 +57,7 @@ module.exports = {
   },
   lint: {
     ignore: ["src/ui/**"],
+    // A translation that drops or renames a {{placeholder}} fails the check.
+    checkTranslationPlaceholders: "error",
   },
 };

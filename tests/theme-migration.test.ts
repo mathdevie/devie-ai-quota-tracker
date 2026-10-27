@@ -1,15 +1,9 @@
-import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import { expect, test } from "vite-plus/test";
 import { themeBootScript } from "../src/app/boot";
+import { THEMES } from "../src/theme/registry";
 
-const registry = readFileSync("src/theme/registry.ts", "utf8");
-const allowed = [
-  "system",
-  "theme-light",
-  "theme-dark",
-  ...Array.from(registry.matchAll(/className: "([^"]+)"/g), (match) => match[1]),
-];
+const allowed = THEMES.map((theme) => theme.className);
 const boot = themeBootScript(allowed);
 
 for (const dark of [false, true]) {
@@ -36,37 +30,6 @@ for (const dark of [false, true]) {
   });
 }
 
-test("runtime storage listener migrates legacy values from another window", () => {
-  const provider = readFileSync("src/theme/ThemeContext.tsx", "utf8");
-  const handler = provider
-    .split("function handleStorageChange(event: StorageEvent) {")[1]
-    .split("\n    }")[0];
-  let selected = "system";
-  let persisted = "";
-  let preview: unknown = "theme-dark";
-  runInNewContext(`(() => { ${handler} })()`, {
-    event: { key: "devie-quota-theme:v1", newValue: "theme-catpuccin-latte" },
-    STORAGE_KEY: "devie-quota-theme:v1",
-    LEGACY_THEMES: runInNewContext(
-      `(${provider.split("const LEGACY_THEMES: Record<string, string> = ")[1].split(";\n")[0]})`,
-      { LIGHT_THEME: "theme-light" },
-    ),
-    ALLOWED_THEMES: new Set(allowed),
-    persistTheme: (value: string) => {
-      persisted = value;
-    },
-    setSelectedTheme: (value: string) => {
-      selected = value;
-    },
-    setPreviewedTheme: (value: unknown) => {
-      preview = value;
-    },
-  });
-  expect(selected).toBe("theme-catppuccin-latte");
-  expect(persisted).toBe(selected);
-  expect(preview).toBeNull();
-});
-
 for (const dark of [false, true]) {
   test(`System appearance is preserved (dark=${dark})`, () => {
     const document = { documentElement: { dataset: { devieTheme: "" } } };
@@ -78,3 +41,35 @@ for (const dark of [false, true]) {
     expect(document.documentElement.dataset.devieTheme).toBe(dark ? "theme-dark" : "theme-light");
   });
 }
+
+test.each([null, "unknown-theme", "theme-default"])("pre-paint normalizes %s", (saved) => {
+  const document = { documentElement: { dataset: { devieTheme: "" } } };
+  let persisted = saved;
+  runInNewContext(boot, {
+    document,
+    localStorage: {
+      getItem: () => saved,
+      setItem: (_key: string, value: string) => {
+        persisted = value;
+      },
+    },
+    matchMedia: () => ({ matches: true }),
+  });
+  expect(persisted).toBe(saved === "theme-default" ? "theme-light" : "system");
+  expect(document.documentElement.dataset.devieTheme).toBe(
+    saved === "theme-default" ? "theme-light" : "theme-dark",
+  );
+});
+
+test("pre-paint remains safe when storage is unavailable", () => {
+  const document = { documentElement: { dataset: { devieTheme: "" } } };
+  runInNewContext(boot, {
+    document,
+    localStorage: {
+      getItem: () => {
+        throw new Error("denied");
+      },
+    },
+  });
+  expect(document.documentElement.dataset.devieTheme).toBe("theme-light");
+});

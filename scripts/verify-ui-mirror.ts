@@ -2,6 +2,8 @@ import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+// The reviewed mathdevie/devie-ui.com commit that src/ui mirrors (2026-10-25).
+// Update it with .agents/skills/sync-devie-ui.
 const baseline = "e0ef2ed996bab08110fae9c45b6938eb53aaab24";
 const files = execFileSync("git", ["ls-tree", "-r", "--name-only", baseline, "src/ui"], {
   encoding: "utf8",

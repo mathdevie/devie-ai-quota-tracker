@@ -76,12 +76,28 @@ export default defineConfig({
   plugins: lazyPlugins(() => [svgComponents(), react({ compiler: true }), themeBoot()]),
   resolve: { alias },
   define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(version) },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./tests/setup.ts"],
+    env: { TZ: "UTC" },
+    // `bun run test --coverage` gates the app-owned logic and components
+    // with the most risk; it is not a whole-app percentage.
+    coverage: {
+      include: [
+        "src/lib/{filters,labels,desktop,date}.ts",
+        "src/app/boot.ts",
+        "src/theme/ThemeContext.tsx",
+        "src/components/{QuotaBars,ResetCredits,QuotaBarsDialog}.tsx",
+      ],
+      reporter: ["text", "html", "lcov"],
+      thresholds: { lines: 90, statements: 90, functions: 90, branches: 85 },
+    },
+  },
   server: {
     port: 3002,
     strictPort: true,
     watch: { ignored: ["**/src-desktop/**"] },
   },
-  preview: { port: 3002, strictPort: true },
   build: {
     target: "safari15",
     outDir: "out",
