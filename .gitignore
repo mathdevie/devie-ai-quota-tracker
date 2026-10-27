@@ -7,3 +7,4 @@ src-desktop/target/
 src-desktop/gen/
 *.log
 *.tsbuildinfo
+coverage/

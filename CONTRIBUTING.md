@@ -38,11 +38,15 @@ Run the frontend checks and Rust tests:
 ```sh
 bun run check      # Vite+: oxfmt, oxlint and the TypeScript check
 bun run test       # Vitest
+bun run test:coverage # Vitest with scoped coverage gates (also runs in CI)
+bun run test:watch # Vitest watch mode while editing
 bun run build      # Vite static bundle in out/
-cd src-desktop
-cargo fmt --check
-cargo test --locked
+bun run test:native # Rust unit tests and native tray integration
+cargo fmt --manifest-path src-desktop/Cargo.toml --check
 ```
+
+See [Testing strategy and coverage](docs/testing.md) for suite ownership,
+targeted commands, coverage boundaries, and the remaining manual checks.
 
 Build a local debug app bundle:
 

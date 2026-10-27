@@ -76,6 +76,24 @@ export default defineConfig({
   plugins: lazyPlugins(() => [svgComponents(), react({ compiler: true }), themeBoot()]),
   resolve: { alias },
   define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(version) },
+  test: {
+    environment: "jsdom",
+    include: ["tests/**/*.test.{ts,tsx}"],
+    setupFiles: ["./tests/setup.ts"],
+    env: { TZ: "UTC" },
+    coverage: {
+      provider: "v8",
+      include: [
+        "src/lib/{filters,labels,desktop,date}.ts",
+        "src/app/boot.ts",
+        "src/theme/ThemeContext.tsx",
+        "src/components/{QuotaBars,ResetCredits,QuotaBarsDialog}.tsx",
+      ],
+      reporter: ["text", "html", "lcov", "json-summary"],
+      reportOnFailure: true,
+      thresholds: { lines: 90, statements: 90, functions: 90, branches: 85 },
+    },
+  },
   server: {
     port: 3002,
     strictPort: true,

@@ -38,7 +38,15 @@ export function readFilters(scope: FilterScope): Filters {
     // The popover starts from the main filters: both shared one key before.
     const saved =
       localStorage.getItem(STORAGE_KEYS[scope]) ?? localStorage.getItem(STORAGE_KEYS.main);
-    return saved ? { ...DEFAULT_FILTERS, ...JSON.parse(saved) } : DEFAULT_FILTERS;
+    const parsed: unknown = saved ? JSON.parse(saved) : null;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return DEFAULT_FILTERS;
+    const fields = parsed as Record<string, unknown>;
+    return {
+      provider:
+        PROVIDER_FILTERS.find((provider) => provider === fields.provider) ??
+        DEFAULT_FILTERS.provider,
+      sort: SORTS.find((sort) => sort === fields.sort) ?? DEFAULT_FILTERS.sort,
+    };
   } catch {
     return DEFAULT_FILTERS;
   }
