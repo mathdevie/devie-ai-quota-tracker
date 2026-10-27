@@ -1,6 +1,8 @@
 //! Unofficial Antigravity integration: browser OAuth and the IDE's Model
 //! Quota summary (two pools, five-hour and weekly), with the model catalog as
 //! fallback. Internal Google endpoints, reproduced from the IDE and 9router.
+//! Google can restrict or change them without notice, so the provider page
+//! keeps its unofficial warning.
 
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};

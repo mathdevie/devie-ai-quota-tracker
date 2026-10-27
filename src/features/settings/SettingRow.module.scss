@@ -1,0 +1,85 @@
+@use "../../ui/_devie.scss" as *;
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.group {
+  display: grid;
+  gap: 7px;
+}
+
+.groupHeader {
+  display: grid;
+  gap: 2px;
+
+  h2 {
+    margin: 0;
+    font-size: $devie__font-size__normal;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: $devie__color__text-sub;
+    font-size: $devie__font-size__small;
+  }
+}
+
+// Native settings groups use a quiet filled surface without an outer frame.
+.groupBody {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 0;
+  border-radius: $devie__radius-strong;
+  background: $devie__color__background-sunken;
+
+  .row {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .row:last-child {
+    border-bottom: 0;
+  }
+}
+
+.row {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: $devie__spacing__x2;
+  padding: 10px 0;
+  border-bottom: 1px solid $devie__color__line;
+}
+
+.text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+
+  p {
+    margin: 0;
+  }
+
+  p:not(.subText) {
+    font-weight: 500;
+  }
+}
+
+.subText {
+  color: $devie__color__text-sub;
+  font-size: $devie__font-size__small;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}

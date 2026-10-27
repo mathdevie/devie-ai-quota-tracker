@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { setLanguage } from "@/lib/desktop";
+import { setLanguage } from "@/features/desktop/desktop";
 import { getDayjsLocale } from "./dayjs-locale";
 import {
   DEFAULT_LOCALE,
@@ -59,9 +59,7 @@ export const getStoredLanguage = (): SupportedLocale => {
 function detectSystemLanguage(): SupportedLocale {
   const supported = Object.keys(resources) as SupportedLocale[];
   for (const language of navigator.languages ?? [navigator.language]) {
-    const exact = supported.find(
-      (locale) => locale.toLowerCase() === language.toLowerCase(),
-    );
+    const exact = supported.find((locale) => locale.toLowerCase() === language.toLowerCase());
     if (exact) return exact;
     const base = language.split("-")[0].toLowerCase();
     const partial = supported.find((locale) => locale.startsWith(`${base}-`));
@@ -76,7 +74,7 @@ i18n
     resources,
     lng: getStoredLanguage(),
     fallbackLng: DEFAULT_LOCALE,
-    debug: process.env.NODE_ENV === "development",
+    debug: import.meta.env.DEV,
 
     interpolation: {
       escapeValue: false, // react already safes from xss

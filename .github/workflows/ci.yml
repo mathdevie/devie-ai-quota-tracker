@@ -22,10 +22,16 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v7
 
+      # Vite+ runs on Node; Bun stays the package manager and script runner.
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.3.12
+          bun-version: 1.4.4
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -40,6 +46,18 @@ jobs:
 
       - name: Check the frontend
         run: bun run check
+
+      - name: Test the frontend
+        run: bun run test --coverage
+
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-coverage
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Build the frontend
         run: bun run build

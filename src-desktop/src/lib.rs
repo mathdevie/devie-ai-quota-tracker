@@ -721,6 +721,8 @@ fn toggle_popover(app: &AppHandle) {
     ));
 }
 
+/// Set `DEVIE_TRAY_TRACE=1` to log tray clicks, activation, and popover
+/// visibility to stderr when debugging the menu bar item.
 fn trace_tray(message: &str) {
     if std::env::var_os("DEVIE_TRAY_TRACE").is_some() {
         eprintln!("[tray] {message}");
@@ -802,10 +804,13 @@ fn make_non_activating_panel(window: &tauri::WebviewWindow) {
         return;
     };
     // SAFETY: the pointer is the live NSWindow of this webview window, and
-    // NSPanel only adds behavior on top of NSWindow.
+    // NSPanel only adds behavior on top of NSWindow. tao allocated it as its
+    // `TaoWindow` subclass, which carries one extra ivar, so the object is
+    // larger than the panel class expects; that ivar stays in place for the
+    // life of the window. `object_setClass` is called directly because
+    // objc2's `set_class` asserts equal instance sizes in debug builds.
     unsafe {
-        let object = &*(pointer as *const AnyObject);
-        AnyObject::set_class(object, PopoverPanel::class());
+        objc2::ffi::object_setClass(pointer.cast::<AnyObject>(), PopoverPanel::class());
         let panel = &*(pointer as *const NSPanel);
         panel.setStyleMask(panel.styleMask() | NSWindowStyleMask::NonactivatingPanel);
         panel.setFloatingPanel(true);
@@ -1111,6 +1116,104 @@ pub fn run() {
 #[cfg(test)]
 mod quota_status_tests {
     use super::*;
+
+    fn dashboard() -> DashboardState {
+        let directory = tempfile::tempdir().unwrap();
+        let database = db::Database::open(directory.path().join("test.sqlite3")).unwrap();
+        for (id, used) in [("one", 20.0), ("two", 80.0)] {
+            database
+                .upsert_connections(&[model::NewConnection {
+                    id: id.into(),
+                    provider: model::Provider::Codex,
+                    label: id.into(),
+                    source_locator: format!("oauth/codex/{id}"),
+                    identity: None,
+                }])
+                .unwrap();
+            database
+                .save_reading(
+                    id,
+                    &model::QuotaReading {
+                        source: "fixture".into(),
+                        identity: None,
+                        reset_credits: None,
+                        windows: vec![model::QuotaWindow {
+                            key: "session".into(),
+                            used_percent: used,
+                            ..Default::default()
+                        }],
+                    },
+                )
+                .unwrap();
+        }
+        database.dashboard_state().unwrap()
+    }
+
+    #[test]
+    fn automatic_tray_picks_most_used_visible_enabled_metered_window() {
+        let mut state = dashboard();
+        state.connections[0].windows.extend([
+            model::QuotaWindow {
+                key: "paid".into(),
+                used_percent: 100.0,
+                paid: true,
+                ..Default::default()
+            },
+            model::QuotaWindow {
+                key: "unlimited".into(),
+                used_percent: 100.0,
+                unlimited: true,
+                ..Default::default()
+            },
+        ]);
+        assert_eq!(tray_window(&state).unwrap().0.id, "two");
+        state.connections[1].hidden_windows = vec!["session".into()];
+        assert_eq!(tray_window(&state).unwrap().0.id, "one");
+        state.connections[1].hidden_windows.clear();
+        state.connections[1].enabled = false;
+        assert_eq!(tray_window(&state).unwrap().0.id, "one");
+        state.connections[0].hidden_windows = vec!["session".into()];
+        assert!(tray_window(&state).is_none());
+    }
+
+    #[test]
+    fn explicit_tray_pin_wins_until_hidden_disabled_or_missing() {
+        let mut state = dashboard();
+        state.settings.tray_summary = Some(model::TraySummary {
+            connection_id: "one".into(),
+            window_key: "session".into(),
+        });
+        assert_eq!(tray_window(&state).unwrap().0.id, "one");
+        state.connections[0].hidden_windows = vec!["session".into()];
+        assert_eq!(tray_window(&state).unwrap().0.id, "two");
+        state.connections[0].hidden_windows.clear();
+        state.connections[0].enabled = false;
+        assert_eq!(tray_window(&state).unwrap().0.id, "two");
+        state.connections[0].enabled = true;
+        state.settings.tray_summary.as_mut().unwrap().window_key = "removed".into();
+        assert_eq!(tray_window(&state).unwrap().0.id, "two");
+        state.settings.tray_summary.as_mut().unwrap().connection_id = "removed".into();
+        assert_eq!(tray_window(&state).unwrap().0.id, "two");
+    }
+
+    #[test]
+    fn explicit_pin_can_select_measured_paid_usage_but_empty_dashboard_has_no_summary() {
+        let mut state = dashboard();
+        state.connections[0].windows[0].paid = true;
+        state.connections[0].windows[0].amount = Some(model::QuotaAmount {
+            used: Some(2.0),
+            total: 10.0,
+            unit: Some("USD".into()),
+            overage: None,
+        });
+        state.settings.tray_summary = Some(model::TraySummary {
+            connection_id: "one".into(),
+            window_key: "session".into(),
+        });
+        assert_eq!(tray_window(&state).unwrap().0.id, "one");
+        state.connections.clear();
+        assert!(tray_window(&state).is_none());
+    }
 
     #[test]
     fn hidden_credit_status_survives_storage_and_ignores_an_old_tray_pin() {

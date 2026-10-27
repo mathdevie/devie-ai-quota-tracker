@@ -27,7 +27,6 @@ use std::{
 };
 
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
-use rand::RngCore;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 
@@ -84,7 +83,7 @@ pub fn pkce() -> Pkce {
 
 pub fn random_token(bytes: usize) -> String {
     let mut buffer = vec![0u8; bytes];
-    rand::thread_rng().fill_bytes(&mut buffer);
+    rand::fill(&mut buffer[..]);
     URL_SAFE_NO_PAD.encode(buffer)
 }
 

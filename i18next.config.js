@@ -19,7 +19,7 @@ module.exports = {
   ],
   extract: {
     input: ["src/**/*.{ts,tsx}"],
-    ignore: ["src/i18n/messages/**", "src/ui/**", "**/*.d.ts"],
+    ignore: ["src/i18n/messages/**", "src/ui/**", "src/tests/**", "**/*.d.ts"],
     output: "src/i18n/messages/{{language}}.json",
     defaultNS: false,
     keySeparator: ".",
@@ -41,7 +41,7 @@ module.exports = {
       "sv-SE",
       "zh-CN",
     ],
-    removeUnusedKeys: false,
+    removeUnusedKeys: true,
     sort: false,
     indentation: 2,
     extractFromComments: false,
@@ -57,5 +57,7 @@ module.exports = {
   },
   lint: {
     ignore: ["src/ui/**"],
+    // A translation that drops or renames a {{placeholder}} fails the check.
+    checkTranslationPlaceholders: "error",
   },
 };

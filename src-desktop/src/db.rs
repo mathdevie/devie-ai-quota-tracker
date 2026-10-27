@@ -775,6 +775,254 @@ impl Database {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::{QuotaAmount, ResetCredit};
+
+    fn new_account(id: &str) -> NewConnection {
+        NewConnection {
+            id: id.into(),
+            provider: Provider::Codex,
+            label: format!("Codex {id}"),
+            source_locator: format!("oauth/codex/{id}"),
+            identity: None,
+        }
+    }
+
+    fn reading(used_percent: f64) -> QuotaReading {
+        QuotaReading {
+            source: "fixture".into(),
+            identity: None,
+            windows: vec![QuotaWindow {
+                key: "session".into(),
+                label: "Session".into(),
+                used_percent,
+                ..Default::default()
+            }],
+            reset_credits: None,
+        }
+    }
+
+    fn stored(database: &Database) -> ProviderConnection {
+        database.connection_by_id("one").unwrap().unwrap()
+    }
+
+    #[test]
+    fn failed_refresh_preserves_last_good_reading_and_recovers() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        database.save_reading("one", &reading(42.0)).unwrap();
+        let original = stored(&database);
+        for status in [
+            ConnectionStatus::Stale,
+            ConnectionStatus::NeedsLogin,
+            ConnectionStatus::Error,
+        ] {
+            database
+                .save_failure("one", status.clone(), "Provider unavailable")
+                .unwrap();
+            let failed = stored(&database);
+            assert_eq!(failed.status, status);
+            assert_eq!(failed.windows, original.windows);
+            assert_eq!(failed.last_updated_at, original.last_updated_at);
+            assert_eq!(failed.last_error.as_deref(), Some("Provider unavailable"));
+        }
+        database.save_reading("one", &reading(12.0)).unwrap();
+        let recovered = stored(&database);
+        assert_eq!(recovered.status, ConnectionStatus::Ready);
+        assert_eq!(recovered.last_error, None);
+        assert_eq!(recovered.windows[0].used_percent, 12.0);
+    }
+
+    #[test]
+    fn invalid_snapshot_rolls_back_all_windows_and_account_changes() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        database.save_reading("one", &reading(42.0)).unwrap();
+        let original = stored(&database);
+        let mut duplicate = reading(90.0);
+        duplicate.windows.push(duplicate.windows[0].clone());
+        assert!(database.save_reading("one", &duplicate).is_err());
+        assert_eq!(stored(&database), original);
+        let count: i64 = database
+            .connection()
+            .unwrap()
+            .query_row("SELECT COUNT(*) FROM quota_snapshots", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(count, 1);
+    }
+
+    #[test]
+    fn snapshots_replace_latest_windows_without_deleting_history() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        let mut first = reading(42.0);
+        first.windows.push(QuotaWindow {
+            key: "weekly".into(),
+            ..Default::default()
+        });
+        database.save_reading("one", &first).unwrap();
+        database.save_reading("one", &reading(30.0)).unwrap();
+        assert_eq!(stored(&database).windows, reading(30.0).windows);
+        let mut empty = reading(0.0);
+        empty.windows.clear();
+        database.save_reading("one", &empty).unwrap();
+        assert!(stored(&database).windows.is_empty());
+        let count: i64 = database
+            .connection()
+            .unwrap()
+            .query_row("SELECT COUNT(*) FROM quota_windows", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(count, 3);
+    }
+
+    #[test]
+    fn credits_distinguish_unreported_from_empty_and_amounts_round_trip() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        let mut first = reading(42.0);
+        first.windows[0].paid = true;
+        first.windows[0].unlimited = true;
+        first.windows[0].amount = Some(QuotaAmount {
+            used: Some(12.5),
+            total: 10.0,
+            unit: Some("USD".into()),
+            overage: Some(2.5),
+        });
+        first.reset_credits = Some(vec![ResetCredit {
+            id: "reset-one".into(),
+            title: Some("Bonus".into()),
+            granted_at: Some("2026-10-01T00:00:00Z".into()),
+            expires_at: None,
+        }]);
+        database.save_reading("one", &first).unwrap();
+        assert_eq!(stored(&database).windows, first.windows);
+        assert_eq!(
+            stored(&database).reset_credits,
+            first.reset_credits.clone().unwrap()
+        );
+        database.save_reading("one", &reading(20.0)).unwrap();
+        assert_eq!(
+            stored(&database).reset_credits,
+            first.reset_credits.unwrap()
+        );
+        let mut spent = reading(0.0);
+        spent.reset_credits = Some(vec![]);
+        database.save_reading("one", &spent).unwrap();
+        assert!(stored(&database).reset_credits.is_empty());
+    }
+
+    #[test]
+    fn reconnect_and_partial_identity_preserve_preferences_across_restart() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("test.sqlite3");
+        let database = Database::open(path.clone()).unwrap();
+        let mut initial = new_account("one");
+        initial.identity = Some(RemoteIdentity {
+            provider_user_id: Some("provider-one".into()),
+            display_name: Some("Alice".into()),
+            plan: Some("Pro".into()),
+        });
+        database.upsert_connections(&[initial]).unwrap();
+        database.set_custom_label("one", Some("Work")).unwrap();
+        database.set_enabled("one", false).unwrap();
+        database
+            .set_hidden_windows("one", &["session".into()])
+            .unwrap();
+        let alerts = ConnectionAlerts {
+            low_quota: true,
+            ..Default::default()
+        };
+        database.set_connection_alerts("one", &alerts).unwrap();
+        database.set_language("fr-FR").unwrap();
+        database.set_update_channel(UpdateChannel::Nightly).unwrap();
+        database.set_show_menu_bar_item(false).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        let mut partial = reading(20.0);
+        partial.identity = Some(RemoteIdentity {
+            plan: Some("Team".into()),
+            ..Default::default()
+        });
+        database.save_reading("one", &partial).unwrap();
+        drop(database);
+        let reopened = Database::open(path).unwrap();
+        let account = stored(&reopened);
+        assert_eq!(account.custom_label.as_deref(), Some("Work"));
+        assert!(!account.enabled);
+        assert_eq!(account.hidden_windows, ["session"]);
+        assert_eq!(account.alerts, alerts);
+        assert_eq!(
+            account.identity,
+            Some(RemoteIdentity {
+                provider_user_id: Some("provider-one".into()),
+                display_name: Some("Alice".into()),
+                plan: Some("Team".into()),
+            })
+        );
+        assert_eq!(reopened.language().unwrap().as_deref(), Some("fr-FR"));
+        assert_eq!(
+            reopened.settings().unwrap().update_channel,
+            UpdateChannel::Nightly
+        );
+        assert!(!reopened.settings().unwrap().show_menu_bar_item);
+    }
+
+    #[test]
+    fn notification_claims_survive_restart_and_failed_delivery_can_retry() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("test.sqlite3");
+        let database = Database::open(path.clone()).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        assert!(database
+            .claim_notification("low:one:session", "one", "low_quota")
+            .unwrap());
+        drop(database);
+        let reopened = Database::open(path).unwrap();
+        assert!(!reopened
+            .claim_notification("low:one:session", "one", "low_quota")
+            .unwrap());
+        reopened.release_notification_claim("low:one:session");
+        assert!(reopened
+            .claim_notification("low:one:session", "one", "low_quota")
+            .unwrap());
+        assert!(reopened
+            .claim_notification("low:one:weekly", "one", "low_quota")
+            .unwrap());
+    }
+
+    #[test]
+    fn deletion_cascades_only_the_selected_accounts_history_and_notices() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database
+            .upsert_connections(&[new_account("one"), new_account("two")])
+            .unwrap();
+        for id in ["one", "two"] {
+            database.save_reading(id, &reading(42.0)).unwrap();
+            database
+                .claim_notification(&format!("low:{id}"), id, "low_quota")
+                .unwrap();
+        }
+        database.delete_connection("one").unwrap();
+        assert!(database.delete_connection("one").is_err());
+        assert!(database.connection_by_id("one").unwrap().is_none());
+        assert_eq!(
+            database.connection_by_id("two").unwrap().unwrap().windows,
+            reading(42.0).windows
+        );
+        for table in ["quota_snapshots", "quota_windows", "notification_events"] {
+            let count: i64 = database
+                .connection()
+                .unwrap()
+                .query_row(&format!("SELECT COUNT(*) FROM {table}"), [], |row| {
+                    row.get(0)
+                })
+                .unwrap();
+            assert_eq!(count, 1, "orphaned data in {table}");
+        }
+    }
 
     #[test]
     fn skips_connections_of_unknown_providers() {

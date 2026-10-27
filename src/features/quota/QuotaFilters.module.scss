@@ -1,0 +1,23 @@
+@use "../../ui/_devie.scss" as *;
+
+.trigger {
+  min-height: 28px;
+  font-size: $devie__font-size__small;
+}
+
+// A text-only trigger that sits beside the popover header icon buttons.
+.compact {
+  min-height: 24px;
+  padding: calc($devie__spacing__x05 - 1px) $devie__spacing__x05;
+  line-height: $devie__spacing__x2;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+// The chevron stays put; no open-state flip in the popover header.
+.compactChevron {
+  transition: none;
+  transform: none;
+}

@@ -1,6 +1,5 @@
 {
   "_Meta": {
-    "IsoCode": "fr-FR",
     "EndonymName": "Français"
   },
   "Metadata": {
@@ -80,6 +79,7 @@
       "Use": "Utiliser",
       "Available_one": "{{count}} réinitialisation disponible",
       "Available_other": "{{count}} réinitialisations disponibles",
+      "Available_many": "{{count}} réinitialisations disponibles",
       "ConfirmTitle": "Réinitialiser les limites Codex ?",
       "ConfirmDescription": "Utiliser 1 crédit de réinitialisation pour {{account}}. Toutes les fenêtres de quota sont réinitialisées maintenant. Cette action est irréversible. Crédits restants ensuite : {{remaining}}.",
       "Confirm": "Réinitialiser"

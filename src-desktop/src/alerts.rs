@@ -322,4 +322,182 @@ mod tests {
         };
         assert!(notices("en-US", &connection, &reading, now).is_empty());
     }
+
+    fn fixed_now() -> DateTime<Utc> {
+        parse_time("2026-10-27T12:00:00Z").unwrap()
+    }
+
+    fn reading(window: QuotaWindow) -> QuotaReading {
+        QuotaReading {
+            source: "fixture".into(),
+            identity: None,
+            windows: vec![window],
+            reset_credits: None,
+        }
+    }
+
+    #[test]
+    fn low_quota_threshold_is_inclusive_and_clamps_overage() {
+        let account = connection(
+            ConnectionAlerts {
+                low_quota: true,
+                ..Default::default()
+            },
+            QuotaWindow::default(),
+        );
+        for (used_percent, expected) in [(79.9, 0), (80.0, 1), (100.0, 1), (150.0, 1), (-10.0, 0)] {
+            let reading = reading(QuotaWindow {
+                used_percent,
+                key: "session".into(),
+                ..Default::default()
+            });
+            let result = notices("en-US", &account, &reading, fixed_now());
+            assert_eq!(result.len(), expected, "used={used_percent}");
+            if used_percent > 100.0 {
+                assert!(result[0].body.contains("0%"));
+            }
+        }
+    }
+
+    #[test]
+    fn reset_soon_requires_a_future_reset_within_thirty_minutes() {
+        let account = connection(
+            ConnectionAlerts {
+                reset_soon: true,
+                ..Default::default()
+            },
+            QuotaWindow::default(),
+        );
+        for (seconds, expected) in [(-1, 0), (0, 0), (1, 1), (1800, 1), (1801, 0)] {
+            let reading = reading(QuotaWindow {
+                resets_at: Some((fixed_now() + Duration::seconds(seconds)).to_rfc3339()),
+                ..Default::default()
+            });
+            let result = notices("en-US", &account, &reading, fixed_now());
+            assert_eq!(result.len(), expected, "seconds={seconds}");
+            if seconds == 1 {
+                assert!(result[0].body.contains('1'));
+            }
+        }
+        for resets_at in [None, Some("invalid date".into())] {
+            assert!(notices(
+                "en-US",
+                &account,
+                &reading(QuotaWindow {
+                    resets_at,
+                    ..Default::default()
+                }),
+                fixed_now()
+            )
+            .is_empty());
+        }
+    }
+
+    #[test]
+    fn reset_detection_rejects_jitter_and_premature_usage_drops() {
+        let mut previous = QuotaWindow {
+            used_percent: 80.0,
+            resets_at: Some(fixed_now().to_rfc3339()),
+            ..Default::default()
+        };
+        for (moved_seconds, used_percent, expected) in [
+            (29, 80.0, false),
+            (30, 80.0, true),
+            (0, 75.1, false),
+            (0, 75.0, true),
+        ] {
+            let current = QuotaWindow {
+                used_percent,
+                resets_at: Some((fixed_now() + Duration::seconds(moved_seconds)).to_rfc3339()),
+                ..Default::default()
+            };
+            assert_eq!(reset_happened(&previous, &current, fixed_now()), expected);
+        }
+        let current = QuotaWindow {
+            used_percent: 0.0,
+            ..Default::default()
+        };
+        previous.resets_at = Some((fixed_now() + Duration::seconds(61)).to_rfc3339());
+        assert!(!reset_happened(&previous, &current, fixed_now()));
+        previous.resets_at = Some((fixed_now() + Duration::seconds(60)).to_rfc3339());
+        assert!(reset_happened(&previous, &current, fixed_now()));
+        previous.resets_at = Some("invalid".into());
+        assert!(!reset_happened(&previous, &current, fixed_now()));
+        previous.resets_at = None;
+        assert!(!reset_happened(&previous, &current, fixed_now()));
+    }
+
+    #[test]
+    fn dedupe_keys_ignore_second_jitter_but_separate_accounts_windows_and_reset_cycles() {
+        let mut account = connection(
+            ConnectionAlerts {
+                low_quota: true,
+                ..Default::default()
+            },
+            QuotaWindow::default(),
+        );
+        let mut reading = reading(QuotaWindow {
+            key: "session".into(),
+            used_percent: 90.0,
+            resets_at: Some("2026-10-27T12:30:01Z".into()),
+            ..Default::default()
+        });
+        let key = notices("en-US", &account, &reading, fixed_now())[0]
+            .event_key
+            .clone();
+        reading.windows[0].resets_at = Some("2026-10-27T14:30:59+02:00".into());
+        assert_eq!(
+            notices("fr-FR", &account, &reading, fixed_now())[0].event_key,
+            key
+        );
+        reading.windows[0].resets_at = Some("2026-10-27T12:31:00Z".into());
+        assert_ne!(
+            notices("en-US", &account, &reading, fixed_now())[0].event_key,
+            key
+        );
+        reading.windows[0].resets_at = Some("2026-10-27T12:30:01Z".into());
+        reading.windows[0].key = "weekly".into();
+        assert_ne!(
+            notices("en-US", &account, &reading, fixed_now())[0].event_key,
+            key
+        );
+        reading.windows[0].key = "session".into();
+        account.id = "two".into();
+        assert_ne!(
+            notices("en-US", &account, &reading, fixed_now())[0].event_key,
+            key
+        );
+    }
+
+    #[test]
+    fn undated_low_quota_notices_are_deduplicated_per_day() {
+        let account = connection(
+            ConnectionAlerts {
+                low_quota: true,
+                ..Default::default()
+            },
+            QuotaWindow::default(),
+        );
+        let reading = reading(QuotaWindow {
+            used_percent: 90.0,
+            ..Default::default()
+        });
+        let key = notices("en-US", &account, &reading, fixed_now())[0]
+            .event_key
+            .clone();
+        assert_eq!(
+            notices(
+                "en-US",
+                &account,
+                &reading,
+                fixed_now() + Duration::hours(1)
+            )[0]
+            .event_key,
+            key
+        );
+        assert_ne!(
+            notices("en-US", &account, &reading, fixed_now() + Duration::days(1))[0].event_key,
+            key
+        );
+    }
 }

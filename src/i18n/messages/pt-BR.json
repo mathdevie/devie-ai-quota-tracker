@@ -1,6 +1,5 @@
 {
   "_Meta": {
-    "IsoCode": "pt-BR",
     "EndonymName": "Português"
   },
   "Metadata": {
@@ -80,6 +79,7 @@
       "Use": "Usar",
       "Available_one": "{{count}} redefinição disponível",
       "Available_other": "{{count}} redefinições disponíveis",
+      "Available_many": "{{count}} redefinições disponíveis",
       "ConfirmTitle": "Redefinir os limites do Codex?",
       "ConfirmDescription": "Usar 1 crédito de redefinição para {{account}}. Todas as janelas de cota são redefinidas agora. Isso não pode ser desfeito. Créditos restantes depois: {{remaining}}.",
       "Confirm": "Redefinir limites"

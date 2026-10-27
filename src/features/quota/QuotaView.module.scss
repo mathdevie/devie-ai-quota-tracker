@@ -1,0 +1,8 @@
+@use "../../ui/_devie.scss" as *;
+
+.cardGrid {
+  display: grid;
+  align-items: start;
+  gap: $devie__spacing__x2;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}

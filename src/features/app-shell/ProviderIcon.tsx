@@ -1,0 +1,50 @@
+import type { Provider } from "@/features/desktop/contracts";
+import styles from "./ProviderIcon.module.scss";
+
+/** Official 128×128 PNG icons, as bundled by 9router (github.com/decolua/9router). */
+export type BrandId =
+  | Provider
+  | "antigravity"
+  | "gemini-cli"
+  | "kiro"
+  | "kimchi"
+  | "opencode"
+  | "qwen"
+  | "kilocode"
+  | "cline"
+  | "windsurf"
+  | "openrouter";
+
+/** The official logo of a tool, with rounded corners like a macOS app icon. */
+export function BrandIcon({
+  brand,
+  size = 18,
+  alt = "",
+}: {
+  brand: BrandId;
+  size?: number;
+  alt?: string;
+}) {
+  return (
+    <img
+      alt={alt}
+      aria-hidden={alt === "" || undefined}
+      className={styles.mark}
+      data-brand={brand}
+      decoding="async"
+      height={size}
+      src={`/providers/${brand}.png`}
+      width={size}
+    />
+  );
+}
+
+export default function ProviderIcon({
+  provider,
+  size = 18,
+}: {
+  provider: Provider;
+  size?: number;
+}) {
+  return <BrandIcon brand={provider} size={size} />;
+}

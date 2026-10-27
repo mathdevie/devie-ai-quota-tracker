@@ -381,6 +381,8 @@ fn add_credits(json: &Value, windows: &mut Vec<QuotaWindow>) {
     if has_monthly_limit && balance.is_none() && !reached {
         return;
     }
+    // Without a balance the row is availability only: 0 or 100 marks the
+    // state, not usage, so it cannot be pinned as a menu bar percentage.
     windows.push(QuotaWindow {
         key: "credits".to_string(),
         label: "Credits".to_string(),

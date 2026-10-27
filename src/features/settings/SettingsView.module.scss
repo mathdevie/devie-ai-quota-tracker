@@ -1,0 +1,84 @@
+@use "../../ui/_devie.scss" as *;
+
+.providerGrid {
+  display: grid;
+  gap: $devie__spacing__x2;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.providerCard {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $devie__spacing__x1;
+  padding: $devie__spacing__x2;
+  border: 1px solid $devie__color__line;
+  border-radius: $devie__radius-strong;
+  background: $devie__color__background-sunken;
+  color: $devie__color__text;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+
+  strong {
+    font-weight: 500;
+  }
+
+  &:is(button):hover {
+    border-color: color-mix(in srgb, $devie__color__primary 40%, $devie__color__line);
+    background: color-mix(in srgb, $devie__color__primary 5%, $devie__color__background);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $devie__color__primary;
+    outline-offset: -2px;
+  }
+}
+
+.providerCardHeader {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: $devie__spacing__x1;
+}
+
+.providerCardTitle {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+
+  strong,
+  small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    color: $devie__color__text-sub;
+    font-size: 11px;
+  }
+}
+
+.providerBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $devie__spacing__x05;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: $devie__color__text-sub;
+}
+
+.dangerText {
+  color: $devie__color__danger;
+}
+
+// A fixed width keeps the row still when the label changes.
+.updateAction {
+  width: 164px;
+}

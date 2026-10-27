@@ -1,5 +1,15 @@
 //! In-app updates from CrabNebula Cloud. The channel is a user setting, so
 //! the endpoint is built at runtime, not in `tauri.conf.json`.
+//!
+//! Stable is CrabNebula's unnamed default channel; nightly adds
+//! `?channel=nightly` and its versions sort above the latest stable. Both are
+//! signed with the same updater key. Switching back to stable never
+//! downgrades: the app waits for a higher stable version.
+//!
+//! The frontend (`AppUpdater.tsx`) checks at start and every 15 minutes in
+//! production builds only, downloads in the background, and shows an
+//! **Update ready** badge. A click checks once more, then installs and
+//! restarts; nothing installs on its own.
 
 use std::sync::Mutex;
 

@@ -1,4 +1,4 @@
-<img src="docs/logo/app-icon.png" alt="The Devie AI Quota Tracker app icon" width="96" />
+<img src="src-desktop/icons/icon.png" alt="The Devie AI Quota Tracker app icon" width="96" />
 
 # Devie AI Quota Tracker
 
@@ -11,11 +11,10 @@
 
 [Overview](#overview) | [Download](#download) | [Features](#features) | [Themes](#themes) | [FAQ](#faq) | [Contributing](#contributing)
 
-
 <table>
 <tr>
-<td width="52%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/app-preview.png" /><img src="docs/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" /></picture></td>
-<td width="48%"><img src="docs/screenshots/popover.png" alt="The menu bar popover with quotas for every account" /></td>
+<td width="52%"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/screenshots/app-preview.png" /><img src=".github/readme/screenshots/theme-light.png" alt="The quota dashboard with Claude Code, Codex, Cursor, and GitHub Copilot accounts" /></picture></td>
+<td width="48%"><img src=".github/readme/screenshots/popover.png" alt="The menu bar popover with quotas for every account" /></td>
 </tr>
 </table>
 
@@ -65,7 +64,7 @@ The menu bar shows the quota of the provider you selected: you can pin the quota
 
 One click opens a quick view popover with all quota details, percentage and reset dates.
 
-<img src="docs/screenshots/menu-bar.jpg" alt="The menu bar popover over the desktop, with quotas for every account" width="760" />
+<img src=".github/readme/screenshots/menu-bar.jpg" alt="The menu bar popover over the desktop, with quotas for every account" width="760" />
 
 ### Supported Providers
 
@@ -73,7 +72,7 @@ Currently supported AI providers include Claude Code, Codex, Gemini CLI, Antigra
 
 Authentication requires OAuth sign-in for each provider that you want to add. Note that unlike other existing solutions, we do not automatically reuse the CLI accounts you are already logged in to on your machine.
 
-<img src="docs/screenshots/providers.png" alt="The Settings window with provider cards and connection counts" width="760" />
+<img src=".github/readme/screenshots/providers.png" alt="The Settings window with provider cards and connection counts" width="760" />
 
 ### Alerts
 
@@ -81,7 +80,7 @@ You can set up alerts (macOS notifications) for each account: low quota, reset s
 
 Make sure you authorize the notifications for this app in your macOS notification settings.
 
-<img src="docs/screenshots/alerts.png" alt="The Alerts dialog with low quota, reset soon, and reset complete toggles" width="760" />
+<img src=".github/readme/screenshots/alerts.png" alt="The Alerts dialog with low quota, reset soon, and reset complete toggles" width="760" />
 
 ### Quota Optimizer
 
@@ -89,7 +88,7 @@ A reset timer normally starts on first use. By activating the optimizer, the app
 request right after each reset, so the timer starts immediately and the
 next reset comes sooner.
 
-<img src="docs/screenshots/quota-optimizer.png" alt="The Quota Optimizer dialog with the auto-start session timers option" width="760" />
+<img src=".github/readme/screenshots/quota-optimizer.png" alt="The Quota Optimizer dialog with the auto-start session timers option" width="760" />
 
 ### Codex Resets
 
@@ -99,23 +98,23 @@ We fetch the latest announcements from [codex-resets.com](https://codex-resets.c
 site that tracks the reset announcements of OpenAI staff. The app reads
 the public status feed only and never sends account data to it.
 
-<img src="docs/screenshots/codex-resets.png" alt="The popover with a Codex reset forecast banner" width="620" />
+<img src=".github/readme/screenshots/codex-resets.png" alt="The popover with a Codex reset forecast banner" width="620" />
 
 ## Themes
 
 This app is implemented using [Devie UI](https://devie-ui.com), a design system that natively supports multiple themes.
 
-| Theme: Light | Theme: Dark |
-| :---: | :---: |
-| <img src="docs/screenshots/theme-light.png" alt="The Light theme" /> | <img src="docs/screenshots/theme-dark.png" alt="The Dark theme" /> |
-| **Theme: Midnight Ink** | **Theme: Copper Sunset** |
-| <img src="docs/screenshots/theme-midnight.png" alt="The Midnight Ink theme" /> | <img src="docs/screenshots/theme-copper.png" alt="The Copper Sunset theme" /> |
-| **Theme: Aurora Green** | **Theme: Sharingan** |
-| <img src="docs/screenshots/theme-aurora.png" alt="The Aurora Green theme" /> | <img src="docs/screenshots/theme-sharingan.png" alt="The Sharingan theme" /> |
-| **Theme: Alpine Snow** | **Theme: Command Prompt** |
-| <img src="docs/screenshots/theme-alpine-snow.png" alt="The Alpine Snow theme" /> | <img src="docs/screenshots/theme-command.png" alt="The Command Prompt theme" /> |
-| **Theme: Totoro** | **Theme: Catpuccin Latte** |
-| <img src="docs/screenshots/theme-totoro.png" alt="The Totoro theme" /> | <img src="docs/screenshots/theme-catpuccin.png" alt="The Catpuccin Latte theme" /> |
+|                                        Theme: Light                                        |                                         Theme: Dark                                          |
+| :----------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------: |
+|       <img src=".github/readme/screenshots/theme-light.png" alt="The Light theme" />       |         <img src=".github/readme/screenshots/theme-dark.png" alt="The Dark theme" />         |
+|                                  **Theme: Midnight Ink**                                   |                                   **Theme: Copper Sunset**                                   |
+|  <img src=".github/readme/screenshots/theme-midnight.png" alt="The Midnight Ink theme" />  |   <img src=".github/readme/screenshots/theme-copper.png" alt="The Copper Sunset theme" />    |
+|                                  **Theme: Aurora Green**                                   |                                     **Theme: Sharingan**                                     |
+|   <img src=".github/readme/screenshots/theme-aurora.png" alt="The Aurora Green theme" />   |    <img src=".github/readme/screenshots/theme-sharingan.png" alt="The Sharingan theme" />    |
+|                                   **Theme: Alpine Snow**                                   |                                  **Theme: Command Prompt**                                   |
+| <img src=".github/readme/screenshots/theme-alpine-snow.png" alt="The Alpine Snow theme" /> |  <img src=".github/readme/screenshots/theme-command.png" alt="The Command Prompt theme" />   |
+|                                     **Theme: Totoro**                                      |                                  **Theme: Catpuccin Latte**                                  |
+|      <img src=".github/readme/screenshots/theme-totoro.png" alt="The Totoro theme" />      | <img src=".github/readme/screenshots/theme-catpuccin.png" alt="The Catpuccin Latte theme" /> |
 
 ## FAQ
 
@@ -168,8 +167,8 @@ The development of this project is supported by:
 <td align="center" width="200">
 <a href="https://sign.plus">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/signplus-dark.svg" />
-<img src="docs/sponsors/signplus-light.svg" alt="The Sign.Plus logo" width="48" />
+<source media="(prefers-color-scheme: dark)" srcset=".github/readme/sponsors/signplus-dark.svg" />
+<img src=".github/readme/sponsors/signplus-light.svg" alt="The Sign.Plus logo" width="48" />
 </picture>
 <br />
 <b>Sign.Plus</b>
@@ -181,14 +180,20 @@ The development of this project is supported by:
 ## Thanks
 
 This application was inspired by other awesome open-source projects:
+
 - [AIUsage](https://github.com/sylearn/AIUsage)
 - [CodexBar](https://github.com/steipete/CodexBar)
 - [usage4claude](https://github.com/f-is-h/usage4claude)
 - [9router](https://github.com/decolua/9router)
- 
+
+## Notices
+
+Provider names and logos belong to their owners and are not covered by the
+MIT license; this project is independent and not affiliated with or endorsed
+by any provider. Sign-in uses the public OAuth clients of the official tools
+(Claude Code, Codex CLI, Gemini CLI under Apache-2.0, GitHub Copilot); they
+are not credentials of this project.
+
 ## License
 
-[MIT](LICENSE). 
-Third-party notices are in [NOTICES](docs/notices.md).
-
-
+[MIT](LICENSE).
