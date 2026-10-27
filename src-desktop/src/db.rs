@@ -699,7 +699,10 @@ impl Database {
         let transaction = connection
             .transaction()
             .map_err(|error| error.to_string())?;
-        let captured_at = Utc::now().to_rfc3339();
+        let captured_at = reading
+            .observed_at
+            .clone()
+            .unwrap_or_else(|| Utc::now().to_rfc3339());
         transaction
             .execute(
                 "INSERT INTO quota_snapshots(connection_id, captured_at, source) VALUES (?1, ?2, ?3)",
@@ -733,7 +736,7 @@ impl Database {
         transaction
             .execute(
                 "UPDATE provider_connections SET
-                   status = 'ready', source = ?2, last_updated_at = ?3, last_error = NULL,
+                   status = ?8, source = ?2, last_updated_at = ?3, last_error = NULL,
                    identity_user_id = COALESCE(?4, identity_user_id),
                    identity_display_name = COALESCE(?5, identity_display_name),
                    identity_plan = COALESCE(?6, identity_plan), updated_at = ?3,
@@ -750,6 +753,7 @@ impl Database {
                         .reset_credits
                         .as_ref()
                         .and_then(|credits| serde_json::to_string(credits).ok()),
+                    if reading.stale { "stale" } else { "ready" },
                 ],
             )
             .map_err(|error| error.to_string())?;
@@ -798,11 +802,32 @@ mod tests {
                 ..Default::default()
             }],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         }
     }
 
     fn stored(database: &Database) -> ProviderConnection {
         database.connection_by_id("one").unwrap().unwrap()
+    }
+
+    #[test]
+    fn cached_reads_keep_observation_time_and_stale_status() {
+        let directory = tempfile::tempdir().unwrap();
+        let database = Database::open(directory.path().join("test.sqlite3")).unwrap();
+        database.upsert_connections(&[new_account("one")]).unwrap();
+        let mut observation = reading(42.0);
+        observation.observed_at = Some("2026-10-27T10:00:00Z".into());
+        database.save_reading("one", &observation).unwrap();
+        observation.stale = true;
+        database.save_reading("one", &observation).unwrap();
+        let cached = stored(&database);
+        assert_eq!(cached.status, ConnectionStatus::Stale);
+        assert_eq!(cached.last_updated_at, observation.observed_at);
+        assert_eq!(cached.windows[0].used_percent, 42.0);
+        observation.stale = false;
+        database.save_reading("one", &observation).unwrap();
+        assert_eq!(stored(&database).status, ConnectionStatus::Ready);
     }
 
     #[test]
@@ -1103,6 +1128,8 @@ mod tests {
                             paid: false,
                         }],
                         reset_credits: None,
+                        observed_at: None,
+                        stale: false,
                     },
                 )
                 .expect("reading");

@@ -1,6 +1,8 @@
 //! Codex (ChatGPT subscription) sign-in and quota reading, with the public
 //! Codex CLI OAuth client and its fixed `localhost:1455/auth/callback`.
 
+use super::{error, ErrorKind, ProviderError};
+
 use chrono::{Duration, Utc};
 use serde_json::Value;
 
@@ -9,7 +11,7 @@ use crate::{
     model::{QuotaAmount, QuotaReading, QuotaWindow, RemoteIdentity, ResetCredit},
     oauth::{
         claude::{encode_query, title_case},
-        decode_jwt_claims, describe_http_failure, LoginOutcome, Pkce, USER_AGENT,
+        decode_jwt_claims, LoginOutcome, Pkce, USER_AGENT,
     },
     parse::{number, reset_time},
 };
@@ -26,7 +28,9 @@ pub const SCOPE: &str = "openid profile email offline_access";
 pub const CALLBACK_PORT: u16 = 1455;
 pub const CALLBACK_PATH: &str = "/auth/callback";
 /// Codex access tokens last hours; renew early like the CLI does.
-pub const REFRESH_LEAD: Duration = Duration::minutes(30);
+pub const REFRESH_LEAD: Duration = Duration::minutes(10);
+pub const CLIENT_VERSION: &str = "0.159.0";
+pub const PING_MODEL: &str = "gpt-6.1-sol";
 
 pub fn redirect_uri() -> String {
     format!("http://localhost:{CALLBACK_PORT}{CALLBACK_PATH}")
@@ -80,19 +84,16 @@ pub async fn exchange(
 pub async fn refresh_tokens(
     client: &reqwest::Client,
     current: &Credentials,
-) -> Result<Credentials, String> {
+) -> Result<Credentials, ProviderError> {
     let refresh_token = current
         .refresh_token
         .as_deref()
         .ok_or_else(|| "This Codex login cannot be renewed. Sign in again.".to_string())?;
-    let tokens = post_form(
-        client,
-        &[
-            ("grant_type", "refresh_token"),
-            ("client_id", CLIENT_ID),
-            ("refresh_token", refresh_token),
-            ("scope", "openid profile email"),
-        ],
+    let tokens = error::json(
+        client.post(TOKEN_URL).json(&serde_json::json!({
+            "grant_type":"refresh_token", "client_id":CLIENT_ID, "refresh_token":refresh_token
+        })),
+        "Codex",
     )
     .await?;
     let (mut credentials, _, _) = interpret(&tokens, current.refresh_token.clone())?;
@@ -102,21 +103,18 @@ pub async fn refresh_tokens(
     Ok(credentials)
 }
 
-async fn post_form(client: &reqwest::Client, form: &[(&str, &str)]) -> Result<Value, String> {
-    let response = client
-        .post(TOKEN_URL)
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .header(reqwest::header::ACCEPT, "application/json")
-        .form(form)
-        .send()
-        .await
-        .map_err(|_| "OpenAI could not be reached.".to_string())?;
-    let status = response.status();
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("Codex", status, &text));
-    }
-    serde_json::from_str(&text).map_err(|_| "Codex returned an invalid token response.".to_string())
+async fn post_form(
+    client: &reqwest::Client,
+    form: &[(&str, &str)],
+) -> Result<Value, ProviderError> {
+    error::json(
+        client
+            .post(TOKEN_URL)
+            .header(reqwest::header::USER_AGENT, USER_AGENT)
+            .form(form),
+        "Codex",
+    )
+    .await
 }
 
 /// Reads tokens and the identity claims from the id token.
@@ -167,6 +165,7 @@ fn interpret(
             expires_at,
             account_id: account_id.clone(),
             project_id: None,
+            last_refresh_at: None,
         },
         RemoteIdentity {
             provider_user_id: account_id,
@@ -185,7 +184,11 @@ fn backend_request(
     let mut request = request
         .bearer_auth(&credentials.access_token)
         .header(reqwest::header::ACCEPT, "application/json")
-        .header(reqwest::header::USER_AGENT, "codex_cli_rs/0.50.0")
+        .header(
+            reqwest::header::USER_AGENT,
+            format!("codex_cli_rs/{CLIENT_VERSION}"),
+        )
+        .header("version", CLIENT_VERSION)
         .header("originator", "codex_cli_rs");
     if let Some(account_id) = &credentials.account_id {
         request = request.header("ChatGPT-Account-ID", account_id);
@@ -194,26 +197,17 @@ fn backend_request(
 }
 
 /// Sends the request and returns the JSON body, or a user-facing error.
-async fn backend_json(request: reqwest::RequestBuilder, invalid: &str) -> Result<Value, String> {
-    let response = request
-        .send()
-        .await
-        .map_err(|_| "ChatGPT could not be reached.".to_string())?;
-    let status = response.status();
-    if status.as_u16() == 401 || status.as_u16() == 403 {
-        return Err("The Codex login expired. Sign in again.".to_string());
-    }
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("Codex", status, &text));
-    }
-    serde_json::from_str(&text).map_err(|_| invalid.to_string())
+async fn backend_json(
+    request: reqwest::RequestBuilder,
+    _invalid: &str,
+) -> Result<Value, ProviderError> {
+    error::json(request, "Codex").await
 }
 
 pub async fn usage(
     client: &reqwest::Client,
     credentials: &Credentials,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let json = backend_json(
         backend_request(client.get(USAGE_URL), credentials),
         "Codex returned invalid quota data.",
@@ -229,7 +223,7 @@ pub async fn usage(
 pub async fn reset_credits(
     client: &reqwest::Client,
     credentials: &Credentials,
-) -> Result<Vec<ResetCredit>, String> {
+) -> Result<Vec<ResetCredit>, ProviderError> {
     let json = backend_json(
         backend_request(client.get(RESET_CREDITS_URL), credentials),
         "Codex returned invalid reset credit data.",
@@ -247,22 +241,35 @@ pub fn parse_reset_credits(json: &Value) -> Vec<ResetCredit> {
         .and_then(Value::as_array)
         .into_iter()
         .flatten()
-        .filter(|credit| {
-            credit
-                .get("status")
-                .and_then(Value::as_str)
-                .is_none_or(|status| status == "available")
-        })
-        .filter_map(|credit| {
-            Some(ResetCredit {
-                id: text(credit, "id")?,
-                title: text(credit, "title"),
-                granted_at: reset_time(credit.get("granted_at")),
-                expires_at: reset_time(credit.get("expires_at")),
-            })
+        .enumerate()
+        .filter(|(_, credit)| credit.get("status").and_then(Value::as_str) == Some("available"))
+        .map(|(index, credit)| ResetCredit {
+            // UI identity only: redemption spends the next available credit, not an ID.
+            id: text(credit, "id").unwrap_or_else(|| format!("available-{index}")),
+            title: text(credit, "title"),
+            granted_at: reset_time(credit.get("granted_at")),
+            expires_at: reset_time(credit.get("expires_at")),
         })
         .collect();
-    credits.sort_by(|a, b| a.expires_at.cmp(&b.expires_at));
+    if let Some(count) = json.get("available_count").and_then(Value::as_u64) {
+        let count = count.min(1000) as usize;
+        credits.truncate(count);
+        while credits.len() < count {
+            let index = credits.len();
+            credits.push(ResetCredit {
+                id: format!("count-only-{index}"),
+                title: None,
+                granted_at: None,
+                expires_at: None,
+            });
+        }
+    }
+    credits.sort_by(|a, b| match (&a.expires_at, &b.expires_at) {
+        (Some(a), Some(b)) => a.cmp(b),
+        (Some(_), None) => std::cmp::Ordering::Less,
+        (None, Some(_)) => std::cmp::Ordering::Greater,
+        _ => std::cmp::Ordering::Equal,
+    });
     credits
 }
 
@@ -270,11 +277,10 @@ pub fn parse_reset_credits(json: &Value) -> Vec<ResetCredit> {
 pub async fn consume_reset_credit(
     client: &reqwest::Client,
     credentials: &Credentials,
-    credit_id: &str,
-) -> Result<(), String> {
+    redeem_request_id: &str,
+) -> Result<(), ProviderError> {
     let body = serde_json::json!({
-        "credit_id": credit_id,
-        "redeem_request_id": uuid::Uuid::new_v4().to_string(),
+        "redeem_request_id": redeem_request_id,
     });
     let json = backend_json(
         backend_request(
@@ -286,41 +292,76 @@ pub async fn consume_reset_credit(
         "Codex returned an invalid reset response.",
     )
     .await?;
-    let redeemed = json
-        .get("credit")
-        .and_then(|credit| credit.get("status"))
-        .and_then(Value::as_str)
-        .is_some_and(|status| status == "redeemed")
-        || json.get("windows_reset").is_some();
-    if redeemed {
+    reset_result(&json)
+}
+
+fn reset_result(json: &Value) -> Result<(), ProviderError> {
+    if json.get("code").and_then(Value::as_str) == Some("no_credit") {
+        return Err(ProviderError::new(
+            ErrorKind::Other,
+            "No Codex reset credits are available.",
+        ));
+    }
+    if json.get("code").and_then(Value::as_str) == Some("reset")
+        || number(json.get("windows_reset")).is_some_and(|n| n > 0.0)
+        || json.pointer("/credit/status").and_then(Value::as_str) == Some("redeemed")
+    {
         Ok(())
     } else {
-        Err("Codex did not accept the reset credit.".to_string())
+        Err(ProviderError::invalid(
+            "Codex did not accept the reset credit.",
+        ))
     }
 }
 
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
     let mut windows = Vec::new();
-    if let Some(limits) = json
+    let normal = json
         .get("rate_limit")
-        .filter(|value| value.is_object())
-        .or_else(|| json.get("rate_limits"))
+        .filter(|v| v.is_object())
+        .or_else(|| json.get("rate_limits").filter(|v| v.is_object()))
+        .or_else(|| json.pointer("/rate_limits_by_limit_id/codex"));
+    if let Some(normal) = normal {
+        add_family(normal, "", "", &mut windows);
+    }
+    for (keys, family, label) in [
+        (
+            &["code_review_rate_limit", "review_rate_limit"][..],
+            "review",
+            "Review",
+        ),
+        (
+            &["spark_rate_limit", "gpt_5_3_codex_spark_rate_limit"][..],
+            "spark",
+            "Spark",
+        ),
+    ] {
+        if let Some(value) = keys
+            .iter()
+            .find_map(|key| json.get(*key).filter(|v| v.is_object()))
+        {
+            add_family(value, family, label, &mut windows);
+        }
+    }
+    if let Some(families) = json
+        .get("rate_limits_by_limit_id")
         .and_then(Value::as_object)
     {
-        add_window(
-            limits,
-            &["primary_window", "primary"],
-            "primary",
-            "Session (5h)",
-            &mut windows,
-        );
-        add_window(
-            limits,
-            &["secondary_window", "secondary"],
-            "secondary",
-            "Weekly",
-            &mut windows,
-        );
+        for (name, value) in families {
+            if name != "codex" {
+                add_named_family(value, name, &mut windows);
+            }
+        }
+    }
+    if let Some(families) = json.get("additional_rate_limits").and_then(Value::as_array) {
+        for value in families {
+            if let Some(name) = ["limit_name", "metered_feature", "id"]
+                .iter()
+                .find_map(|key| value.get(*key).and_then(Value::as_str))
+            {
+                add_named_family(value, name, &mut windows);
+            }
+        }
     }
     add_credits(json, &mut windows);
     if windows.is_empty() {
@@ -339,7 +380,63 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         }),
         windows,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
+}
+
+fn add_named_family(value: &Value, name: &str, windows: &mut Vec<QuotaWindow>) {
+    let lower = name.to_lowercase();
+    let family = if lower.contains("review") {
+        "review".to_string()
+    } else if lower.contains("spark") {
+        "spark".to_string()
+    } else {
+        lower
+            .chars()
+            .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
+            .collect()
+    };
+    if !family.is_empty() {
+        add_family(value, &family, &title_case(name), windows);
+    }
+}
+
+fn add_family(value: &Value, family: &str, label: &str, windows: &mut Vec<QuotaWindow>) {
+    let value = value
+        .get("rate_limit")
+        .filter(|v| v.is_object())
+        .unwrap_or(value);
+    let Some(limits) = value.as_object() else {
+        return;
+    };
+    for (aliases, key, fallback) in [
+        (
+            &["primary_window", "primary"][..],
+            "primary",
+            "Session (5h)",
+        ),
+        (
+            &["secondary_window", "secondary"][..],
+            "secondary",
+            "Weekly",
+        ),
+    ] {
+        let key = if family.is_empty() {
+            key.to_string()
+        } else {
+            format!("{family}_{key}")
+        };
+        if windows.iter().any(|w| w.key == key) {
+            continue;
+        }
+        let before = windows.len();
+        add_window(limits, aliases, &key, fallback, windows);
+        if !family.is_empty() && windows.len() > before {
+            let window = windows.last_mut().unwrap();
+            window.label = format!("{label} · {}", window.label);
+        }
+    }
 }
 
 /// The effective monthly limit and the credit balance are separate values.
@@ -521,6 +618,40 @@ fn normalize_reset(value: String, window: &serde_json::Map<String, Value>) -> Op
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn accepts_reset_credits_without_provider_ids() {
+        let credits = parse_reset_credits(&serde_json::json!({"available_count": 2, "credits": [
+            {"status":"available", "expires_at":"2026-12-01T00:00:00Z"},
+            {"status":"available", "expires_at":"2026-12-02T00:00:00Z"}
+        ]}));
+        assert_eq!(credits.len(), 2);
+    }
+
+    #[test]
+    fn reads_review_and_named_rate_limit_families() {
+        let reading = parse_usage(&serde_json::json!({
+            "rate_limits_by_limit_id": {
+                "codex": {"primary_window":{"used_percent":12}},
+                "code_review": {"primary_window":{"used_percent":34}}
+            },
+            "additional_rate_limits": [{"limit_name":"spark", "rate_limit":{
+                "secondary_window":{"used_percent":56}
+            }}]
+        }))
+        .unwrap();
+        assert_eq!(reading.windows.len(), 3);
+        assert!(reading
+            .windows
+            .iter()
+            .any(|w| w.key == "review_primary" && w.used_percent == 34.0));
+    }
+
+    #[test]
+    fn no_credit_or_zero_windows_is_not_a_success() {
+        assert!(reset_result(&serde_json::json!({"code":"no_credit", "windows_reset":0})).is_err());
+        assert!(reset_result(&serde_json::json!({"windows_reset":0})).is_err());
+        assert!(reset_result(&serde_json::json!({"code":"reset", "windows_reset":2})).is_ok());
+    }
 
     fn workspace_usage() -> Value {
         serde_json::from_str(include_str!("fixtures/codex-workspace-usage.json"))

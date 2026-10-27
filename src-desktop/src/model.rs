@@ -272,8 +272,12 @@ pub struct NewConnection {
     pub identity: Option<RemoteIdentity>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct QuotaReading {
+    /// Time of the provider observation, preserved when a cache serves it again.
+    pub observed_at: Option<String>,
+    /// True when serving the last successful observation after a provider failure.
+    pub stale: bool,
     pub source: String,
     pub identity: Option<RemoteIdentity>,
     pub windows: Vec<QuotaWindow>,

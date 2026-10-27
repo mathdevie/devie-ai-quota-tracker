@@ -26,11 +26,11 @@ const commands: [string, () => Promise<unknown>, Record<string, unknown> | undef
   ["refresh_connection", () => desktop.refreshConnection("account"), { connectionId: "account" }],
   ["start_login", () => desktop.startLogin("claude"), { provider: "claude" }],
   [
-    "finish_login",
-    () => desktop.finishLogin("session", "code"),
+    "submit_login_code",
+    () => desktop.submitLoginCode("session", "code"),
     { sessionId: "session", code: "code" },
   ],
-  ["finish_login", () => desktop.finishLogin("session"), { sessionId: "session", code: null }],
+  ["finish_login", () => desktop.finishLogin("session"), { sessionId: "session" }],
   ["cancel_login", () => desktop.cancelLogin("session"), { sessionId: "session" }],
   ["remove_connection", () => desktop.removeConnection("account"), { connectionId: "account" }],
   [

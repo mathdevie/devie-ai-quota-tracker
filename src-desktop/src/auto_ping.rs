@@ -249,11 +249,15 @@ async fn send_codex(
         .post(CODEX_PING_URL)
         .bearer_auth(&credentials.access_token)
         .header(reqwest::header::ACCEPT, "text/event-stream")
-        .header(reqwest::header::USER_AGENT, "codex_cli_rs/0.136.0")
+        .header(
+            reqwest::header::USER_AGENT,
+            format!("codex_cli_rs/{}", oauth::codex::CLIENT_VERSION),
+        )
+        .header("version", oauth::codex::CLIENT_VERSION)
         .header("originator", "codex_cli_rs")
         .header("session_id", &connection.id)
         .json(&json!({
-            "model": "gpt-5.5",
+            "model": oauth::codex::PING_MODEL,
             "input": [{
                 "type": "message",
                 "role": "user",
@@ -351,6 +355,8 @@ mod tests {
             identity: None,
             windows: vec![session(None, 0.0)],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         };
         assert!(!claude_ping_blocked(
             &connection,
@@ -370,6 +376,8 @@ mod tests {
             identity: None,
             windows: vec![session(None, 0.0)],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         };
         assert!(claude_ping_blocked(
             &connection,

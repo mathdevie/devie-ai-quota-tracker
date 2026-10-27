@@ -4,6 +4,8 @@
 //! Google can restrict or change them without notice, so the provider page
 //! keeps its unofficial warning.
 
+use super::{error, ErrorKind, ProviderError};
+
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};
 
@@ -24,10 +26,10 @@ const SUMMARY_URL: &str =
     "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary";
 const QUOTA_URL: &str = "https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels";
 // The quota endpoints answer only requests that look like the IDE.
-const CLIENT_VERSION: &str = "2.11.0";
+const CLIENT_VERSION: &str = "2.24.0";
 
 fn user_agent() -> String {
-    format!("antigravity/ide/{CLIENT_VERSION} darwin/arm64")
+    format!("antigravity/hub/{CLIENT_VERSION} darwin/arm64")
 }
 pub const CALLBACK_PATH: &str = "/callback";
 pub const REFRESH_LEAD: Duration = Duration::minutes(5);
@@ -85,7 +87,7 @@ pub async fn exchange(
 pub async fn refresh_tokens(
     client: &reqwest::Client,
     current: &Credentials,
-) -> Result<Credentials, String> {
+) -> Result<Credentials, ProviderError> {
     let refresh = current
         .refresh_token
         .as_deref()
@@ -95,30 +97,16 @@ pub async fn refresh_tokens(
         &[("grant_type", "refresh_token"), ("refresh_token", refresh)],
     )
     .await?;
-    credentials_from(&tokens, Some(current))
+    credentials_from(&tokens, Some(current)).map_err(ProviderError::invalid)
 }
 
-async fn token_request(client: &reqwest::Client, fields: &[(&str, &str)]) -> Result<Value, String> {
+async fn token_request(
+    client: &reqwest::Client,
+    fields: &[(&str, &str)],
+) -> Result<Value, ProviderError> {
     let mut form = vec![("client_id", CLIENT_ID), ("client_secret", CLIENT_SECRET)];
     form.extend_from_slice(fields);
-    let response = client
-        .post(gemini::TOKEN_URL)
-        .form(&form)
-        .send()
-        .await
-        .map_err(|_| "Google could not be reached.".to_string())?;
-    let status = response.status();
-    if !status.is_success() {
-        // Token response bodies stay out of errors.
-        return Err(format!(
-            "Antigravity token exchange failed (HTTP {}).",
-            status.as_u16()
-        ));
-    }
-    response
-        .json()
-        .await
-        .map_err(|_| "Antigravity returned an invalid token response.".into())
+    error::json(client.post(gemini::TOKEN_URL).form(&form), "Antigravity").await
 }
 
 fn credentials_from(tokens: &Value, current: Option<&Credentials>) -> Result<Credentials, String> {
@@ -147,6 +135,7 @@ fn credentials_from(tokens: &Value, current: Option<&Credentials>) -> Result<Cre
             .map(|seconds| Utc::now() + Duration::seconds(seconds as i64)),
         account_id: current.and_then(|c| c.account_id.clone()),
         project_id: current.and_then(|c| c.project_id.clone()),
+        last_refresh_at: None,
     })
 }
 
@@ -154,10 +143,10 @@ fn credentials_from(tokens: &Value, current: Option<&Credentials>) -> Result<Cre
 #[derive(Debug)]
 struct ApiError {
     status: Option<u16>,
-    message: String,
+    message: ProviderError,
 }
 
-impl From<ApiError> for String {
+impl From<ApiError> for ProviderError {
     fn from(error: ApiError) -> Self {
         error.message
     }
@@ -180,7 +169,7 @@ async fn api_post(
         .await
         .map_err(|_| ApiError {
             status: None,
-            message: "Antigravity could not be reached.".into(),
+            message: ProviderError::new(ErrorKind::Transport, "Antigravity could not be reached."),
         })?;
     let status = response.status();
     if let Some(message) = api_error(status) {
@@ -191,7 +180,7 @@ async fn api_post(
     }
     response.json().await.map_err(|_| ApiError {
         status: Some(status.as_u16()),
-        message: "Antigravity returned invalid quota data.".into(),
+        message: ProviderError::invalid("Antigravity returned invalid quota data."),
     })
 }
 
@@ -200,17 +189,11 @@ fn try_catalog(error: &ApiError) -> bool {
     !matches!(error.status, Some(401 | 429))
 }
 
-fn api_error(status: reqwest::StatusCode) -> Option<String> {
-    match status.as_u16() {
-        200..=299 => None,
-        401 => Some("The Antigravity login expired. Sign in again.".into()),
-        403 => Some("Antigravity quota access is unavailable for this account. The unofficial integration cannot read its limits.".into()),
-        429 => Some("Antigravity quota requests are rate limited. Try again later.".into()),
-        code => Some(format!("Antigravity quota request failed (HTTP {code}).")),
-    }
+fn api_error(status: reqwest::StatusCode) -> Option<ProviderError> {
+    (!status.is_success()).then(|| ProviderError::http("Antigravity", status, ""))
 }
 
-async fn subscription(client: &reqwest::Client, token: &str) -> Result<Value, String> {
+async fn subscription(client: &reqwest::Client, token: &str) -> Result<Value, ProviderError> {
     api_post(
         client,
         token,
@@ -221,22 +204,25 @@ async fn subscription(client: &reqwest::Client, token: &str) -> Result<Value, St
         }),
     )
     .await
-    .map_err(String::from)
+    .map_err(ProviderError::from)
 }
 
 pub async fn usage(
     client: &reqwest::Client,
     credentials: &Credentials,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let token = &credentials.access_token;
-    // The login saved the project id; ask loadCodeAssist only when it could not.
-    let project = match &credentials.project_id {
-        Some(id) => Some(id.clone()),
-        None => subscription(client, token)
-            .await
-            .ok()
-            .and_then(|info| gemini::project_id(info.get("cloudaicompanionProject"))),
-    };
+    // Tier changes affect which catalog allowances are meaningful.
+    let info = subscription(client, token).await.ok();
+    let project = info
+        .as_ref()
+        .and_then(|info| gemini::project_id(info.get("cloudaicompanionProject")))
+        .or_else(|| credentials.project_id.clone());
+    let paid = info
+        .as_ref()
+        .and_then(|v| v.pointer("/paidTier/id"))
+        .and_then(Value::as_str)
+        .is_some_and(|id| !id.is_empty() && id != "free-tier");
     let body = project
         .map(|id| json!({ "project": id }))
         .unwrap_or_else(|| json!({}));
@@ -249,8 +235,14 @@ pub async fn usage(
         Err(error) if !try_catalog(&error) => return Err(error.message),
         Err(_) => {}
     }
+    if !paid {
+        return Err(ProviderError::new(
+            ErrorKind::Other,
+            "Antigravity weekly quota is unavailable. Try again later.",
+        ));
+    }
     let json = api_post(client, token, QUOTA_URL, &body).await?;
-    parse_usage(&json)
+    parse_usage(&json).map_err(ProviderError::invalid)
 }
 
 /// `parse::reset_time` passes unknown text through; keep real timestamps only.
@@ -263,6 +255,8 @@ fn strict_reset_time(value: Option<&Value>) -> Option<String> {
 pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
     let groups = json
         .get("groups")
+        .filter(|v| v.is_array())
+        .or_else(|| json.pointer("/quotaSummary/groups"))
         .and_then(Value::as_array)
         .ok_or_else(|| "Antigravity returned no quota summary.".to_string())?;
     let mut windows = Vec::new();
@@ -273,9 +267,6 @@ pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
         };
         let mut lanes = Vec::new();
         for bucket in buckets {
-            if bucket.get("disabled").and_then(Value::as_bool) == Some(true) {
-                continue;
-            }
             let Some(key) = bucket
                 .get("bucketId")
                 .and_then(Value::as_str)
@@ -284,12 +275,20 @@ pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
             else {
                 continue;
             };
-            let Some(remaining) = number(bucket.get("remainingFraction"))
-                .filter(|value| value.is_finite() && (0.0..=1.0).contains(value))
-            else {
+            let (rank, window) = window_label(bucket, key);
+            let disabled = bucket.get("disabled").and_then(Value::as_bool) == Some(true);
+            if disabled && rank != 0 {
+                continue;
+            }
+            let remaining = if disabled {
+                Some(0.0)
+            } else {
+                number(bucket.get("remainingFraction"))
+            }
+            .filter(|value| value.is_finite() && (0.0..=1.0).contains(value));
+            let Some(remaining) = remaining else {
                 continue;
             };
-            let (rank, window) = window_label(bucket, key);
             let label = format!("{} ({window})", pool_label(key, group_name));
             lanes.push((
                 rank,
@@ -317,6 +316,8 @@ pub fn parse_summary(json: &Value) -> Result<QuotaReading, String> {
         windows,
         identity: None,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 
@@ -420,12 +421,26 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         windows,
         identity: None,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn nested_summary_keeps_exhausted_disabled_sessions() {
+        let reading = parse_summary(&json!({"quotaSummary":{"groups":[{
+            "displayName":"Gemini Models", "buckets":[
+                {"bucketId":"gemini-5h", "window":"5h", "disabled":true},
+                {"bucketId":"gemini-weekly", "window":"weekly", "remainingFraction":0.0}
+            ]
+        }]}}))
+        .unwrap();
+        assert_eq!(reading.windows.len(), 2);
+        assert_eq!(reading.windows[0].used_percent, 100.0);
+    }
 
     #[tokio::test]
     async fn fetches_remote_quota_with_account_token_and_project() {
@@ -637,7 +652,7 @@ mod tests {
     }
 
     #[test]
-    fn summary_skips_disabled_and_unknown_buckets_and_needs_one_window() {
+    fn summary_preserves_disabled_sessions_and_skips_unknown_buckets() {
         let reading = parse_summary(&json!({ "groups": [ { "displayName": "Custom", "buckets": [
             { "bucketId": "custom-5h", "remainingFraction": 0.5, "disabled": true },
             { "bucketId": "custom-weekly", "remainingFraction": "NaN" },
@@ -656,6 +671,7 @@ mod tests {
         assert_eq!(
             rows,
             vec![
+                ("custom-5h", "Custom (5h)"),
                 ("custom-5h-b", "Custom (5h)"),
                 ("custom-daily", "Custom (Daily Limit Remaining)"),
             ]
@@ -766,7 +782,7 @@ mod tests {
     fn falls_back_to_the_catalog_only_when_it_can_help() {
         let error = |status| ApiError {
             status,
-            message: String::new(),
+            message: String::new().into(),
         };
         assert!(try_catalog(&error(Some(403))));
         assert!(try_catalog(&error(Some(404))));
@@ -776,7 +792,7 @@ mod tests {
         assert!(!try_catalog(&error(Some(429))));
         assert_eq!(
             user_agent(),
-            format!("antigravity/ide/{CLIENT_VERSION} darwin/arm64")
+            format!("antigravity/hub/{CLIENT_VERSION} darwin/arm64")
         );
     }
 
@@ -784,13 +800,16 @@ mod tests {
     fn distinguishes_expired_login_from_unavailable_quota() {
         assert!(api_error(reqwest::StatusCode::UNAUTHORIZED)
             .unwrap()
+            .message
             .contains("expired"));
         assert!(!api_error(reqwest::StatusCode::FORBIDDEN)
             .unwrap()
+            .message
             .contains("expired"));
         assert!(api_error(reqwest::StatusCode::TOO_MANY_REQUESTS)
             .unwrap()
-            .contains("rate limited"));
+            .message
+            .contains("rate-limited"));
         assert!(api_error(reqwest::StatusCode::OK).is_none());
     }
 }

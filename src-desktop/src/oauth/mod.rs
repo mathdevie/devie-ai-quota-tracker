@@ -15,16 +15,13 @@ pub mod claude;
 pub mod codex;
 pub mod copilot;
 pub mod cursor;
+mod error;
 pub mod gemini;
+mod sessions;
+pub use error::{ErrorKind, ProviderError};
+pub use sessions::LoginSessions;
 
-use std::{
-    collections::HashMap,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc, Mutex,
-    },
-    time::Duration,
-};
+use std::{sync::atomic::Ordering, time::Duration};
 
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use serde::Serialize;
@@ -95,57 +92,6 @@ pub struct PendingLogin {
     pub callback: Option<callback::CallbackServer>,
     pub device: Option<copilot::DeviceCode>,
     pub cursor: Option<cursor::DeepLogin>,
-}
-
-#[derive(Default)]
-struct LoginRegistry {
-    /// Sign-ins that started but did not begin waiting for the browser.
-    pending: HashMap<String, PendingLogin>,
-    /// Sign-ins waiting for the browser: their callback stop flags.
-    waiting: HashMap<String, Arc<AtomicBool>>,
-}
-
-#[derive(Clone, Default)]
-pub struct LoginSessions(Arc<Mutex<LoginRegistry>>);
-
-impl LoginSessions {
-    fn lock(&self) -> std::sync::MutexGuard<'_, LoginRegistry> {
-        self.0.lock().unwrap_or_else(|poison| poison.into_inner())
-    }
-
-    pub fn insert(&self, id: String, login: PendingLogin) {
-        let mut registry = self.lock();
-        // One sign-in at a time: a new one cancels the rest and frees the fixed ports.
-        registry.pending.clear();
-        for stop in registry.waiting.drain().map(|(_, stop)| stop) {
-            stop.store(true, Ordering::Relaxed);
-        }
-        registry.pending.insert(id, login);
-    }
-
-    /// Moves a sign-in to the waiting stage. `cancel` can still stop it.
-    pub fn take(&self, id: &str) -> Option<PendingLogin> {
-        let mut registry = self.lock();
-        let login = registry.pending.remove(id)?;
-        if let Some(stop) = login.callback.as_ref().map(|server| server.stop_handle()) {
-            registry.waiting.insert(id.to_string(), stop);
-        }
-        Some(login)
-    }
-
-    /// Ends a sign-in at any stage and frees its callback port.
-    pub fn cancel(&self, id: &str) {
-        let mut registry = self.lock();
-        registry.pending.remove(id);
-        if let Some(stop) = registry.waiting.remove(id) {
-            stop.store(true, Ordering::Relaxed);
-        }
-    }
-
-    /// Forgets a sign-in that finished, one way or the other.
-    pub fn finish(&self, id: &str) {
-        self.lock().waiting.remove(id);
-    }
 }
 
 /// Starts a sign-in: opens the browser and returns what the interface shows.
@@ -275,7 +221,7 @@ pub async fn start(
 pub async fn finish(
     client: &reqwest::Client,
     login: PendingLogin,
-    manual_code: Option<String>,
+    mut manual_code: tokio::sync::oneshot::Receiver<String>,
 ) -> Result<LoginOutcome, String> {
     match login.provider {
         Provider::Copilot => {
@@ -294,30 +240,25 @@ pub async fn finish(
             let pair = login
                 .pkce
                 .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
-            let (code, state) = match manual_code {
-                Some(code) if !code.trim().is_empty() => (code.trim().to_string(), None),
-                _ => {
-                    let server = login
-                        .callback
-                        .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
-                    let params =
-                        tauri::async_runtime::spawn_blocking(move || server.wait(LOGIN_TIMEOUT))
-                            .await
-                            .map_err(|_| "The sign-in stopped early.".to_string())?
-                            .ok_or_else(|| {
-                                "The browser did not return in time. Start the sign-in again."
-                                    .to_string()
-                            })?;
+            let server = login
+                .callback
+                .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
+            let stop = server.stop_handle();
+            let callback = tauri::async_runtime::spawn_blocking(move || server.wait(LOGIN_TIMEOUT));
+            tokio::pin!(callback);
+            let (code, state) = tokio::select! {
+                code = &mut manual_code, if login.provider == Provider::Claude => {
+                    stop.store(true, Ordering::Relaxed);
+                    (code.map_err(|_| "The sign-in session ended.".to_string())?, None)
+                }
+                params = &mut callback => {
+                    let params = params.map_err(|_| "The sign-in stopped early.".to_string())?
+                        .ok_or_else(|| "The browser did not return in time. Start the sign-in again.".to_string())?;
                     if let Some(error) = params.error {
                         return Err(format!("The provider refused the sign-in: {error}"));
                     }
-                    let code = params
-                        .code
-                        .ok_or_else(|| "The provider returned no code.".to_string())?;
-                    // A browser callback must echo the state; only a pasted code may omit it.
-                    let state = params.state.ok_or_else(|| {
-                        "The sign-in response does not match this session. Start again.".to_string()
-                    })?;
+                    let code = params.code.ok_or_else(|| "The provider returned no code.".to_string())?;
+                    let state = params.state.ok_or_else(|| "The sign-in response does not match this session. Start again.".to_string())?;
                     (code, Some(state))
                 }
             };
@@ -390,13 +331,16 @@ pub async fn refresh_quota(
     app_data_dir: &Path,
     client: &reqwest::Client,
     force: bool,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let current = credentials_for_request(connection, app_data_dir, client).await?;
-    match read_quota(connection, client, &current, force).await {
-        Err(message) if message.contains("expired") && current.refresh_token.is_some() => {
+    match read_quota(connection, app_data_dir, client, &current, force).await {
+        Err(error)
+            if error.kind == ErrorKind::AccessExpired
+                && can_renew(&connection.provider, &current) =>
+        {
             // The token may have been revoked early. Renew once, then retry.
-            let renewed = renew(connection, app_data_dir, client, &current).await?;
-            read_quota(connection, client, &renewed, force).await
+            let renewed = renew_rejected(connection, app_data_dir, client, &current).await?;
+            read_quota(connection, app_data_dir, client, &renewed, force).await
         }
         result => result,
     }
@@ -407,51 +351,99 @@ pub async fn credentials_for_request(
     connection: &ProviderConnection,
     app_data_dir: &Path,
     client: &reqwest::Client,
-) -> Result<Credentials, String> {
-    let mut current = credentials::load(app_data_dir, &connection.id)?;
+) -> Result<Credentials, ProviderError> {
     let lead = match connection.provider {
         Provider::Claude => claude::REFRESH_LEAD,
         Provider::Codex => codex::REFRESH_LEAD,
         Provider::Gemini => gemini::REFRESH_LEAD,
         Provider::Antigravity => antigravity::REFRESH_LEAD,
-        Provider::Copilot => chrono::Duration::zero(),
+        Provider::Copilot => chrono::Duration::minutes(5),
         Provider::Cursor => cursor::REFRESH_LEAD,
     };
-    if current.refresh_token.is_some() && current.expires_within(lead) {
-        current = renew(connection, app_data_dir, client, &current).await?;
-    }
-    Ok(current)
+    credentials::refresh_with(
+        app_data_dir,
+        &connection.id,
+        None,
+        |current| {
+            can_renew(&connection.provider, current)
+                && (current.expires_within(lead)
+                    || (connection.provider == Provider::Codex
+                        && current
+                            .last_refresh_at
+                            .is_none_or(|at| chrono::Utc::now() - at >= chrono::Duration::days(8))))
+        },
+        |current| async move { renew(connection, client, &current).await },
+    )
+    .await
+}
+
+fn can_renew(provider: &Provider, credentials: &Credentials) -> bool {
+    *provider != Provider::Cursor
+        && credentials
+            .refresh_token
+            .as_deref()
+            .is_some_and(|token| !token.is_empty())
+}
+
+/// A competing request may already have replaced the rejected token.
+pub async fn renew_rejected(
+    connection: &ProviderConnection,
+    app_data_dir: &Path,
+    client: &reqwest::Client,
+    rejected: &Credentials,
+) -> Result<Credentials, ProviderError> {
+    credentials::refresh_with(
+        app_data_dir,
+        &connection.id,
+        Some(&rejected.access_token),
+        |_| true,
+        |current| async move { renew(connection, client, &current).await },
+    )
+    .await
 }
 
 async fn renew(
     connection: &ProviderConnection,
-    app_data_dir: &Path,
     client: &reqwest::Client,
     current: &Credentials,
-) -> Result<Credentials, String> {
-    let renewed = match connection.provider {
+) -> Result<Credentials, ProviderError> {
+    if !can_renew(&connection.provider, current) {
+        return Err(ProviderError::needs_login(
+            "This login cannot be renewed. Sign in again.",
+        ));
+    }
+    match connection.provider {
         Provider::Claude => claude::refresh_tokens(client, current).await,
         Provider::Codex => codex::refresh_tokens(client, current).await,
         Provider::Gemini => gemini::refresh_tokens(client, current).await,
         Provider::Antigravity => antigravity::refresh_tokens(client, current).await,
-        Provider::Copilot => Err("GitHub tokens do not renew. Sign in again.".to_string()),
-        Provider::Cursor => Err("Cursor tokens do not renew. Sign in again.".to_string()),
+        Provider::Copilot => copilot::refresh_tokens(client, current).await,
+        Provider::Cursor => Err(ProviderError::needs_login(
+            "Cursor tokens do not renew. Sign in again.",
+        )),
     }
-    .map_err(|message| format!("{message} Sign in again to renew the login."))?;
-    credentials::save(app_data_dir, &connection.id, &renewed)?;
-    Ok(renewed)
 }
 
 async fn read_quota(
     connection: &ProviderConnection,
+    app_data_dir: &Path,
     client: &reqwest::Client,
     current: &Credentials,
     force: bool,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     match connection.provider {
         Provider::Claude => claude::cached_usage(client, &current.access_token, force).await,
         Provider::Codex => codex::usage(client, current).await,
-        Provider::Gemini => gemini::usage(client, current).await,
+        Provider::Gemini => {
+            // Project discovery is a provider request too: keep it inside the
+            // same one-refresh retry boundary as the quota request.
+            let current =
+                credentials::project_with(app_data_dir, &connection.id, |current| async move {
+                    gemini::resolve_project(client, &current.access_token).await
+                })
+                .await?;
+            gemini::usage(client, &current).await
+        }
         Provider::Antigravity => antigravity::usage(client, current).await,
         Provider::Copilot => {
             let login = connection

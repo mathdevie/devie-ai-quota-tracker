@@ -2,6 +2,8 @@
 //!
 //! This uses the public OAuth client and Code Assist endpoints from Gemini CLI.
 
+use super::{error, ProviderError};
+
 use std::collections::BTreeMap;
 
 use chrono::{Duration, Utc};
@@ -69,9 +71,10 @@ pub async fn exchange(
     .await?;
     let mut credentials = credentials_from(&tokens, None, None)?;
     let (mut identity, account_key) = profile(client, &credentials.access_token).await?;
-    let project = load_or_create_project(client, &credentials.access_token).await?;
-    credentials.project_id = Some(project.id);
-    identity.plan = project.plan;
+    if let Ok(project) = load_or_create_project(client, &credentials.access_token).await {
+        credentials.project_id = Some(project.id);
+        identity.plan = project.plan;
+    }
     Ok(LoginOutcome {
         credentials,
         identity,
@@ -82,7 +85,7 @@ pub async fn exchange(
 pub async fn refresh_tokens(
     client: &reqwest::Client,
     current: &Credentials,
-) -> Result<Credentials, String> {
+) -> Result<Credentials, ProviderError> {
     let refresh_token = current
         .refresh_token
         .as_deref()
@@ -106,22 +109,18 @@ pub async fn refresh_tokens(
     Ok(credentials)
 }
 
-async fn post_token(client: &reqwest::Client, form: &[(&str, &str)]) -> Result<Value, String> {
-    let response = client
-        .post(TOKEN_URL)
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .header(reqwest::header::ACCEPT, "application/json")
-        .form(form)
-        .send()
-        .await
-        .map_err(|_| "Google could not be reached.".to_string())?;
-    let status = response.status();
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("Gemini", status, &text));
-    }
-    serde_json::from_str(&text)
-        .map_err(|_| "Gemini returned an invalid token response.".to_string())
+async fn post_token(
+    client: &reqwest::Client,
+    form: &[(&str, &str)],
+) -> Result<Value, ProviderError> {
+    error::json(
+        client
+            .post(TOKEN_URL)
+            .header(reqwest::header::USER_AGENT, USER_AGENT)
+            .form(form),
+        "Gemini",
+    )
+    .await
 }
 
 fn credentials_from(
@@ -147,6 +146,7 @@ fn credentials_from(
         expires_at,
         account_id: None,
         project_id,
+        last_refresh_at: None,
     })
 }
 
@@ -193,7 +193,7 @@ struct ProjectInfo {
 async fn load_or_create_project(
     client: &reqwest::Client,
     access_token: &str,
-) -> Result<ProjectInfo, String> {
+) -> Result<ProjectInfo, ProviderError> {
     let load = code_assist_post(
         client,
         access_token,
@@ -210,7 +210,8 @@ async fn load_or_create_project(
     if load.get("currentTier").is_some_and(|tier| !tier.is_null()) {
         return Err(
             "Gemini requires a Google Cloud project for this account. Set one in Gemini CLI first."
-                .to_string(),
+                .to_string()
+                .into(),
         );
     }
 
@@ -262,7 +263,8 @@ async fn load_or_create_project(
     }
     Err(
         "Gemini did not finish the account setup. Open Gemini CLI once, then try again."
-            .to_string(),
+            .to_string()
+            .into(),
     )
 }
 
@@ -283,7 +285,7 @@ async fn code_assist_post(
     access_token: &str,
     path: &str,
     body: &Value,
-) -> Result<Value, String> {
+) -> Result<Value, ProviderError> {
     let url = format!("{CODE_ASSIST_URL}/{path}");
     let response = client
         .post(url)
@@ -291,8 +293,7 @@ async fn code_assist_post(
         .header(reqwest::header::USER_AGENT, USER_AGENT)
         .json(body)
         .send()
-        .await
-        .map_err(|_| "Gemini Code Assist could not be reached.".to_string())?;
+        .await?;
     parse_code_assist_response(response).await
 }
 
@@ -300,36 +301,42 @@ async fn code_assist_get(
     client: &reqwest::Client,
     access_token: &str,
     path: &str,
-) -> Result<Value, String> {
+) -> Result<Value, ProviderError> {
     let url = format!("{CODE_ASSIST_URL}/v1internal/{path}");
     let response = client
         .get(url)
         .bearer_auth(access_token)
         .header(reqwest::header::USER_AGENT, USER_AGENT)
         .send()
-        .await
-        .map_err(|_| "Gemini Code Assist could not be reached.".to_string())?;
+        .await?;
     parse_code_assist_response(response).await
 }
 
-async fn parse_code_assist_response(response: reqwest::Response) -> Result<Value, String> {
+async fn parse_code_assist_response(response: reqwest::Response) -> Result<Value, ProviderError> {
     let status = response.status();
-    let text = response.text().await.unwrap_or_default();
-    if status.as_u16() == 401 {
-        return Err("The Gemini login expired. Sign in again.".to_string());
-    }
+    let text = response.text().await?;
     if !status.is_success() {
-        return Err(describe_http_failure("Gemini Code Assist", status, &text));
+        return Err(ProviderError::http("Gemini Code Assist", status, &text));
     }
-    serde_json::from_str(&text).map_err(|_| "Gemini Code Assist returned invalid data.".to_string())
+    serde_json::from_str(&text)
+        .map_err(|_| ProviderError::invalid("Gemini Code Assist returned invalid data."))
+}
+
+pub async fn resolve_project(
+    client: &reqwest::Client,
+    token: &str,
+) -> Result<String, ProviderError> {
+    load_or_create_project(client, token)
+        .await
+        .map(|project| project.id)
 }
 
 pub async fn usage(
     client: &reqwest::Client,
     credentials: &Credentials,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let project_id = credentials.project_id.as_deref().ok_or_else(|| {
-        "The Gemini account has no Code Assist project. Sign in again.".to_string()
+        "The Gemini account has no Code Assist project. Project setup is required.".to_string()
     })?;
     let json = code_assist_post(
         client,
@@ -338,7 +345,7 @@ pub async fn usage(
         &json!({ "project": project_id }),
     )
     .await?;
-    parse_usage(&json)
+    parse_usage(&json).map_err(ProviderError::invalid)
 }
 
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
@@ -378,6 +385,8 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         identity: None,
         windows: windows.into_values().collect(),
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 

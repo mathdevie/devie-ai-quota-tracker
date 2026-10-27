@@ -2,7 +2,12 @@
 //! app's PKCE deep link (`cursor.com/loginDeepControl`, polled on
 //! `api2.cursor.sh/auth/poll`) is reproduced, undocumented as it is. Quota
 //! comes from the `cursor.com` dashboard endpoints with the token as the
-//! `WorkosCursorSessionToken` cookie, like CodexBar and cursor-stats.
+//! `WorkosCursorSessionToken` cookie, with IDE Connect JSON and enterprise
+//! usage fallbacks matching 9router. There is no known token renewal route.
+
+use super::{error, ErrorKind, ProviderError};
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
+use sha2::{Digest, Sha256};
 
 use std::time::Duration as StdDuration;
 
@@ -125,6 +130,7 @@ fn interpret(tokens: &Value) -> Result<LoginOutcome, String> {
             expires_at,
             account_id: Some(user_id.clone()),
             project_id: None,
+            last_refresh_at: None,
         },
         identity: RemoteIdentity {
             provider_user_id: Some(user_id.clone()),
@@ -165,31 +171,23 @@ async fn dashboard_json(
     client: &reqwest::Client,
     url: &str,
     cookie: &str,
-    invalid: &str,
-) -> Result<Value, String> {
-    let response = client
-        .get(url)
-        .header(reqwest::header::ACCEPT, "application/json")
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .header(reqwest::header::COOKIE, cookie)
-        .send()
-        .await
-        .map_err(|_| "Cursor could not be reached.".to_string())?;
-    let status = response.status();
-    if status.as_u16() == 401 || status.as_u16() == 403 {
-        return Err("The Cursor login expired. Sign in again.".to_string());
-    }
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("Cursor", status, &text));
-    }
-    serde_json::from_str(&text).map_err(|_| invalid.to_string())
+    _invalid: &str,
+) -> Result<Value, ProviderError> {
+    error::json(
+        client
+            .get(url)
+            .header(reqwest::header::ACCEPT, "application/json")
+            .header(reqwest::header::USER_AGENT, USER_AGENT)
+            .header(reqwest::header::COOKIE, cookie),
+        "Cursor",
+    )
+    .await
 }
 
-pub async fn usage(
+async fn dashboard_usage(
     client: &reqwest::Client,
     credentials: &Credentials,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let cookie = cookie_header(credentials)?;
     let summary = dashboard_json(
         client,
@@ -209,6 +207,190 @@ pub async fn usage(
         }
     }
     Ok(reading)
+}
+
+const PERIOD_URL: &str =
+    "https://api2.cursor.sh/aiserver.v1.DashboardService/GetCurrentPeriodUsage";
+const PLAN_URL: &str = "https://api2.cursor.sh/aiserver.v1.DashboardService/GetPlanInfo";
+const AUTH_USAGE_URL: &str = "https://api2.cursor.sh/auth/usage";
+const CLIENT_VERSION: &str = "3.12.17";
+
+pub async fn usage(
+    client: &reqwest::Client,
+    credentials: &Credentials,
+) -> Result<QuotaReading, ProviderError> {
+    match dashboard_usage(client, credentials).await {
+        Ok(reading) => Ok(reading),
+        // Do not multiply requests during an outage or retry an expired token.
+        Err(error)
+            if matches!(
+                error.kind,
+                ErrorKind::AccessExpired | ErrorKind::RateLimited | ErrorKind::Transport
+            ) =>
+        {
+            Err(error)
+        }
+        Err(_) => ide_usage(client, credentials).await,
+    }
+}
+
+fn digest(value: &str) -> String {
+    Sha256::digest(value.as_bytes())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
+}
+
+fn checksum(machine: &str, milliseconds: i64) -> String {
+    let stamp = (milliseconds / 1_000_000) as u32;
+    // Match JavaScript's 32-bit shift semantics in Cursor's checksum routine.
+    let mut bytes = [8, 0, 24, 16, 8, 0].map(|shift| (stamp >> shift) as u8);
+    let mut previous = 165;
+    for (i, byte) in bytes.iter_mut().enumerate() {
+        *byte = (*byte ^ previous).wrapping_add(i as u8);
+        previous = *byte;
+    }
+    format!("{}{machine}", URL_SAFE_NO_PAD.encode(bytes))
+}
+
+fn ide_request(
+    client: &reqwest::Client,
+    url: &str,
+    credentials: &Credentials,
+) -> reqwest::RequestBuilder {
+    let token = &credentials.access_token;
+    let machine = digest(&format!("{token}machineId"));
+    client
+        .post(url)
+        .bearer_auth(token)
+        .json(&serde_json::json!({}))
+        .header("accept", "application/json")
+        .header("connect-protocol-version", "1")
+        .header("user-agent", "connect-es/1.6.1")
+        .header("x-client-key", digest(token))
+        .header(
+            "x-cursor-checksum",
+            checksum(&machine, Utc::now().timestamp_millis()),
+        )
+        .header("x-cursor-client-version", CLIENT_VERSION)
+        .header(
+            "x-cursor-client-commit",
+            "0fb762053c34788bb7760d5673f8a6d4c8589d50",
+        )
+        .header("x-cursor-client-type", "ide")
+        .header("x-cursor-client-os", "macos")
+        .header("x-cursor-client-arch", "aarch64")
+        .header("x-cursor-client-device-type", "desktop")
+        .header("x-ghost-mode", "true")
+        .header("x-request-id", uuid::Uuid::new_v4().to_string())
+        .header(
+            "x-session-id",
+            uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_DNS, token.as_bytes()).to_string(),
+        )
+}
+
+async fn ide_usage(
+    client: &reqwest::Client,
+    credentials: &Credentials,
+) -> Result<QuotaReading, ProviderError> {
+    let period = error::json(ide_request(client, PERIOD_URL, credentials), "Cursor").await;
+    let mut reading = match period {
+        Ok(json) => parse_period_usage(&json).ok(),
+        Err(error)
+            if matches!(
+                error.kind,
+                ErrorKind::AccessExpired | ErrorKind::RateLimited | ErrorKind::Transport
+            ) =>
+        {
+            return Err(error)
+        }
+        Err(_) => None,
+    };
+    if reading.is_none() {
+        let json = error::json(
+            client
+                .get(AUTH_USAGE_URL)
+                .bearer_auth(&credentials.access_token)
+                .header("accept", "application/json"),
+            "Cursor",
+        )
+        .await?;
+        reading = Some(parse_auth_usage(&json).map_err(ProviderError::invalid)?);
+    }
+    let mut reading = reading.unwrap();
+    if let Ok(plan) = error::json(ide_request(client, PLAN_URL, credentials), "Cursor").await {
+        if let Some(name) = plan
+            .pointer("/planInfo/planName")
+            .and_then(Value::as_str)
+            .filter(|s| !s.trim().is_empty())
+        {
+            reading.identity = Some(RemoteIdentity {
+                plan: Some(name.into()),
+                ..Default::default()
+            });
+        }
+    }
+    Ok(reading)
+}
+
+fn parse_period_usage(json: &Value) -> Result<QuotaReading, String> {
+    // Reuse our dashboard normalization to preserve cents, model pools and caps.
+    let plan = json.get("planUsage").cloned().unwrap_or(Value::Null);
+    let spend = json.get("spendLimitUsage").cloned().unwrap_or(Value::Null);
+    let mut plan = plan;
+    if plan.is_object() {
+        plan["used"] = plan
+            .get("includedSpend")
+            .or_else(|| plan.get("totalSpend"))
+            .cloned()
+            .unwrap_or(Value::Null);
+    }
+    let normalized = serde_json::json!({
+        "billingCycleEnd":json.get("billingCycleEnd"),
+        "individualUsage": {"plan":plan, "onDemand":{
+            "used":spend.get("individualUsed"), "limit":spend.get("individualLimit")
+        }},
+        "teamUsage":{"pooled":{"used":spend.get("pooledUsed"), "limit":spend.get("pooledLimit")}}
+    });
+    let mut reading = parse_usage_summary(&normalized)?;
+    reading.source = "Cursor IDE API".into();
+    Ok(reading)
+}
+
+fn parse_auth_usage(json: &Value) -> Result<QuotaReading, String> {
+    let mut windows = Vec::new();
+    for (key, bucket) in json
+        .as_object()
+        .ok_or("Cursor returned invalid quota data.")?
+    {
+        let total = number(bucket.get("maxRequestUsage")).filter(|n| n.is_finite() && *n > 0.0);
+        let used = number(bucket.get("numRequests")).filter(|n| n.is_finite() && *n >= 0.0);
+        if let (Some(total), Some(used)) = (total, used) {
+            windows.push(QuotaWindow {
+                key: format!("requests_{key}"),
+                label: format!("{key} requests"),
+                used_percent: (used / total * 100.0).clamp(0.0, 100.0),
+                // startOfMonth is the period start, not a future reset deadline.
+                resets_at: None,
+                unlimited: false,
+                paid: false,
+                amount: Some(QuotaAmount {
+                    used: Some(used),
+                    total,
+                    unit: Some("requests".into()),
+                    overage: None,
+                }),
+            });
+        }
+    }
+    if windows.is_empty() {
+        return Err("Cursor returned no active quota windows.".into());
+    }
+    Ok(QuotaReading {
+        source: "Cursor IDE API".into(),
+        windows,
+        ..Default::default()
+    })
 }
 
 /// Turns `/api/usage-summary` into quota windows: the included plan (two
@@ -264,6 +446,8 @@ pub fn parse_usage_summary(json: &Value) -> Result<QuotaReading, String> {
         }),
         windows,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 
@@ -380,6 +564,36 @@ pub const REFRESH_LEAD: Duration = Duration::zero();
 mod tests {
     use super::*;
     use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
+
+    #[test]
+    fn reads_ide_period_spending_and_enterprise_requests() {
+        let reading = parse_period_usage(&serde_json::json!({
+            "billingCycleEnd":"2026-12-01T00:00:00Z",
+            "planUsage":{"limit":2000,"includedSpend":500},
+            "spendLimitUsage":{"individualLimit":1000,"individualUsed":200}
+        }))
+        .unwrap();
+        assert_eq!(reading.windows.len(), 2);
+        assert_eq!(reading.windows[0].used_percent, 25.0);
+        assert_eq!(reading.windows[1].amount.as_ref().unwrap().total, 10.0);
+        let requests = parse_auth_usage(&serde_json::json!({"startOfMonth":"2026-11-01", "model":{"numRequests":20,"maxRequestUsage":100}})).unwrap();
+        assert_eq!(requests.windows[0].used_percent, 20.0);
+        assert!(requests.windows[0].resets_at.is_none());
+        assert!(parse_auth_usage(&serde_json::json!({"model":{}})).is_err());
+    }
+
+    #[test]
+    fn ide_requests_use_bearer_connect_json_without_dashboard_cookie() {
+        let mut credentials = Credentials::default();
+        credentials.access_token = "synthetic".into();
+        let request = ide_request(&reqwest::Client::new(), PERIOD_URL, &credentials)
+            .build()
+            .unwrap();
+        assert_eq!(request.headers()["authorization"], "Bearer synthetic");
+        assert_eq!(request.headers()["content-type"], "application/json");
+        assert_eq!(request.headers()["connect-protocol-version"], "1");
+        assert!(request.headers().get("cookie").is_none());
+    }
 
     fn jwt(claims: &str) -> String {
         format!("h.{}.s", URL_SAFE_NO_PAD.encode(claims))

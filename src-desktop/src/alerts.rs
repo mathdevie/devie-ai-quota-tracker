@@ -290,6 +290,8 @@ mod tests {
                 paid: false,
             }],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         };
         let notices = notices("fr-FR", &connection, &reading, now);
         assert_eq!(notices.len(), 3);
@@ -319,6 +321,8 @@ mod tests {
             identity: None,
             windows: vec![window],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         };
         assert!(notices("en-US", &connection, &reading, now).is_empty());
     }
@@ -333,6 +337,8 @@ mod tests {
             identity: None,
             windows: vec![window],
             reset_credits: None,
+            observed_at: None,
+            stale: false,
         }
     }
 
