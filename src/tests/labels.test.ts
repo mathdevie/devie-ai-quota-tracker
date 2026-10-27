@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vite-plus/test";
-import { accountLabel, fullName, isCreditStatus, isUnofficial, visibleWindows } from "@/lib/labels";
+import {
+  accountLabel,
+  fullName,
+  isCreditStatus,
+  isUnofficial,
+  visibleWindows,
+} from "@/features/connections/labels";
 import { account, quota } from "./helpers";
 
 describe("account identity", () => {

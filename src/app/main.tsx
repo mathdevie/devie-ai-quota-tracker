@@ -1,7 +1,7 @@
 import { Toast } from "@base-ui/react/toast";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import AppShell from "@/components/AppShell";
+import AppShell from "@/features/app-shell/AppShell";
 import I18nProvider from "@/i18n/I18nProvider";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import { Toaster } from "@/ui/Toaster";

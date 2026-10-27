@@ -3,7 +3,7 @@ import { createInstance } from "i18next";
 import type { ReactElement, ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 import messages from "@/i18n/messages/en-US.json";
-import type { ProviderConnection, QuotaWindow } from "@/lib/contracts";
+import type { ProviderConnection, QuotaWindow } from "@/features/desktop/contracts";
 import Tooltip from "@/ui/Tooltip";
 
 export const testI18n = createInstance();

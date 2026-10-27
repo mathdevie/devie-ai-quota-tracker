@@ -42,7 +42,7 @@ push protection rejects it.
 7. Review the app-owned integration points, whose comments explain each
    override: `src/app/main.tsx` (import order, Toaster placement),
    `src/app/globals.scss` (zoom and dialog sizing), `src/theme/` (themes,
-   legacy migrations, native fallbacks), `src/components/PopoverSurface.tsx`
+   legacy migrations, native fallbacks), `src/features/app-shell/PopoverSurface.tsx`
    and its SCSS, `QuotaFilters.module.scss`, and `ResetCredits.tsx`.
 8. Check in the browser (`bun run dev:web-only`) and the native app
    (`bun run dev`), and record screenshots:

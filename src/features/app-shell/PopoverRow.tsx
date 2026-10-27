@@ -1,0 +1,62 @@
+import { useTranslation } from "react-i18next";
+import type { ProviderConnection } from "@/features/desktop/contracts";
+import { accountLabel, PROVIDER_NAMES, visibleWindows } from "@/features/connections/labels";
+import CodexResetsNews from "@/features/connections/CodexResetsNews";
+import { StatusBadge } from "@/features/connections/ConnectionCard";
+import styles from "./PopoverRow.module.scss";
+import ProviderIcon from "./ProviderIcon";
+import QuotaBars from "@/features/connections/QuotaBars";
+import ResetCredits from "@/features/connections/ResetCredits";
+
+/** One account in the menu bar popover: a flat row, no card frame. */
+export default function PopoverRow({
+  connection,
+  pinnedKey,
+  onPin,
+  onUseReset,
+  onOverlayChange,
+}: {
+  connection: ProviderConnection;
+  /** The quota window the menu bar shows, when it belongs to this account. */
+  pinnedKey?: string;
+  onPin: (windowKey: string) => void;
+  onUseReset: (id: string, creditId: string) => Promise<boolean>;
+  /** Reports when the reset list or its confirmation is open. */
+  onOverlayChange: (open: boolean) => void;
+}) {
+  const { t } = useTranslation();
+  const plan = connection.identity?.plan;
+  const windows = visibleWindows(connection);
+  return (
+    <article className={styles.row}>
+      <header className={styles.header}>
+        <ProviderIcon provider={connection.provider} size={20} />
+        <p className={styles.identity}>
+          <strong>{PROVIDER_NAMES[connection.provider]}</strong>
+          <span>
+            {" "}
+            {accountLabel(connection)}
+            {plan && ` (${plan})`}
+          </span>
+        </p>
+        <ResetCredits
+          compact
+          connection={connection}
+          onOverlayChange={onOverlayChange}
+          onUseReset={onUseReset}
+        />
+        <StatusBadge connection={connection} />
+      </header>
+      {connection.provider === "codex" && <CodexResetsNews className={styles.news} />}
+      {windows.length > 0 ? (
+        <QuotaBars onPin={onPin} pinnedKey={pinnedKey} size="sm" windows={windows} />
+      ) : (
+        <p className={styles.empty}>
+          {connection.windows.length > 0
+            ? t("Connection.AllBarsHidden")
+            : (connection.lastError ?? t("Connection.NoQuotaData"))}
+        </p>
+      )}
+    </article>
+  );
+}

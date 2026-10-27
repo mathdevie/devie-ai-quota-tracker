@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
-import * as desktop from "@/lib/desktop";
-import { previewCodexResets, previewState } from "@/lib/fixtures";
-import type { CodexResetsStatus, DashboardState } from "@/lib/contracts";
+import * as desktop from "@/features/desktop/desktop";
+import { previewCodexResets, previewState } from "@/features/desktop/fixtures";
+import type { CodexResetsStatus, DashboardState } from "@/features/desktop/contracts";
 import { deferred } from "./helpers";
 
 const native = vi.hoisted(() => ({ invoke: vi.fn(), listen: vi.fn(), setSize: vi.fn() }));

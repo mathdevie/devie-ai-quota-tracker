@@ -1,7 +1,7 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vite-plus/test";
-import QuotaBarsDialog from "@/components/QuotaBarsDialog";
+import QuotaBarsDialog from "@/features/connections/QuotaBarsDialog";
 import { account, deferred, quota, renderApp } from "./helpers";
 
 describe("quota visibility preferences", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vite-plus/test";
-import { applyFilters, DEFAULT_FILTERS, readFilters, writeFilters } from "@/lib/filters";
+import { applyFilters, DEFAULT_FILTERS, readFilters, writeFilters } from "@/features/quota/filters";
 import { account, quota } from "./helpers";
 
 describe("quota filtering and sorting", () => {

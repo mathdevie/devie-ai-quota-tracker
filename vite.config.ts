@@ -84,10 +84,12 @@ export default defineConfig({
     // with the most risk; it is not a whole-app percentage.
     coverage: {
       include: [
-        "src/lib/{filters,labels,desktop,date}.ts",
+        "src/features/quota/filters.ts",
+        "src/features/connections/{labels.ts,QuotaBars.tsx,ResetCredits.tsx,QuotaBarsDialog.tsx}",
+        "src/features/desktop/desktop.ts",
+        "src/helpers/date.ts",
         "src/app/boot.ts",
         "src/theme/ThemeContext.tsx",
-        "src/components/{QuotaBars,ResetCredits,QuotaBarsDialog}.tsx",
       ],
       reporter: ["text", "html", "lcov"],
       thresholds: { lines: 90, statements: 90, functions: 90, branches: 85 },

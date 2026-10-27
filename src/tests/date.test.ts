@@ -1,5 +1,5 @@
 import { expect, test } from "vite-plus/test";
-import { formatAgo, formatDateTime, formatDate } from "@/lib/date";
+import { formatAgo, formatDateTime, formatDate } from "@/helpers/date";
 
 const now = Date.parse("2026-10-27T12:00:00Z");
 

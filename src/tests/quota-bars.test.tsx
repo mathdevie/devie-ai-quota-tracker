@@ -1,7 +1,11 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vite-plus/test";
-import QuotaBars, { quotaLevel, quotaStatusText, untilText } from "@/components/QuotaBars";
+import QuotaBars, {
+  quotaLevel,
+  quotaStatusText,
+  untilText,
+} from "@/features/connections/QuotaBars";
 import { quota, renderApp, testI18n } from "./helpers";
 
 test.each([

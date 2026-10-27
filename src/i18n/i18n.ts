@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { setLanguage } from "@/lib/desktop";
+import { setLanguage } from "@/features/desktop/desktop";
 import { getDayjsLocale } from "./dayjs-locale";
 import {
   DEFAULT_LOCALE,

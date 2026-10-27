@@ -1,7 +1,7 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vite-plus/test";
-import ResetCredits from "@/components/ResetCredits";
+import ResetCredits from "@/features/connections/ResetCredits";
 import { account, deferred, renderApp } from "./helpers";
 
 const connection = account({

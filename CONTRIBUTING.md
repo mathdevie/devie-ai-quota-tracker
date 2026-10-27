@@ -71,11 +71,17 @@ its front matter) and a row in this table.
 - Rust (`src-desktop/`) owns sign-in, network requests, token storage,
   SQLite, the menu bar, and notifications. The webview receives normalized
   connections and quotas only; tokens never enter it.
-- `src/lib/contracts.ts` mirrors `src-desktop/src/model.rs` by hand. Change
-  both in the same pull request.
+- `src/features/desktop/contracts.ts` mirrors `src-desktop/src/model.rs` by
+  hand. Change both in the same pull request.
+- `src/features/` groups the app by domain: `app-shell` (frame, popover,
+  small shared pieces), `quota`, `connections`, `settings`, `updater`, and
+  `desktop` (the Rust bridge). A feature's UI, state, styles, and helpers
+  live together, flat, with prefixed names. `app-shell` and `desktop` are
+  foundation: anything may import them; `quota` imports `connections`, not
+  the other way round. `src/helpers/` holds project-agnostic functions only.
 - `src/ui` is a byte-identical copy of [Devie UI](https://www.devie-ui.com/).
   Never edit it. App code and overrides live in `src/app`, `src/theme`, and
-  `src/components`, with comments explaining each override. Update it only
+  `src/features`, with comments explaining each override. Update it only
   with the `sync-devie-ui` skill.
 
 ## Providers

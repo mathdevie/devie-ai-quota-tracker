@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { isDesktop } from "@/lib/desktop";
+import { isDesktop } from "@/features/desktop/desktop";
 import { DARK_THEME, LIGHT_THEME, SYSTEM_THEME, THEMES } from "@/theme/registry";
 
 interface ThemeContextType {
