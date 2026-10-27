@@ -9,7 +9,7 @@ import type {
   Provider,
   ProviderConnection,
 } from "@/features/desktop/contracts";
-import { cancelLogin, finishLogin, startLogin } from "@/features/desktop/desktop";
+import { cancelLogin, finishLogin, startLogin, submitLoginCode } from "@/features/desktop/desktop";
 import { accountLabel, PROVIDER_NAMES } from "./labels";
 import Button from "@/ui/Button";
 import Dialog from "@/ui/Dialog";
@@ -57,6 +57,7 @@ export default function LoginDialog({
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    let closeTimer: number | undefined;
     setPhase("starting");
     setStart(undefined);
     setError(undefined);
@@ -78,7 +79,7 @@ export default function LoginDialog({
         sessionRef.current = undefined;
         setPhase("done");
         onConnectedRef.current(state);
-        window.setTimeout(() => onOpenChangeRef.current(false), 900);
+        closeTimer = window.setTimeout(() => onOpenChangeRef.current(false), 900);
       } catch (reason) {
         if (cancelled) return;
         sessionRef.current = undefined;
@@ -89,6 +90,7 @@ export default function LoginDialog({
 
     return () => {
       cancelled = true;
+      if (closeTimer !== undefined) window.clearTimeout(closeTimer);
       const session = sessionRef.current;
       sessionRef.current = undefined;
       if (session) void cancelLogin(session);
@@ -99,15 +101,12 @@ export default function LoginDialog({
     event.preventDefault();
     const session = sessionRef.current;
     if (!session || !code.trim()) return;
-    // The pasted code replaces the browser callback for this session.
-    sessionRef.current = undefined;
     setPhase("starting");
     try {
-      const state = await finishLogin(session, code.trim());
-      setPhase("done");
-      onConnected(state);
-      window.setTimeout(() => onOpenChange(false), 900);
+      await submitLoginCode(session, code.trim());
+      // The original finishLogin waiter owns completion and cancellation.
     } catch (reason) {
+      if (sessionRef.current !== session) return;
       setError(errorMessage(reason));
       setPhase("error");
     }

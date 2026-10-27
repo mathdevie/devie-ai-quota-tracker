@@ -1,6 +1,8 @@
 //! GitHub Copilot sign-in (device code flow, public client id). Quota comes
 //! from the internal Copilot user endpoint with the GitHub OAuth token.
 
+use super::{error, ProviderError};
+
 use std::time::Duration as StdDuration;
 
 use chrono::{Duration, Utc};
@@ -123,6 +125,7 @@ pub async fn wait_for_approval(
                 .map(|seconds| Utc::now() + Duration::seconds(seconds)),
             account_id: None,
             project_id: None,
+            last_refresh_at: None,
         };
         let identity = user(client, &credentials.access_token).await?;
         let account_key = identity
@@ -173,47 +176,80 @@ pub async fn usage(
     client: &reqwest::Client,
     credentials: &Credentials,
     login: &str,
-) -> Result<QuotaReading, String> {
-    let response = client
-        .get(USAGE_URL)
-        .header(reqwest::header::ACCEPT, "application/json")
-        .header(
-            reqwest::header::AUTHORIZATION,
-            format!("token {}", credentials.access_token),
-        )
-        .header(reqwest::header::USER_AGENT, "GitHubCopilotChat/0.26.7")
-        .header("Editor-Version", "vscode/1.100.0")
-        .header("Editor-Plugin-Version", "copilot-chat/0.26.7")
-        .header("X-GitHub-Api-Version", API_VERSION)
-        .send()
-        .await
-        .map_err(|_| "GitHub Copilot could not be reached.".to_string())?;
-    let status = response.status();
-    if status.as_u16() == 401 {
-        return Err("The GitHub login expired. Sign in again.".to_string());
+) -> Result<QuotaReading, ProviderError> {
+    let json = error::json(
+        client
+            .get(USAGE_URL)
+            .header(reqwest::header::ACCEPT, "application/json")
+            .header(
+                reqwest::header::AUTHORIZATION,
+                format!("token {}", credentials.access_token),
+            )
+            .header(reqwest::header::USER_AGENT, "GitHubCopilotChat/0.26.7")
+            .header("Editor-Version", "vscode/1.100.0")
+            .header("Editor-Plugin-Version", "copilot-chat/0.26.7")
+            .header("X-GitHub-Api-Version", API_VERSION),
+        "GitHub Copilot",
+    )
+    .await?;
+    parse_payload(&json, login).map_err(ProviderError::invalid)
+}
+
+pub async fn refresh_tokens(
+    client: &reqwest::Client,
+    current: &Credentials,
+) -> Result<Credentials, ProviderError> {
+    let refresh = current
+        .refresh_token
+        .as_deref()
+        .ok_or_else(|| ProviderError::needs_login("Sign in to GitHub again."))?;
+    let json = error::json(
+        client
+            .post(TOKEN_URL)
+            .header(reqwest::header::ACCEPT, "application/json")
+            .form(&[
+                ("client_id", CLIENT_ID),
+                ("grant_type", "refresh_token"),
+                ("refresh_token", refresh),
+            ]),
+        "GitHub",
+    )
+    .await?;
+    // GitHub can report OAuth failures with HTTP 200.
+    if json.get("error").is_some() {
+        return Err(ProviderError::http(
+            "GitHub",
+            reqwest::StatusCode::BAD_REQUEST,
+            &json.to_string(),
+        ));
     }
-    if status.as_u16() == 403 || status.as_u16() == 404 {
-        return Err("This GitHub account has no Copilot access.".to_string());
+    let mut renewed = current.clone();
+    renewed.access_token = json
+        .get("access_token")
+        .and_then(Value::as_str)
+        .filter(|s| !s.is_empty())
+        .ok_or_else(|| ProviderError::invalid("GitHub returned no access token."))?
+        .to_string();
+    if let Some(refresh) = json
+        .get("refresh_token")
+        .and_then(Value::as_str)
+        .filter(|s| !s.is_empty())
+    {
+        renewed.refresh_token = Some(refresh.into());
     }
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("GitHub Copilot", status, &text));
-    }
-    let json: Value = serde_json::from_str(&text)
-        .map_err(|_| "GitHub Copilot returned invalid quota data.".to_string())?;
-    let mut reading = parse_payload(&json, login)?;
-    reading.source = "GitHub Copilot API".to_string();
-    Ok(reading)
+    renewed.expires_at = number(json.get("expires_in"))
+        .filter(|n| n.is_finite() && *n > 0.0 && *n < 31536000.0)
+        .map(|n| Utc::now() + Duration::seconds(n as i64));
+    Ok(renewed)
 }
 
 pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, String> {
     let object = payload
         .as_object()
         .ok_or_else(|| "GitHub Copilot returned an invalid quota object.".to_string())?;
-    let snapshots = object
-        .get("quota_snapshots")
-        .and_then(Value::as_object)
-        .ok_or_else(|| "GitHub Copilot returned no quota snapshots.".to_string())?;
+    let Some(snapshots) = object.get("quota_snapshots").and_then(Value::as_object) else {
+        return parse_free_payload(payload, login);
+    };
     let reset = reset_time(
         object
             .get("quota_reset_date_utc")
@@ -271,11 +307,65 @@ pub fn parse_payload(payload: &Value, login: &str) -> Result<QuotaReading, Strin
         }),
         windows,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 
 /// The marketing name of a `copilot_plan` value. "individual" is the old
 /// name of Copilot Pro, still used by the API.
+/// Free-plan limited_user_quotas are the remaining allowance, not consumption.
+/// See VS Code's chatEntitlementService.ts (reference pinned in fixtures/README.md).
+fn parse_free_payload(payload: &Value, login: &str) -> Result<QuotaReading, String> {
+    let mut windows = Vec::new();
+    let resets_at = reset_time(payload.get("limited_user_reset_date"));
+    for (key, label, unit) in [
+        ("chat", "Chat", "messages"),
+        ("completions", "Completions", "completions"),
+    ] {
+        let total = number(payload.get("monthly_quotas").and_then(|v| v.get(key)))
+            .filter(|n| n.is_finite() && *n > 0.0);
+        let remaining = number(payload.get("limited_user_quotas").and_then(|v| v.get(key)))
+            .filter(|n| n.is_finite());
+        if let (Some(total), Some(remaining)) = (total, remaining) {
+            let used = total - remaining.clamp(0.0, total);
+            windows.push(QuotaWindow {
+                key: key.into(),
+                label: label.into(),
+                used_percent: used / total * 100.0,
+                resets_at: resets_at.clone(),
+                unlimited: false,
+                paid: false,
+                amount: Some(QuotaAmount {
+                    used: Some(used),
+                    total,
+                    unit: Some(unit.into()),
+                    overage: None,
+                }),
+            });
+        }
+    }
+    if windows.is_empty() {
+        return Err("GitHub Copilot returned no usable subscription quota.".into());
+    }
+    Ok(QuotaReading {
+        source: "GitHub Copilot API".into(),
+        windows,
+        reset_credits: None,
+        identity: Some(RemoteIdentity {
+            provider_user_id: Some(login.into()),
+            display_name: None,
+            plan: payload
+                .get("copilot_plan")
+                .or_else(|| payload.get("access_type_sku"))
+                .and_then(Value::as_str)
+                .map(plan_label),
+        }),
+        observed_at: None,
+        stale: false,
+    })
+}
+
 pub fn plan_label(plan: &str) -> String {
     match plan.to_lowercase().as_str() {
         "free" | "free_limited" | "free_limited_copilot" => "Free".to_string(),
@@ -378,6 +468,21 @@ fn title_case(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reads_free_plan_remaining_allowances() {
+        let reading = parse_payload(
+            &serde_json::json!({
+                "copilot_plan":"free", "monthly_quotas":{"chat":50,"completions":2000},
+                "limited_user_quotas":{"chat":40,"completions":1500},
+                "limited_user_reset_date":"2026-12-01T00:00:00Z"
+            }),
+            "example",
+        )
+        .unwrap();
+        assert_eq!(reading.windows.len(), 2);
+        assert_eq!(reading.windows[0].used_percent, 20.0);
+        assert_eq!(reading.windows[1].used_percent, 25.0);
+    }
 
     #[test]
     fn parses_premium_interaction_quota() {

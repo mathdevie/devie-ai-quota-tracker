@@ -89,14 +89,25 @@ its front matter) and a row in this table.
 Each provider is a module in `src-desktop/src/oauth/`; its module docs cover
 the details. Constructed test fixtures live in `src-desktop/src/oauth/fixtures/`.
 
-| Provider                 | Sign-in                                                                        | Quota source                                                            |
-| ------------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| Claude                   | Claude Code OAuth client, PKCE, callback on `localhost:54545` or a pasted code | `api.anthropic.com/api/oauth/usage`                                     |
-| Codex                    | Codex CLI OAuth client, PKCE, callback on `localhost:1455`                     | `chatgpt.com/backend-api/wham/usage`                                    |
-| Gemini CLI               | Gemini CLI OAuth client, loopback callback                                     | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota`              |
-| Antigravity (unofficial) | Antigravity IDE OAuth client, loopback callback                                | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary` |
-| GitHub Copilot           | GitHub device code flow, Copilot client id                                     | `api.github.com/copilot_internal/user`                                  |
-| Cursor                   | Cursor desktop PKCE deep link, polled on `api2.cursor.sh/auth/poll`            | `cursor.com/api/usage-summary`                                          |
+| Provider                 | Sign-in                                                                        | Quota source                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Claude                   | Claude Code OAuth client, PKCE, callback on `localhost:54545` or a pasted code | `api.anthropic.com/api/oauth/usage`                                           |
+| Codex                    | Codex CLI OAuth client, PKCE, callback on `localhost:1455`                     | `chatgpt.com/backend-api/wham/usage`                                          |
+| Gemini CLI               | Gemini CLI OAuth client, loopback callback                                     | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota`                    |
+| Antigravity (unofficial) | Antigravity IDE OAuth client, loopback callback                                | `daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`       |
+| GitHub Copilot           | GitHub device code flow, Copilot client id                                     | `api.github.com/copilot_internal/user`                                        |
+| Cursor                   | Cursor desktop PKCE deep link, polled on `api2.cursor.sh/auth/poll`            | Dashboard usage summary, with IDE Connect JSON and enterprise usage fallbacks |
+
+Provider compatibility was reviewed against 9router v0.5.111 at
+[`3a978a6`](https://github.com/decolua/9router/tree/3a978a631ad65529c06e48ce495092d5bba29f46).
+The [fixture notes](src-desktop/src/oauth/fixtures/README.md) record the
+reference contracts and deliberate differences.
+
+Credential refresh, reconnect, deferred Google project setup, and removal
+share a per-account lock. An expired access token is renewed once per quota
+operation; permission failures and rate limits do not imply a revoked login.
+Cached readings retain their original observation time, and readings served
+after a failed request are marked stale.
 
 ## Languages
 

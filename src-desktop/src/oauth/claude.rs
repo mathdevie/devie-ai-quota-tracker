@@ -2,6 +2,8 @@
 //! OAuth client. PKCE callback on `localhost:54545`, the CLI port; the user can
 //! also paste the code from the Anthropic page.
 
+use super::{error, ErrorKind, ProviderError};
+
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex, OnceLock},
@@ -15,7 +17,7 @@ use sha2::{Digest, Sha256};
 use crate::{
     credentials::Credentials,
     model::{QuotaAmount, QuotaReading, QuotaWindow, RemoteIdentity},
-    oauth::{describe_http_failure, LoginOutcome, Pkce, USER_AGENT},
+    oauth::{LoginOutcome, Pkce, USER_AGENT},
     parse::{number, reset_time},
 };
 
@@ -73,7 +75,7 @@ pub async fn cached_usage(
     client: &reqwest::Client,
     access_token: &str,
     force: bool,
-) -> Result<QuotaReading, String> {
+) -> Result<QuotaReading, ProviderError> {
     let key = cache_key(access_token);
     let now = Instant::now();
     if !force {
@@ -82,7 +84,7 @@ pub async fn cached_usage(
                 .filter(|until| *until > now)
                 .and(slot.last_good.clone())
         }) {
-            return Ok(stale_copy(&reading));
+            return Ok(cached_copy(&reading, false));
         }
     }
 
@@ -98,12 +100,13 @@ pub async fn cached_usage(
         )
     });
     if let Some(reading) = last_good.as_ref().filter(|_| (fresh && !force) || cooling) {
-        return Ok(stale_copy(reading));
+        return Ok(cached_copy(reading, cooling));
     }
     if cooling {
-        return Err(
-            "Anthropic rate-limited the quota request. Try again in a few minutes.".to_string(),
-        );
+        return Err(ProviderError::new(
+            ErrorKind::RateLimited,
+            "Anthropic rate-limited the quota request. Try again in a few minutes.",
+        ));
     }
 
     match usage(client, access_token).await {
@@ -116,6 +119,7 @@ pub async fn cached_usage(
                 }
             };
             reading.identity = Some(identity.clone());
+            reading.observed_at = Some(Utc::now().to_rfc3339());
             with_slot(&key, |slot| {
                 slot.identity = Some(identity);
                 slot.last_good = Some(reading.clone());
@@ -124,50 +128,43 @@ pub async fn cached_usage(
             });
             Ok(reading)
         }
-        Err(UsageError::Expired(message)) => {
+        Err(error) if error.kind == ErrorKind::AccessExpired => {
             with_slot(&key, |slot| {
                 slot.last_good = None;
                 slot.fresh_until = None;
                 slot.identity = None;
             });
-            Err(message)
+            Err(error)
         }
-        Err(UsageError::RateLimited(message)) => {
+        Err(error) if error.kind == ErrorKind::RateLimited => {
             let last_good = with_slot(&key, |slot| {
+                slot.fresh_until = None;
                 slot.cooldown_until = Some(Instant::now() + RATE_LIMIT_COOLDOWN);
                 slot.last_good.clone()
             });
-            last_good.map(|reading| stale_copy(&reading)).ok_or(message)
+            last_good
+                .map(|reading| cached_copy(&reading, true))
+                .ok_or(error)
         }
-        Err(UsageError::Other(message)) => {
-            let last_good = with_slot(&key, |slot| slot.last_good.clone());
-            last_good.map(|reading| stale_copy(&reading)).ok_or(message)
+        Err(error) => {
+            let last_good = with_slot(&key, |slot| {
+                slot.fresh_until = None;
+                slot.last_good.clone()
+            });
+            last_good
+                .map(|reading| cached_copy(&reading, true))
+                .ok_or(error)
         }
     }
 }
 
-fn stale_copy(reading: &QuotaReading) -> QuotaReading {
+fn cached_copy(reading: &QuotaReading, stale: bool) -> QuotaReading {
     let mut copy = reading.clone();
+    copy.stale = stale;
     if !copy.source.ends_with("(cached)") {
         copy.source = format!("{} (cached)", copy.source);
     }
     copy
-}
-
-enum UsageError {
-    Expired(String),
-    RateLimited(String),
-    Other(String),
-}
-
-impl From<UsageError> for String {
-    fn from(error: UsageError) -> Self {
-        match error {
-            UsageError::Expired(message)
-            | UsageError::RateLimited(message)
-            | UsageError::Other(message) => message,
-        }
-    }
 }
 
 pub fn redirect_uri() -> String {
@@ -229,7 +226,7 @@ pub async fn exchange(
 pub async fn refresh_tokens(
     client: &reqwest::Client,
     current: &Credentials,
-) -> Result<Credentials, String> {
+) -> Result<Credentials, ProviderError> {
     let refresh_token = current
         .refresh_token
         .as_deref()
@@ -243,24 +240,18 @@ pub async fn refresh_tokens(
         }),
     )
     .await?;
-    credentials_from(&tokens, current.refresh_token.clone())
+    credentials_from(&tokens, current.refresh_token.clone()).map_err(ProviderError::invalid)
 }
 
-async fn post_json(client: &reqwest::Client, body: &Value) -> Result<Value, String> {
-    let response = client
-        .post(TOKEN_URL)
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .json(body)
-        .send()
-        .await
-        .map_err(|_| "Anthropic could not be reached.".to_string())?;
-    let status = response.status();
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(describe_http_failure("Claude", status, &text));
-    }
-    serde_json::from_str(&text)
-        .map_err(|_| "Claude returned an invalid token response.".to_string())
+async fn post_json(client: &reqwest::Client, body: &Value) -> Result<Value, ProviderError> {
+    error::json(
+        client
+            .post(TOKEN_URL)
+            .header(reqwest::header::USER_AGENT, USER_AGENT)
+            .json(body),
+        "Claude",
+    )
+    .await
 }
 
 fn credentials_from(
@@ -285,6 +276,7 @@ fn credentials_from(
         expires_at,
         account_id: None,
         project_id: None,
+        last_refresh_at: None,
     })
 }
 
@@ -355,36 +347,21 @@ pub fn tier_label(tier: &str) -> String {
     }
 }
 
-async fn usage(client: &reqwest::Client, access_token: &str) -> Result<QuotaReading, UsageError> {
-    let response = client
-        .get(USAGE_URL)
-        .bearer_auth(access_token)
-        .header("anthropic-beta", OAUTH_BETA)
-        .header("anthropic-version", ANTHROPIC_VERSION)
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .send()
-        .await
-        .map_err(|_| UsageError::Other("Anthropic could not be reached.".to_string()))?;
-    let status = response.status();
-    if status.as_u16() == 401 || status.as_u16() == 403 {
-        return Err(UsageError::Expired(
-            "The Claude login expired. Sign in again.".to_string(),
-        ));
-    }
-    if status.as_u16() == 429 {
-        return Err(UsageError::RateLimited(
-            "Anthropic rate-limited the quota request. Try again in a few minutes.".to_string(),
-        ));
-    }
-    let text = response.text().await.unwrap_or_default();
-    if !status.is_success() {
-        return Err(UsageError::Other(describe_http_failure(
-            "Claude", status, &text,
-        )));
-    }
-    let json: Value = serde_json::from_str(&text)
-        .map_err(|_| UsageError::Other("Claude returned invalid quota data.".to_string()))?;
-    parse_usage(&json).map_err(UsageError::Other)
+async fn usage(
+    client: &reqwest::Client,
+    access_token: &str,
+) -> Result<QuotaReading, ProviderError> {
+    let json = error::json(
+        client
+            .get(USAGE_URL)
+            .bearer_auth(access_token)
+            .header("anthropic-beta", OAUTH_BETA)
+            .header("anthropic-version", ANTHROPIC_VERSION)
+            .header(reqwest::header::USER_AGENT, USER_AGENT),
+        "Claude",
+    )
+    .await?;
+    parse_usage(&json).map_err(ProviderError::invalid)
 }
 
 pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
@@ -415,6 +392,8 @@ pub fn parse_usage(json: &Value) -> Result<QuotaReading, String> {
         identity: None,
         windows,
         reset_credits: None,
+        observed_at: None,
+        stale: false,
     })
 }
 
@@ -584,6 +563,35 @@ pub fn title_case(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn cached_reads_keep_their_observation_time_and_report_cooldown_as_stale() {
+        let token = format!("synthetic-{}", uuid::Uuid::new_v4());
+        let key = cache_key(&token);
+        let observed_at = "2026-10-27T10:00:00Z";
+        with_slot(&key, |slot| {
+            slot.last_good = Some(QuotaReading {
+                observed_at: Some(observed_at.into()),
+                source: "Claude OAuth".into(),
+                ..Default::default()
+            });
+            slot.fresh_until = Some(Instant::now() + USAGE_CACHE_TTL);
+        });
+        let client = reqwest::Client::new();
+        let fresh = cached_usage(&client, &token, false).await.unwrap();
+        assert!(!fresh.stale);
+        assert_eq!(fresh.observed_at.as_deref(), Some(observed_at));
+        with_slot(&key, |slot| {
+            slot.fresh_until = None;
+            slot.cooldown_until = Some(Instant::now() + RATE_LIMIT_COOLDOWN);
+        });
+        for force in [true, false] {
+            let cached = cached_usage(&client, &token, force).await.unwrap();
+            assert!(cached.stale);
+            assert_eq!(cached.observed_at, fresh.observed_at);
+        }
+        usage_cache().lock().unwrap().remove(&key);
+    }
 
     #[test]
     fn adds_the_paid_extra_usage_window() {

@@ -64,12 +64,17 @@ export async function startLogin(provider: Provider): Promise<LoginStart> {
   return call("start_login", { provider });
 }
 
-export async function finishLogin(sessionId: string, code?: string): Promise<DashboardState> {
+export async function finishLogin(sessionId: string): Promise<DashboardState> {
   if (!isDesktop()) {
     await delay(1200);
     throw new Error("The browser preview cannot complete a provider sign-in.");
   }
-  return call("finish_login", { sessionId, code: code || null });
+  return call("finish_login", { sessionId });
+}
+
+export async function submitLoginCode(sessionId: string, code: string): Promise<void> {
+  if (!isDesktop()) return;
+  await call("submit_login_code", { sessionId, code });
 }
 
 export async function cancelLogin(sessionId: string): Promise<void> {

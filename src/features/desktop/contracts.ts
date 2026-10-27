@@ -54,6 +54,7 @@ export interface ProviderConnection {
   enabled: boolean;
   status: ConnectionStatus;
   source: string;
+  /** Time the provider data was observed; cached reads preserve it. */
   lastUpdatedAt?: string;
   lastError?: string;
   /** A name the user typed for this account. */
@@ -70,6 +71,7 @@ export interface ProviderConnection {
 
 /** One Codex reset credit. Spending it resets every window of the account. */
 export interface ResetCredit {
+  /** Local display key; redemption consumes the next available provider credit. */
   id: string;
   title?: string;
   grantedAt?: string;

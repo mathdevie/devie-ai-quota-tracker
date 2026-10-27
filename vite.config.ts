@@ -85,7 +85,7 @@ export default defineConfig({
     coverage: {
       include: [
         "src/features/quota/filters.ts",
-        "src/features/connections/{labels.ts,QuotaBars.tsx,ResetCredits.tsx,QuotaBarsDialog.tsx}",
+        "src/features/connections/{labels.ts,QuotaBars.tsx,ResetCredits.tsx,QuotaBarsDialog.tsx,LoginDialog.tsx}",
         "src/features/desktop/desktop.ts",
         "src/helpers/date.ts",
         "src/app/boot.ts",

@@ -17,7 +17,7 @@ mod updater;
 use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use db::Database;
-use model::{ConnectionAlerts, ConnectionStatus, DashboardState, TraySummary, UpdateChannel};
+use model::{ConnectionAlerts, DashboardState, TraySummary, UpdateChannel};
 use oauth::{LoginSessions, LoginStart};
 #[cfg(target_os = "macos")]
 use tauri::window::{Effect, EffectState, EffectsBuilder};
@@ -51,30 +51,45 @@ async fn start_login(app: AppHandle, provider: String) -> Result<LoginStart, Str
     let core = app.state::<Core>().inner().clone();
     let provider = model::Provider::from_db(&provider)
         .ok_or_else(|| "This provider is not supported.".to_string())?;
-    let (start, pending) = oauth::start(&core.client, provider).await?;
-    core.logins.insert(start.session_id.clone(), pending);
+    let session_id = core.logins.reserve();
+    let result = oauth::start(&core.client, provider).await;
+    let (mut start, pending) = match result {
+        Ok(result) => result,
+        Err(error) => {
+            core.logins.cancel(&session_id);
+            return Err(error);
+        }
+    };
+    core.logins.install(&session_id, pending)?;
+    start.session_id = session_id;
     Ok(start)
 }
 
 #[tauri::command]
-async fn finish_login(
-    app: AppHandle,
-    session_id: String,
-    code: Option<String>,
-) -> Result<DashboardState, String> {
+async fn finish_login(app: AppHandle, session_id: String) -> Result<DashboardState, String> {
     let core = app.state::<Core>().inner().clone();
     let pending = core
         .logins
         .take(&session_id)
         .ok_or_else(|| "The sign-in session ended. Start again.".to_string())?;
-    let provider = pending.provider.clone();
-    let outcome = oauth::finish(&core.client, pending, code).await;
-    core.logins.finish(&session_id);
-    let outcome = outcome?;
+    let provider = pending.pending.provider.clone();
+    let mut outcome = match pending.run(&core.client).await {
+        Ok(outcome) => outcome,
+        Err(error) => {
+            core.logins.cancel(&session_id);
+            return Err(error);
+        }
+    };
+    outcome.credentials.last_refresh_at = Some(chrono::Utc::now());
     let connection = oauth::connection_for(&provider, &outcome);
-    core.database.upsert_connections(&[connection.clone()])?;
-    core.database.set_enabled(&connection.id, true)?;
-    credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
+    {
+        let _guard = credentials::lock(&core.app_data_dir, &connection.id).await;
+        core.logins.commit(&session_id, || {
+            credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
+            core.database.upsert_connections(&[connection.clone()])?;
+            core.database.set_enabled(&connection.id, true)
+        })?;
+    }
     core.telemetry.capture(
         "provider_connected",
         serde_json::json!({ "provider": provider.as_str() }),
@@ -86,16 +101,26 @@ async fn finish_login(
 }
 
 #[tauri::command]
+fn submit_login_code(
+    core: State<'_, Core>,
+    session_id: String,
+    code: String,
+) -> Result<(), String> {
+    core.logins.submit_code(&session_id, code)
+}
+
+#[tauri::command]
 fn cancel_login(core: State<'_, Core>, session_id: String) {
     core.logins.cancel(&session_id);
 }
 
 #[tauri::command]
-fn remove_connection(
+async fn remove_connection(
     app: AppHandle,
     core: State<'_, Core>,
     connection_id: String,
 ) -> Result<DashboardState, String> {
+    let _guard = credentials::lock(&core.app_data_dir, &connection_id).await;
     let provider = core
         .database
         .connection_by_id(&connection_id)?
@@ -249,7 +274,16 @@ async fn use_reset_credit(
     }
     let credentials =
         oauth::credentials_for_request(&connection, &core.app_data_dir, &core.client).await?;
-    oauth::codex::consume_reset_credit(&core.client, &credentials, &credit_id).await?;
+    let request_id = uuid::Uuid::new_v4().to_string();
+    match oauth::codex::consume_reset_credit(&core.client, &credentials, &request_id).await {
+        Err(error) if error.kind == oauth::ErrorKind::AccessExpired => {
+            let renewed =
+                oauth::renew_rejected(&connection, &core.app_data_dir, &core.client, &credentials)
+                    .await?;
+            oauth::codex::consume_reset_credit(&core.client, &renewed, &request_id).await?;
+        }
+        result => result?,
+    }
     refresh_one(&app, &core, &connection, true).await;
     publish_state(&app, &core)
 }
@@ -524,6 +558,9 @@ async fn refresh_one(
     match oauth::refresh_quota(&current, &core.app_data_dir, &core.client, force).await {
         Ok(reading) => {
             let _ = core.database.save_reading(&current.id, &reading);
+            if reading.stale {
+                return;
+            }
             alerts::after_reading(app, &core.database, &current, &reading);
             auto_ping::after_reading(
                 &core.database,
@@ -534,18 +571,9 @@ async fn refresh_one(
             )
             .await;
         }
-        Err(message) => {
-            let lower = message.to_lowercase();
-            let status = if lower.contains("sign in")
-                || lower.contains("login")
-                || lower.contains("expired")
-            {
-                ConnectionStatus::NeedsLogin
-            } else if !current.windows.is_empty() {
-                ConnectionStatus::Stale
-            } else {
-                ConnectionStatus::Error
-            };
+        Err(error) => {
+            let status = error.status(!current.windows.is_empty());
+            let message = error.to_string();
             core.telemetry.capture(
                 "quota_refresh_failed",
                 serde_json::json!({
@@ -1072,6 +1100,7 @@ pub fn run() {
             start_login,
             finish_login,
             cancel_login,
+            submit_login_code,
             remove_connection,
             refresh_all,
             refresh_connection,
@@ -1142,6 +1171,8 @@ mod quota_status_tests {
                             used_percent: used,
                             ..Default::default()
                         }],
+                        observed_at: None,
+                        stale: false,
                     },
                 )
                 .unwrap();
