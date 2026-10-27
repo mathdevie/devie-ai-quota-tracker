@@ -19,7 +19,7 @@ import pickerStyles from "../ThemePicker.module.scss";
 import { useAppUpdater } from "../updater/AppUpdater";
 import styles from "./views.module.scss";
 
-const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "dev";
 
 function ProviderCard({
   provider,

@@ -9,7 +9,7 @@ if one shipped since, then installs and restarts. So the app restarts into
 the latest release once.
 
 Updates run only in packaged builds. `tauri dev` never reads the update feed
-(`NEXT_PUBLIC_IS_DESKTOP_BUILD` is set by `beforeBuildCommand` only).
+(`VITE_IS_DESKTOP_BUILD` is set by `beforeBuildCommand` only).
 
 ## Channels
 

@@ -76,7 +76,7 @@ i18n
     resources,
     lng: getStoredLanguage(),
     fallbackLng: DEFAULT_LOCALE,
-    debug: process.env.NODE_ENV === "development",
+    debug: import.meta.env.DEV,
 
     interpolation: {
       escapeValue: false, // react already safes from xss

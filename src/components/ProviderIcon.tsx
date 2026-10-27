@@ -26,7 +26,6 @@ export function BrandIcon({
   alt?: string;
 }) {
   return (
-    // biome-ignore lint/performance/noImgElement: a static PNG in the app bundle; next/image adds nothing here.
     <img
       alt={alt}
       aria-hidden={alt === "" || undefined}

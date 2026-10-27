@@ -37,7 +37,7 @@ Run the frontend checks and Rust tests:
 
 ```sh
 bun run check
-bun run build
+bun run build      # TypeScript check + Vite static bundle in out/
 cd src-desktop
 cargo fmt --check
 cargo test --locked
@@ -107,11 +107,13 @@ the upstream docs site's package manifest or dependencies. Base UI is currently
 
 Entry points and app-owned overrides (maintainer owner: mathdevie):
 
-- `src/app/layout.tsx` imports default tokens, upstream desktop sizing, app
+- `src/app/main.tsx` imports default tokens, upstream desktop sizing, app
   light/dark themes and upstream custom themes, then global/app desktop overrides.
-  Its pre-hydration script validates saved themes and migrates
-  `theme-default` to `theme-light` and `theme-catpuccin-latte` to
-  `theme-catppuccin-latte`, persisting the canonical value before paint.
+  `src/app/boot.ts` holds the pre-paint script that `vite.config.ts` injects
+  into `index.html` with the theme list from `src/theme/registry.ts`. It
+  validates saved themes and migrates `theme-default` to `theme-light` and
+  `theme-catpuccin-latte` to `theme-catppuccin-latte`, persisting the canonical
+  value before paint.
 - `src/theme/ThemeContext.tsx` retains the same migrations for runtime and storage
   events across windows. `src/theme/registry.ts` owns translated display names,
   System/light/dark choices and native appearance metadata. System maps to native

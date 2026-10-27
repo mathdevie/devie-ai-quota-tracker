@@ -22,7 +22,7 @@ export function isDesktop(): boolean {
 
 /** Packaged builds only: `tauri dev` must not read the update feed or install over itself. */
 export const IS_DESKTOP_BUILD =
-  process.env.NEXT_PUBLIC_IS_DESKTOP_BUILD === "true";
+  import.meta.env.VITE_IS_DESKTOP_BUILD === "true";
 
 async function call<T>(command: string, args?: Record<string, unknown>) {
   const { invoke } = await import("@tauri-apps/api/core");

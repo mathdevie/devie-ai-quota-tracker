@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
+import { themeBootScript } from "../src/app/boot";
 
-const layout = readFileSync("src/app/layout.tsx", "utf8");
 const registry = readFileSync("src/theme/registry.ts", "utf8");
 const allowed = [
   "system",
@@ -14,13 +14,7 @@ const allowed = [
     (match) => match[1],
   ),
 ];
-const boot = layout
-  .split("const themeBootScript = `")[1]
-  .split("`;\n")[0]
-  .replace(
-    /\$\{JSON.stringify\(THEMES.map\(\(theme\) => theme.className\)\)\}/,
-    JSON.stringify(allowed),
-  );
+const boot = themeBootScript(allowed);
 
 for (const dark of [false, true]) {
   test(`legacy theme migrates before hydration and survives reload (system dark=${dark})`, () => {

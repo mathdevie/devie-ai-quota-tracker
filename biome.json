@@ -4,7 +4,6 @@
     "includes": [
       "**",
       "!node_modules",
-      "!.next",
       "!out",
       "!.worktrees",
       "!src/ui/themes/**/*.svg",

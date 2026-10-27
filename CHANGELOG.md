@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The interface is now built with Vite instead of a Next.js static export.
+  The app looks and behaves the same.
+
 ## [0.14.3] - 2026-10-24
 
 ### Fixed
