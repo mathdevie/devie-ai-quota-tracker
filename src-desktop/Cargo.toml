@@ -14,29 +14,29 @@ name = "devie_quota_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.6", features = [] }
+tauri-build = { version = "2.7", features = [] }
 
 [dependencies]
-base64 = "0.22"
+base64 = "0.23"
 chrono = { version = "0.4", features = ["serde"] }
 open = "5"
-rand = "0.8"
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
-rusqlite = { version = "0.37", features = ["bundled"] }
+rand = "0.10"
+reqwest = { version = "0.13", default-features = false, features = ["json", "form", "query", "rustls"] }
+rusqlite = { version = "0.41", features = ["bundled"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-sha2 = "0.10"
+sha2 = "0.11"
 sys-locale = "0.3"
-tauri = { version = "=2.11.3", features = ["tray-icon", "macos-private-api", "image-png"] }
-tauri-plugin-positioner = { version = "2.3.1", features = ["tray-icon"] }
-tauri-plugin-notification = "2.3.3"
-tauri-plugin-process = "2.3.1"
-tauri-plugin-updater = "2.10.1"
+tauri = { version = "=2.12.5", features = ["tray-icon", "macos-private-api", "image-png"] }
+tauri-plugin-positioner = { version = "2.4.0", features = ["tray-icon"] }
+tauri-plugin-notification = "2.7.0"
+tauri-plugin-process = "2.4.0"
+tauri-plugin-updater = "2.14.0"
 thiserror = "2"
 tokio = { version = "1", features = ["time", "sync", "net", "rt", "macros"] }
 uuid = { version = "1", features = ["v4", "v5", "serde"] }
 zeroize = "1"
-tauri-plugin-autostart = "2.5.1"
+tauri-plugin-autostart = "2.7.0"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.6"
