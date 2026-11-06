@@ -14,6 +14,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provider requests now verify certificates with the macOS trust store, so
   certificates you trust in Keychain, such as a company proxy's, also work.
 - Updated Tauri to 2.12 and the other app dependencies.
+- Anonymous telemetry, when on, records a failed sign-in: the provider, the
+  step that failed, and a coarse reason. Never the message or the account.
+
+### Fixed
+
+- Claude sign-in works while another app, such as Claude Code, holds the
+  sign-in port: the browser opens Claude's code page, and you paste the code.
+  The sign-in dialog also offers that page when the redirect does not arrive.
+- A pasted Claude code is accepted as `code#state`, as a bare code, or as the
+  whole address of the redirect page.
+- A failed Claude account lookup during sign-in now stops the sign-in instead
+  of adding a second, nameless account.
+- A sign-in code that expired or was already used says so, instead of asking
+  to renew a login. Other rejected sign-ins show the provider's reason.
+- The sign-in page in the browser no longer says "Signed in" before the app
+  finishes, and a tab left over from an earlier attempt no longer ends the
+  current sign-in.
 
 ## [0.14.3] - 2026-10-24
 

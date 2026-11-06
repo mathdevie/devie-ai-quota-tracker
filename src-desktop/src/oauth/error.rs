@@ -80,6 +80,13 @@ impl ProviderError {
             ErrorKind::RateLimited => {
                 format!("{provider} rate-limited this request. Try again later.")
             }
+            ErrorKind::Other => match explanation(&json) {
+                Some(detail) => format!("{provider} returned HTTP {}: {detail}", status.as_u16()),
+                None => format!(
+                    "{provider} returned HTTP {}. Try again later.",
+                    status.as_u16()
+                ),
+            },
             _ => format!(
                 "{provider} returned HTTP {}. Try again later.",
                 status.as_u16()
@@ -87,6 +94,17 @@ impl ProviderError {
         };
         Self::new(kind, message)
     }
+}
+
+/// The provider's own words from a JSON error body. Never the raw body, which
+/// may echo sensitive data.
+fn explanation(json: &serde_json::Value) -> Option<String> {
+    let text = json
+        .get("error_description")
+        .or_else(|| json.pointer("/error/message"))
+        .and_then(|value| value.as_str())?
+        .trim();
+    (!text.is_empty()).then(|| text.chars().take(160).collect())
 }
 
 impl From<String> for ProviderError {
@@ -155,5 +173,27 @@ mod tests {
             r#"{"error":{"code":"refresh_token_reused"}}"#,
         );
         assert_eq!(error.kind, ErrorKind::NeedsLogin);
+    }
+
+    #[test]
+    fn a_rejected_request_carries_the_provider_explanation() {
+        let error = ProviderError::http(
+            "Provider",
+            reqwest::StatusCode::BAD_REQUEST,
+            r#"{"error":"invalid_request","error_description":"Invalid redirect_uri"}"#,
+        );
+        assert_eq!(
+            error.message,
+            "Provider returned HTTP 400: Invalid redirect_uri"
+        );
+        let error = ProviderError::http(
+            "Provider",
+            reqwest::StatusCode::BAD_REQUEST,
+            "sensitive response",
+        );
+        assert_eq!(
+            error.message,
+            "Provider returned HTTP 400. Try again later."
+        );
     }
 }

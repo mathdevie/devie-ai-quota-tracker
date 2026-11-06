@@ -52,12 +52,13 @@ async fn start_login(app: AppHandle, provider: String) -> Result<LoginStart, Str
     let provider = model::Provider::from_db(&provider)
         .ok_or_else(|| "This provider is not supported.".to_string())?;
     let session_id = core.logins.reserve();
-    let result = oauth::start(&core.client, provider).await;
+    let result = oauth::start(&core.client, provider.clone()).await;
     let (mut start, pending) = match result {
         Ok(result) => result,
         Err(error) => {
             core.logins.cancel(&session_id);
-            return Err(error);
+            report_login_failure(&core, &provider, &error);
+            return Err(error.into());
         }
     };
     core.logins.install(&session_id, pending)?;
@@ -77,18 +78,24 @@ async fn finish_login(app: AppHandle, session_id: String) -> Result<DashboardSta
         Ok(outcome) => outcome,
         Err(error) => {
             core.logins.cancel(&session_id);
-            return Err(error);
+            report_login_failure(&core, &provider, &error);
+            return Err(error.into());
         }
     };
     outcome.credentials.last_refresh_at = Some(chrono::Utc::now());
     let connection = oauth::connection_for(&provider, &outcome);
     {
         let _guard = credentials::lock(&core.app_data_dir, &connection.id).await;
-        core.logins.commit(&session_id, || {
-            credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
-            core.database.upsert_connections(&[connection.clone()])?;
-            core.database.set_enabled(&connection.id, true)
-        })?;
+        core.logins
+            .commit(&session_id, || {
+                credentials::save(&core.app_data_dir, &connection.id, &outcome.credentials)?;
+                core.database.upsert_connections(&[connection.clone()])?;
+                core.database.set_enabled(&connection.id, true)
+            })
+            .inspect_err(|message| {
+                let error = oauth::LoginError::new("save", "storage", message.clone());
+                report_login_failure(&core, &provider, &error);
+            })?;
     }
     core.telemetry.capture(
         "provider_connected",
@@ -98,6 +105,18 @@ async fn finish_login(app: AppHandle, session_id: String) -> Result<DashboardSta
         refresh_one(&app, &core, &connection, true).await;
     }
     publish_state(&app, &core)
+}
+
+/// Anonymous: the provider, the step that failed, and a coarse reason. Never the message.
+fn report_login_failure(core: &Core, provider: &model::Provider, error: &oauth::LoginError) {
+    core.telemetry.capture(
+        "provider_login_failed",
+        serde_json::json!({
+            "provider": provider.as_str(),
+            "stage": error.stage,
+            "reason": error.reason,
+        }),
+    );
 }
 
 #[tauri::command]

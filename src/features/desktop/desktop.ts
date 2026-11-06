@@ -59,6 +59,7 @@ export async function startLogin(provider: Provider): Promise<LoginStart> {
       url: "https://example.com/oauth",
       userCode: provider === "copilot" ? "ABCD-1234" : undefined,
       acceptsManualCode: provider === "claude",
+      manualUrl: provider === "claude" ? "https://example.com/oauth/code" : undefined,
     };
   }
   return call("start_login", { provider });

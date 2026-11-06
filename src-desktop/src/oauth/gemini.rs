@@ -2,7 +2,7 @@
 //!
 //! This uses the public OAuth client and Code Assist endpoints from Gemini CLI.
 
-use super::{error, ProviderError};
+use super::{error, LoginError, ProviderError};
 
 use std::collections::BTreeMap;
 
@@ -54,9 +54,9 @@ pub async fn exchange(
     redirect_uri: &str,
     code: &str,
     state: Option<&str>,
-) -> Result<LoginOutcome, String> {
+) -> Result<LoginOutcome, LoginError> {
     if state != Some(pair.state.as_str()) {
-        return Err("The sign-in response does not match this session. Start again.".to_string());
+        return Err(LoginError::state_mismatch());
     }
     let tokens = post_token(
         client,

@@ -124,6 +124,8 @@ export default function LoginDialog({
   }
 
   const name = PROVIDER_NAMES[provider];
+  // The callback port was busy: only a pasted code can finish this sign-in.
+  const manualOnly = start?.manualUrl !== undefined && start.manualUrl === start.url;
 
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open} size="sm">
@@ -154,7 +156,9 @@ export default function LoginDialog({
                       {t("Login.RenewHint", { account: accountLabel(renew) })}
                     </p>
                   )}
-                  <p className={styles.hint}>{t(`Login.Hint.${provider}`)}</p>
+                  <p className={styles.hint}>
+                    {manualOnly ? t("Login.ManualOnlyHint") : t(`Login.Hint.${provider}`)}
+                  </p>
                   {start.userCode && (
                     <button
                       className={styles.userCode}
@@ -176,7 +180,9 @@ export default function LoginDialog({
                   {start.acceptsManualCode && (
                     <form className={styles.manual} onSubmit={handleManualCode}>
                       <Field.Root>
-                        <Field.Label>{t("Login.PasteCode")}</Field.Label>
+                        <Field.Label>
+                          {manualOnly ? t("Login.PasteCodeOnly") : t("Login.PasteCode")}
+                        </Field.Label>
                         <InputGroup.Root>
                           <Input
                             autoComplete="off"
@@ -195,6 +201,17 @@ export default function LoginDialog({
                           </Button>
                         </InputGroup.Root>
                       </Field.Root>
+                      {start.manualUrl && !manualOnly && (
+                        <a
+                          className={styles.link}
+                          href={start.manualUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          <ExternalLink size={13} />
+                          {t("Login.OpenCodePage")}
+                        </a>
+                      )}
                     </form>
                   )}
                 </>

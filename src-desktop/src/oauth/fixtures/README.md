@@ -35,7 +35,10 @@ are constructed, with synthetic credentials; tests do not call live providers.
 - **Gemini:** successful OAuth survives deferred project setup; later quota
   requests discover and persist the project within the authentication retry path.
 - **Claude:** cached observations keep their timestamps; cooldown/error fallback
-  is stale. Optional reset grants are outside this update.
+  is stale. Optional reset grants are outside this update. Unlike 9router, a
+  pasted code uses Claude Code's code page
+  (`https://platform.claude.com/oauth/code/callback`, from Claude Code 2.1.309)
+  as its redirect, and a failed profile lookup fails the sign-in.
 - **Copilot:** free-plan `limited_user_quotas` represent **remaining** allowance,
   unlike 9router's interpretation at this revision. This follows
   [VS Code's entitlement calculation](https://github.com/microsoft/vscode/blob/523ca4dc60aa2bd8b8f34db5138cb8ee62e46374/src/vs/workbench/services/chat/common/chatEntitlementService.ts#L967),

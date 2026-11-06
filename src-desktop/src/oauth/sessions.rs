@@ -1,6 +1,6 @@
 //! One owner per login. Manual codes feed the existing waiter; cancellation
 //! covers polling, token exchange, and the final persistence boundary.
-use super::{LoginOutcome, PendingLogin, Provider};
+use super::{LoginError, LoginOutcome, PendingLogin, Provider};
 use std::{
     collections::HashMap,
     sync::{
@@ -121,10 +121,10 @@ pub struct LoginTask {
 }
 
 impl LoginTask {
-    pub async fn run(mut self, client: &reqwest::Client) -> Result<LoginOutcome, String> {
+    pub async fn run(mut self, client: &reqwest::Client) -> Result<LoginOutcome, LoginError> {
         tokio::select! {
             biased;
-            _ = self.cancelled.wait_for(|cancelled| *cancelled) => Err("The sign-in was cancelled.".into()),
+            _ = self.cancelled.wait_for(|cancelled| *cancelled) => Err(LoginError::cancelled()),
             result = super::finish(client, self.pending, self.manual) => result,
         }
     }
@@ -165,7 +165,7 @@ mod tests {
             sessions.cancel(&id);
             assert_eq!(
                 task.run(&reqwest::Client::new()).await.unwrap_err(),
-                "The sign-in was cancelled."
+                LoginError::cancelled()
             );
             assert!(sessions
                 .commit(&id, || -> Result<(), String> {
@@ -190,7 +190,8 @@ mod tests {
     async fn replacing_a_running_callback_releases_its_port() {
         let sessions = LoginSessions::default();
         let id = sessions.reserve();
-        let server = super::super::callback::CallbackServer::start(0, "/callback").unwrap();
+        let server =
+            super::super::callback::CallbackServer::start(0, "/callback", "state").unwrap();
         let port = server.port();
         let mut login = pending(Provider::Claude);
         login.pkce = Some(super::super::pkce());
@@ -207,8 +208,8 @@ mod tests {
             _ = tokio::task::yield_now() => {},
         }
         sessions.reserve();
-        assert_eq!(running.await.unwrap_err(), "The sign-in was cancelled.");
-        let replacement = super::super::callback::CallbackServer::start(port, "/callback");
+        assert_eq!(running.await.unwrap_err(), LoginError::cancelled());
+        let replacement = super::super::callback::CallbackServer::start(port, "/callback", "state");
         assert!(replacement.is_ok(), "previous login kept its port");
         assert!(sessions.commit(&id, || Ok(())).is_err());
     }
@@ -241,7 +242,7 @@ mod tests {
                 _ = tokio::task::yield_now() => {},
             }
             sessions.cancel(&id);
-            assert_eq!(running.await.unwrap_err(), "The sign-in was cancelled.");
+            assert_eq!(running.await.unwrap_err(), LoginError::cancelled());
         }
     }
 }
