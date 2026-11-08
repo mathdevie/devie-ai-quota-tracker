@@ -369,10 +369,34 @@ fn parse_profile(json: &Value) -> RemoteIdentity {
         display_name: text(account, "email")
             .or_else(|| text(account, "display_name"))
             .or_else(|| text(account, "full_name")),
-        plan: text(organization, "rate_limit_tier")
-            .map(|tier| tier_label(&tier))
-            .or_else(|| text(organization, "billing_type").map(|value| title_case(&value)))
-            .or_else(|| text(organization, "organization_type").map(|value| title_case(&value))),
+        plan: plan_label(
+            text(organization, "organization_type").as_deref(),
+            text(organization, "rate_limit_tier"),
+        )
+        .or_else(|| text(organization, "billing_type").map(|value| title_case(&value)))
+        .or_else(|| text(organization, "organization_type").map(|value| title_case(&value))),
+    }
+}
+
+/// The organization type names the plan family; the tier only splits Max into
+/// 5x and 20x. Pro shares the generic `default_claude_ai` tier with Free, so
+/// the tier alone decides only when the type is missing or unknown.
+fn plan_label(organization_type: Option<&str>, tier: Option<String>) -> Option<String> {
+    let family = match organization_type.map(str::to_lowercase).as_deref() {
+        Some("claude_max") => Some("Max"),
+        Some("claude_pro") => Some("Pro"),
+        Some("claude_team") => Some("Team"),
+        Some("claude_enterprise") => Some("Enterprise"),
+        _ => None,
+    };
+    match family {
+        Some("Max") => Some(
+            tier.map(|tier| tier_label(&tier))
+                .filter(|label| label.starts_with("Max"))
+                .unwrap_or_else(|| "Max".to_string()),
+        ),
+        Some(family) => Some(family.to_string()),
+        None => tier.map(|tier| tier_label(&tier)),
     }
 }
 
@@ -907,5 +931,53 @@ mod tests {
         .await
         .unwrap_err();
         assert_eq!(error.reason, "no_code");
+    }
+
+    fn plan(organization: Value) -> Option<String> {
+        parse_profile(&json!({ "organization": organization })).plan
+    }
+
+    #[test]
+    fn plan_family_comes_from_organization_type() {
+        // Pro shares the generic `default_claude_ai` tier with Free (#37).
+        assert_eq!(
+            plan(json!({"organization_type":"claude_pro","rate_limit_tier":"default_claude_ai"}))
+                .as_deref(),
+            Some("Pro")
+        );
+        assert_eq!(
+            plan(json!({"organization_type":"claude_team","rate_limit_tier":"default_claude_ai"}))
+                .as_deref(),
+            Some("Team")
+        );
+        assert_eq!(
+            plan(
+                json!({"organization_type":"claude_max","rate_limit_tier":"default_claude_max_20x"})
+            )
+            .as_deref(),
+            Some("Max 20x")
+        );
+        assert_eq!(
+            plan(json!({"organization_type":"claude_max","rate_limit_tier":"default_claude_ai"}))
+                .as_deref(),
+            Some("Max")
+        );
+    }
+
+    #[test]
+    fn plan_falls_back_to_the_tier_without_a_known_organization_type() {
+        assert_eq!(
+            plan(json!({"rate_limit_tier":"default_claude_ai"})).as_deref(),
+            Some("Free")
+        );
+        assert_eq!(
+            plan(json!({"organization_type":"claude_new","rate_limit_tier":"default_claude_pro"}))
+                .as_deref(),
+            Some("Pro")
+        );
+        assert_eq!(
+            plan(json!({"organization_type":"claude_new"})).as_deref(),
+            Some("Claude New")
+        );
     }
 }

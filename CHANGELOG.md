@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The sign-in page in the browser no longer says "Signed in" before the app
   finishes, and a tab left over from an earlier attempt no longer ends the
   current sign-in.
+- Claude Pro accounts are shown as Pro instead of Free.
 
 ## [0.14.3] - 2026-10-24
 
