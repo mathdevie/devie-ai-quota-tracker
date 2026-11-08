@@ -857,7 +857,7 @@ dependencies = [
 
 [[package]]
 name = "devie-quota"
-version = "0.14.3"
+version = "0.15.0"
 dependencies = [
  "base64 0.23.1",
  "block2",
