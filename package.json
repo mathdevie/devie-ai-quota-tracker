@@ -1,6 +1,6 @@
 {
   "name": "devie-quota",
-  "version": "0.14.3",
+  "version": "0.15.0",
   "private": true,
   "description": "macOS menu bar for tracking AI subscription quotas in one place (Claude Code, Codex, Gemini CLI, GitHub Copilot, and Cursor)",
   "homepage": "https://github.com/mathdevie/devie-ai-quota-tracker",
