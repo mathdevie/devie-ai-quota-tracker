@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   certificates you trust in Keychain, such as a company proxy's, also work.
 - Updated Tauri to 2.12 and the other app dependencies.
 
+### Fixed
+
+- Claude Pro accounts are shown as Pro instead of Free.
+
 ## [0.14.3] - 2026-10-24
 
 ### Fixed
