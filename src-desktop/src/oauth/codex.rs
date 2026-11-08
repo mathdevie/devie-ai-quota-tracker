@@ -1,7 +1,7 @@
 //! Codex (ChatGPT subscription) sign-in and quota reading, with the public
 //! Codex CLI OAuth client and its fixed `localhost:1455/auth/callback`.
 
-use super::{error, ErrorKind, ProviderError};
+use super::{error, ErrorKind, LoginError, ProviderError};
 
 use chrono::{Duration, Utc};
 use serde_json::Value;
@@ -58,9 +58,9 @@ pub async fn exchange(
     redirect_uri: &str,
     code: &str,
     state: Option<&str>,
-) -> Result<LoginOutcome, String> {
+) -> Result<LoginOutcome, LoginError> {
     if state.is_some_and(|value| value != pkce.state) {
-        return Err("The sign-in response does not match this session. Start again.".to_string());
+        return Err(LoginError::state_mismatch());
     }
     let tokens = post_form(
         client,
@@ -874,7 +874,7 @@ mod tests {
         let err = exchange(&client, &pkce, &redirect_uri(), "code", Some("wrong"))
             .await
             .expect_err("mismatched state must fail");
-        assert!(err.contains("does not match"));
+        assert_eq!(err.reason, "state_mismatch");
     }
 
     #[test]

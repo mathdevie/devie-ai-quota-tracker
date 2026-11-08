@@ -1,5 +1,6 @@
 //! A tiny loopback HTTP server that receives one OAuth redirect.
 
+use super::LoginError;
 use std::{
     collections::HashMap,
     io::{Read, Write},
@@ -26,28 +27,36 @@ pub struct CallbackServer {
 }
 
 impl CallbackServer {
-    /// Listens on `127.0.0.1:port` and answers the first request on `path`.
-    pub fn start(port: u16, path: &'static str) -> Result<Self, String> {
+    /// Listens on `127.0.0.1:port` and answers the first redirect on `path`
+    /// that carries a result for this sign-in's `state`.
+    pub fn start(port: u16, path: &'static str, state: &str) -> Result<Self, LoginError> {
+        let unavailable = || {
+            LoginError::new(
+                "start",
+                "callback",
+                "The app could not start a local sign-in callback. Try again.",
+            )
+        };
         let listener = bind_with_retry(port).map_err(|_| {
             if port == 0 {
-                "The app could not start a local sign-in callback. Try again.".to_string()
+                unavailable()
             } else {
-                format!(
-                    "Port {port} is busy. Close the other program that uses it, then try again."
+                LoginError::new(
+                    "start",
+                    "port_busy",
+                    format!(
+                        "Port {port} is busy. Close the other program that uses it, then try again."
+                    ),
                 )
             }
         })?;
-        let port = listener
-            .local_addr()
-            .map_err(|error| error.to_string())?
-            .port();
-        listener
-            .set_nonblocking(true)
-            .map_err(|error| error.to_string())?;
+        let port = listener.local_addr().map_err(|_| unavailable())?.port();
+        listener.set_nonblocking(true).map_err(|_| unavailable())?;
         let (sender, receiver) = mpsc::channel();
         let stop = Arc::new(AtomicBool::new(false));
         let stop_flag = stop.clone();
-        thread::spawn(move || serve(listener, path, sender, stop_flag));
+        let state = state.to_string();
+        thread::spawn(move || serve(listener, path, &state, sender, stop_flag));
         Ok(Self {
             receiver,
             stop,
@@ -111,6 +120,7 @@ impl Drop for CallbackServer {
 fn serve(
     listener: TcpListener,
     path: &str,
+    state: &str,
     sender: mpsc::Sender<CallbackParams>,
     stop: Arc<AtomicBool>,
 ) {
@@ -147,6 +157,26 @@ fn serve(
             continue;
         }
         let params = parse_params(query);
+        // A tab from an earlier attempt, or a request without a result, must
+        // not end this sign-in. Some providers omit the state on errors.
+        if params.state.as_deref().is_some_and(|value| value != state) {
+            respond(
+                &mut stream,
+                400,
+                "Sign-in link expired",
+                "This page belongs to an earlier sign-in. Return to Devie AI Quota Tracker.",
+            );
+            continue;
+        }
+        if params.code.is_none() && params.error.is_none() {
+            respond(
+                &mut stream,
+                400,
+                "Bad request",
+                "This address expects a sign-in result.",
+            );
+            continue;
+        }
         if params.error.is_some() {
             respond(
                 &mut stream,
@@ -155,11 +185,12 @@ fn serve(
                 "The provider reported an error. You can close this tab.",
             );
         } else {
+            // The token exchange is still ahead: the app reports the outcome.
             respond(
                 &mut stream,
                 200,
-                "Signed in",
-                "You can close this tab and return to Devie AI Quota Tracker.",
+                "Finishing sign-in",
+                "Return to Devie AI Quota Tracker to see the result. You can close this tab.",
             );
         }
         let _ = sender.send(params);
@@ -178,7 +209,7 @@ fn parse_request_target(request: &str) -> Option<(&str, &str)> {
     Some(target.split_once('?').unwrap_or((target, "")))
 }
 
-fn parse_params(query: &str) -> CallbackParams {
+pub(super) fn parse_params(query: &str) -> CallbackParams {
     let map = query
         .split('&')
         .filter(|pair| !pair.is_empty())
@@ -265,7 +296,7 @@ mod tests {
 
     #[test]
     fn stopping_frees_the_port_and_ends_the_wait() {
-        let server = CallbackServer::start(0, "/callback").expect("server");
+        let server = CallbackServer::start(0, "/callback", "two").expect("server");
         let port = server.port();
         let stop = server.stop_handle();
         let waiter = thread::spawn(move || server.wait(Duration::from_secs(10)));
@@ -285,7 +316,7 @@ mod tests {
 
     #[test]
     fn receives_one_redirect() {
-        let server = CallbackServer::start(0, "/callback").expect("server");
+        let server = CallbackServer::start(0, "/callback", "two").expect("server");
         let port = server.port();
         let mut client = std::net::TcpStream::connect(("127.0.0.1", port)).expect("client");
         client
@@ -296,5 +327,37 @@ mod tests {
         assert!(response.starts_with("HTTP/1.1 200"));
         let params = server.wait(Duration::from_secs(2)).expect("params");
         assert_eq!(params.code.as_deref(), Some("one"));
+    }
+
+    fn get(port: u16, target: &str) -> String {
+        let mut client = std::net::TcpStream::connect(("127.0.0.1", port)).expect("client");
+        client
+            .write_all(format!("GET {target} HTTP/1.1\r\nHost: x\r\n\r\n").as_bytes())
+            .expect("request");
+        let mut response = String::new();
+        client.read_to_string(&mut response).expect("response");
+        response
+    }
+
+    #[test]
+    fn stale_and_empty_requests_leave_the_sign_in_waiting() {
+        let server = CallbackServer::start(0, "/callback", "current").expect("server");
+        let port = server.port();
+        assert!(get(port, "/callback?code=old&state=earlier").starts_with("HTTP/1.1 400"));
+        assert!(get(port, "/callback").starts_with("HTTP/1.1 400"));
+        assert_eq!(server.wait(Duration::from_millis(200)), None);
+        let response = get(port, "/callback?code=new&state=current");
+        assert!(response.starts_with("HTTP/1.1 200"));
+        assert!(!response.contains("Signed in"));
+        let params = server.wait(Duration::from_secs(2)).expect("params");
+        assert_eq!(params.code.as_deref(), Some("new"));
+    }
+
+    #[test]
+    fn a_provider_error_without_state_still_ends_the_wait() {
+        let server = CallbackServer::start(0, "/callback", "current").expect("server");
+        get(server.port(), "/callback?error=access_denied");
+        let params = server.wait(Duration::from_secs(2)).expect("params");
+        assert_eq!(params.error.as_deref(), Some("access_denied"));
     }
 }

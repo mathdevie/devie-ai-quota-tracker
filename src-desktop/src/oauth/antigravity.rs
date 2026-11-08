@@ -4,7 +4,7 @@
 //! Google can restrict or change them without notice, so the provider page
 //! keeps its unofficial warning.
 
-use super::{error, ErrorKind, ProviderError};
+use super::{error, ErrorKind, LoginError, ProviderError};
 
 use chrono::{Duration, Utc};
 use serde_json::{json, Value};
@@ -57,9 +57,9 @@ pub async fn exchange(
     redirect_uri: &str,
     code: &str,
     state: Option<&str>,
-) -> Result<LoginOutcome, String> {
+) -> Result<LoginOutcome, LoginError> {
     if state != Some(pair.state.as_str()) {
-        return Err("The sign-in response does not match this session. Start again.".into());
+        return Err(LoginError::state_mismatch());
     }
     let tokens = token_request(
         client,
@@ -774,7 +774,7 @@ mod tests {
             let error = exchange(&client, &pair, &redirect_uri(12345), "code", state)
                 .await
                 .unwrap_err();
-            assert!(error.contains("does not match"));
+            assert_eq!(error.reason, "state_mismatch");
         }
     }
 

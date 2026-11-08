@@ -2,7 +2,7 @@
 //! OAuth client. PKCE callback on `localhost:54545`, the CLI port; the user can
 //! also paste the code from the Anthropic page.
 
-use super::{error, ErrorKind, ProviderError};
+use super::{callback, error, ErrorKind, LoginError, ProviderError};
 
 use std::{
     collections::HashMap,
@@ -30,6 +30,9 @@ pub const PROFILE_URL: &str = "https://api.anthropic.com/api/oauth/profile";
 pub const SCOPES: &str = "org:create_api_key user:profile user:inference";
 pub const CALLBACK_PORT: u16 = 54545;
 pub const CALLBACK_PATH: &str = "/callback";
+/// Claude Code's page that shows `code#state` to paste, for when no redirect
+/// can reach this Mac.
+pub const MANUAL_REDIRECT_URI: &str = "https://platform.claude.com/oauth/code/callback";
 const ANTHROPIC_VERSION: &str = "2023-06-01";
 const OAUTH_BETA: &str = "oauth-2025-04-20";
 /// Refresh when less than this remains, as the Claude CLI does.
@@ -111,17 +114,18 @@ pub async fn cached_usage(
 
     match usage(client, access_token).await {
         Ok(mut reading) => {
+            // A failed lookup leaves the saved identity alone and retries next read.
             let identity = match with_slot(&key, |slot| slot.identity.clone()) {
-                Some(identity) => identity,
-                None => {
-                    let (identity, _) = profile(client, access_token).await;
-                    identity
-                }
+                Some(identity) => Some(identity),
+                None => profile(client, access_token)
+                    .await
+                    .ok()
+                    .map(|(identity, _)| identity),
             };
-            reading.identity = Some(identity.clone());
+            reading.identity = identity.clone();
             reading.observed_at = Some(Utc::now().to_rfc3339());
             with_slot(&key, |slot| {
-                slot.identity = Some(identity);
+                slot.identity = identity;
                 slot.last_good = Some(reading.clone());
                 slot.fresh_until = Some(Instant::now() + USAGE_CACHE_TTL);
                 slot.cooldown_until = None;
@@ -185,22 +189,53 @@ pub fn authorize_url(pkce: &Pkce, redirect_uri: &str) -> String {
     format!("{AUTHORIZE_URL}?{}", encode_query(&query))
 }
 
+/// Reads what the user pasted: `code#state` from the code page, a bare code,
+/// or the whole address of a redirect. Returns the code, the state, and the
+/// redirect URI the code was issued for, which the exchange must repeat.
+pub fn pasted_code(input: &str) -> (String, Option<String>, String) {
+    let input = input.trim();
+    if let Some((address, query)) = input
+        .split_once('?')
+        .filter(|(_, query)| query.contains("code="))
+    {
+        let query = query.split_once('#').map_or(query, |(query, _)| query);
+        let params = callback::parse_params(query);
+        let redirect =
+            if address.starts_with("http://localhost") || address.starts_with("http://127.0.0.1") {
+                redirect_uri()
+            } else {
+                MANUAL_REDIRECT_URI.to_string()
+            };
+        return (params.code.unwrap_or_default(), params.state, redirect);
+    }
+    let (code, state) = match input.split_once('#') {
+        Some((code, state)) => (code, Some(state.trim().to_string())),
+        None => (input, None),
+    };
+    (
+        code.trim().to_string(),
+        state,
+        MANUAL_REDIRECT_URI.to_string(),
+    )
+}
+
 pub async fn exchange(
     client: &reqwest::Client,
     pkce: &Pkce,
     redirect_uri: &str,
     code: &str,
     state: Option<&str>,
-) -> Result<LoginOutcome, String> {
-    // A pasted code may carry the state after a `#`.
-    let (code, embedded_state) = code.split_once('#').unwrap_or((code, ""));
-    let state = if embedded_state.is_empty() {
-        state.unwrap_or(pkce.state.as_str())
-    } else {
-        embedded_state
-    };
+) -> Result<LoginOutcome, LoginError> {
+    let state = state.unwrap_or(pkce.state.as_str());
     if state != pkce.state {
-        return Err("The sign-in response does not match this session. Start again.".to_string());
+        return Err(LoginError::state_mismatch());
+    }
+    if code.trim().is_empty() {
+        return Err(LoginError::new(
+            "authorize",
+            "no_code",
+            "The pasted text has no sign-in code. Copy the code from the Claude page.",
+        ));
     }
     let tokens = post_json(
         client,
@@ -215,7 +250,9 @@ pub async fn exchange(
     )
     .await?;
     let credentials = credentials_from(&tokens, None)?;
-    let (identity, account_key) = profile(client, &credentials.access_token).await;
+    let (identity, account_key) = profile(client, &credentials.access_token)
+        .await
+        .map_err(LoginError::profile)?;
     Ok(LoginOutcome {
         credentials,
         identity,
@@ -280,28 +317,42 @@ fn credentials_from(
     })
 }
 
-async fn profile(client: &reqwest::Client, access_token: &str) -> (RemoteIdentity, String) {
-    let response = client
-        .get(PROFILE_URL)
-        .bearer_auth(access_token)
-        .header("anthropic-beta", OAUTH_BETA)
-        .header("anthropic-version", ANTHROPIC_VERSION)
-        .header(reqwest::header::USER_AGENT, USER_AGENT)
-        .send()
-        .await;
-    let json = match response {
-        Ok(response) if response.status().is_success() => {
-            response.json::<Value>().await.unwrap_or(Value::Null)
+/// The account behind a token, and the key that keeps one connection per
+/// account across sign-ins. Retries once after a network error or a 429.
+async fn profile(
+    client: &reqwest::Client,
+    access_token: &str,
+) -> Result<(RemoteIdentity, String), ProviderError> {
+    let request = || {
+        error::json(
+            client
+                .get(PROFILE_URL)
+                .bearer_auth(access_token)
+                .header("anthropic-beta", OAUTH_BETA)
+                .header("anthropic-version", ANTHROPIC_VERSION)
+                .header(reqwest::header::USER_AGENT, USER_AGENT),
+            "Claude",
+        )
+    };
+    let json = match request().await {
+        Err(error) if error.transient() => {
+            tokio::time::sleep(StdDuration::from_secs(1)).await;
+            request().await?
         }
-        _ => Value::Null,
+        result => result?,
     };
     let identity = parse_profile(&json);
-    let key = identity
+    let key = account_key(&identity).ok_or_else(|| {
+        ProviderError::invalid("Claude did not return the account details. Try again.")
+    })?;
+    Ok((identity, key))
+}
+
+fn account_key(identity: &RemoteIdentity) -> Option<String> {
+    identity
         .provider_user_id
         .clone()
         .or_else(|| identity.display_name.clone())
-        .unwrap_or_else(|| Utc::now().timestamp_millis().to_string());
-    (identity, key)
 }
 
 fn parse_profile(json: &Value) -> RemoteIdentity {
@@ -668,11 +719,12 @@ mod tests {
         let err = exchange(&client, &pkce, &redirect_uri(), "code", Some("wrong"))
             .await
             .expect_err("mismatched state must fail");
-        assert!(err.contains("does not match"));
-        let err = exchange(&client, &pkce, &redirect_uri(), "code#wrong", None)
+        assert_eq!(err.reason, "state_mismatch");
+        let (code, state, redirect) = pasted_code("code#wrong");
+        let err = exchange(&client, &pkce, &redirect, &code, state.as_deref())
             .await
             .expect_err("mismatched embedded state must fail");
-        assert!(err.contains("does not match"));
+        assert_eq!(err.reason, "state_mismatch");
     }
 
     #[test]
@@ -836,6 +888,49 @@ mod tests {
         let identity = parse_profile(&json);
         assert_eq!(identity.display_name.as_deref(), Some("me@example.com"));
         assert_eq!(identity.plan.as_deref(), Some("Max 5x"));
+    }
+
+    #[test]
+    fn a_profile_without_an_account_has_no_key() {
+        // Without a key, every sign-in would add a new, nameless account.
+        let identity =
+            parse_profile(&json!({"organization":{"rate_limit_tier":"default_claude_pro"}}));
+        assert_eq!(account_key(&identity), None);
+        let identity = parse_profile(&json!({"account":{"email":"me@example.com"}}));
+        assert_eq!(account_key(&identity).as_deref(), Some("me@example.com"));
+    }
+
+    #[test]
+    fn reads_pasted_codes_with_the_redirect_they_came_from() {
+        let manual = MANUAL_REDIRECT_URI.to_string();
+        assert_eq!(
+            pasted_code(" abc#xyz \n"),
+            ("abc".into(), Some("xyz".into()), manual.clone())
+        );
+        assert_eq!(pasted_code("abc"), ("abc".into(), None, manual.clone()));
+        assert_eq!(
+            pasted_code("http://localhost:54545/callback?code=abc%23&state=xyz"),
+            ("abc#".into(), Some("xyz".into()), redirect_uri())
+        );
+        assert_eq!(
+            pasted_code(&format!("{MANUAL_REDIRECT_URI}?code=abc&state=xyz#top")),
+            ("abc".into(), Some("xyz".into()), manual)
+        );
+    }
+
+    #[tokio::test]
+    async fn rejects_an_empty_pasted_code_before_any_request() {
+        let pair = crate::oauth::pkce();
+        let error = exchange(
+            &reqwest::Client::new(),
+            &pair,
+            MANUAL_REDIRECT_URI,
+            " ",
+            None,
+        )
+        .await
+        .unwrap_err();
+        assert_eq!(error.reason, "no_code");
     }
 
     fn plan(organization: Value) -> Option<String> {

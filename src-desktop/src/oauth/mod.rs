@@ -50,6 +50,10 @@ pub struct LoginStart {
     pub user_code: Option<String>,
     /// True when the user can paste an authorization code by hand.
     pub accepts_manual_code: bool,
+    /// Claude only: the same sign-in on a page that shows a code to paste.
+    /// Equal to `url` when the callback port was busy and no redirect can arrive.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub manual_url: Option<String>,
 }
 
 /// The result of a completed sign-in, before the connection exists.
@@ -59,6 +63,80 @@ pub struct LoginOutcome {
     pub identity: RemoteIdentity,
     /// Stable per-account key, such as an account id or a login name.
     pub account_key: String,
+}
+
+/// A failed sign-in: a sentence for the user, plus a stage and a reason that
+/// anonymous telemetry may carry. The message may name an account and stays local.
+#[derive(Clone, Debug, PartialEq)]
+pub struct LoginError {
+    /// `start`, `authorize`, `exchange`, `profile`, or `save`.
+    pub stage: &'static str,
+    pub reason: &'static str,
+    pub message: String,
+}
+
+impl LoginError {
+    pub fn new(stage: &'static str, reason: &'static str, message: impl Into<String>) -> Self {
+        Self {
+            stage,
+            reason,
+            message: message.into(),
+        }
+    }
+
+    pub fn state_mismatch() -> Self {
+        Self::new(
+            "authorize",
+            "state_mismatch",
+            "The sign-in response does not match this session. Start again.",
+        )
+    }
+
+    pub fn cancelled() -> Self {
+        Self::new("authorize", "cancelled", "The sign-in was cancelled.")
+    }
+
+    /// The account lookup right after the token exchange failed.
+    pub fn profile(error: ProviderError) -> Self {
+        Self {
+            stage: "profile",
+            ..error.into()
+        }
+    }
+}
+
+impl From<ProviderError> for LoginError {
+    fn from(error: ProviderError) -> Self {
+        let reason = match error.kind {
+            ErrorKind::AccessExpired => "unauthorized",
+            ErrorKind::NeedsLogin => "invalid_grant",
+            ErrorKind::Forbidden => "forbidden",
+            ErrorKind::RateLimited => "rate_limited",
+            ErrorKind::Transport => "network",
+            ErrorKind::InvalidResponse => "invalid_response",
+            ErrorKind::Other => "other",
+        };
+        let message = match error.kind {
+            // At sign-in, `invalid_grant` means the authorization code, not a saved login.
+            ErrorKind::NeedsLogin => {
+                "The sign-in code expired or was already used. Start the sign-in again.".into()
+            }
+            _ => error.message,
+        };
+        Self::new("exchange", reason, message)
+    }
+}
+
+impl From<String> for LoginError {
+    fn from(message: String) -> Self {
+        Self::new("exchange", "other", message)
+    }
+}
+
+impl From<LoginError> for String {
+    fn from(error: LoginError) -> Self {
+        error.message
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -98,21 +176,25 @@ pub struct PendingLogin {
 pub async fn start(
     client: &reqwest::Client,
     provider: Provider,
-) -> Result<(LoginStart, PendingLogin), String> {
+) -> Result<(LoginStart, PendingLogin), LoginError> {
     let session_id = random_token(16);
     match provider {
-        Provider::Claude | Provider::Codex => {
+        Provider::Claude => {
             let pair = pkce();
-            let (redirect_uri, url, port, path) = if provider == Provider::Claude {
-                let redirect = claude::redirect_uri();
-                let url = claude::authorize_url(&pair, &redirect);
-                (redirect, url, claude::CALLBACK_PORT, claude::CALLBACK_PATH)
-            } else {
-                let redirect = codex::redirect_uri();
-                let url = codex::authorize_url(&pair, &redirect);
-                (redirect, url, codex::CALLBACK_PORT, codex::CALLBACK_PATH)
+            let redirect_uri = claude::redirect_uri();
+            let manual_url = claude::authorize_url(&pair, claude::MANUAL_REDIRECT_URI);
+            // Claude Code may hold the port for its own sign-in. The code page
+            // still works without it.
+            let server = callback::CallbackServer::start(
+                claude::CALLBACK_PORT,
+                claude::CALLBACK_PATH,
+                &pair.state,
+            )
+            .ok();
+            let url = match server {
+                Some(_) => claude::authorize_url(&pair, &redirect_uri),
+                None => manual_url.clone(),
             };
-            let server = callback::CallbackServer::start(port, path)?;
             open_browser(&url)?;
             Ok((
                 LoginStart {
@@ -120,7 +202,37 @@ pub async fn start(
                     provider: provider.clone(),
                     url,
                     user_code: None,
-                    accepts_manual_code: provider == Provider::Claude,
+                    accepts_manual_code: true,
+                    manual_url: Some(manual_url),
+                },
+                PendingLogin {
+                    provider,
+                    pkce: Some(pair),
+                    redirect_uri,
+                    callback: server,
+                    device: None,
+                    cursor: None,
+                },
+            ))
+        }
+        Provider::Codex => {
+            let pair = pkce();
+            let redirect_uri = codex::redirect_uri();
+            let url = codex::authorize_url(&pair, &redirect_uri);
+            let server = callback::CallbackServer::start(
+                codex::CALLBACK_PORT,
+                codex::CALLBACK_PATH,
+                &pair.state,
+            )?;
+            open_browser(&url)?;
+            Ok((
+                LoginStart {
+                    session_id,
+                    provider: provider.clone(),
+                    url,
+                    user_code: None,
+                    accepts_manual_code: false,
+                    manual_url: None,
                 },
                 PendingLogin {
                     provider,
@@ -148,7 +260,7 @@ pub async fn start(
                         gemini::authorize_url,
                     )
                 };
-            let server = callback::CallbackServer::start(0, path)?;
+            let server = callback::CallbackServer::start(0, path, &pair.state)?;
             let redirect_uri = redirect(server.port());
             let url = authorize(&pair, &redirect_uri);
             open_browser(&url)?;
@@ -159,6 +271,7 @@ pub async fn start(
                     url,
                     user_code: None,
                     accepts_manual_code: false,
+                    manual_url: None,
                 },
                 PendingLogin {
                     provider,
@@ -171,7 +284,9 @@ pub async fn start(
             ))
         }
         Provider::Copilot => {
-            let device = copilot::request_device_code(client).await?;
+            let device = copilot::request_device_code(client)
+                .await
+                .map_err(|message| LoginError::new("start", "device_code", message))?;
             open_browser(&device.verification_uri)?;
             Ok((
                 LoginStart {
@@ -180,6 +295,7 @@ pub async fn start(
                     url: device.verification_uri.clone(),
                     user_code: Some(device.user_code.clone()),
                     accepts_manual_code: false,
+                    manual_url: None,
                 },
                 PendingLogin {
                     provider,
@@ -202,6 +318,7 @@ pub async fn start(
                     url,
                     user_code: None,
                     accepts_manual_code: false,
+                    manual_url: None,
                 },
                 PendingLogin {
                     provider,
@@ -221,73 +338,116 @@ pub async fn start(
 pub async fn finish(
     client: &reqwest::Client,
     login: PendingLogin,
-    mut manual_code: tokio::sync::oneshot::Receiver<String>,
-) -> Result<LoginOutcome, String> {
+    manual_code: tokio::sync::oneshot::Receiver<String>,
+) -> Result<LoginOutcome, LoginError> {
+    let authorize = |message: String| LoginError::new("authorize", "other", message);
     match login.provider {
         Provider::Copilot => {
-            let device = login
-                .device
-                .ok_or_else(|| "The GitHub sign-in session is invalid.".to_string())?;
-            copilot::wait_for_approval(client, &device).await
+            let device = login.device.ok_or_else(invalid_session)?;
+            copilot::wait_for_approval(client, &device)
+                .await
+                .map_err(authorize)
         }
         Provider::Cursor => {
-            let login = login
-                .cursor
-                .ok_or_else(|| "The Cursor sign-in session is invalid.".to_string())?;
-            cursor::wait_for_login(client, &login).await
+            let login = login.cursor.ok_or_else(invalid_session)?;
+            cursor::wait_for_login(client, &login)
+                .await
+                .map_err(authorize)
         }
         Provider::Claude | Provider::Codex | Provider::Gemini | Provider::Antigravity => {
-            let pair = login
-                .pkce
-                .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
-            let server = login
-                .callback
-                .ok_or_else(|| "The sign-in session is invalid.".to_string())?;
-            let stop = server.stop_handle();
-            let callback = tauri::async_runtime::spawn_blocking(move || server.wait(LOGIN_TIMEOUT));
-            tokio::pin!(callback);
-            let (code, state) = tokio::select! {
-                code = &mut manual_code, if login.provider == Provider::Claude => {
-                    stop.store(true, Ordering::Relaxed);
-                    (code.map_err(|_| "The sign-in session ended.".to_string())?, None)
-                }
-                params = &mut callback => {
-                    let params = params.map_err(|_| "The sign-in stopped early.".to_string())?
-                        .ok_or_else(|| "The browser did not return in time. Start the sign-in again.".to_string())?;
-                    if let Some(error) = params.error {
-                        return Err(format!("The provider refused the sign-in: {error}"));
+            let pair = login.pkce.ok_or_else(invalid_session)?;
+            let accepts_manual = login.provider == Provider::Claude;
+            let (code, state, redirect_uri) =
+                match wait_for_code(login.callback, manual_code, accepts_manual).await? {
+                    Received::Pasted(input) => claude::pasted_code(&input),
+                    Received::Redirect(params) => {
+                        if let Some(error) = params.error {
+                            return Err(LoginError::new(
+                                "authorize",
+                                "refused",
+                                format!("The provider refused the sign-in: {error}"),
+                            ));
+                        }
+                        let code = params.code.ok_or_else(|| {
+                            LoginError::new(
+                                "authorize",
+                                "no_code",
+                                "The provider returned no code.",
+                            )
+                        })?;
+                        let state = params.state.ok_or_else(LoginError::state_mismatch)?;
+                        (code, Some(state), login.redirect_uri)
                     }
-                    let code = params.code.ok_or_else(|| "The provider returned no code.".to_string())?;
-                    let state = params.state.ok_or_else(|| "The sign-in response does not match this session. Start again.".to_string())?;
-                    (code, Some(state))
-                }
-            };
+                };
+            let state = state.as_deref();
             match login.provider {
                 Provider::Claude => {
-                    claude::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
-                        .await
+                    claude::exchange(client, &pair, &redirect_uri, &code, state).await
                 }
                 Provider::Codex => {
-                    codex::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
-                        .await
+                    codex::exchange(client, &pair, &redirect_uri, &code, state).await
                 }
                 Provider::Gemini => {
-                    gemini::exchange(client, &pair, &login.redirect_uri, &code, state.as_deref())
-                        .await
+                    gemini::exchange(client, &pair, &redirect_uri, &code, state).await
                 }
                 Provider::Antigravity => {
-                    antigravity::exchange(
-                        client,
-                        &pair,
-                        &login.redirect_uri,
-                        &code,
-                        state.as_deref(),
-                    )
-                    .await
+                    antigravity::exchange(client, &pair, &redirect_uri, &code, state).await
                 }
                 Provider::Copilot | Provider::Cursor => unreachable!(),
             }
         }
+    }
+}
+
+fn invalid_session() -> LoginError {
+    LoginError::new(
+        "start",
+        "invalid_session",
+        "The sign-in session is invalid.",
+    )
+}
+
+enum Received {
+    Redirect(callback::CallbackParams),
+    Pasted(String),
+}
+
+/// Waits for the browser redirect or, when accepted, a pasted code, whichever
+/// comes first. Without a callback server only a pasted code can arrive.
+async fn wait_for_code(
+    server: Option<callback::CallbackServer>,
+    mut manual_code: tokio::sync::oneshot::Receiver<String>,
+    accepts_manual: bool,
+) -> Result<Received, LoginError> {
+    let ended = || LoginError::new("authorize", "cancelled", "The sign-in session ended.");
+    let late = || {
+        LoginError::new(
+            "authorize",
+            "timeout",
+            "The sign-in did not finish in time. Start the sign-in again.",
+        )
+    };
+    let Some(server) = server else {
+        if !accepts_manual {
+            return Err(invalid_session());
+        }
+        return match tokio::time::timeout(LOGIN_TIMEOUT, manual_code).await {
+            Ok(code) => code.map(Received::Pasted).map_err(|_| ended()),
+            Err(_) => Err(late()),
+        };
+    };
+    let stop = server.stop_handle();
+    let callback = tauri::async_runtime::spawn_blocking(move || server.wait(LOGIN_TIMEOUT));
+    tokio::pin!(callback);
+    tokio::select! {
+        code = &mut manual_code, if accepts_manual => {
+            stop.store(true, Ordering::Relaxed);
+            code.map(Received::Pasted).map_err(|_| ended())
+        }
+        params = &mut callback => params
+            .map_err(|_| LoginError::new("authorize", "other", "The sign-in stopped early."))?
+            .map(Received::Redirect)
+            .ok_or_else(late),
     }
 }
 
@@ -457,8 +617,9 @@ async fn read_quota(
     }
 }
 
-fn open_browser(url: &str) -> Result<(), String> {
-    open::that_detached(url).map_err(|_| "The browser could not open.".to_string())
+fn open_browser(url: &str) -> Result<(), LoginError> {
+    open::that_detached(url)
+        .map_err(|_| LoginError::new("start", "browser", "The browser could not open."))
 }
 
 pub fn decode_jwt_claims(token: &str) -> Option<serde_json::Value> {

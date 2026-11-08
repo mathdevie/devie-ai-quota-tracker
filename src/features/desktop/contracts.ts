@@ -112,6 +112,11 @@ export interface LoginStart {
   userCode?: string;
   /** True when the user can paste an authorization code by hand. */
   acceptsManualCode: boolean;
+  /**
+   * Claude only: the same sign-in on a page that shows a code to paste.
+   * Equal to `url` when the callback port was busy and no redirect can arrive.
+   */
+  manualUrl?: string;
 }
 
 /** One Codex reset announcement, from codex-resets.com. */

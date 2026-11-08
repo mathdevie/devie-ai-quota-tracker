@@ -147,6 +147,34 @@ it("displays and copies a device code without offering manual OAuth entry", asyn
   expect(screen.queryByRole("textbox")).toBeNull();
 });
 
+it("offers the code page next to the browser redirect", async () => {
+  native.invoke.mockImplementation((command: string) =>
+    command === "start_login"
+      ? Promise.resolve({ ...started, manualUrl: "https://example.com/code" })
+      : new Promise(() => {}),
+  );
+  renderApp(<LoginDialog provider="claude" open onOpenChange={vi.fn()} onConnected={vi.fn()} />);
+  const link = await screen.findByRole("link", { name: "Show a code to paste instead" });
+  expect(link.getAttribute("href")).toBe("https://example.com/code");
+  expect(screen.getByText(/The app receives the result on this Mac/)).toBeTruthy();
+});
+
+it("asks for a pasted code when the callback port is busy", async () => {
+  native.invoke.mockImplementation((command: string) =>
+    command === "start_login"
+      ? Promise.resolve({
+          ...started,
+          url: "https://example.com/code",
+          manualUrl: "https://example.com/code",
+        })
+      : new Promise(() => {}),
+  );
+  renderApp(<LoginDialog provider="claude" open onOpenChange={vi.fn()} onConnected={vi.fn()} />);
+  expect(await screen.findByText(/Another app is using the sign-in port/)).toBeTruthy();
+  expect(screen.getByRole("textbox", { name: "Paste the code from the page" })).toBeTruthy();
+  expect(screen.queryByRole("link", { name: "Show a code to paste instead" })).toBeNull();
+});
+
 it("does not start a closed dialog", () => {
   renderApp(
     <LoginDialog provider="claude" open={false} onOpenChange={vi.fn()} onConnected={vi.fn()} />,
